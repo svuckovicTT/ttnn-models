@@ -9,11 +9,11 @@ from pathlib import Path
 
 import torch
 import torch_xla.runtime as xr
-from transformers import ResNetForImageClassification
+from transformers import ResNetForImageClassification, AutoImageProcessor
 from tt_torch import codegen_py
+from datasets import load_dataset
 
-MODEL_PATH = "microsoft/resnet-50"
-OUTPUT_DIR = f"models/{MODEL_PATH}/codegen"
+OUTPUT_DIR = str(Path(__file__).resolve().parent / "model")
 
 
 def main():
@@ -21,9 +21,19 @@ def main():
     xr.set_device_type("TT")
 
     # Load ResNet-50 from HuggingFace
-    model = ResNetForImageClassification.from_pretrained("microsoft/resnet-50", torch_dtype=torch.bfloat16)
+    model = ResNetForImageClassification.from_pretrained(
+        "microsoft/resnet-50", torch_dtype=torch.bfloat16
+    )
     model.eval()
-    x = torch.randn(1, 3, 224, 224, dtype=torch.bfloat16)
+
+    # Get input
+    dataset = load_dataset("huggingface/cats-image")
+    image = dataset["test"]["image"][0]
+    processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
+    x = processor(image, return_tensors="pt")["pixel_values"].to(torch.bfloat16)
+
+    print(f"Input shape: {x.shape}")
+    print(f"Input dtype: {x.dtype}")
 
     codegen_py(
         model,
