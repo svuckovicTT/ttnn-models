@@ -1,0 +1,12 @@
+Refactor complete. Summary of changes:
+
+**`model_ttnn.py`** — Added `import params`, defined `LightweightModule` (with `__call__` dispatching to `forward`), defined `ModelTTNN(LightweightModule)`:
+- `__init__(self, device)` saves `self.device`, loads `self.weights` via `params.load_weights_for__main_from_state_dict()`, initializes `self.ce_cache = {}`
+- `forward(self, activations)` contains all the original `ttnn.*` ops, with `device=device` rewritten to `device=self.device` and the consteval call using `self.ce_cache` / `self.weights` / `self.device`
+- Removed the module-level `ce_cache__main` global and the `_main` free function
+
+**`main.py`** — Replaced the `_main`/`load_weights_for__main_from_state_dict` imports with `ModelTTNN`, and updated both `main()` and `test_main()` callsites to do `model = ModelTTNN(device); _main_0 = model(load_activations_for__main_0)`.
+
+Both files pass `ast.parse`. Behavior is preserved: weights load once at construction, the ce_cache persists across `forward` calls via `self.ce_cache` (same dict mutation semantics as the previous global), and the call operator routes through `LightweightModule.__call__` → `forward`.
+
+--- Time taken: 260.4s ---
