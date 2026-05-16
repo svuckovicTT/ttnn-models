@@ -1,0 +1,47 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.12.3', 'Platform': 'Linux-5.15.0-168-generic-x86_64-with-glibc2.39', 'Packages': {'pytest': '9.0.3', 'pluggy': '1.6.0'}, 'Plugins': {'forked': '1.6.0', 'metadata': '3.1.1', 'jaxtyping': '0.3.9', 'split': '0.11.0', 'json-report': '1.5.0', 'anyio': '4.13.0'}}
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
+plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
+collecting ... collected 1 item
+
+main.py::test_main FAILED                                                [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        load_activations_for__main_0 = load_activations_for__main()
+        load_weights_for__main_0 = load_weights_for__main()
+        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+    
+        ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
+        golden_output = run_golden().reshape(1, 1000).to(torch.float32)
+    
+        pcc = calculate_pcc(ttnn_output, golden_output)
+        print(f"PCC: {pcc:.6f}")
+>       assert pcc >= 0.99, f"PCC {pcc:.6f} is below threshold 0.99"
+E       AssertionError: PCC 0.921890 is below threshold 0.99
+E       assert 0.9218899011611938 >= 0.99
+
+main.py:5676: AssertionError
+----------------------------- Captured stdout call -----------------------------
+Device: MeshDevice(1x1 grid, 1 devices)
+PCC: 0.921890
+----------------------------- Captured stderr call -----------------------------
+
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 9814.82it/s]
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - AssertionError: PCC 0.921890 is below threshold 0.99
+======================== 1 failed, 2 warnings in 12.42s ========================
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
