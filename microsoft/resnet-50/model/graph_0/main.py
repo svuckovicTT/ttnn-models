@@ -2,8 +2,7 @@ import ttnn
 import torch
 import utils
 import model_pt
-from model_ttnn import _main
-from params import load_weights_for__main_from_state_dict
+from model_ttnn import ModelTTNN
 from utils import calculate_pcc
 
 
@@ -33,8 +32,8 @@ def main():
     device = open_device()
     try:
         load_activations_for__main_0 = load_activations_for__main(device)
-        load_weights_for__main_0 = load_weights_for__main_from_state_dict()
-        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
+        model = ModelTTNN(device)
+        _main_0 = model(load_activations_for__main_0)
         return 0
     finally:
         ttnn.close_mesh_device(device)
@@ -46,8 +45,8 @@ def test_main():
     device = open_device()
     try:
         load_activations_for__main_0 = load_activations_for__main(device)
-        load_weights_for__main_0 = load_weights_for__main_from_state_dict()
-        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
+        model = ModelTTNN(device)
+        _main_0 = model(load_activations_for__main_0)
 
         ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
         golden_output = model_pt.main().logits.reshape(1, 1000).to(torch.float32)
