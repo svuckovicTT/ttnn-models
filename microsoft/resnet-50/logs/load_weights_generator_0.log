@@ -1,0 +1,8 @@
+All tasks completed successfully.
+
+Summary:
+- **`params.py`** (new): contains `load_weights_for__main` (moved from main.py) + `ALL_WEIGHTS` set (267 keys, all share the same properties) + `load_weights_for__main_from_state_dict` which loads the model via `model_pt.load_model()`, iterates `ALL_WEIGHTS`, and applies `ttnn.from_torch` → `to_layout(ROW_MAJOR)` → `to_dtype(BFLOAT16)` (no `to_device` since original used `device=None`).
+- **`main.py`**: removed the moved function; added `from params import load_weights_for__main`.
+- **`verify_weights.py`** (new): compares both dicts; all 267 weights match exactly (exit code 0).
+
+--- Time taken: 475.2s ---
