@@ -1,0 +1,15 @@
+All changes complete. Summary of what changed:
+
+- **`utils.py`**: Removed the `DeviceGetter` singleton class and the now-unused `math` import.
+- **`main.py`**:
+  - Added `open_device()` helper that calls `ttnn.open_mesh_device(mesh_shape=ttnn.MeshShape((1, 1)), l1_small_size=1 << 15)` and prints the device.
+  - `main()` and `test_main()` open the device, run the workload in a `try` block, and call `ttnn.close_mesh_device(device)` in `finally`.
+  - `_main(activations, weights, device)` and `load_activations_for__main(device)` now receive the device via argument; all internal `utils_DeviceGetter_get_device_0`/`_1` usages replaced with `device`.
+- **`consteval.py`**:
+  - `consteval__main`, `main_const_eval_0`, `main_const_eval_1`, `main_const_eval_2` all take `device` as an argument and forward it appropriately.
+  - Removed the now-unused `import utils`.
+- **`params.py`**: No changes — it never used the device.
+
+Syntax-validated all four files with `ast.parse`.
+
+--- Time taken: 297.0s ---
