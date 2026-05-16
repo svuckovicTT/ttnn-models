@@ -5658,13 +5658,22 @@ def main():
     golden_output = run_golden().reshape(1, 1000).to(torch.float32)
 
     pcc = calculate_pcc(ttnn_output, golden_output)
-    print(f"PCC: {pcc}")
+    print(f"PCC: {pcc:.6f}")
     assert pcc >= 0.99, f"PCC {pcc} is below threshold 0.99"
     return 0
 
 
 def test_main():
-    return 0
+    load_activations_for__main_0 = load_activations_for__main()
+    load_weights_for__main_0 = load_weights_for__main()
+    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+
+    ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
+    golden_output = run_golden().reshape(1, 1000).to(torch.float32)
+
+    pcc = calculate_pcc(ttnn_output, golden_output)
+    print(f"PCC: {pcc:.6f}")
+    assert pcc >= 0.99, f"PCC {pcc} is below threshold 0.99"
 
 
 if __name__ == "__main__":
