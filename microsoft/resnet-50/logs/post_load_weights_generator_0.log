@@ -1,0 +1,6 @@
+All three tasks complete:
+- Removed `load_weights_for__main` function (and the `_main_weights` global and now-unused `import utils`) from `params.py` — file shrank from 2965 → 294 lines.
+- Updated `main.py` import and both call sites to use `load_weights_for__main_from_state_dict`.
+- Deleted `verify_weights.py`.
+
+--- Time taken: 116.5s ---
