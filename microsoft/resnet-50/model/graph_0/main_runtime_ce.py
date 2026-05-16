@@ -30,6 +30,16 @@ def calculate_pcc(x, y):
 def _main(activations, weights):
     global ce_cache__main
     ce_cache__main = consteval__main(ce_cache__main, weights)
+    # === PATCHED: override main_const_eval_0 outputs with runtime dumps ===
+    _ce_device = utils.DeviceGetter.get_device((1, 1))
+    _ce_mc = ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None)
+    ce_cache__main["main_const_eval_0"] = [
+        ttnn.to_device(
+            ttnn.load_tensor(f"/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/runtime_consteval/ve_{i}.tensorbin"),
+            _ce_device, memory_config=_ce_mc,
+        )
+        for i in range(106)
+    ]
     args_0 = activations[0]
     var_0 = ce_cache__main["main_const_eval_0"]
     utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((1, 1))
@@ -95,6 +105,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/conv2d_0.tensorbin", ttnn_conv2d_0)
     ttnn_max_pool2d_0 = ttnn.max_pool2d(
         ttnn_conv2d_0,
         1,
@@ -124,6 +135,7 @@ def _main(activations, weights):
         reallocate_halo_output=False,
         config_tensor_in_dram=True,
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/max_pool2d_0.tensorbin", ttnn_max_pool2d_0)
     ttnn.deallocate(ttnn_conv2d_0, False)
     ttnn_to_memory_config_0 = ttnn.to_memory_config(
         ttnn_max_pool2d_0,
@@ -183,6 +195,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/conv2d_1.tensorbin", ttnn_conv2d_1)
     ttnn_conv2d_2 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_1,
         weight_tensor=var_0[4],
@@ -224,6 +237,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/conv2d_2.tensorbin", ttnn_conv2d_2)
     ttnn_conv2d_3 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_2,
         weight_tensor=var_0[6],
@@ -264,6 +278,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/conv2d_3.tensorbin", ttnn_conv2d_3)
     ttnn_conv2d_4 = ttnn.conv2d(
         input_tensor=ttnn_max_pool2d_0,
         weight_tensor=var_0[8],
@@ -304,6 +319,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/conv2d_4.tensorbin", ttnn_conv2d_4)
     ttnn.deallocate(ttnn_max_pool2d_0, False)
     ttnn_add_0 = ttnn.add(
         ttnn_conv2d_3,
@@ -324,6 +340,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_0.tensorbin", ttnn_add_0)
     ttnn.deallocate(ttnn_conv2d_4, False)
     ttnn.deallocate(ttnn_conv2d_3, False)
     ttnn_relu_0 = ttnn.relu(
@@ -485,6 +502,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_1.tensorbin", ttnn_add_1)
     ttnn.deallocate(ttnn_conv2d_7, False)
     ttnn.deallocate(ttnn_relu_0, False)
     ttnn_relu_1 = ttnn.relu(
@@ -646,6 +664,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_2.tensorbin", ttnn_add_2)
     ttnn.deallocate(ttnn_conv2d_10, False)
     ttnn.deallocate(ttnn_relu_1, False)
     ttnn_relu_2 = ttnn.relu(
@@ -868,6 +887,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_3.tensorbin", ttnn_add_3)
     ttnn.deallocate(ttnn_conv2d_14, False)
     ttnn.deallocate(ttnn_conv2d_13, False)
     ttnn_relu_3 = ttnn.relu(
@@ -1014,6 +1034,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_4.tensorbin", ttnn_add_4)
     ttnn.deallocate(ttnn_conv2d_17, False)
     ttnn.deallocate(ttnn_relu_3, False)
     ttnn_relu_4 = ttnn.relu(
@@ -1160,6 +1181,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_5.tensorbin", ttnn_add_5)
     ttnn.deallocate(ttnn_conv2d_20, False)
     ttnn.deallocate(ttnn_relu_4, False)
     ttnn_relu_5 = ttnn.relu(
@@ -1306,6 +1328,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_6.tensorbin", ttnn_add_6)
     ttnn.deallocate(ttnn_conv2d_23, False)
     ttnn.deallocate(ttnn_relu_5, False)
     ttnn_relu_6 = ttnn.relu(
@@ -1490,6 +1513,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_7.tensorbin", ttnn_add_7)
     ttnn.deallocate(ttnn_conv2d_27, False)
     ttnn.deallocate(ttnn_conv2d_26, False)
     ttnn_relu_7 = ttnn.relu(
@@ -1650,6 +1674,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_8.tensorbin", ttnn_add_8)
     ttnn.deallocate(ttnn_conv2d_30, False)
     ttnn.deallocate(ttnn_relu_7, False)
     ttnn_relu_8 = ttnn.relu(
@@ -1810,6 +1835,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_9.tensorbin", ttnn_add_9)
     ttnn.deallocate(ttnn_conv2d_33, False)
     ttnn.deallocate(ttnn_relu_8, False)
     ttnn_relu_9 = ttnn.relu(
@@ -1970,6 +1996,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_10.tensorbin", ttnn_add_10)
     ttnn.deallocate(ttnn_conv2d_36, False)
     ttnn.deallocate(ttnn_relu_9, False)
     ttnn_relu_10 = ttnn.relu(
@@ -2130,6 +2157,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_11.tensorbin", ttnn_add_11)
     ttnn.deallocate(ttnn_conv2d_39, False)
     ttnn.deallocate(ttnn_relu_10, False)
     ttnn_relu_11 = ttnn.relu(
@@ -2290,6 +2318,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_12.tensorbin", ttnn_add_12)
     ttnn.deallocate(ttnn_conv2d_42, False)
     ttnn.deallocate(ttnn_relu_11, False)
     ttnn_relu_12 = ttnn.relu(
@@ -2488,6 +2517,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_13.tensorbin", ttnn_add_13)
     ttnn.deallocate(ttnn_conv2d_46, False)
     ttnn.deallocate(ttnn_conv2d_45, False)
     ttnn_relu_13 = ttnn.relu(
@@ -2660,6 +2690,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_14.tensorbin", ttnn_add_14)
     ttnn.deallocate(ttnn_conv2d_49, False)
     ttnn.deallocate(ttnn_relu_13, False)
     ttnn_relu_14 = ttnn.relu(
@@ -2821,6 +2852,7 @@ def _main(activations, weights):
             ),
         ),
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/add_15.tensorbin", ttnn_add_15)
     ttnn.deallocate(ttnn_conv2d_52, False)
     ttnn.deallocate(ttnn_relu_14, False)
     ttnn_relu_15 = ttnn.relu(
@@ -2935,6 +2967,7 @@ def _main(activations, weights):
         activation=None,
         compute_kernel_config=None,
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/linear_0.tensorbin", ttnn_linear_0)
     ttnn.deallocate(ttnn_reshape_1, False)
     ttnn_typecast_1 = ttnn.typecast(
         ttnn_linear_0,
@@ -2962,6 +2995,7 @@ def _main(activations, weights):
         ),
     )
     ttnn.deallocate(ttnn_typecast_1, False)
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/final.tensorbin", ttnn_to_memory_config_11)
     return [ttnn_to_memory_config_11]
 
 

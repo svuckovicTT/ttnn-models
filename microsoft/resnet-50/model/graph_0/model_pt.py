@@ -12,7 +12,7 @@ from transformers import AutoImageProcessor, ResNetForImageClassification
 def load_input():
     dataset = load_dataset("huggingface/cats-image", split="test")
     image = dataset[0]["image"]
-    image = image.resize((224, 224))
+    # image = image.resize((224, 224))
     processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
     return processor(image, return_tensors="pt")["pixel_values"].to(torch.bfloat16)
 
@@ -28,6 +28,7 @@ def load_model():
 def run():
     model = load_model()
     pixel_values = load_input()
+    print(f"Pixel values shape: {pixel_values.shape}")
     with torch.no_grad():
         logits = model(pixel_values=pixel_values).logits
     return logits

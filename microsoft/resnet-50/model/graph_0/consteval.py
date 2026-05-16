@@ -2425,6 +2425,10 @@ def main_const_eval_0(arg):
         ttnn_typecast_265,
         ttnn_typecast_266,
     )
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/cpu_hoisted_v6.tensorbin", v_6)
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/cpu_hoisted_v0.tensorbin", v_0)
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/cpu_hoisted_v2.tensorbin", v_2)
+    ttnn.dump_tensor("/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0/dumps/codegen/cpu_hoisted_v4.tensorbin", v_4)
     ttnn.deallocate(ttnn_typecast_266, False)
     ttnn.deallocate(ttnn_typecast_265, False)
     ttnn.deallocate(ttnn_typecast_264, False)
