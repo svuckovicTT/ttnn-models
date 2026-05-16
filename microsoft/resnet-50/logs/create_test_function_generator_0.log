@@ -1,0 +1,3 @@
+Done. `test_main()` at main.py:5666 now mirrors `main()` — runs the TTNN graph, computes PCC against the PyTorch golden, prints it to 6 decimals, and asserts `pcc >= 0.99` so pytest fails below that threshold.
+
+--- Time taken: 53.8s ---
