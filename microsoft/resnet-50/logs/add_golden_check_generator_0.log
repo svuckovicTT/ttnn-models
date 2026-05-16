@@ -1,0 +1,7 @@
+All three tasks done:
+
+1. **`model_pt.py`** created at `microsoft/resnet-50/model/graph_0/model_pt.py` — loads ResNet-50 from HuggingFace, uses the same input processing as `codegen.py` (cats-image dataset + AutoImageProcessor → bfloat16), with input creation wrapped in `load_input()`.
+2. **`calculate_pcc()`** added to `utils.py` (with `torch` import).
+3. **`from utils import calculate_pcc`** added to `main.py` (imported but unused, as requested).
+
+--- Time taken: 83.2s ---
