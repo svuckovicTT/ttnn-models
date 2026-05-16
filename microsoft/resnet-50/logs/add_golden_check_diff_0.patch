@@ -1,0 +1,96 @@
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 467d904..edc70e6 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -1,10 +1,32 @@
++import torch
+ import ttnn
+ import utils
+ from consteval import consteval__main
++from model_pt import run as run_golden
+ 
+ ce_cache__main = {}
+ 
+ 
++def calculate_pcc(x, y):
++    # This function calculates the PCC between two torch tensors
++
++    # Assert both are torch tensors
++    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
++    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
++
++    if x.shape != y.shape:
++        raise ValueError(
++            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
++        )
++
++    # Calculate PCC
++    x_flat, y_flat = x.flatten(), y.flatten()
++    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
++    denom = vx.norm() * vy.norm()
++
++    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()
++
++
+ def _main(activations, weights):
+     global ce_cache__main
+     ce_cache__main = consteval__main(ce_cache__main, weights)
+@@ -5631,6 +5653,13 @@ def main():
+     load_activations_for__main_0 = load_activations_for__main()
+     load_weights_for__main_0 = load_weights_for__main()
+     _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
++
++    ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
++    golden_output = run_golden().reshape(1, 1000).to(torch.float32)
++
++    pcc = calculate_pcc(ttnn_output, golden_output)
++    print(f"PCC: {pcc}")
++    assert pcc >= 0.99, f"PCC {pcc} is below threshold 0.99"
+     return 0
+ 
+ 
+diff --git a/microsoft/resnet-50/model/graph_0/model_pt.py b/microsoft/resnet-50/model/graph_0/model_pt.py
+new file mode 100644
+index 0000000..464b804
+--- /dev/null
++++ b/microsoft/resnet-50/model/graph_0/model_pt.py
+@@ -0,0 +1,39 @@
++# SPDX-FileCopyrightText: (c) 2026 Tenstorrent AI ULC
++#
++# SPDX-License-Identifier: Apache-2.0
++
++"""CPU PyTorch reference implementation of ResNet-50 from HuggingFace."""
++
++import torch
++from datasets import load_dataset
++from transformers import AutoImageProcessor, ResNetForImageClassification
++
++
++def load_input():
++    dataset = load_dataset("huggingface/cats-image", split="test")
++    image = dataset[0]["image"]
++    image = image.resize((224, 224))
++    processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
++    return processor(image, return_tensors="pt")["pixel_values"].to(torch.bfloat16)
++
++
++def load_model():
++    model = ResNetForImageClassification.from_pretrained(
++        "microsoft/resnet-50", torch_dtype=torch.bfloat16
++    )
++    model.eval()
++    return model
++
++
++def run():
++    model = load_model()
++    pixel_values = load_input()
++    with torch.no_grad():
++        logits = model(pixel_values=pixel_values).logits
++    return logits
++
++
++if __name__ == "__main__":
++    logits = run()
++    print(f"Logits shape: {logits.shape}")
++    print(f"Predicted class: {logits.argmax(-1).item()}")

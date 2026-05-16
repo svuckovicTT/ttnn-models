@@ -1,8 +1,30 @@
+import torch
 import ttnn
 import utils
 from consteval import consteval__main
+from model_pt import run as run_golden
 
 ce_cache__main = {}
+
+
+def calculate_pcc(x, y):
+    # This function calculates the PCC between two torch tensors
+
+    # Assert both are torch tensors
+    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
+    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
+
+    if x.shape != y.shape:
+        raise ValueError(
+            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
+        )
+
+    # Calculate PCC
+    x_flat, y_flat = x.flatten(), y.flatten()
+    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
+    denom = vx.norm() * vy.norm()
+
+    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()
 
 
 def _main(activations, weights):
@@ -5631,6 +5653,13 @@ def main():
     load_activations_for__main_0 = load_activations_for__main()
     load_weights_for__main_0 = load_weights_for__main()
     _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+
+    ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
+    golden_output = run_golden().reshape(1, 1000).to(torch.float32)
+
+    pcc = calculate_pcc(ttnn_output, golden_output)
+    print(f"PCC: {pcc}")
+    assert pcc >= 0.99, f"PCC {pcc} is below threshold 0.99"
     return 0
 
 
