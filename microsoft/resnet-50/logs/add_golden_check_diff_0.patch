@@ -1,0 +1,94 @@
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 467d904..417fab3 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -1,6 +1,7 @@
+ import ttnn
+ import utils
+ from consteval import consteval__main
++from utils import calculate_pcc
+ 
+ ce_cache__main = {}
+ 
+diff --git a/microsoft/resnet-50/model/graph_0/model_pt.py b/microsoft/resnet-50/model/graph_0/model_pt.py
+new file mode 100644
+index 0000000..d3da5eb
+--- /dev/null
++++ b/microsoft/resnet-50/model/graph_0/model_pt.py
+@@ -0,0 +1,40 @@
++# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
++#
++# SPDX-License-Identifier: Apache-2.0
++
++import torch
++from transformers import ResNetForImageClassification, AutoImageProcessor
++from datasets import load_dataset
++
++
++def load_input():
++    dataset = load_dataset("huggingface/cats-image")
++    image = dataset["test"]["image"][0]
++    processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
++    x = processor(image, return_tensors="pt")["pixel_values"].to(torch.bfloat16)
++    return x
++
++
++def load_model():
++    model = ResNetForImageClassification.from_pretrained(
++        "microsoft/resnet-50", torch_dtype=torch.bfloat16
++    )
++    model.eval()
++    return model
++
++
++def main():
++    model = load_model()
++    x = load_input()
++
++    print(f"Input shape: {x.shape}")
++    print(f"Input dtype: {x.dtype}")
++
++    with torch.no_grad():
++        output = model(x)
++
++    return output
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/microsoft/resnet-50/model/graph_0/utils.py b/microsoft/resnet-50/model/graph_0/utils.py
+index a33bf59..60606b8 100644
+--- a/microsoft/resnet-50/model/graph_0/utils.py
++++ b/microsoft/resnet-50/model/graph_0/utils.py
+@@ -3,6 +3,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ import ttnn
+ import math
++import torch
+ 
+ 
+ class DeviceGetter:
+@@ -80,3 +81,23 @@ def create_global_semaphore(input_tensor):
+     mesh_device = input_tensor.device()
+     shard_spec = input_tensor.memory_config().shard_spec
+     return ttnn.create_global_semaphore(mesh_device, shard_spec.grid, 0)
++
++
++def calculate_pcc(x, y):
++    # This function calculates the PCC between two torch tensors
++
++    # Assert both are torch tensors
++    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
++    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
++
++    if x.shape != y.shape:
++        raise ValueError(
++            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
++        )
++
++    # Calculate PCC
++    x_flat, y_flat = x.flatten(), y.flatten()
++    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
++    denom = vx.norm() * vy.norm()
++
++    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()
