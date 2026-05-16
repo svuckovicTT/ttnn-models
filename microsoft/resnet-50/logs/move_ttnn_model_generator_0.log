@@ -1,0 +1,6 @@
+Both files are valid Python. The refactor is complete:
+
+- **`model_ttnn.py`** (new file): contains `import ttnn`, `from consteval import consteval__main`, the `ce_cache__main = {}` global, and the entire `_main` forward function (lines 12-2946 from the original).
+- **`main.py`** (updated): removed the `consteval__main` import, removed `ce_cache__main`, removed the `_main` function body, and added `from model_ttnn import _main`. All call sites (`main()` and `test_main()`) work via the new import.
+
+--- Time taken: 133.1s ---
