@@ -1,0 +1,10 @@
+Both files are now in place:
+
+**1. Created `model/graph_0/model_pt.py`**: Loads `microsoft/resnet-50` from HuggingFace, loads the cats image from `huggingface/cats-image`, resizes it to 224×224, processes it through `AutoImageProcessor`, and runs the model in eval mode on CPU with bfloat16 (matching the codegen path), returning logits.
+
+**2. Updated `model/graph_0/main.py`**: Added `torch` import, the `calculate_pcc` function, an import of `run` from `model_pt`, and updated `main()` to:
+- Run the TTNN model and convert the output tensor to torch (reshaped to `[1, 1000]`).
+- Run the PyTorch CPU golden model.
+- Compute PCC and assert ≥ 0.99.
+
+--- Time taken: 130.4s ---
