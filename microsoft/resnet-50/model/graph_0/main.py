@@ -9,12 +9,11 @@ from utils import calculate_pcc
 ce_cache__main = {}
 
 
-def _main(activations, weights):
+def _main(activations, weights, device):
     global ce_cache__main
-    ce_cache__main = consteval__main(ce_cache__main, weights)
+    ce_cache__main = consteval__main(ce_cache__main, weights, device)
     args_0 = activations[0]
     var_0 = ce_cache__main["main_const_eval_0"]
-    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((1, 1))
     ttnn_to_layout_0 = ttnn.to_layout(
         args_0, ttnn.Layout.TILE, None, memory_config=None
     )
@@ -39,7 +38,7 @@ def _main(activations, weights):
     ttnn_conv2d_0 = ttnn.conv2d(
         input_tensor=ttnn_reshape_0,
         weight_tensor=var_0[0],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=3,
         out_channels=64,
         batch_size=1,
@@ -127,7 +126,7 @@ def _main(activations, weights):
     ttnn_conv2d_1 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_0,
         weight_tensor=var_0[2],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=64,
         batch_size=1,
@@ -168,7 +167,7 @@ def _main(activations, weights):
     ttnn_conv2d_2 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_1,
         weight_tensor=var_0[4],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=64,
         batch_size=1,
@@ -209,7 +208,7 @@ def _main(activations, weights):
     ttnn_conv2d_3 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_2,
         weight_tensor=var_0[6],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=256,
         batch_size=1,
@@ -249,7 +248,7 @@ def _main(activations, weights):
     ttnn_conv2d_4 = ttnn.conv2d(
         input_tensor=ttnn_max_pool2d_0,
         weight_tensor=var_0[8],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=256,
         batch_size=1,
@@ -329,7 +328,7 @@ def _main(activations, weights):
     ttnn_conv2d_5 = ttnn.conv2d(
         input_tensor=ttnn_relu_0,
         weight_tensor=var_0[10],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=64,
         batch_size=1,
@@ -370,7 +369,7 @@ def _main(activations, weights):
     ttnn_conv2d_6 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_5,
         weight_tensor=var_0[12],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=64,
         batch_size=1,
@@ -411,7 +410,7 @@ def _main(activations, weights):
     ttnn_conv2d_7 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_6,
         weight_tensor=var_0[14],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=256,
         batch_size=1,
@@ -490,7 +489,7 @@ def _main(activations, weights):
     ttnn_conv2d_8 = ttnn.conv2d(
         input_tensor=ttnn_relu_1,
         weight_tensor=var_0[16],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=64,
         batch_size=1,
@@ -531,7 +530,7 @@ def _main(activations, weights):
     ttnn_conv2d_9 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_8,
         weight_tensor=var_0[18],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=64,
         batch_size=1,
@@ -572,7 +571,7 @@ def _main(activations, weights):
     ttnn_conv2d_10 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_9,
         weight_tensor=var_0[20],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=64,
         out_channels=256,
         batch_size=1,
@@ -651,7 +650,7 @@ def _main(activations, weights):
     ttnn_conv2d_11 = ttnn.conv2d(
         input_tensor=ttnn_relu_2,
         weight_tensor=var_0[22],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=128,
         batch_size=1,
@@ -692,7 +691,7 @@ def _main(activations, weights):
     ttnn_conv2d_12 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_11,
         weight_tensor=var_0[24],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=128,
         batch_size=1,
@@ -748,7 +747,7 @@ def _main(activations, weights):
     ttnn_conv2d_13 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_1,
         weight_tensor=var_0[26],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=512,
         batch_size=1,
@@ -800,7 +799,7 @@ def _main(activations, weights):
     ttnn_conv2d_14 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_2,
         weight_tensor=var_0[28],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=512,
         batch_size=1,
@@ -870,7 +869,7 @@ def _main(activations, weights):
     ttnn_conv2d_15 = ttnn.conv2d(
         input_tensor=ttnn_relu_3,
         weight_tensor=var_0[30],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=128,
         batch_size=1,
@@ -908,7 +907,7 @@ def _main(activations, weights):
     ttnn_conv2d_16 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_15,
         weight_tensor=var_0[32],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=128,
         batch_size=1,
@@ -946,7 +945,7 @@ def _main(activations, weights):
     ttnn_conv2d_17 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_16,
         weight_tensor=var_0[34],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=512,
         batch_size=1,
@@ -1016,7 +1015,7 @@ def _main(activations, weights):
     ttnn_conv2d_18 = ttnn.conv2d(
         input_tensor=ttnn_relu_4,
         weight_tensor=var_0[36],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=128,
         batch_size=1,
@@ -1054,7 +1053,7 @@ def _main(activations, weights):
     ttnn_conv2d_19 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_18,
         weight_tensor=var_0[38],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=128,
         batch_size=1,
@@ -1092,7 +1091,7 @@ def _main(activations, weights):
     ttnn_conv2d_20 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_19,
         weight_tensor=var_0[40],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=512,
         batch_size=1,
@@ -1162,7 +1161,7 @@ def _main(activations, weights):
     ttnn_conv2d_21 = ttnn.conv2d(
         input_tensor=ttnn_relu_5,
         weight_tensor=var_0[42],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=128,
         batch_size=1,
@@ -1200,7 +1199,7 @@ def _main(activations, weights):
     ttnn_conv2d_22 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_21,
         weight_tensor=var_0[44],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=128,
         batch_size=1,
@@ -1238,7 +1237,7 @@ def _main(activations, weights):
     ttnn_conv2d_23 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_22,
         weight_tensor=var_0[46],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=128,
         out_channels=512,
         batch_size=1,
@@ -1308,7 +1307,7 @@ def _main(activations, weights):
     ttnn_conv2d_24 = ttnn.conv2d(
         input_tensor=ttnn_relu_6,
         weight_tensor=var_0[48],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=256,
         batch_size=1,
@@ -1346,7 +1345,7 @@ def _main(activations, weights):
     ttnn_conv2d_25 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_24,
         weight_tensor=var_0[50],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=256,
         batch_size=1,
@@ -1384,7 +1383,7 @@ def _main(activations, weights):
     ttnn_conv2d_26 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_25,
         weight_tensor=var_0[52],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=1024,
         batch_size=1,
@@ -1421,7 +1420,7 @@ def _main(activations, weights):
     ttnn_conv2d_27 = ttnn.conv2d(
         input_tensor=ttnn_relu_6,
         weight_tensor=var_0[54],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=1024,
         batch_size=1,
@@ -1506,7 +1505,7 @@ def _main(activations, weights):
     ttnn_conv2d_28 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_3,
         weight_tensor=var_0[56],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=1024,
         out_channels=256,
         batch_size=1,
@@ -1544,7 +1543,7 @@ def _main(activations, weights):
     ttnn_conv2d_29 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_28,
         weight_tensor=var_0[58],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=256,
         batch_size=1,
@@ -1582,7 +1581,7 @@ def _main(activations, weights):
     ttnn_conv2d_30 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_29,
         weight_tensor=var_0[60],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=1024,
         batch_size=1,
@@ -1666,7 +1665,7 @@ def _main(activations, weights):
     ttnn_conv2d_31 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_4,
         weight_tensor=var_0[62],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=1024,
         out_channels=256,
         batch_size=1,
@@ -1704,7 +1703,7 @@ def _main(activations, weights):
     ttnn_conv2d_32 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_31,
         weight_tensor=var_0[64],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=256,
         batch_size=1,
@@ -1742,7 +1741,7 @@ def _main(activations, weights):
     ttnn_conv2d_33 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_32,
         weight_tensor=var_0[66],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=1024,
         batch_size=1,
@@ -1826,7 +1825,7 @@ def _main(activations, weights):
     ttnn_conv2d_34 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_5,
         weight_tensor=var_0[68],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=1024,
         out_channels=256,
         batch_size=1,
@@ -1864,7 +1863,7 @@ def _main(activations, weights):
     ttnn_conv2d_35 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_34,
         weight_tensor=var_0[70],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=256,
         batch_size=1,
@@ -1902,7 +1901,7 @@ def _main(activations, weights):
     ttnn_conv2d_36 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_35,
         weight_tensor=var_0[72],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=1024,
         batch_size=1,
@@ -1986,7 +1985,7 @@ def _main(activations, weights):
     ttnn_conv2d_37 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_6,
         weight_tensor=var_0[74],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=1024,
         out_channels=256,
         batch_size=1,
@@ -2024,7 +2023,7 @@ def _main(activations, weights):
     ttnn_conv2d_38 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_37,
         weight_tensor=var_0[76],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=256,
         batch_size=1,
@@ -2062,7 +2061,7 @@ def _main(activations, weights):
     ttnn_conv2d_39 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_38,
         weight_tensor=var_0[78],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=1024,
         batch_size=1,
@@ -2146,7 +2145,7 @@ def _main(activations, weights):
     ttnn_conv2d_40 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_7,
         weight_tensor=var_0[80],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=1024,
         out_channels=256,
         batch_size=1,
@@ -2184,7 +2183,7 @@ def _main(activations, weights):
     ttnn_conv2d_41 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_40,
         weight_tensor=var_0[82],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=256,
         batch_size=1,
@@ -2222,7 +2221,7 @@ def _main(activations, weights):
     ttnn_conv2d_42 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_41,
         weight_tensor=var_0[84],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=256,
         out_channels=1024,
         batch_size=1,
@@ -2306,7 +2305,7 @@ def _main(activations, weights):
     ttnn_conv2d_43 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_8,
         weight_tensor=var_0[86],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=1024,
         out_channels=512,
         batch_size=1,
@@ -2344,7 +2343,7 @@ def _main(activations, weights):
     ttnn_conv2d_44 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_43,
         weight_tensor=var_0[88],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=512,
         batch_size=1,
@@ -2382,7 +2381,7 @@ def _main(activations, weights):
     ttnn_conv2d_45 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_44,
         weight_tensor=var_0[90],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=2048,
         batch_size=1,
@@ -2419,7 +2418,7 @@ def _main(activations, weights):
     ttnn_conv2d_46 = ttnn.conv2d(
         input_tensor=ttnn_relu_12,
         weight_tensor=var_0[92],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=1024,
         out_channels=2048,
         batch_size=1,
@@ -2504,7 +2503,7 @@ def _main(activations, weights):
     ttnn_conv2d_47 = ttnn.conv2d(
         input_tensor=ttnn_to_memory_config_9,
         weight_tensor=var_0[94],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=2048,
         out_channels=512,
         batch_size=1,
@@ -2545,7 +2544,7 @@ def _main(activations, weights):
     ttnn_conv2d_48 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_47,
         weight_tensor=var_0[96],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=512,
         batch_size=1,
@@ -2586,7 +2585,7 @@ def _main(activations, weights):
     ttnn_conv2d_49 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_48,
         weight_tensor=var_0[98],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=2048,
         batch_size=1,
@@ -2665,7 +2664,7 @@ def _main(activations, weights):
     ttnn_conv2d_50 = ttnn.conv2d(
         input_tensor=ttnn_relu_14,
         weight_tensor=var_0[100],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=2048,
         out_channels=512,
         batch_size=1,
@@ -2706,7 +2705,7 @@ def _main(activations, weights):
     ttnn_conv2d_51 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_50,
         weight_tensor=var_0[102],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=512,
         batch_size=1,
@@ -2747,7 +2746,7 @@ def _main(activations, weights):
     ttnn_conv2d_52 = ttnn.conv2d(
         input_tensor=ttnn_conv2d_51,
         weight_tensor=var_0[104],
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         in_channels=512,
         out_channels=2048,
         batch_size=1,
@@ -2947,13 +2946,12 @@ def _main(activations, weights):
     return [ttnn_to_memory_config_11]
 
 
-def load_activations_for__main():
-    utils_DeviceGetter_get_device_1 = utils.DeviceGetter.get_device((1, 1))
+def load_activations_for__main(device):
     utils_load_tensor_0 = utils.load_tensor(
         "./tensors/arg27.tensorbin",
         ttnn.Layout.ROW_MAJOR,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2961,26 +2959,43 @@ def load_activations_for__main():
     return [utils_load_tensor_0]
 
 
+def open_device():
+    device = ttnn.open_mesh_device(
+        mesh_shape=ttnn.MeshShape((1, 1)),
+        l1_small_size=1 << 15,
+    )
+    print(f"Device: {device}")
+    return device
+
+
 def main():
-    load_activations_for__main_0 = load_activations_for__main()
-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
-    return 0
+    device = open_device()
+    try:
+        load_activations_for__main_0 = load_activations_for__main(device)
+        load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
+        return 0
+    finally:
+        ttnn.close_mesh_device(device)
 
 
 def test_main():
     pcc_threshold = 0.98
 
-    load_activations_for__main_0 = load_activations_for__main()
-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+    device = open_device()
+    try:
+        load_activations_for__main_0 = load_activations_for__main(device)
+        load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
 
-    ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
-    golden_output = model_pt.main().logits.reshape(1, 1000).to(torch.float32)
+        ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
+        golden_output = model_pt.main().logits.reshape(1, 1000).to(torch.float32)
 
-    pcc = calculate_pcc(ttnn_output, golden_output)
-    print(f"\nPCC: {pcc:.6f}")
-    assert pcc >= pcc_threshold, f"PCC {pcc} is below threshold of {pcc_threshold}"
+        pcc = calculate_pcc(ttnn_output, golden_output)
+        print(f"\nPCC: {pcc:.6f}")
+        assert pcc >= pcc_threshold, f"PCC {pcc} is below threshold of {pcc_threshold}"
+    finally:
+        ttnn.close_mesh_device(device)
 
 
 if __name__ == "__main__":

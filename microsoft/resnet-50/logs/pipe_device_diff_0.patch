@@ -1,0 +1,1668 @@
+diff --git a/microsoft/resnet-50/model/graph_0/consteval.py b/microsoft/resnet-50/model/graph_0/consteval.py
+index e35a173..db5fdaa 100644
+--- a/microsoft/resnet-50/model/graph_0/consteval.py
++++ b/microsoft/resnet-50/model/graph_0/consteval.py
+@@ -1,5 +1,4 @@
+ import ttnn
+-import utils
+ import ttir_cpu
+ import torch
+ 
+@@ -1454,8 +1453,7 @@ def cpu_hoisted_const_eval_3d7508d3(
+     )
+ 
+ 
+-def main_const_eval_0(arg):
+-    utils_DeviceGetter_get_device_2 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_0(arg, device):
+     ttnn_typecast_2 = ttnn.typecast(arg[20], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_3 = ttnn.typecast(arg[23], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_4 = ttnn.typecast(arg[24], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -2710,7 +2708,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -2744,7 +2742,7 @@ def main_const_eval_0(arg):
+         padding=[3, 3, 3, 3],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -2790,7 +2788,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -2835,7 +2833,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -2881,7 +2879,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -2926,7 +2924,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -2972,7 +2970,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3016,7 +3014,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3061,7 +3059,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3105,7 +3103,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3150,7 +3148,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3195,7 +3193,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3241,7 +3239,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3286,7 +3284,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3332,7 +3330,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3376,7 +3374,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3421,7 +3419,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3466,7 +3464,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3512,7 +3510,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3557,7 +3555,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3603,7 +3601,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3647,7 +3645,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3692,7 +3690,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3737,7 +3735,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3783,7 +3781,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3828,7 +3826,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3871,7 +3869,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3912,7 +3910,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3954,7 +3952,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -3995,7 +3993,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4037,7 +4035,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4079,7 +4077,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4122,7 +4120,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4164,7 +4162,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4207,7 +4205,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4248,7 +4246,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4290,7 +4288,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4332,7 +4330,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4375,7 +4373,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4417,7 +4415,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4460,7 +4458,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4501,7 +4499,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4543,7 +4541,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4585,7 +4583,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4628,7 +4626,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4670,7 +4668,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4713,7 +4711,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4754,7 +4752,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4796,7 +4794,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4838,7 +4836,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4881,7 +4879,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4923,7 +4921,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -4966,7 +4964,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5007,7 +5005,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5049,7 +5047,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5090,7 +5088,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5132,7 +5130,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5174,7 +5172,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5217,7 +5215,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5259,7 +5257,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5302,7 +5300,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5343,7 +5341,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5385,7 +5383,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5427,7 +5425,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5470,7 +5468,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5512,7 +5510,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5555,7 +5553,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5596,7 +5594,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5638,7 +5636,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5680,7 +5678,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5723,7 +5721,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5765,7 +5763,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5808,7 +5806,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5849,7 +5847,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5891,7 +5889,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5933,7 +5931,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -5976,7 +5974,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6018,7 +6016,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6061,7 +6059,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6102,7 +6100,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6144,7 +6142,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6186,7 +6184,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6229,7 +6227,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6271,7 +6269,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6314,7 +6312,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6355,7 +6353,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6397,7 +6395,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6439,7 +6437,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6482,7 +6480,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6524,7 +6522,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6567,7 +6565,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6608,7 +6606,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6650,7 +6648,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6691,7 +6689,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6733,7 +6731,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6775,7 +6773,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6821,7 +6819,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6866,7 +6864,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6912,7 +6910,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -6956,7 +6954,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -7001,7 +6999,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -7046,7 +7044,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -7092,7 +7090,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -7137,7 +7135,7 @@ def main_const_eval_0(arg):
+         padding=[1, 1, 1, 1],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -7183,7 +7181,7 @@ def main_const_eval_0(arg):
+         dilation=[1, 1],
+         has_bias=True,
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -7227,7 +7225,7 @@ def main_const_eval_0(arg):
+         padding=[0, 0, 0, 0],
+         dilation=[1, 1],
+         groups=1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
+         conv_config=ttnn.Conv2dConfig(
+@@ -7357,8 +7355,7 @@ def cpu_hoisted_const_eval_382fc5dd(arg):
+     return ttnn_from_torch_106
+ 
+ 
+-def main_const_eval_1(arg):
+-    utils_DeviceGetter_get_device_3 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_1(arg, device):
+     ttnn_typecast_373 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+     cpu_hoisted_const_eval_382fc5dd_0 = cpu_hoisted_const_eval_382fc5dd(
+         ttnn_typecast_373
+@@ -7370,7 +7367,7 @@ def main_const_eval_1(arg):
+     ttnn.deallocate(cpu_hoisted_const_eval_382fc5dd_0, False)
+     ttnn_to_device_0 = ttnn.to_device(
+         ttnn_to_layout_1,
+-        device=utils_DeviceGetter_get_device_3,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -7386,8 +7383,7 @@ def cpu_hoisted_const_eval_27d66922(arg):
+     return ttnn_from_torch_107
+ 
+ 
+-def main_const_eval_2(arg):
+-    utils_DeviceGetter_get_device_4 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_2(arg, device):
+     ttnn_typecast_374 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+     cpu_hoisted_const_eval_27d66922_0 = cpu_hoisted_const_eval_27d66922(
+         ttnn_typecast_374
+@@ -7399,7 +7395,7 @@ def main_const_eval_2(arg):
+     ttnn.deallocate(cpu_hoisted_const_eval_27d66922_0, False)
+     ttnn_to_device_1 = ttnn.to_device(
+         ttnn_to_layout_2,
+-        device=utils_DeviceGetter_get_device_4,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -7408,7 +7404,7 @@ def main_const_eval_2(arg):
+     return [ttnn_to_device_1]
+ 
+ 
+-def consteval__main(ce_cache, weights):
++def consteval__main(ce_cache, weights, device):
+     if not ce_cache:
+         main_const_eval_0_0 = main_const_eval_0(
+             [
+@@ -7989,7 +7985,8 @@ def consteval__main(ce_cache, weights):
+                     "resnet.encoder.stages.3.layers.2.layer.0.normalization.weight"
+                 ],
+                 weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"],
+-            ]
++            ],
++            device,
+         )
+         ce_cache["main_const_eval_0"] = [
+             main_const_eval_0_0[0],
+@@ -8099,8 +8096,8 @@ def consteval__main(ce_cache, weights):
+             main_const_eval_0_0[104],
+             main_const_eval_0_0[105],
+         ]
+-        main_const_eval_1_0 = main_const_eval_1([weights["classifier.1.bias"]])
++        main_const_eval_1_0 = main_const_eval_1([weights["classifier.1.bias"]], device)
+         ce_cache["main_const_eval_1"] = main_const_eval_1_0[0]
+-        main_const_eval_2_0 = main_const_eval_2([weights["classifier.1.weight"]])
++        main_const_eval_2_0 = main_const_eval_2([weights["classifier.1.weight"]], device)
+         ce_cache["main_const_eval_2"] = main_const_eval_2_0[0]
+     return ce_cache
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 7404ab0..ad92da6 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -9,12 +9,11 @@ from utils import calculate_pcc
+ ce_cache__main = {}
+ 
+ 
+-def _main(activations, weights):
++def _main(activations, weights, device):
+     global ce_cache__main
+-    ce_cache__main = consteval__main(ce_cache__main, weights)
++    ce_cache__main = consteval__main(ce_cache__main, weights, device)
+     args_0 = activations[0]
+     var_0 = ce_cache__main["main_const_eval_0"]
+-    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((1, 1))
+     ttnn_to_layout_0 = ttnn.to_layout(
+         args_0, ttnn.Layout.TILE, None, memory_config=None
+     )
+@@ -39,7 +38,7 @@ def _main(activations, weights):
+     ttnn_conv2d_0 = ttnn.conv2d(
+         input_tensor=ttnn_reshape_0,
+         weight_tensor=var_0[0],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=3,
+         out_channels=64,
+         batch_size=1,
+@@ -127,7 +126,7 @@ def _main(activations, weights):
+     ttnn_conv2d_1 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_0,
+         weight_tensor=var_0[2],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=64,
+         batch_size=1,
+@@ -168,7 +167,7 @@ def _main(activations, weights):
+     ttnn_conv2d_2 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_1,
+         weight_tensor=var_0[4],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=64,
+         batch_size=1,
+@@ -209,7 +208,7 @@ def _main(activations, weights):
+     ttnn_conv2d_3 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_2,
+         weight_tensor=var_0[6],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=256,
+         batch_size=1,
+@@ -249,7 +248,7 @@ def _main(activations, weights):
+     ttnn_conv2d_4 = ttnn.conv2d(
+         input_tensor=ttnn_max_pool2d_0,
+         weight_tensor=var_0[8],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=256,
+         batch_size=1,
+@@ -329,7 +328,7 @@ def _main(activations, weights):
+     ttnn_conv2d_5 = ttnn.conv2d(
+         input_tensor=ttnn_relu_0,
+         weight_tensor=var_0[10],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=64,
+         batch_size=1,
+@@ -370,7 +369,7 @@ def _main(activations, weights):
+     ttnn_conv2d_6 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_5,
+         weight_tensor=var_0[12],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=64,
+         batch_size=1,
+@@ -411,7 +410,7 @@ def _main(activations, weights):
+     ttnn_conv2d_7 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_6,
+         weight_tensor=var_0[14],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=256,
+         batch_size=1,
+@@ -490,7 +489,7 @@ def _main(activations, weights):
+     ttnn_conv2d_8 = ttnn.conv2d(
+         input_tensor=ttnn_relu_1,
+         weight_tensor=var_0[16],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=64,
+         batch_size=1,
+@@ -531,7 +530,7 @@ def _main(activations, weights):
+     ttnn_conv2d_9 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_8,
+         weight_tensor=var_0[18],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=64,
+         batch_size=1,
+@@ -572,7 +571,7 @@ def _main(activations, weights):
+     ttnn_conv2d_10 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_9,
+         weight_tensor=var_0[20],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=64,
+         out_channels=256,
+         batch_size=1,
+@@ -651,7 +650,7 @@ def _main(activations, weights):
+     ttnn_conv2d_11 = ttnn.conv2d(
+         input_tensor=ttnn_relu_2,
+         weight_tensor=var_0[22],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=128,
+         batch_size=1,
+@@ -692,7 +691,7 @@ def _main(activations, weights):
+     ttnn_conv2d_12 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_11,
+         weight_tensor=var_0[24],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=128,
+         batch_size=1,
+@@ -748,7 +747,7 @@ def _main(activations, weights):
+     ttnn_conv2d_13 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_1,
+         weight_tensor=var_0[26],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=512,
+         batch_size=1,
+@@ -800,7 +799,7 @@ def _main(activations, weights):
+     ttnn_conv2d_14 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_2,
+         weight_tensor=var_0[28],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=512,
+         batch_size=1,
+@@ -870,7 +869,7 @@ def _main(activations, weights):
+     ttnn_conv2d_15 = ttnn.conv2d(
+         input_tensor=ttnn_relu_3,
+         weight_tensor=var_0[30],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=128,
+         batch_size=1,
+@@ -908,7 +907,7 @@ def _main(activations, weights):
+     ttnn_conv2d_16 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_15,
+         weight_tensor=var_0[32],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=128,
+         batch_size=1,
+@@ -946,7 +945,7 @@ def _main(activations, weights):
+     ttnn_conv2d_17 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_16,
+         weight_tensor=var_0[34],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=512,
+         batch_size=1,
+@@ -1016,7 +1015,7 @@ def _main(activations, weights):
+     ttnn_conv2d_18 = ttnn.conv2d(
+         input_tensor=ttnn_relu_4,
+         weight_tensor=var_0[36],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=128,
+         batch_size=1,
+@@ -1054,7 +1053,7 @@ def _main(activations, weights):
+     ttnn_conv2d_19 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_18,
+         weight_tensor=var_0[38],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=128,
+         batch_size=1,
+@@ -1092,7 +1091,7 @@ def _main(activations, weights):
+     ttnn_conv2d_20 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_19,
+         weight_tensor=var_0[40],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=512,
+         batch_size=1,
+@@ -1162,7 +1161,7 @@ def _main(activations, weights):
+     ttnn_conv2d_21 = ttnn.conv2d(
+         input_tensor=ttnn_relu_5,
+         weight_tensor=var_0[42],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=128,
+         batch_size=1,
+@@ -1200,7 +1199,7 @@ def _main(activations, weights):
+     ttnn_conv2d_22 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_21,
+         weight_tensor=var_0[44],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=128,
+         batch_size=1,
+@@ -1238,7 +1237,7 @@ def _main(activations, weights):
+     ttnn_conv2d_23 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_22,
+         weight_tensor=var_0[46],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=128,
+         out_channels=512,
+         batch_size=1,
+@@ -1308,7 +1307,7 @@ def _main(activations, weights):
+     ttnn_conv2d_24 = ttnn.conv2d(
+         input_tensor=ttnn_relu_6,
+         weight_tensor=var_0[48],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=256,
+         batch_size=1,
+@@ -1346,7 +1345,7 @@ def _main(activations, weights):
+     ttnn_conv2d_25 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_24,
+         weight_tensor=var_0[50],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=256,
+         batch_size=1,
+@@ -1384,7 +1383,7 @@ def _main(activations, weights):
+     ttnn_conv2d_26 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_25,
+         weight_tensor=var_0[52],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=1024,
+         batch_size=1,
+@@ -1421,7 +1420,7 @@ def _main(activations, weights):
+     ttnn_conv2d_27 = ttnn.conv2d(
+         input_tensor=ttnn_relu_6,
+         weight_tensor=var_0[54],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=1024,
+         batch_size=1,
+@@ -1506,7 +1505,7 @@ def _main(activations, weights):
+     ttnn_conv2d_28 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_3,
+         weight_tensor=var_0[56],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=1024,
+         out_channels=256,
+         batch_size=1,
+@@ -1544,7 +1543,7 @@ def _main(activations, weights):
+     ttnn_conv2d_29 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_28,
+         weight_tensor=var_0[58],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=256,
+         batch_size=1,
+@@ -1582,7 +1581,7 @@ def _main(activations, weights):
+     ttnn_conv2d_30 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_29,
+         weight_tensor=var_0[60],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=1024,
+         batch_size=1,
+@@ -1666,7 +1665,7 @@ def _main(activations, weights):
+     ttnn_conv2d_31 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_4,
+         weight_tensor=var_0[62],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=1024,
+         out_channels=256,
+         batch_size=1,
+@@ -1704,7 +1703,7 @@ def _main(activations, weights):
+     ttnn_conv2d_32 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_31,
+         weight_tensor=var_0[64],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=256,
+         batch_size=1,
+@@ -1742,7 +1741,7 @@ def _main(activations, weights):
+     ttnn_conv2d_33 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_32,
+         weight_tensor=var_0[66],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=1024,
+         batch_size=1,
+@@ -1826,7 +1825,7 @@ def _main(activations, weights):
+     ttnn_conv2d_34 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_5,
+         weight_tensor=var_0[68],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=1024,
+         out_channels=256,
+         batch_size=1,
+@@ -1864,7 +1863,7 @@ def _main(activations, weights):
+     ttnn_conv2d_35 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_34,
+         weight_tensor=var_0[70],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=256,
+         batch_size=1,
+@@ -1902,7 +1901,7 @@ def _main(activations, weights):
+     ttnn_conv2d_36 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_35,
+         weight_tensor=var_0[72],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=1024,
+         batch_size=1,
+@@ -1986,7 +1985,7 @@ def _main(activations, weights):
+     ttnn_conv2d_37 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_6,
+         weight_tensor=var_0[74],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=1024,
+         out_channels=256,
+         batch_size=1,
+@@ -2024,7 +2023,7 @@ def _main(activations, weights):
+     ttnn_conv2d_38 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_37,
+         weight_tensor=var_0[76],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=256,
+         batch_size=1,
+@@ -2062,7 +2061,7 @@ def _main(activations, weights):
+     ttnn_conv2d_39 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_38,
+         weight_tensor=var_0[78],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=1024,
+         batch_size=1,
+@@ -2146,7 +2145,7 @@ def _main(activations, weights):
+     ttnn_conv2d_40 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_7,
+         weight_tensor=var_0[80],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=1024,
+         out_channels=256,
+         batch_size=1,
+@@ -2184,7 +2183,7 @@ def _main(activations, weights):
+     ttnn_conv2d_41 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_40,
+         weight_tensor=var_0[82],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=256,
+         batch_size=1,
+@@ -2222,7 +2221,7 @@ def _main(activations, weights):
+     ttnn_conv2d_42 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_41,
+         weight_tensor=var_0[84],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=256,
+         out_channels=1024,
+         batch_size=1,
+@@ -2306,7 +2305,7 @@ def _main(activations, weights):
+     ttnn_conv2d_43 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_8,
+         weight_tensor=var_0[86],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=1024,
+         out_channels=512,
+         batch_size=1,
+@@ -2344,7 +2343,7 @@ def _main(activations, weights):
+     ttnn_conv2d_44 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_43,
+         weight_tensor=var_0[88],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=512,
+         batch_size=1,
+@@ -2382,7 +2381,7 @@ def _main(activations, weights):
+     ttnn_conv2d_45 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_44,
+         weight_tensor=var_0[90],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=2048,
+         batch_size=1,
+@@ -2419,7 +2418,7 @@ def _main(activations, weights):
+     ttnn_conv2d_46 = ttnn.conv2d(
+         input_tensor=ttnn_relu_12,
+         weight_tensor=var_0[92],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=1024,
+         out_channels=2048,
+         batch_size=1,
+@@ -2504,7 +2503,7 @@ def _main(activations, weights):
+     ttnn_conv2d_47 = ttnn.conv2d(
+         input_tensor=ttnn_to_memory_config_9,
+         weight_tensor=var_0[94],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=2048,
+         out_channels=512,
+         batch_size=1,
+@@ -2545,7 +2544,7 @@ def _main(activations, weights):
+     ttnn_conv2d_48 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_47,
+         weight_tensor=var_0[96],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=512,
+         batch_size=1,
+@@ -2586,7 +2585,7 @@ def _main(activations, weights):
+     ttnn_conv2d_49 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_48,
+         weight_tensor=var_0[98],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=2048,
+         batch_size=1,
+@@ -2665,7 +2664,7 @@ def _main(activations, weights):
+     ttnn_conv2d_50 = ttnn.conv2d(
+         input_tensor=ttnn_relu_14,
+         weight_tensor=var_0[100],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=2048,
+         out_channels=512,
+         batch_size=1,
+@@ -2706,7 +2705,7 @@ def _main(activations, weights):
+     ttnn_conv2d_51 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_50,
+         weight_tensor=var_0[102],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=512,
+         batch_size=1,
+@@ -2747,7 +2746,7 @@ def _main(activations, weights):
+     ttnn_conv2d_52 = ttnn.conv2d(
+         input_tensor=ttnn_conv2d_51,
+         weight_tensor=var_0[104],
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         in_channels=512,
+         out_channels=2048,
+         batch_size=1,
+@@ -2947,13 +2946,12 @@ def _main(activations, weights):
+     return [ttnn_to_memory_config_11]
+ 
+ 
+-def load_activations_for__main():
+-    utils_DeviceGetter_get_device_1 = utils.DeviceGetter.get_device((1, 1))
++def load_activations_for__main(device):
+     utils_load_tensor_0 = utils.load_tensor(
+         "./tensors/arg27.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2961,26 +2959,43 @@ def load_activations_for__main():
+     return [utils_load_tensor_0]
+ 
+ 
++def open_device():
++    device = ttnn.open_mesh_device(
++        mesh_shape=ttnn.MeshShape((1, 1)),
++        l1_small_size=1 << 15,
++    )
++    print(f"Device: {device}")
++    return device
++
++
+ def main():
+-    load_activations_for__main_0 = load_activations_for__main()
+-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+-    return 0
++    device = open_device()
++    try:
++        load_activations_for__main_0 = load_activations_for__main(device)
++        load_weights_for__main_0 = load_weights_for__main_from_state_dict()
++        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
++        return 0
++    finally:
++        ttnn.close_mesh_device(device)
+ 
+ 
+ def test_main():
+     pcc_threshold = 0.98
+ 
+-    load_activations_for__main_0 = load_activations_for__main()
+-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
++    device = open_device()
++    try:
++        load_activations_for__main_0 = load_activations_for__main(device)
++        load_weights_for__main_0 = load_weights_for__main_from_state_dict()
++        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
+ 
+-    ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
+-    golden_output = model_pt.main().logits.reshape(1, 1000).to(torch.float32)
++        ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
++        golden_output = model_pt.main().logits.reshape(1, 1000).to(torch.float32)
+ 
+-    pcc = calculate_pcc(ttnn_output, golden_output)
+-    print(f"\nPCC: {pcc:.6f}")
+-    assert pcc >= pcc_threshold, f"PCC {pcc} is below threshold of {pcc_threshold}"
++        pcc = calculate_pcc(ttnn_output, golden_output)
++        print(f"\nPCC: {pcc:.6f}")
++        assert pcc >= pcc_threshold, f"PCC {pcc} is below threshold of {pcc_threshold}"
++    finally:
++        ttnn.close_mesh_device(device)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/microsoft/resnet-50/model/graph_0/utils.py b/microsoft/resnet-50/model/graph_0/utils.py
+index 60606b8..016ad89 100644
+--- a/microsoft/resnet-50/model/graph_0/utils.py
++++ b/microsoft/resnet-50/model/graph_0/utils.py
+@@ -2,53 +2,9 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ import ttnn
+-import math
+ import torch
+ 
+ 
+-class DeviceGetter:
+-    _instance = None
+-    _mesh_shape = None
+-    l1_small_size = 1 << 15
+-
+-    def __init__(self):
+-        raise RuntimeError("This is Singleton, invoke get_device() instead.")
+-
+-    def __del__(self):
+-        if self._instance is not None:
+-            ttnn.close_mesh_device(self._instance)
+-            ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
+-
+-    @classmethod
+-    def get_device(cls, mesh_shape):
+-        if cls._instance == None:
+-            if (
+-                not isinstance(mesh_shape, (list, tuple))
+-                or len(mesh_shape) == 0
+-                or not all(isinstance(x, int) and x > 0 for x in mesh_shape)
+-            ):
+-                raise ValueError(
+-                    f"mesh_shape must be a non-empty list or tuple of positive integers, got {mesh_shape}"
+-                )
+-            cls._mesh_shape = mesh_shape
+-
+-            if math.prod(mesh_shape) >= 2:
+-                ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D)
+-            cls._instance = ttnn.open_mesh_device(
+-                mesh_shape=ttnn.MeshShape(mesh_shape),
+-                l1_small_size=cls.l1_small_size,
+-            )
+-            print(f"Device: {cls._instance}")
+-
+-        # Compare requested mesh_shape with _mesh_shape used to initialize the device
+-        if tuple(cls._mesh_shape) != tuple(mesh_shape):
+-            raise ValueError(
+-                f"Device already initialized with mesh_shape={cls._mesh_shape}, but got mesh_shape={mesh_shape}"
+-            )
+-
+-        return cls._instance
+-
+-
+ def get_scalar_from_tensor(tensor: ttnn.Tensor) -> int:
+     assert tensor.logical_volume() == 1, "expected scalar tensor"
+     assert tensor.dtype == ttnn.DataType.UINT32, "expected uint32 tensor"
