@@ -1,0 +1,13 @@
+The changes are in place. Here's a summary of what was done:
+
+**Imports added** (`main.py:1-6`):
+- `import torch` — needed for `torch.float32` conversion
+- `import model_pt` — provides access to the PyTorch golden reference
+
+**`test_main()` function** (`main.py:5640-5652`):
+- Mirrors the `main()` structure: loads activations, weights, and runs `_main`.
+- Converts the TTNN output to torch via `ttnn.to_torch()`, reshapes to `(1, 1000)` and casts to `float32`.
+- Uses `model_pt.main().logits` as the golden PyTorch reference (since `ResNetForImageClassification` returns an output object with `.logits`).
+- Calls `calculate_pcc`, prints the PCC with 6 decimal places, and asserts `pcc >= 0.98`.
+
+--- Time taken: 126.4s ---
