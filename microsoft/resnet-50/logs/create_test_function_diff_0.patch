@@ -1,0 +1,32 @@
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 417fab3..d8c1e07 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -1,5 +1,7 @@
+ import ttnn
++import torch
+ import utils
++import model_pt
+ from consteval import consteval__main
+ from utils import calculate_pcc
+ 
+@@ -5636,7 +5638,18 @@ def main():
+ 
+ 
+ def test_main():
+-    return 0
++    pcc_threshold = 0.98
++
++    load_activations_for__main_0 = load_activations_for__main()
++    load_weights_for__main_0 = load_weights_for__main()
++    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
++
++    ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
++    golden_output = model_pt.main().logits.reshape(1, 1000).to(torch.float32)
++
++    pcc = calculate_pcc(ttnn_output, golden_output)
++    print(f"\nPCC: {pcc:.6f}")
++    assert pcc >= pcc_threshold, f"PCC {pcc} is below threshold of {pcc_threshold}"
+ 
+ 
+ if __name__ == "__main__":
