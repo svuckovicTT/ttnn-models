@@ -1,5 +1,3 @@
-import time
-
 import ttnn
 import torch
 import utils
@@ -48,16 +46,7 @@ def test_main():
     try:
         load_activations_for__main_0 = load_activations_for__main(device)
         model = ModelTTNN(device)
-
-        batch_size = load_activations_for__main_0[0].shape[0]
-        for i in range(3):
-            start_time = time.perf_counter()
-            _main_0 = model(load_activations_for__main_0)
-            ttnn.synchronize_device(device)
-            end_time = time.perf_counter()
-            time_taken = end_time - start_time
-            fps = batch_size / time_taken
-            print(f"Iteration {i + 1}: Time taken: {time_taken:.4f}s, FPS: {fps:.2f}")
+        _main_0 = model(load_activations_for__main_0)
 
         ttnn_output = ttnn.to_torch(_main_0[0]).reshape(1, 1000).to(torch.float32)
         golden_output = model_pt.main().logits.reshape(1, 1000).to(torch.float32)
