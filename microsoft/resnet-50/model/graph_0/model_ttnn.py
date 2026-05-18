@@ -14,8 +14,26 @@ class ModelTTNN(LightweightModule):
         self.weights = params.load_weights_for__main_from_state_dict()
         self.weights = consteval.run_consteval(self.weights, device)
 
+        self.embedder = ResNetEmbeddings(self.device, self.weights)
+        self.encoder = ResNetEncoder(self.device, self.weights)
+        self.pooler = ResNetPooler(self.device, self.weights)
+        self.classifier = ResNetClassifier(self.device, self.weights)
+
     def forward(self, activations):
         args_0 = activations[0]
+        hidden_state = self.embedder(args_0)
+        hidden_state = self.encoder(hidden_state)
+        hidden_state = self.pooler(hidden_state)
+        hidden_state = self.classifier(hidden_state)
+        return [hidden_state]
+
+
+class ResNetEmbeddings(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, args_0):
         ttnn_to_layout_0 = ttnn.to_layout(
             args_0, ttnn.Layout.TILE, None, memory_config=None
         )
@@ -108,6 +126,16 @@ class ModelTTNN(LightweightModule):
             config_tensor_in_dram=True,
         )
         ttnn.deallocate(ttnn_conv2d_0, False)
+        return ttnn_max_pool2d_0
+
+
+class Stage0BottleNeckLayer0(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_max_pool2d_0 = hidden_state
         ttnn_to_memory_config_0 = ttnn.to_memory_config(
             ttnn_max_pool2d_0,
             ttnn.MemoryConfig(
@@ -327,6 +355,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_0, False)
+        return ttnn_relu_0
+
+
+class Stage0BottleNeckLayer1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_0 = hidden_state
         ttnn_conv2d_5 = ttnn.conv2d(
             input_tensor=ttnn_relu_0,
             weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.0.convolution.weight"],
@@ -488,6 +526,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_1, False)
+        return ttnn_relu_1
+
+
+class Stage0BottleNeckLayer2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_1 = hidden_state
         ttnn_conv2d_8 = ttnn.conv2d(
             input_tensor=ttnn_relu_1,
             weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.0.convolution.weight"],
@@ -649,6 +697,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_2, False)
+        return ttnn_relu_2
+
+
+class Stage1BottleNeckLayer0(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_2 = hidden_state
         ttnn_conv2d_11 = ttnn.conv2d(
             input_tensor=ttnn_relu_2,
             weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.0.convolution.weight"],
@@ -868,6 +926,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_3, False)
+        return ttnn_relu_3
+
+
+class Stage1BottleNeckLayer1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_3 = hidden_state
         ttnn_conv2d_15 = ttnn.conv2d(
             input_tensor=ttnn_relu_3,
             weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.0.convolution.weight"],
@@ -1014,6 +1082,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_4, False)
+        return ttnn_relu_4
+
+
+class Stage1BottleNeckLayer2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_4 = hidden_state
         ttnn_conv2d_18 = ttnn.conv2d(
             input_tensor=ttnn_relu_4,
             weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.0.convolution.weight"],
@@ -1160,6 +1238,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_5, False)
+        return ttnn_relu_5
+
+
+class Stage1BottleNeckLayer3(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_5 = hidden_state
         ttnn_conv2d_21 = ttnn.conv2d(
             input_tensor=ttnn_relu_5,
             weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.0.convolution.weight"],
@@ -1306,6 +1394,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_6, False)
+        return ttnn_relu_6
+
+
+class Stage2BottleNeckLayer0(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_6 = hidden_state
         ttnn_conv2d_24 = ttnn.conv2d(
             input_tensor=ttnn_relu_6,
             weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.0.convolution.weight"],
@@ -1490,6 +1588,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_7, False)
+        return ttnn_relu_7
+
+
+class Stage2BottleNeckLayer1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_7 = hidden_state
         ttnn_to_memory_config_3 = ttnn.to_memory_config(
             ttnn_relu_7,
             ttnn.MemoryConfig(
@@ -1650,6 +1758,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_8, False)
+        return ttnn_relu_8
+
+
+class Stage2BottleNeckLayer2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_8 = hidden_state
         ttnn_to_memory_config_4 = ttnn.to_memory_config(
             ttnn_relu_8,
             ttnn.MemoryConfig(
@@ -1810,6 +1928,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_9, False)
+        return ttnn_relu_9
+
+
+class Stage2BottleNeckLayer3(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_9 = hidden_state
         ttnn_to_memory_config_5 = ttnn.to_memory_config(
             ttnn_relu_9,
             ttnn.MemoryConfig(
@@ -1970,6 +2098,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_10, False)
+        return ttnn_relu_10
+
+
+class Stage2BottleNeckLayer4(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_10 = hidden_state
         ttnn_to_memory_config_6 = ttnn.to_memory_config(
             ttnn_relu_10,
             ttnn.MemoryConfig(
@@ -2130,6 +2268,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_11, False)
+        return ttnn_relu_11
+
+
+class Stage2BottleNeckLayer5(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_11 = hidden_state
         ttnn_to_memory_config_7 = ttnn.to_memory_config(
             ttnn_relu_11,
             ttnn.MemoryConfig(
@@ -2290,6 +2438,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_12, False)
+        return ttnn_relu_12
+
+
+class Stage3BottleNeckLayer0(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_12 = hidden_state
         ttnn_to_memory_config_8 = ttnn.to_memory_config(
             ttnn_relu_12,
             ttnn.MemoryConfig(
@@ -2488,6 +2646,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_13, False)
+        return ttnn_relu_13
+
+
+class Stage3BottleNeckLayer1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_13 = hidden_state
         ttnn_to_memory_config_9 = ttnn.to_memory_config(
             ttnn_relu_13,
             ttnn.MemoryConfig(
@@ -2663,6 +2831,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_14, False)
+        return ttnn_relu_14
+
+
+class Stage3BottleNeckLayer2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_14 = hidden_state
         ttnn_conv2d_50 = ttnn.conv2d(
             input_tensor=ttnn_relu_14,
             weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"],
@@ -2824,6 +3002,101 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_15, False)
+        return ttnn_relu_15
+
+
+class ResNetStage0(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.layer_0 = Stage0BottleNeckLayer0(self.device, self.weights)
+        self.layer_1 = Stage0BottleNeckLayer1(self.device, self.weights)
+        self.layer_2 = Stage0BottleNeckLayer2(self.device, self.weights)
+
+    def forward(self, hidden_state):
+        hidden_state = self.layer_0(hidden_state)
+        hidden_state = self.layer_1(hidden_state)
+        hidden_state = self.layer_2(hidden_state)
+        return hidden_state
+
+
+class ResNetStage1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.layer_0 = Stage1BottleNeckLayer0(self.device, self.weights)
+        self.layer_1 = Stage1BottleNeckLayer1(self.device, self.weights)
+        self.layer_2 = Stage1BottleNeckLayer2(self.device, self.weights)
+        self.layer_3 = Stage1BottleNeckLayer3(self.device, self.weights)
+
+    def forward(self, hidden_state):
+        hidden_state = self.layer_0(hidden_state)
+        hidden_state = self.layer_1(hidden_state)
+        hidden_state = self.layer_2(hidden_state)
+        hidden_state = self.layer_3(hidden_state)
+        return hidden_state
+
+
+class ResNetStage2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.layer_0 = Stage2BottleNeckLayer0(self.device, self.weights)
+        self.layer_1 = Stage2BottleNeckLayer1(self.device, self.weights)
+        self.layer_2 = Stage2BottleNeckLayer2(self.device, self.weights)
+        self.layer_3 = Stage2BottleNeckLayer3(self.device, self.weights)
+        self.layer_4 = Stage2BottleNeckLayer4(self.device, self.weights)
+        self.layer_5 = Stage2BottleNeckLayer5(self.device, self.weights)
+
+    def forward(self, hidden_state):
+        hidden_state = self.layer_0(hidden_state)
+        hidden_state = self.layer_1(hidden_state)
+        hidden_state = self.layer_2(hidden_state)
+        hidden_state = self.layer_3(hidden_state)
+        hidden_state = self.layer_4(hidden_state)
+        hidden_state = self.layer_5(hidden_state)
+        return hidden_state
+
+
+class ResNetStage3(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.layer_0 = Stage3BottleNeckLayer0(self.device, self.weights)
+        self.layer_1 = Stage3BottleNeckLayer1(self.device, self.weights)
+        self.layer_2 = Stage3BottleNeckLayer2(self.device, self.weights)
+
+    def forward(self, hidden_state):
+        hidden_state = self.layer_0(hidden_state)
+        hidden_state = self.layer_1(hidden_state)
+        hidden_state = self.layer_2(hidden_state)
+        return hidden_state
+
+
+class ResNetEncoder(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.stage_0 = ResNetStage0(self.device, self.weights)
+        self.stage_1 = ResNetStage1(self.device, self.weights)
+        self.stage_2 = ResNetStage2(self.device, self.weights)
+        self.stage_3 = ResNetStage3(self.device, self.weights)
+
+    def forward(self, hidden_state):
+        hidden_state = self.stage_0(hidden_state)
+        hidden_state = self.stage_1(hidden_state)
+        hidden_state = self.stage_2(hidden_state)
+        hidden_state = self.stage_3(hidden_state)
+        return hidden_state
+
+
+class ResNetPooler(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_relu_15 = hidden_state
         ttnn_typecast_0 = ttnn.typecast(
             ttnn_relu_15,
             ttnn.DataType.FLOAT32,
@@ -2871,6 +3144,16 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_mean_0, False)
+        return ttnn_to_memory_config_10
+
+
+class ResNetClassifier(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_state):
+        ttnn_to_memory_config_10 = hidden_state
         ttnn_reshape_1 = ttnn.reshape(
             ttnn_to_memory_config_10,
             [1, 2048],
@@ -2945,5 +3228,4 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_typecast_1, False)
-        return [ttnn_to_memory_config_11]
-
+        return ttnn_to_memory_config_11
