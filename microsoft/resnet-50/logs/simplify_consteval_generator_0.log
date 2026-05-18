@@ -1,0 +1,20 @@
+Summary of changes:
+
+**`consteval.py`** (8103 → 2056 lines):
+- Removed the 1450-line `cpu_hoisted_const_eval_3d7508d3` function with its 270 explicit `arg_N` parameters and 53 unrolled BN-fusion blocks
+- Removed the 5900-line `main_const_eval_0` (53 unrolled `prepare_conv_weights`/`prepare_conv_bias` blocks)
+- Removed `main_const_eval_1`, `main_const_eval_2`, and `consteval__main` (with its `ce_cache` indirection)
+- Introduced four helpers:
+  - `_fuse_bn_into_conv(weights, prefix, out_channels)` — single generic BN fold (used 53× instead of 53 inlined copies)
+  - `_prepare_conv_for_device(...)` — fuses BN, runs `prepare_conv_weights`/`prepare_conv_bias`, stores results back as `<prefix>.convolution.weight` and `<prefix>.convolution.bias`
+  - `_prepare_classifier_bias_for_device` / `_prepare_classifier_weight_for_device` — replace the tiny `main_const_eval_1`/`_2` functions
+- `run_consteval(weights, device)` calls the helper 53× (one per conv-BN block) + 2× for the classifier; each call site is now ~25 lines of conv-specific config rather than 100+ lines of unrolled prepare-conv plumbing
+
+**`model_ttnn.py`** (2951 → 2949 lines):
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` directly (no `ce_cache`, no per-forward consteval, no `if not ce_cache:` guard needed)
+- `forward` reads weights by descriptive name (`self.weights["resnet.embedder.embedder.convolution.weight"]`) instead of opaque `var_0[0]`/`var_0[1]` indices — all 106 occurrences replaced
+- Classifier matmul uses `self.weights["classifier.1.weight"]` / `self.weights["classifier.1.bias"]` instead of `ce_cache__main["main_const_eval_2"]` / `_1`
+
+Each tensor in `weights` now holds a single tensor (no lists), with keys mirroring the original PyTorch state-dict nomenclature.
+
+--- Time taken: 780.9s ---
