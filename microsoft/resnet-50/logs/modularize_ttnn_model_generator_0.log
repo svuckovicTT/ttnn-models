@@ -1,0 +1,13 @@
+Refactor complete. The file has been transformed from a flat 2949-line `forward` into a modular structure with 26 classes matching the PyTorch ResNet-50 hierarchy:
+
+- `ModelTTNN` (main, at top) → calls `ResNetEmbeddings`, `ResNetEncoder`, `ResNetPooler`, `ResNetClassifier`
+- `ResNetEncoder` → `ResNetStage0..3`
+- Each `ResNetStageN` → 3/4/6/3 `StageNBottleNeckLayerM` instances (16 total)
+- Each module extends `LightweightModule` with `__init__` and `forward`
+
+Verification:
+- Filtered op sequence matches the original exactly (2930 lines of operations)
+- All 108 weight references, all 53 conv2d, 16 add, 16 relu, 64 deallocate, 12 to_memory_config, and every other ttnn op call preserved 1:1
+- File parses as valid Python with all classes having `__init__` and `forward`
+
+--- Time taken: 798.1s ---
