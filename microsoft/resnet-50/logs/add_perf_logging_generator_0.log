@@ -1,0 +1,3 @@
+Added perf logging to `test_main`. Since ResNet-50 is an image model with input shape `1x3x224x224`, the loop runs the same input 3 times, syncs the device after each call before fetching the end time, and logs time taken (4 decimals) and FPS (2 decimals) per iteration. The final iteration's output flows into the existing PCC check.
+
+--- Time taken: 62.1s ---
