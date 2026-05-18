@@ -1,0 +1,8 @@
+The changes add perf logging to `test_main`:
+
+- Loads the input activations fresh inside each iteration (avoids the "Tensor is not allocated" failure from the prior attempt where the input was deallocated after the first model call).
+- Runs the model 3 times, calling `ttnn.synchronize_device(device)` before sampling the end time.
+- Logs time taken with 4 decimal places and FPS with 2 decimal places (ResNet-50 is an image model).
+- PCC verification uses the last iteration's output, preserving the original assertion.
+
+--- Time taken: 70.6s ---
