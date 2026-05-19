@@ -1,0 +1,107 @@
+diff --git a/microsoft/resnet-50/logs/create_empty_pytest_generator_0.log b/microsoft/resnet-50/logs/create_empty_pytest_generator_0.log
+new file mode 100644
+index 0000000..0c18c21
+--- /dev/null
++++ b/microsoft/resnet-50/logs/create_empty_pytest_generator_0.log
+@@ -0,0 +1,3 @@
++Done. Added `test_main()` returning 0 immediately above the `if __name__ == "__main__":` block.
++
++--- Time taken: 13.1s | session: d1beea9f-f6c0-4a57-b914-aa56abcd2b6a ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/prime_generator_0.log b/microsoft/resnet-50/logs/prime_generator_0.log
+new file mode 100644
+index 0000000..c58bee9
+--- /dev/null
++++ b/microsoft/resnet-50/logs/prime_generator_0.log
+@@ -0,0 +1,76 @@
++I now have a thorough understanding of the codebase. Here's the summary:
++
++---
++
++## Codegen Summary: microsoft/resnet-50
++
++### Files in `microsoft/resnet-50/model/graph_0/`
++
++| File | Lines | Purpose |
++|------|-------|---------|
++| `main.py` | 5733 | Forward pass, weight loading, activation loading, entry point |
++| `consteval.py` | 8209 | Compile-time constant evaluation (BatchNorm folding into conv weights) |
++| `utils.py` | 83 | Device singleton, tensor loading helper, global semaphore helper |
++| `ttir_cpu.py` | 908 | Pure-torch CPU implementations of TTIR ops (used by consteval) |
++| `__init__.py` | 3 | License header only |
++| `../../xla.py` | 146 | XLA reference: loads HuggingFace ResNet-50, runs codegen/inference/golden comparison |
++
++### Structure of `main.py`
++
++**4 functions, one massive:**
++
++1. **`_main(activations, weights)`** (lines 8–3038, ~3030 lines): The forward pass — a single flat function with sequentially numbered ttnn ops. This is the core refactoring target.
++2. **`load_activations_for__main()`** (lines 3041–3052): Loads 1 activation tensor from `./tensors/arg27.tensorbin`.
++3. **`load_weights_for__main()`** (lines 3058–5722): Loads 266 weight tensors from `.tensorbin` files into a global `_main_weights` dict keyed by HuggingFace parameter names (e.g., `"resnet.encoder.stages.0.layers.0.layer.0.convolution.weight"`).
++4. **`main()`** (lines 5725–5729): Entry point — calls load_activations, load_weights, then `_main()`.
++
++### Forward Pass (`_main`) Op Inventory
++
++| Op | Count |
++|----|-------|
++| `ttnn.conv2d` | 53 |
++| `ttnn.add` (residual) | 16 |
++| `ttnn.relu` | 16 |
++| `ttnn.deallocate` | 64 |
++| `ttnn.to_memory_config` | 12 |
++| `ttnn.max_pool2d` | 1 |
++| `ttnn.mean` (global avg pool) | 1 |
++| `ttnn.linear` (classifier) | 1 |
++| `ttnn.typecast` | 2 |
++| `ttnn.reshape` | 3 |
++| `ttnn.permute` | 1 |
++| `ttnn.to_layout` | 1 |
++
++### Network Architecture (as expressed in ops)
++
++Standard ResNet-50 bottleneck architecture:
++- **Stem**: `to_layout` → `permute` → `reshape` → `conv2d_0` (7x7, stride 2, 3→64, fused ReLU) → `max_pool2d`
++- **Stage 0** (56x56, 256ch): 3 bottleneck blocks. First block has shortcut `conv2d` (1x1, 64→256). Each block = 1x1→3x3→1x1 convs with residual `add` + `relu`.
++- **Stage 1** (28x28, 512ch): 4 bottleneck blocks. First block downsamples (stride 2) with shortcut.
++- **Stage 2** (14x14, 1024ch): 6 bottleneck blocks. First block downsamples.
++- **Stage 3** (7x7, 2048ch): 3 bottleneck blocks. First block downsamples.
++- **Head**: `typecast` → `reshape` → `mean` (global avg pool) → `reshape` → `linear` (classifier, 2048→1000) → `typecast` → `to_memory_config` (result to DRAM)
++
++### How Weights Flow
++
++1. `load_weights_for__main()` loads raw tensors by name into `_main_weights` dict
++2. `consteval__main()` receives these weights and runs `main_const_eval_0()` which:
++   - Converts BatchNorm params (running_var, running_mean, weight, bias) to torch
++   - Folds BN into conv weights via `ttir_cpu` ops (scale = weight/sqrt(var+eps), folded_weight = conv_weight * scale, folded_bias = bias - mean * scale)
++   - Returns 106 preprocessed tensors (folded conv weights+biases for all 53 convs)
++3. `_main()` indexes these as `var_0[0]` through `var_0[105]` (weights at even indices, biases at odd)
++4. Classifier weight/bias go through separate `main_const_eval_1` and `main_const_eval_2` (simple to_layout conversions)
++
++### Key Auto-Generated / Messy Patterns
++
++1. **Monolithic flat function**: `_main` is ~3030 lines with no structure — all 53 conv blocks inlined sequentially with no grouping.
++2. **Numbered variable names**: `ttnn_conv2d_0` through `ttnn_conv2d_52`, `ttnn_relu_0` through `ttnn_relu_15`, etc. No semantic meaning.
++3. **Massive MemoryConfig repetition**: Every op call has its full `ttnn.MemoryConfig(...)` with nested `ShardSpec`, `CoreRangeSet`, `CoreRange`, `CoreCoord` spelled out inline. Many are identical across ops in the same stage.
++4. **Weights indexed by opaque integer**: `var_0[0]`, `var_0[1]`, ..., `var_0[105]` — no indication of which layer they belong to.
++5. **Conv2dConfig boilerplate**: Many conv calls share identical config parameters (e.g., `compute_config=None`, `slice_config=ttnn.Conv2dSliceConfig(...)`, `dilation=[1,1]`, `groups=1`).
++6. **Weight loading function** (~2665 lines): 266 individual `utils.load_tensor()` calls with no structure.
++7. **consteval.py**: `cpu_hoisted_const_eval_3d7508d3` takes 265 positional args (`arg_0` through `arg_264`), then has a massive unrolled BN-folding computation.
++8. **Cache unpacking in consteval**: `ce_cache["main_const_eval_0"]` is populated by listing all 106 indices individually.
++9. **`model_ttnn.py` does not exist** — there's no separate model class; everything is in the flat `main.py`.
++
++--- Time taken: 179.2s | session: 40ed3f75-1570-4636-ad08-2221fbecabab ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 66f09d7..6106f68 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -5729,5 +5729,9 @@ def main():
+     return 0
+ 
+ 
++def test_main():
++    return 0
++
++
+ if __name__ == "__main__":
+     main()
