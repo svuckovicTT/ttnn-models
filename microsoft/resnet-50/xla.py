@@ -1,0 +1,117 @@
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
+
+### Demonstrates codegen for ResNet-50 from HuggingFace
+
+import os
+from pathlib import Path
+
+import torch
+import torch_xla
+import torch_xla.runtime as xr
+from datasets import load_dataset
+from transformers import AutoImageProcessor, ResNetForImageClassification
+from tt_torch import codegen_py
+
+OUTPUT_DIR = str(Path(__file__).resolve().parent / "model")
+
+
+def load_input():
+    dataset = load_dataset("imagenet-1k", split="validation", streaming=True)
+    images = [sample["image"] for sample in dataset.take(8)]
+    processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
+    x = processor(images, return_tensors="pt")["pixel_values"].to(torch.bfloat16)
+
+    print(f"Input shape: {x.shape}")
+    print(f"Input dtype: {x.dtype}")
+
+    return x
+
+
+def load_pytorch_model():
+    model = ResNetForImageClassification.from_pretrained(
+        "microsoft/resnet-50", torch_dtype=torch.bfloat16
+    )
+    model.eval()
+    return model
+
+
+def run_pytorch_model():
+    model = load_pytorch_model()
+    x = load_input()
+
+    with torch.no_grad():
+        output = model(x)
+
+    return output.logits
+
+
+def run_tt_model():
+    device = torch_xla.device()
+
+    model = load_pytorch_model()
+    model.compile(backend="tt")
+    model = model.to(device)
+    x = load_input().to(device)
+
+    with torch.no_grad():
+        output = model(x)
+
+    return output.logits.cpu()
+
+
+def codegen_model():
+    os.environ["XLA_HLO_DEBUG"] = "1"
+
+    model = load_pytorch_model()
+    x = load_input()
+
+    codegen_py(
+        model,
+        x,
+        export_path=OUTPUT_DIR,
+        export_tensors=True,
+        compiler_options={
+            "codegen_split_files": True,
+            "optimization_level": 2,
+        },
+    )
+
+
+def compare_pytorch_and_tt_runs():
+    pcc_threshold = 0.99
+
+    pt_output = run_pytorch_model()
+    tt_output = run_tt_model()
+
+    assert pt_output.shape == tt_output.shape, f"shape mismatch: {pt_output.shape} vs {tt_output.shape}"
+    assert pt_output.dtype == tt_output.dtype, f"dtype mismatch: {pt_output.dtype} vs {tt_output.dtype}"
+    x, y = pt_output.flatten().float(), tt_output.flatten().float()
+    vx, vy = x - x.mean(), y - y.mean()
+    pcc = ((vx @ vy) / (vx.norm() * vy.norm())).item()
+    print(f"PCC: {pcc:.6f}")
+    assert pcc >= 0.98, f"PCC {pcc} is below threshold of {pcc_threshold}"
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="ResNet-50 codegen pipeline")
+
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--run-pt", action="store_true", help="Run PyTorch model on CPU")
+    mode.add_argument("--run-tt", action="store_true", help="Run model on TT hardware")
+    mode.add_argument("--codegen", action="store_true", help="Generate TTNN code")
+    mode.add_argument("--golden", action="store_true", help="Compare PyTorch and TTNN runs")
+
+    args = parser.parse_args()
+
+    if args.run_pt:
+        run_pytorch_model()
+    if args.run_tt:
+        run_tt_model()
+    if args.codegen:
+        codegen_model()
+    if args.golden:
+        compare_pytorch_and_tt_runs()
