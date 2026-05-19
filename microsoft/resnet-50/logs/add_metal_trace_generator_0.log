@@ -1,0 +1,14 @@
+Changes complete. Summary:
+
+**`main.py`** — Modified `test_main` to use single-CQ metal trace:
+- Loads the input as a host tensor once (device=None).
+- Allocates a persistent DRAM tensor via `ttnn.allocate_tensor_on_device`.
+- Iteration 1: copies host→device, runs model, syncs (compiles + fills program cache).
+- Iteration 2: copies host→device, captures trace via `begin_trace_capture` / `end_trace_capture`.
+- Iterations 3–5: copies host→device, executes trace with `ttnn.execute_trace`, reads output back via non-blocking `.cpu()`, syncs.
+- Each of the 5 iterations is timed and logs `Time taken` + `FPS` as before.
+- No `trace_region_size` / `enable_program_cache` flags set.
+
+**`model_ttnn.py`** — Removed the single `ttnn.deallocate(args_0, False)` call on the input tensor (line 40) so the persistent DRAM input tensor stays alive across trace runs. No other deallocates were touched.
+
+--- Time taken: 151.0s ---
