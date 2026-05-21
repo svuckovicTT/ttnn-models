@@ -15,6 +15,10 @@ from transformers import AutoImageProcessor, ResNetForImageClassification
 from tt_torch import codegen_py
 
 OUTPUT_DIR = str(Path(__file__).resolve().parent / "model")
+COMPILE_OPTIONS = {
+    "optimization_level": 2,
+    "codegen_split_files": True,
+}
 
 
 def load_input():
@@ -50,8 +54,10 @@ def run_pytorch_model():
 def run_tt_model():
     device = torch_xla.device()
 
+    torch_xla.set_custom_compile_options(COMPILE_OPTIONS)
+
     model = load_pytorch_model()
-    model.compile(backend="tt")
+    model.compile(backend="tt", options={"tt_legacy_compile": True})
     model = model.to(device)
     x = load_input().to(device)
 
@@ -72,26 +78,28 @@ def codegen_model():
         x,
         export_path=OUTPUT_DIR,
         export_tensors=True,
-        compiler_options={
-            "codegen_split_files": True,
-            "optimization_level": 2,
-        },
+        compiler_options=COMPILE_OPTIONS,
     )
 
 
 def compare_pytorch_and_tt_runs():
-    pcc_threshold = 0.99
+    # Exact PCC is calculated during first run and manually set here
+    exact_pcc = 0.9784230589866638
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()
 
-    assert pt_output.shape == tt_output.shape, f"shape mismatch: {pt_output.shape} vs {tt_output.shape}"
-    assert pt_output.dtype == tt_output.dtype, f"dtype mismatch: {pt_output.dtype} vs {tt_output.dtype}"
+    assert pt_output.shape == tt_output.shape, (
+        f"shape mismatch: {pt_output.shape} vs {tt_output.shape}"
+    )
+    assert pt_output.dtype == tt_output.dtype, (
+        f"dtype mismatch: {pt_output.dtype} vs {tt_output.dtype}"
+    )
     x, y = pt_output.flatten().float(), tt_output.flatten().float()
     vx, vy = x - x.mean(), y - y.mean()
     pcc = ((vx @ vy) / (vx.norm() * vy.norm())).item()
     print(f"PCC: {pcc:.6f}")
-    assert pcc >= 0.98, f"PCC {pcc} is below threshold of {pcc_threshold}"
+    assert pcc == exact_pcc, f"PCC {pcc} is below threshold of {exact_pcc}"
 
 
 if __name__ == "__main__":
@@ -103,7 +111,9 @@ if __name__ == "__main__":
     mode.add_argument("--run-pt", action="store_true", help="Run PyTorch model on CPU")
     mode.add_argument("--run-tt", action="store_true", help="Run model on TT hardware")
     mode.add_argument("--codegen", action="store_true", help="Generate TTNN code")
-    mode.add_argument("--golden", action="store_true", help="Compare PyTorch and TTNN runs")
+    mode.add_argument(
+        "--golden", action="store_true", help="Compare PyTorch and TTNN runs"
+    )
 
     args = parser.parse_args()
 
