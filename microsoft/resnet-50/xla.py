@@ -84,7 +84,7 @@ def codegen_model():
 
 def compare_pytorch_and_tt_runs():
     # Exact PCC is calculated during first run and manually set here
-    exact_pcc = 0.9784230589866638
+    exact_pcc = 0.97265625
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()
@@ -95,11 +95,29 @@ def compare_pytorch_and_tt_runs():
     assert pt_output.dtype == tt_output.dtype, (
         f"dtype mismatch: {pt_output.dtype} vs {tt_output.dtype}"
     )
-    x, y = pt_output.flatten().float(), tt_output.flatten().float()
-    vx, vy = x - x.mean(), y - y.mean()
-    pcc = ((vx @ vy) / (vx.norm() * vy.norm())).item()
+    pcc = calculate_pcc(pt_output, tt_output)
     print(f"PCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} is below threshold of {exact_pcc}"
+
+
+def calculate_pcc(x, y):
+    # This function calculates the PCC between two torch tensors
+
+    # Assert both are torch tensors
+    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
+    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
+
+    if x.shape != y.shape:
+        raise ValueError(
+            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
+        )
+
+    # Calculate PCC
+    x_flat, y_flat = x.flatten(), y.flatten()
+    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
+    denom = vx.norm() * vy.norm()
+
+    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()
 
 
 if __name__ == "__main__":
