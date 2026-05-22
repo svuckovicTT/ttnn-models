@@ -22,7 +22,7 @@ COMPILE_OPTIONS = {
 
 
 def load_input():
-    dataset = load_dataset("imagenet-1k", split="validation", streaming=True)
+    dataset = load_dataset("ILSVRC/imagenet-1k", split="validation", streaming=True)
     images = [sample["image"] for sample in dataset.take(8)]
     processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
     x = processor(images, return_tensors="pt")["pixel_values"].to(torch.bfloat16)
