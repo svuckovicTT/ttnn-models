@@ -87,8 +87,7 @@ def codegen_model():
 
 
 def compare_pytorch_and_tt_runs():
-    # Capture exact PCC from first --golden run and paste here.
-    exact_pcc = None
+    exact_pcc = 0.9765207171440125
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()
@@ -99,7 +98,7 @@ def compare_pytorch_and_tt_runs():
     assert pt_output.dtype == tt_output.dtype, (
         f"dtype mismatch: {pt_output.dtype} vs {tt_output.dtype}"
     )
-    x, y = pt_output.flatten().float(), tt_output.flatten().float()
+    x, y = pt_output.flatten(), tt_output.flatten()
     vx, vy = x - x.mean(), y - y.mean()
     pcc = ((vx @ vy) / (vx.norm() * vy.norm())).item()
     print(f"PCC: {pcc:.6f}")
