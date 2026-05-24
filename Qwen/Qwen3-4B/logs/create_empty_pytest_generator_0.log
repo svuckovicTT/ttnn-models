@@ -1,0 +1,3 @@
+Added the empty `test_main()` pytest function to `main.py` just above the `if __name__ == "__main__":` block.
+
+--- Time taken: 30.1s ---
