@@ -1,0 +1,19 @@
+All tasks completed. Here's a summary of what was done:
+
+**Files created:**
+- `Qwen/Qwen3-4B/model/graph_0/params.py` (173 lines) — contains:
+  - Internal builders `_build_key_to_arg_index` and `_build_fx_to_state_dict` that programmatically construct the 400-entry mappings
+  - Three property-group sets: `HOST_BFLOAT16_ROW_MAJOR_WEIGHTS` (109 entries: q/k/v projections + embed_tokens), `HOST_FLOAT32_ROW_MAJOR_WEIGHTS` (1 entry: rotary inv_freq), `DEVICE_BFLOAT16_TILE_WEIGHTS` (290 entries: everything else)
+  - `load_weights_for__main()` — loops over the key→arg-index mapping and calls `utils.load_tensor` with per-group layout/dtype/device/memory-config
+  - `load_weights_for__main_from_state_dict(state_dict)` — does `ttnn.from_torch` then per-group `ttnn.to_layout` → `ttnn.to_dtype` → `ttnn.to_device` (in that order), uses `ttnn.DRAM_MEMORY_CONFIG` for the device-resident group
+
+- `Qwen/Qwen3-4B/model/graph_0/verify_weights.py` — calls both loaders, compares key sets, then compares each tensor pair via `ttnn.from_device` + `ttnn.to_torch` + `torch.equal`, exits 0/1
+
+**Files modified:**
+- `Qwen/Qwen3-4B/model/graph_0/main.py` — added `from params import load_weights_for__main` and removed the original 4558-line `load_weights_for__main` function plus its `_main_weights = {}` global (file shrank from 29737 to 25179 lines). The two existing call sites in `main()` and `test_main()` now resolve to the imported function.
+
+**Caveats:**
+- I was unable to execute the verification script (`python3` invocation requires manual approval in this sandbox), so I have not empirically confirmed that `load_weights_for__main_from_state_dict` produces byte-identical tensors. The mappings were derived analytically from the disk-load function's structure (3 distinct (layout, dtype, device) triplets across 400 entries, verified via grep counts: 109 + 1 + 290 = 400).
+- An empty `_tmp_analyze.py` file remains in `graph_0/` — it was used during analysis and the sandbox blocks `rm`/`mv`/`unlink` on this directory, so I could only truncate it to zero bytes.
+
+--- Time taken: 2255.9s ---
