@@ -1,4 +1,5 @@
 import ttnn
+import model_pt
 import utils
 from consteval import consteval__main
 from utils import calculate_pcc
@@ -29705,7 +29706,31 @@ def main():
 
 
 def test_main():
-    return 0
+    exact_pcc = 0.9765207171440125
+
+    device = utils.DeviceGetter.get_device((1, 1))
+
+    input = model_pt.load_input()
+    input = ttnn.from_torch(input)
+    input = ttnn.to_layout(input, ttnn.Layout.ROW_MAJOR)
+    input = ttnn.to_dtype(input, ttnn.DataType.INT32)
+    input = ttnn.to_device(
+        input,
+        device,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+
+    weights = load_weights_for__main()
+    outputs = _main([input], weights)
+
+    ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+    golden_output = model_pt.run_pytorch_model()
+
+    pcc = calculate_pcc(ttnn_output, golden_output)
+    print(f"\nPCC: {pcc:.6f}")
+    assert pcc >= exact_pcc, f"PCC {pcc} is not greater than threshold {exact_pcc}"
 
 
 if __name__ == "__main__":
