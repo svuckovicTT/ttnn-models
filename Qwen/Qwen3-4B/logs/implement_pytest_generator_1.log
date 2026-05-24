@@ -1,0 +1,7 @@
+Implemented `test_main()` in `main.py`:
+- Added `import model_pt`.
+- Loads the input via `model_pt.load_input()`, converts it to a TTNN tensor with `ttnn.from_torch()`, then mirrors the layout/dtype/device transformations from `load_activations_for__main()` (ROW_MAJOR, INT32, DRAM interleaved on `(1,1)` mesh).
+- Loads weights, runs `_main`, converts the final output tensor back to torch (`ttnn.to_torch(ttnn.from_device(outputs[-1]))` — `outputs[-1]` has shape `[1, 16, 151936]`, matching the PT logits).
+- Computes PCC via `calculate_pcc`, prints to 6 decimals, and asserts equality against `exact_pcc = 0.9765207171440125` (the value from `xla.py`).
+
+--- Time taken: 233.6s ---
