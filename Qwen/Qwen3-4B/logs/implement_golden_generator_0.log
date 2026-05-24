@@ -1,0 +1,7 @@
+Done. Three changes:
+
+- Created `model/graph_0/model_pt.py` with `load_input()`, `load_pytorch_model()`, and `run_pytorch_model()` mirroring the equivalent functions in `xla.py` (ignoring tt-xla code).
+- Added `calculate_pcc()` and `import torch` to `model/graph_0/utils.py`.
+- Added `from utils import calculate_pcc` to `model/graph_0/main.py`.
+
+--- Time taken: 58.2s ---
