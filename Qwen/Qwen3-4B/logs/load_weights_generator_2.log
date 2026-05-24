@@ -1,0 +1,20 @@
+All four tasks are now complete:
+
+**Summary of changes:**
+
+1. **`params.py`** (190 lines, new file):
+   - Defines weight property groups as sets: `TILE_BFLOAT16_DRAM_WEIGHTS`, `ROW_MAJOR_BFLOAT16_HOST_WEIGHTS`, `ROW_MAJOR_FLOAT32_HOST_WEIGHTS`
+   - `_build_key_to_arg_index()`: maps each weight key to its `arg<N>.tensorbin` index, preserving the original load order
+   - `_FX_TO_STATE_DICT_KEY`: maps FX-mangled keys to pytorch state_dict keys
+   - `load_weights_for__main()`: loads from disk, dispatching on group membership
+   - `load_weights_for__main_from_state_dict(state_dict)`: loads via `ttnn.from_torch` + `to_layout` → `to_dtype` → `to_device` (in that order), using `ttnn.DRAM_MEMORY_CONFIG`
+
+2. **`main.py`**: original 29737 → now 25179 lines. Removed the 4500-line `load_weights_for__main` body and `_main_weights = {}` global; added `from params import load_weights_for__main`.
+
+3. **`verify_weights.py`** (76 lines, new file):
+   - `verify()`: compares dicts from both loaders, checks keys match and tensor values are exactly equal
+   - `test_verify_weights()`: pytest-compatible wrapper that asserts verify()
+   - `__main__`: runs verify() and exits with appropriate code
+   - Handles the non-persistent `rotary_emb.inv_freq` buffer by augmenting the state_dict
+
+--- Time taken: 2581.8s ---
