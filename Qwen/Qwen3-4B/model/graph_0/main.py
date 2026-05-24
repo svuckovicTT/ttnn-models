@@ -1,6 +1,7 @@
 import ttnn
 import utils
 from consteval import consteval__main
+from utils import calculate_pcc
 
 ce_cache__main = {}
 

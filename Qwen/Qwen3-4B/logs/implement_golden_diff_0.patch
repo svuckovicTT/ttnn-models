@@ -1,0 +1,91 @@
+diff --git a/Qwen/Qwen3-4B/model/graph_0/main.py b/Qwen/Qwen3-4B/model/graph_0/main.py
+index 8ac5ad2..36fd08d 100644
+--- a/Qwen/Qwen3-4B/model/graph_0/main.py
++++ b/Qwen/Qwen3-4B/model/graph_0/main.py
+@@ -1,6 +1,7 @@
+ import ttnn
+ import utils
+ from consteval import consteval__main
++from utils import calculate_pcc
+ 
+ ce_cache__main = {}
+ 
+diff --git a/Qwen/Qwen3-4B/model/graph_0/model_pt.py b/Qwen/Qwen3-4B/model/graph_0/model_pt.py
+new file mode 100644
+index 0000000..97ac68a
+--- /dev/null
++++ b/Qwen/Qwen3-4B/model/graph_0/model_pt.py
+@@ -0,0 +1,41 @@
++# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
++#
++# SPDX-License-Identifier: Apache-2.0
++
++import torch
++from transformers import AutoModelForCausalLM, AutoTokenizer
++
++
++def load_input():
++    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-4B")
++    messages = [{"role": "user", "content": "Who are you?"}]
++    text = tokenizer.apply_chat_template(
++        messages,
++        tokenize=False,
++        add_generation_prompt=True,
++        enable_thinking=False,
++    )
++    x = tokenizer(text, return_tensors="pt")["input_ids"]
++
++    print(f"Input shape: {x.shape}")
++    print(f"Input dtype: {x.dtype}")
++
++    return x
++
++
++def load_pytorch_model():
++    model = AutoModelForCausalLM.from_pretrained(
++        "Qwen/Qwen3-4B", torch_dtype=torch.bfloat16
++    )
++    model.eval()
++    return model
++
++
++def run_pytorch_model():
++    model = load_pytorch_model()
++    x = load_input()
++
++    with torch.no_grad():
++        output = model(x)
++
++    return output.logits
+diff --git a/Qwen/Qwen3-4B/model/graph_0/utils.py b/Qwen/Qwen3-4B/model/graph_0/utils.py
+index a33bf59..1fff9c6 100644
+--- a/Qwen/Qwen3-4B/model/graph_0/utils.py
++++ b/Qwen/Qwen3-4B/model/graph_0/utils.py
+@@ -3,6 +3,27 @@
+ # SPDX-License-Identifier: Apache-2.0
+ import ttnn
+ import math
++import torch
++
++
++def calculate_pcc(x, y):
++    # This function calculates the PCC between two torch tensors
++
++    # Assert both are torch tensors
++    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
++    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
++
++    if x.shape != y.shape:
++        raise ValueError(
++            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
++        )
++
++    # Calculate PCC
++    x_flat, y_flat = x.flatten(), y.flatten()
++    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
++    denom = vx.norm() * vy.norm()
++
++    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()
+ 
+ 
+ class DeviceGetter:
