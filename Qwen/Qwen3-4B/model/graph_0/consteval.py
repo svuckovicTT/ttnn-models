@@ -665,7 +665,7 @@ def cpu_hoisted_const_eval_17957e90():
         data=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
     )
     ttir_cpu_full_0 = ttir_cpu.full(
-        shape=[1, 1, 1, 1], fill_value=-Inf, dtype=torch.float32
+        shape=[1, 1, 1, 1], fill_value=float('-inf'), dtype=torch.float32
     )
     ttir_cpu_full_1 = ttir_cpu.full(
         shape=[1, 1, 1, 1], fill_value=0, dtype=torch.float32
