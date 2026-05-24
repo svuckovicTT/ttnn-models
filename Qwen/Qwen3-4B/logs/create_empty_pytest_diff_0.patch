@@ -1,0 +1,14 @@
+diff --git a/Qwen/Qwen3-4B/model/graph_0/main.py b/Qwen/Qwen3-4B/model/graph_0/main.py
+index e95a0de..8ac5ad2 100644
+--- a/Qwen/Qwen3-4B/model/graph_0/main.py
++++ b/Qwen/Qwen3-4B/model/graph_0/main.py
+@@ -29703,5 +29703,9 @@ def main():
+     return 0
+ 
+ 
++def test_main():
++    return 0
++
++
+ if __name__ == "__main__":
+     main()
