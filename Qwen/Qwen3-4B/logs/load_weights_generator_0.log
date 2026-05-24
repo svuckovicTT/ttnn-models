@@ -1,15 +1,16 @@
-All tasks are completed. Here's a summary of the work:
+All three deliverables are in place:
 
-**Files created:**
-- `params.py` — contains:
-  - `load_weights_for__main()` — loads weights from disk; uses property-group sets (`_HOST_BFLOAT16_WEIGHTS`, `_HOST_FLOAT32_WEIGHTS`, `_DEVICE_TILE_BFLOAT16_WEIGHTS`) plus a 400-entry `_WEIGHT_KEY_BY_ARG_INDEX` dict mapping each weight key to its `arg<N>.tensorbin` index, with one branch per group calling `utils.load_tensor` with the appropriate layout/dtype/device/memory-config.
-  - `load_weights_for__main_from_state_dict(state_dict)` — loads weights from a torch `state_dict`, calling `ttnn.from_torch` and then `ttnn.to_layout` → `ttnn.to_dtype` → `ttnn.to_device` (in that order) per group, using `ttnn.DRAM_MEMORY_CONFIG` for the device-resident TILE group.
-  - `_fx_key_to_state_dict_key(key)` — translates FX-style `L__self___...` keys to PyTorch state_dict keys.
-- `verify_weights.py` — script that calls both loaders, compares key sets, then compares tensor values via `ttnn.from_device` + `ttnn.to_torch`, exiting 0/1.
+**Summary**
 
-**Files modified:**
-- `main.py` — added `from params import load_weights_for__main` near the top imports. Calls to `load_weights_for__main()` in `main()` and `test_main()` now resolve to the params.py version.
+- **`params.py`** (230 lines): Contains both loaders.
+  - `load_weights_for__main()` — disk loader, refactored to iterate `ALL_WEIGHTS` and apply the right property set based on which group each key belongs to. Output dict is semantically identical to the original 4500-line auto-generated function.
+  - `load_weights_for__main_from_state_dict()` — state_dict loader that fetches each parameter from the PyTorch `state_dict()`, calls `ttnn.from_torch(pt_tensor)`, then `ttnn.to_layout`, `ttnn.to_dtype`, `ttnn.to_device` in that order based on the same property groups.
+  - Three weight property sets at module level: `ROW_MAJOR_HOST_BFLOAT16_WEIGHTS`, `ROW_MAJOR_HOST_FLOAT32_WEIGHTS`, `TILE_DEVICE_BFLOAT16_WEIGHTS`. Uses `ttnn.DRAM_MEMORY_CONFIG`.
 
-**Caveat:** The auto-generated 4500-line weight-loader body is still physically present in `main.py` but is renamed to `_legacy_load_weights_for__main` (and commented as superseded). The sandbox blocks `cp`, `sed -i`, shell redirection, and `touch`, so removing those lines via shell tools is not possible. Doing it via chunked `Edit` calls would require regenerating the auto-gen body byte-for-byte across many large tool calls; given the constraints I chose to rename rather than risk a misformatted removal. The rename ensures the imported `params.load_weights_for__main` is the one actually called by `main()` / `test_main()`, preserving 100% semantic equivalence at runtime.
+- **`main.py`** (25179 lines, down from 29738): The original `load_weights_for__main` function (and its `_main_weights = {}` global) has been removed entirely. `main.py` now imports the function via `from params import load_weights_for__main` near the top.
 
---- Time taken: 2568.5s ---
+- **`verify_weights.py`** (54 lines): pytest test `test_verify_weights` that asserts both loaders produce identical dictionaries (matching lengths, matching keys, byte-exact tensor values via `torch.equal`).
+
+Note: two empty placeholder files `_split.py` and `_analyze.py` were created during the work as scratch helpers but could not be removed via Bash (sandbox blocks `rm`); they are now empty 0-byte files.
+
+--- Time taken: 2992.9s ---
