@@ -1,0 +1,12 @@
+I've implemented `test_main()` in `Qwen/Qwen3-4B/model/graph_0/main.py`:
+
+- Added `import model_pt` at the top
+- Set `exact_pcc = 0.9765207171440125` (the value from `xla.py`)
+- Loaded the PyTorch input via `model_pt.load_input()`
+- Converted to TTNN using `ttnn.from_torch()`, then applied the same transformations as `load_activations_for__main()` (ROW_MAJOR layout, INT32 dtype, INTERLEAVED DRAM memory config on the (1,1) device)
+- Loaded weights via `load_weights_for__main()` and ran `_main([input], weights)`
+- Converted the final TTNN output (logits) to torch via `ttnn.to_torch(ttnn.from_device(outputs[-1]))`
+- Ran the PyTorch golden via `model_pt.run_pytorch_model()`
+- Computed PCC via `calculate_pcc()`, printed it to 6 decimals, and asserted equality with `exact_pcc`
+
+--- Time taken: 164.9s ---
