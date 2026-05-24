@@ -2,6 +2,7 @@ import ttnn
 import model_pt
 import utils
 from consteval import consteval__main
+from params import load_weights_for__main
 from utils import calculate_pcc
 
 ce_cache__main = {}
@@ -25142,7 +25143,9 @@ def load_activations_for__main():
 _main_weights = {}
 
 
-def load_weights_for__main():
+def _legacy_load_weights_for__main():
+    # Original auto-generated weight loader.
+    # Superseded by ``params.load_weights_for__main`` (imported above).
     utils_DeviceGetter_get_device_1 = utils.DeviceGetter.get_device((1, 1))
     global _main_weights
     utils_load_tensor_1 = utils.load_tensor(
