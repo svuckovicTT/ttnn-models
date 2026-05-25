@@ -1,6 +1,6 @@
 import ttnn
 import params
-from consteval import consteval__main
+import consteval
 
 
 class LightweightModule:
@@ -8,22 +8,16 @@ class LightweightModule:
         return self.forward(*args, **kwargs)
 
 
-ce_cache__main = {}
-
-
 class ModelTTNN(LightweightModule):
     def __init__(self, device):
         self.device = device
         self.weights = params.load_weights_for__main_from_state_dict(device)
+        self.weights = consteval.run_consteval(self.weights, device)
 
     def forward(self, activations):
-        global ce_cache__main
-        ce_cache__main = consteval__main(ce_cache__main, self.weights, self.device)
         args_0 = activations[0]
-        var_0 = ce_cache__main["main_const_eval_2"]
-        var_1 = var_0[0]
-        var_2 = var_0[1]
-        var_3 = ce_cache__main["main_const_eval_21"]
+        var_1 = self.weights["L__self___model_rotary_emb_cos"]
+        var_2 = self.weights["L__self___model_rotary_emb_sin"]
         ttnn_typecast_0 = ttnn.typecast(
             args_0,
             ttnn.DataType.UINT32,
@@ -42,7 +36,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_typecast_0, False)
         ttnn_embedding_0 = ttnn.embedding(
             ttnn_reshape_0,
-            ce_cache__main["main_const_eval_0"],
+            self.weights["L__self___model_embed_tokens.weight"],
             padding_idx=None,
             layout=ttnn.Layout.TILE,
             dtype=ttnn.DataType.BFLOAT16,
@@ -119,7 +113,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_0, False)
         ttnn_matmul_0 = ttnn.matmul(
             ttnn_to_memory_config_1,
-            ce_cache__main["main_const_eval_19"],
+            self.weights["L__self___model_layers_0_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -384,7 +378,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_4,
                 ttnn_slice_3,
                 ttnn_permute_0,
-                attn_mask=var_3[0],
+                attn_mask=self.weights["L__self___model_layers_0_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -810,7 +804,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_4, False)
         ttnn_matmul_5 = ttnn.matmul(
             ttnn_to_memory_config_15,
-            ce_cache__main["main_const_eval_6"],
+            self.weights["L__self___model_layers_1_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -1075,7 +1069,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_9,
                 ttnn_slice_8,
                 ttnn_permute_3,
-                attn_mask=var_3[1],
+                attn_mask=self.weights["L__self___model_layers_1_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -1501,7 +1495,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_8, False)
         ttnn_matmul_10 = ttnn.matmul(
             ttnn_to_memory_config_29,
-            ce_cache__main["main_const_eval_15"],
+            self.weights["L__self___model_layers_2_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -1766,7 +1760,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_14,
                 ttnn_slice_13,
                 ttnn_permute_6,
-                attn_mask=var_3[2],
+                attn_mask=self.weights["L__self___model_layers_2_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -2192,7 +2186,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_12, False)
         ttnn_matmul_15 = ttnn.matmul(
             ttnn_to_memory_config_43,
-            ce_cache__main["main_const_eval_5"],
+            self.weights["L__self___model_layers_3_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -2457,7 +2451,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_19,
                 ttnn_slice_18,
                 ttnn_permute_9,
-                attn_mask=var_3[3],
+                attn_mask=self.weights["L__self___model_layers_3_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -2883,7 +2877,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_16, False)
         ttnn_matmul_20 = ttnn.matmul(
             ttnn_to_memory_config_57,
-            ce_cache__main["main_const_eval_34"],
+            self.weights["L__self___model_layers_4_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -3148,7 +3142,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_24,
                 ttnn_slice_23,
                 ttnn_permute_12,
-                attn_mask=var_3[4],
+                attn_mask=self.weights["L__self___model_layers_4_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -3574,7 +3568,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_20, False)
         ttnn_matmul_25 = ttnn.matmul(
             ttnn_to_memory_config_71,
-            ce_cache__main["main_const_eval_13"],
+            self.weights["L__self___model_layers_5_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -3839,7 +3833,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_29,
                 ttnn_slice_28,
                 ttnn_permute_15,
-                attn_mask=var_3[5],
+                attn_mask=self.weights["L__self___model_layers_5_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -4265,7 +4259,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_24, False)
         ttnn_matmul_30 = ttnn.matmul(
             ttnn_to_memory_config_85,
-            ce_cache__main["main_const_eval_26"],
+            self.weights["L__self___model_layers_6_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -4530,7 +4524,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_34,
                 ttnn_slice_33,
                 ttnn_permute_18,
-                attn_mask=var_3[6],
+                attn_mask=self.weights["L__self___model_layers_6_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -4956,7 +4950,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_28, False)
         ttnn_matmul_35 = ttnn.matmul(
             ttnn_to_memory_config_99,
-            ce_cache__main["main_const_eval_37"],
+            self.weights["L__self___model_layers_7_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -5221,7 +5215,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_39,
                 ttnn_slice_38,
                 ttnn_permute_21,
-                attn_mask=var_3[7],
+                attn_mask=self.weights["L__self___model_layers_7_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -5647,7 +5641,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_32, False)
         ttnn_matmul_40 = ttnn.matmul(
             ttnn_to_memory_config_113,
-            ce_cache__main["main_const_eval_11"],
+            self.weights["L__self___model_layers_8_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -5912,7 +5906,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_44,
                 ttnn_slice_43,
                 ttnn_permute_24,
-                attn_mask=var_3[8],
+                attn_mask=self.weights["L__self___model_layers_8_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -6338,7 +6332,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_36, False)
         ttnn_matmul_45 = ttnn.matmul(
             ttnn_to_memory_config_127,
-            ce_cache__main["main_const_eval_12"],
+            self.weights["L__self___model_layers_9_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -6603,7 +6597,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_49,
                 ttnn_slice_48,
                 ttnn_permute_27,
-                attn_mask=var_3[9],
+                attn_mask=self.weights["L__self___model_layers_9_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -7029,7 +7023,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_40, False)
         ttnn_matmul_50 = ttnn.matmul(
             ttnn_to_memory_config_141,
-            ce_cache__main["main_const_eval_28"],
+            self.weights["L__self___model_layers_10_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -7294,7 +7288,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_54,
                 ttnn_slice_53,
                 ttnn_permute_30,
-                attn_mask=var_3[10],
+                attn_mask=self.weights["L__self___model_layers_10_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -7720,7 +7714,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_44, False)
         ttnn_matmul_55 = ttnn.matmul(
             ttnn_to_memory_config_155,
-            ce_cache__main["main_const_eval_29"],
+            self.weights["L__self___model_layers_11_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -7985,7 +7979,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_59,
                 ttnn_slice_58,
                 ttnn_permute_33,
-                attn_mask=var_3[11],
+                attn_mask=self.weights["L__self___model_layers_11_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -8411,7 +8405,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_48, False)
         ttnn_matmul_60 = ttnn.matmul(
             ttnn_to_memory_config_169,
-            ce_cache__main["main_const_eval_16"],
+            self.weights["L__self___model_layers_12_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -8676,7 +8670,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_64,
                 ttnn_slice_63,
                 ttnn_permute_36,
-                attn_mask=var_3[12],
+                attn_mask=self.weights["L__self___model_layers_12_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -9102,7 +9096,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_52, False)
         ttnn_matmul_65 = ttnn.matmul(
             ttnn_to_memory_config_183,
-            ce_cache__main["main_const_eval_30"],
+            self.weights["L__self___model_layers_13_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -9367,7 +9361,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_69,
                 ttnn_slice_68,
                 ttnn_permute_39,
-                attn_mask=var_3[13],
+                attn_mask=self.weights["L__self___model_layers_13_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -9793,7 +9787,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_56, False)
         ttnn_matmul_70 = ttnn.matmul(
             ttnn_to_memory_config_197,
-            ce_cache__main["main_const_eval_31"],
+            self.weights["L__self___model_layers_14_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -10058,7 +10052,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_74,
                 ttnn_slice_73,
                 ttnn_permute_42,
-                attn_mask=var_3[14],
+                attn_mask=self.weights["L__self___model_layers_14_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -10484,7 +10478,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_60, False)
         ttnn_matmul_75 = ttnn.matmul(
             ttnn_to_memory_config_211,
-            ce_cache__main["main_const_eval_14"],
+            self.weights["L__self___model_layers_15_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -10749,7 +10743,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_79,
                 ttnn_slice_78,
                 ttnn_permute_45,
-                attn_mask=var_3[15],
+                attn_mask=self.weights["L__self___model_layers_15_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -11175,7 +11169,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_64, False)
         ttnn_matmul_80 = ttnn.matmul(
             ttnn_to_memory_config_225,
-            ce_cache__main["main_const_eval_4"],
+            self.weights["L__self___model_layers_16_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -11440,7 +11434,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_84,
                 ttnn_slice_83,
                 ttnn_permute_48,
-                attn_mask=var_3[16],
+                attn_mask=self.weights["L__self___model_layers_16_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -11866,7 +11860,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_68, False)
         ttnn_matmul_85 = ttnn.matmul(
             ttnn_to_memory_config_239,
-            ce_cache__main["main_const_eval_35"],
+            self.weights["L__self___model_layers_17_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -12131,7 +12125,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_89,
                 ttnn_slice_88,
                 ttnn_permute_51,
-                attn_mask=var_3[17],
+                attn_mask=self.weights["L__self___model_layers_17_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -12557,7 +12551,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_72, False)
         ttnn_matmul_90 = ttnn.matmul(
             ttnn_to_memory_config_253,
-            ce_cache__main["main_const_eval_8"],
+            self.weights["L__self___model_layers_18_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -12822,7 +12816,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_94,
                 ttnn_slice_93,
                 ttnn_permute_54,
-                attn_mask=var_3[18],
+                attn_mask=self.weights["L__self___model_layers_18_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -13248,7 +13242,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_76, False)
         ttnn_matmul_95 = ttnn.matmul(
             ttnn_to_memory_config_267,
-            ce_cache__main["main_const_eval_22"],
+            self.weights["L__self___model_layers_19_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -13513,7 +13507,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_99,
                 ttnn_slice_98,
                 ttnn_permute_57,
-                attn_mask=var_3[19],
+                attn_mask=self.weights["L__self___model_layers_19_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -13939,7 +13933,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_80, False)
         ttnn_matmul_100 = ttnn.matmul(
             ttnn_to_memory_config_281,
-            ce_cache__main["main_const_eval_1"],
+            self.weights["L__self___model_layers_20_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -14204,7 +14198,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_104,
                 ttnn_slice_103,
                 ttnn_permute_60,
-                attn_mask=var_3[20],
+                attn_mask=self.weights["L__self___model_layers_20_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -14630,7 +14624,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_84, False)
         ttnn_matmul_105 = ttnn.matmul(
             ttnn_to_memory_config_295,
-            ce_cache__main["main_const_eval_27"],
+            self.weights["L__self___model_layers_21_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -14895,7 +14889,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_109,
                 ttnn_slice_108,
                 ttnn_permute_63,
-                attn_mask=var_3[21],
+                attn_mask=self.weights["L__self___model_layers_21_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -15321,7 +15315,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_88, False)
         ttnn_matmul_110 = ttnn.matmul(
             ttnn_to_memory_config_309,
-            ce_cache__main["main_const_eval_17"],
+            self.weights["L__self___model_layers_22_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -15586,7 +15580,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_114,
                 ttnn_slice_113,
                 ttnn_permute_66,
-                attn_mask=var_3[22],
+                attn_mask=self.weights["L__self___model_layers_22_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -16012,7 +16006,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_92, False)
         ttnn_matmul_115 = ttnn.matmul(
             ttnn_to_memory_config_323,
-            ce_cache__main["main_const_eval_20"],
+            self.weights["L__self___model_layers_23_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -16277,7 +16271,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_119,
                 ttnn_slice_118,
                 ttnn_permute_69,
-                attn_mask=var_3[23],
+                attn_mask=self.weights["L__self___model_layers_23_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -16703,7 +16697,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_96, False)
         ttnn_matmul_120 = ttnn.matmul(
             ttnn_to_memory_config_337,
-            ce_cache__main["main_const_eval_3"],
+            self.weights["L__self___model_layers_24_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -16968,7 +16962,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_124,
                 ttnn_slice_123,
                 ttnn_permute_72,
-                attn_mask=var_3[24],
+                attn_mask=self.weights["L__self___model_layers_24_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -17394,7 +17388,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_100, False)
         ttnn_matmul_125 = ttnn.matmul(
             ttnn_to_memory_config_351,
-            ce_cache__main["main_const_eval_18"],
+            self.weights["L__self___model_layers_25_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -17659,7 +17653,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_129,
                 ttnn_slice_128,
                 ttnn_permute_75,
-                attn_mask=var_3[25],
+                attn_mask=self.weights["L__self___model_layers_25_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -18085,7 +18079,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_104, False)
         ttnn_matmul_130 = ttnn.matmul(
             ttnn_to_memory_config_365,
-            ce_cache__main["main_const_eval_7"],
+            self.weights["L__self___model_layers_26_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -18350,7 +18344,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_134,
                 ttnn_slice_133,
                 ttnn_permute_78,
-                attn_mask=var_3[26],
+                attn_mask=self.weights["L__self___model_layers_26_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -18776,7 +18770,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_108, False)
         ttnn_matmul_135 = ttnn.matmul(
             ttnn_to_memory_config_379,
-            ce_cache__main["main_const_eval_38"],
+            self.weights["L__self___model_layers_27_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -19041,7 +19035,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_139,
                 ttnn_slice_138,
                 ttnn_permute_81,
-                attn_mask=var_3[27],
+                attn_mask=self.weights["L__self___model_layers_27_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -19467,7 +19461,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_112, False)
         ttnn_matmul_140 = ttnn.matmul(
             ttnn_to_memory_config_393,
-            ce_cache__main["main_const_eval_9"],
+            self.weights["L__self___model_layers_28_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -19732,7 +19726,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_144,
                 ttnn_slice_143,
                 ttnn_permute_84,
-                attn_mask=var_3[28],
+                attn_mask=self.weights["L__self___model_layers_28_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -20158,7 +20152,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_116, False)
         ttnn_matmul_145 = ttnn.matmul(
             ttnn_to_memory_config_407,
-            ce_cache__main["main_const_eval_23"],
+            self.weights["L__self___model_layers_29_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -20423,7 +20417,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_149,
                 ttnn_slice_148,
                 ttnn_permute_87,
-                attn_mask=var_3[29],
+                attn_mask=self.weights["L__self___model_layers_29_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -20849,7 +20843,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_120, False)
         ttnn_matmul_150 = ttnn.matmul(
             ttnn_to_memory_config_421,
-            ce_cache__main["main_const_eval_36"],
+            self.weights["L__self___model_layers_30_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -21114,7 +21108,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_154,
                 ttnn_slice_153,
                 ttnn_permute_90,
-                attn_mask=var_3[30],
+                attn_mask=self.weights["L__self___model_layers_30_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -21540,7 +21534,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_124, False)
         ttnn_matmul_155 = ttnn.matmul(
             ttnn_to_memory_config_435,
-            ce_cache__main["main_const_eval_25"],
+            self.weights["L__self___model_layers_31_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -21805,7 +21799,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_159,
                 ttnn_slice_158,
                 ttnn_permute_93,
-                attn_mask=var_3[31],
+                attn_mask=self.weights["L__self___model_layers_31_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -22231,7 +22225,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_128, False)
         ttnn_matmul_160 = ttnn.matmul(
             ttnn_to_memory_config_449,
-            ce_cache__main["main_const_eval_24"],
+            self.weights["L__self___model_layers_32_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -22496,7 +22490,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_164,
                 ttnn_slice_163,
                 ttnn_permute_96,
-                attn_mask=var_3[32],
+                attn_mask=self.weights["L__self___model_layers_32_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -22922,7 +22916,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_132, False)
         ttnn_matmul_165 = ttnn.matmul(
             ttnn_to_memory_config_463,
-            ce_cache__main["main_const_eval_32"],
+            self.weights["L__self___model_layers_33_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -23187,7 +23181,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_169,
                 ttnn_slice_168,
                 ttnn_permute_99,
-                attn_mask=var_3[33],
+                attn_mask=self.weights["L__self___model_layers_33_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -23613,7 +23607,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_136, False)
         ttnn_matmul_170 = ttnn.matmul(
             ttnn_to_memory_config_477,
-            ce_cache__main["main_const_eval_33"],
+            self.weights["L__self___model_layers_34_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -23878,7 +23872,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_174,
                 ttnn_slice_173,
                 ttnn_permute_102,
-                attn_mask=var_3[34],
+                attn_mask=self.weights["L__self___model_layers_34_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
@@ -24304,7 +24298,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_rms_norm_140, False)
         ttnn_matmul_175 = ttnn.matmul(
             ttnn_to_memory_config_491,
-            ce_cache__main["main_const_eval_10"],
+            self.weights["L__self___model_layers_35_self_attn_qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -24569,7 +24563,7 @@ class ModelTTNN(LightweightModule):
                 ttnn_slice_179,
                 ttnn_slice_178,
                 ttnn_permute_105,
-                attn_mask=var_3[35],
+                attn_mask=self.weights["L__self___model_layers_35_causal_mask"],
                 is_causal=False,
                 scale=0.088388338685035706,
                 sliding_window_size=None,
