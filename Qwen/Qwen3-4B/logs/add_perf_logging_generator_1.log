@@ -1,0 +1,8 @@
+Updated `test_main` in `Qwen/Qwen3-4B/model/graph_0/main.py` to:
+- Import `time`.
+- Run the model 3 iterations, recreating the TTNN input each iteration (the model deallocates its input via `ttnn.deallocate(args_0, False)` at `model_ttnn.py:29`, which broke the previous attempt's loop).
+- Call `ttnn.synchronize_device(device)` before stopping the timer using `time.perf_counter()`.
+- Log `Time: {:.4f}s, TPS: {:.2f}` per iteration (TPS since Qwen3-4B is an LLM, using `torch_input.numel()` as token count).
+- Preserve the PCC check using the outputs from the last iteration.
+
+--- Time taken: 89.6s ---
