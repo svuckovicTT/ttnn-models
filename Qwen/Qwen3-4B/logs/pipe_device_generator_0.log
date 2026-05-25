@@ -1,0 +1,8 @@
+All references to `DeviceGetter` are gone. Summary:
+
+- **`utils.py`**: Removed `DeviceGetter` class and the now-unused `import math`.
+- **`main.py`**: `main()` and `test_main()` now open the device directly with `ttnn.open_mesh_device(mesh_shape=ttnn.MeshShape((1, 1)), l1_small_size=1 << 15)` (replicating the original DeviceGetter call shape, with the fabric branch elided because `prod((1,1)) < 2`), and close it via `ttnn.close_mesh_device` + `ttnn.set_fabric_config(DISABLED)` in a `try/finally`. The device is piped through `load_activations_for__main(device)`, `load_weights_for__main_from_state_dict(device)`, and `_main(activations, weights, device)`.
+- **`params.py`**: Dropped `import utils`; `load_weights_for__main_from_state_dict` now accepts `device`.
+- **`consteval.py`**: Dropped `import utils`. `consteval__main(ce_cache, weights, device)` and every `main_const_eval_*` now accept/use the passed-in `device` instead of calling `DeviceGetter.get_device((1, 1))`.
+
+--- Time taken: 398.6s ---
