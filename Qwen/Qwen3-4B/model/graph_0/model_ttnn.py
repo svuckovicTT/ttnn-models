@@ -26,7 +26,6 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(args_0, False)
         ttnn_reshape_0 = ttnn.reshape(
             ttnn_typecast_0,
             [16],

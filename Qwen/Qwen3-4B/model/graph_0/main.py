@@ -48,32 +48,56 @@ def test_main():
         torch_input = model_pt.load_input()
         num_tokens = torch_input.numel()
 
-        def to_ttnn_input():
-            t = ttnn.from_torch(torch_input)
-            t = ttnn.to_layout(t, ttnn.Layout.ROW_MAJOR)
-            t = ttnn.to_dtype(t, ttnn.DataType.INT32)
-            t = ttnn.to_device(
-                t,
-                device,
-                ttnn.MemoryConfig(
-                    ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-                ),
-            )
-            return t
+        host_tensor = ttnn.from_torch(torch_input)
+        host_tensor = ttnn.to_layout(host_tensor, ttnn.Layout.ROW_MAJOR)
+        host_tensor = ttnn.to_dtype(host_tensor, ttnn.DataType.INT32)
+
+        dram_memory_config = ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        )
+        input_dram_tensor = ttnn.allocate_tensor_on_device(
+            list(torch_input.shape),
+            ttnn.DataType.INT32,
+            ttnn.Layout.ROW_MAJOR,
+            device,
+            dram_memory_config,
+        )
 
         model = ModelTTNN(device)
 
-        outputs = None
+        # Run 1: compile model / fill program cache
+        ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
+        start = time.perf_counter()
+        outputs = model([input_dram_tensor])
+        ttnn.synchronize_device(device)
+        elapsed = time.perf_counter() - start
+        tps = num_tokens / elapsed
+        print(f"Iteration 1: Time: {elapsed:.4f}s, TPS: {tps:.2f}")
+
+        # Run 2: capture trace
+        ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
+        start = time.perf_counter()
+        tid = ttnn.begin_trace_capture(device, cq_id=0)
+        outputs = model([input_dram_tensor])
+        ttnn.end_trace_capture(device, tid, cq_id=0)
+        ttnn.synchronize_device(device)
+        elapsed = time.perf_counter() - start
+        tps = num_tokens / elapsed
+        print(f"Iteration 2: Time: {elapsed:.4f}s, TPS: {tps:.2f}")
+
+        # Runs 3-5: execute trace
+        host_output_tensor = None
         for i in range(3):
-            ttnn_input = to_ttnn_input()
+            ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
             start = time.perf_counter()
-            outputs = model([ttnn_input])
+            ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
+            host_output_tensor = outputs[-1].cpu(blocking=False)
             ttnn.synchronize_device(device)
             elapsed = time.perf_counter() - start
             tps = num_tokens / elapsed
-            print(f"Iteration {i + 1}: Time: {elapsed:.4f}s, TPS: {tps:.2f}")
+            print(f"Iteration {i + 3}: Time: {elapsed:.4f}s, TPS: {tps:.2f}")
 
-        ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+        ttnn_output = ttnn.to_torch(host_output_tensor)
         golden_output = model_pt.run_pytorch_model()
 
         pcc = calculate_pcc(ttnn_output, golden_output)
