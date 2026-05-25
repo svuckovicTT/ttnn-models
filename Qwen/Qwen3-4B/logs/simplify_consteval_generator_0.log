@@ -1,0 +1,15 @@
+The refactoring is complete. Summary:
+
+**`consteval.py`** went from 2070 → 125 lines by:
+- Deduplicating 36 identical QKV-fusion functions into `_build_fused_qkv_proj_weight` + `_fuse_qkv_weights_cpu`, called in a per-layer loop
+- Deduplicating the 36-way unrolled causal-mask emitter into `_build_causal_mask_cpu` + a `_to_tile_bf16_dram` helper called in a loop
+- Extracting the shared `typecast(BF16) → to_layout(TILE) → to_device(DRAM)` epilogue into `_to_tile_bf16_dram`
+- Replacing `consteval__main(ce_cache, weights, device)` with `run_consteval(weights, device)` that mutates `weights` in place (no `ce_cache`, no `if not ce_cache:` guard)
+- Splitting multi-tensor entries into single-tensor entries: cos/sin are now separate `L__self___model_rotary_emb_cos` / `..._sin` keys, and each layer's causal mask gets its own `L__self___model_layers_{i}_causal_mask` key
+
+**`model_ttnn.py`**:
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` once at construction
+- `forward` no longer threads a global `ce_cache__main`; all consteval results are read directly from `self.weights` using descriptive keys (`..._self_attn_qkv_proj.weight`, `..._causal_mask`, `..._rotary_emb_cos/sin`, `..._embed_tokens.weight`)
+- The opaque `var_3[i]` mask lookups were rewritten to `self.weights["L__self___model_layers_{i}_causal_mask"]`
+
+--- Time taken: 415.7s ---
