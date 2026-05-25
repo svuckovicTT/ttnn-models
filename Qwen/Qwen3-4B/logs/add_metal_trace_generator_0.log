@@ -1,0 +1,12 @@
+Changes complete:
+
+- **`model_ttnn.py`**: Removed the `ttnn.deallocate(args_0, False)` call on the input tensor (`args_0 = activations[0]`) so the persistent DRAM input tensor isn't deallocated during trace execution.
+- **`main.py` `test_main`**: Replaced the 3-iteration loop with the metal-trace 5-run flow:
+  1. Allocate a persistent DRAM input tensor via `ttnn.allocate_tensor_on_device`.
+  2. Run 1 — copy host→device, run model to compile/fill program cache.
+  3. Run 2 — copy host→device, `begin_trace_capture`, run model, `end_trace_capture`.
+  4. Runs 3–5 — copy host→device, `execute_trace` (non-blocking), `outputs[-1].cpu(blocking=False)`, synchronize.
+  
+  Each of the 5 runs is timed and logged with the same TPS format. PCC is computed from the last captured `host_output_tensor`. `trace_region_size` and `enable_program_cache` are not set, per instructions.
+
+--- Time taken: 140.6s ---
