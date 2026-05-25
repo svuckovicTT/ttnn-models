@@ -4,7 +4,6 @@
 
 import ttnn
 import model_pt
-import utils
 
 
 ROW_MAJOR_BFLOAT16_WEIGHTS = {
@@ -437,9 +436,7 @@ def _state_dict_key(weight_name):
     return name
 
 
-def load_weights_for__main_from_state_dict():
-    device = utils.DeviceGetter.get_device((1, 1))
-
+def load_weights_for__main_from_state_dict(device):
     model = model_pt.load_pytorch_model()
     state_dict = dict(model.state_dict())
     for name, buf in model.named_buffers():
