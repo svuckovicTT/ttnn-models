@@ -1,7 +1,8 @@
 import ttnn
 import model_pt
 import utils
-from model_ttnn import ModelTTNN
+from model_ttnn import _main
+from params import load_weights_for__main_from_state_dict
 from utils import calculate_pcc
 
 
@@ -26,8 +27,8 @@ def main():
     print(f"Device: {device}")
     try:
         load_activations_for__main_0 = load_activations_for__main(device)
-        model = ModelTTNN(device)
-        _main_0 = model(load_activations_for__main_0)
+        load_weights_for__main_0 = load_weights_for__main_from_state_dict(device)
+        _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
     finally:
         ttnn.close_mesh_device(device)
         ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
@@ -55,8 +56,8 @@ def test_main():
             ),
         )
 
-        model = ModelTTNN(device)
-        outputs = model([input])
+        weights = load_weights_for__main_from_state_dict(device)
+        outputs = _main([input], weights, device)
 
         ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
         golden_output = model_pt.run_pytorch_model()
