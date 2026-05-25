@@ -1,0 +1,6 @@
+Both files parse successfully. Summary of changes:
+
+- **Created `model_ttnn.py`**: Contains `import ttnn`, `from consteval import consteval__main`, the `ce_cache__main` global, and the moved `_main` forward function.
+- **Updated `main.py`**: Removed `_main` (~25117 lines), the `ce_cache__main` global, and the now-unused `from consteval import consteval__main`. Added `from model_ttnn import _main`. The `load_activations_for__main`, `main`, `test_main`, and `__main__` entry point remain — they reference `_main` via the new import.
+
+--- Time taken: 110.1s ---
