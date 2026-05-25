@@ -1,0 +1,7 @@
+Refactor complete. Summary:
+
+**`model_ttnn.py`**: Added `LightweightModule` base class and `ModelTTNN` subclass. `__init__(device)` stores `self.device`, loads weights into `self.weights`, and initializes `self.ce_cache = {}`. The former `_main` function body became the `forward(self, activations)` method — all `ce_cache__main` references rewritten to `self.ce_cache`, and the consteval call now uses `self.weights` / `self.device`. The module-level `ce_cache__main` global and the `global` declaration are gone.
+
+**`main.py`**: Dropped the `_main` and `load_weights_for__main_from_state_dict` imports. Both `main()` and `test_main()` now do `model = ModelTTNN(device)` followed by `model(activations)`, exercising `LightweightModule.__call__`.
+
+--- Time taken: 191.7s ---
