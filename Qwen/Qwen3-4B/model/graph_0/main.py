@@ -1,5 +1,3 @@
-import time
-
 import ttnn
 import model_pt
 import utils
@@ -46,7 +44,6 @@ def test_main():
     print(f"Device: {device}")
     try:
         input = model_pt.load_input()
-        num_tokens = input.numel()
         input = ttnn.from_torch(input)
         input = ttnn.to_layout(input, ttnn.Layout.ROW_MAJOR)
         input = ttnn.to_dtype(input, ttnn.DataType.INT32)
@@ -59,14 +56,7 @@ def test_main():
         )
 
         model = ModelTTNN(device)
-
-        for i in range(3):
-            start = time.perf_counter()
-            outputs = model([input])
-            ttnn.synchronize_device(device)
-            elapsed = time.perf_counter() - start
-            tps = num_tokens / elapsed
-            print(f"Iteration {i + 1}: Time: {elapsed:.4f}s, TPS: {tps:.2f}")
+        outputs = model([input])
 
         ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
         golden_output = model_pt.run_pytorch_model()
