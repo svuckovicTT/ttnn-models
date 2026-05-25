@@ -1,0 +1,15 @@
+Both files pass syntax validation. Summary:
+
+**model_ttnn.py** (25135 lines):
+- Added `import params` and removed the module-level `ce_cache__main = {}` global
+- Defined `LightweightModule` with `__call__` forwarding to `forward`
+- Defined `ModelTTNN(LightweightModule)`:
+  - `__init__(device)` sets `self.device`, `self.weights = params.load_weights_for__main_from_state_dict(device)`, `self.ce_cache = {}`
+  - `forward(activations)` re-aliases `device = self.device`, `weights = self.weights`, threads the consteval cache through `self.ce_cache`, and runs all the unchanged `ttnn.*` ops (indented one level deeper)
+
+**main.py**:
+- `from model_ttnn import _main` → `from model_ttnn import ModelTTNN`
+- Dropped the `load_weights_for__main_from_state_dict` import (weight loading now happens inside `ModelTTNN.__init__`)
+- Both `main()` and `test_main()` now do `model = ModelTTNN(device)` then call `model(activations)` via the `__call__` operator
+
+--- Time taken: 320.0s ---
