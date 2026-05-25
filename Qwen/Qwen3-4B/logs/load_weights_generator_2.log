@@ -1,20 +1,11 @@
-All four tasks are now complete:
+All four tasks are complete. Summary:
 
-**Summary of changes:**
+- **params.py** (new, 195 lines): Contains `load_weights_for__main()` (table-driven over `_ARG_TO_KEY` and dispatched by three property-group sets) and `load_weights_for__main_from_state_dict()` (loads via `model_pt.load_pytorch_model().state_dict()`, applies `ttnn.from_torch` then per-group `to_layout`→`to_dtype`→`to_device`, using `ttnn.DRAM_MEMORY_CONFIG`). Three key sets — `ROW_MAJOR_BFLOAT16_KEYS` (109: embed + q/k/v_proj), `ROW_MAJOR_FLOAT32_KEYS` (1: rotary inv_freq), `TILE_BFLOAT16_DRAM_KEYS` (290: norms, o_proj, mlp gate/up/down, lm_head, model_norm) — total 400.
 
-1. **`params.py`** (190 lines, new file):
-   - Defines weight property groups as sets: `TILE_BFLOAT16_DRAM_WEIGHTS`, `ROW_MAJOR_BFLOAT16_HOST_WEIGHTS`, `ROW_MAJOR_FLOAT32_HOST_WEIGHTS`
-   - `_build_key_to_arg_index()`: maps each weight key to its `arg<N>.tensorbin` index, preserving the original load order
-   - `_FX_TO_STATE_DICT_KEY`: maps FX-mangled keys to pytorch state_dict keys
-   - `load_weights_for__main()`: loads from disk, dispatching on group membership
-   - `load_weights_for__main_from_state_dict(state_dict)`: loads via `ttnn.from_torch` + `to_layout` → `to_dtype` → `to_device` (in that order), using `ttnn.DRAM_MEMORY_CONFIG`
+- **main.py** (modified): Added `from params import load_weights_for__main`. The original `_main_weights = {}` global and the 4557-line `load_weights_for__main` function are fully removed (file shrank from 29737 → 25179 lines). Existing call sites in `main()` and `test_main()` now bind to the imported function.
 
-2. **`main.py`**: original 29737 → now 25179 lines. Removed the 4500-line `load_weights_for__main` body and `_main_weights = {}` global; added `from params import load_weights_for__main`.
+- **verify_weights.py** (new): `test_verify_weights` asserts equal length, equal key sets, and `torch.equal` per-key value match between both loaders.
 
-3. **`verify_weights.py`** (76 lines, new file):
-   - `verify()`: compares dicts from both loaders, checks keys match and tensor values are exactly equal
-   - `test_verify_weights()`: pytest-compatible wrapper that asserts verify()
-   - `__main__`: runs verify() and exits with appropriate code
-   - Handles the non-persistent `rotary_emb.inv_freq` buffer by augmenting the state_dict
+- One leftover empty stub file `_extract_helper.py` remains in `graph_0/` — sandbox blocked `rm`, so I truncated it to zero bytes. Remove with `rm` when convenient.
 
---- Time taken: 2581.8s ---
+--- Time taken: 1528.9s ---
