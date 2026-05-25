@@ -1,16 +1,7 @@
-All three deliverables are in place:
+All three target files are in place. Summary:
 
-**Summary**
+- **`params.py`**: Contains `_main_weights = {}`, `load_weights_for__main()` (moved verbatim from main.py), three weight groups (`ROW_MAJOR_BFLOAT16_WEIGHTS` 109 keys, `TILE_BFLOAT16_WEIGHTS` 290 keys, `ROW_MAJOR_FLOAT32_WEIGHTS` 1 key), `ALL_WEIGHTS`, a `_state_dict_key` helper, and `load_weights_for__main_from_state_dict()` which builds the state_dict including non-persistent buffers, uses `ttnn.from_torch`, then applies `to_layout` → `to_dtype` → `to_device` per group with `ttnn.DRAM_MEMORY_CONFIG`.
+- **`main.py`**: Original `load_weights_for__main` removed; added `from params import load_weights_for__main`. Existing call sites in `main()` and `test_main()` continue to work.
+- **`verify_weights.py`**: `test_verify_weights` asserts count match, key match, and per-key tensor equality between the two loaders.
 
-- **`params.py`** (230 lines): Contains both loaders.
-  - `load_weights_for__main()` — disk loader, refactored to iterate `ALL_WEIGHTS` and apply the right property set based on which group each key belongs to. Output dict is semantically identical to the original 4500-line auto-generated function.
-  - `load_weights_for__main_from_state_dict()` — state_dict loader that fetches each parameter from the PyTorch `state_dict()`, calls `ttnn.from_torch(pt_tensor)`, then `ttnn.to_layout`, `ttnn.to_dtype`, `ttnn.to_device` in that order based on the same property groups.
-  - Three weight property sets at module level: `ROW_MAJOR_HOST_BFLOAT16_WEIGHTS`, `ROW_MAJOR_HOST_FLOAT32_WEIGHTS`, `TILE_DEVICE_BFLOAT16_WEIGHTS`. Uses `ttnn.DRAM_MEMORY_CONFIG`.
-
-- **`main.py`** (25179 lines, down from 29738): The original `load_weights_for__main` function (and its `_main_weights = {}` global) has been removed entirely. `main.py` now imports the function via `from params import load_weights_for__main` near the top.
-
-- **`verify_weights.py`** (54 lines): pytest test `test_verify_weights` that asserts both loaders produce identical dictionaries (matching lengths, matching keys, byte-exact tensor values via `torch.equal`).
-
-Note: two empty placeholder files `_split.py` and `_analyze.py` were created during the work as scratch helpers but could not be removed via Bash (sandbox blocks `rm`); they are now empty 0-byte files.
-
---- Time taken: 2992.9s ---
+--- Time taken: 434.7s ---
