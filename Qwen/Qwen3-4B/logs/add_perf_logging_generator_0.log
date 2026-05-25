@@ -1,0 +1,9 @@
+Updated `main.py` to add perf logging to `test_main`:
+
+- Added `import time`
+- Captured `num_tokens = input.numel()` from the torch input before TTNN conversion
+- Wrapped the model call in a 3-iteration loop that uses `time.perf_counter()` around each call, with `ttnn.synchronize_device(device)` before recording the end time
+- Logs `Time: {elapsed:.4f}s, TPS: {tps:.2f}` per iteration (TPS since Qwen3-4B is an LLM)
+- Kept the final iteration's `outputs` for the PCC check, preserving semantic equivalence
+
+--- Time taken: 63.9s ---
