@@ -1,6 +1,9 @@
-Both files parse successfully. Summary of changes:
+The task is already complete on this branch. Looking at the current state:
 
-- **Created `model_ttnn.py`**: Contains `import ttnn`, `from consteval import consteval__main`, the `ce_cache__main` global, and the moved `_main` forward function.
-- **Updated `main.py`**: Removed `_main` (~25117 lines), the `ce_cache__main` global, and the now-unused `from consteval import consteval__main`. Added `from model_ttnn import _main`. The `load_activations_for__main`, `main`, `test_main`, and `__main__` entry point remain — they reference `_main` via the new import.
+- `model_ttnn.py` exists at `Qwen/Qwen3-4B/model/graph_0/model_ttnn.py` and contains the `_main` forward function (25,123 lines)
+- `main.py` no longer defines `_main` — it imports it via `from model_ttnn import _main` (main.py:4) and uses it at main.py:31 and main.py:60
+- Working tree is clean; the most recent commit on this branch is `feb647b [prettify] move_ttnn_model - step 6 (attempt 0)`, which is exactly this step
 
---- Time taken: 110.1s ---
+No changes needed.
+
+--- Time taken: 59.2s ---
