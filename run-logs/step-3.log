@@ -1,22 +1,0 @@
-2026-05-26 08:45:06.670 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
-[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights: 100%|██████████| 146/146 [00:00<00:00, 32642.24it/s]
-Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights: 100%|██████████| 146/146 [00:00<00:00, 31021.70it/s]
-2026-05-26 08:45:09.081 (   2.411s) [        4D752140]              stubs.inc:122   WARN| STUB: PJRT_Client_TopologyDescription
-2026-05-26 08:45:09.081939: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
-Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights: 100%|██████████| 146/146 [00:00<00:00, 27374.54it/s]
-Loading weights:   0%|          | 0/146 [00:00<?, ?it/s]Loading weights: 100%|██████████| 146/146 [00:00<00:00, 30589.36it/s]
-/usr/lib/python3.12/copyreg.py:99: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
-  return cls.__new__(cls, *args)
-2026-05-26 08:45:18.567 (  11.897s) [        4D752140]      module_builder.cc:975   WARN| `mhlo.num_partitions` attribute not found, assuming default number of partitions: 1
-2026-05-26 08:45:18.567 (  11.897s) [        4D752140]      module_builder.cc:989   WARN| `mhlo.num_replicas` attribute not found, assuming default number of replicas: 1
-2026-05-26 08:45:18.567 (  11.897s) [        4D752140]      module_builder.cc:999   WARN| Num replicas and num partitions are not set, inferring the number of devices from mesh shape
-2026-05-26 08:46:07.982 (  61.311s) [        4D752140]              stubs.inc:81    WARN| STUB: PJRT_Executable_GetCompiledMemoryStats
-PCC: 1.007812
-Traceback (most recent call last):
-  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/meta-llama/Llama-3.2-1B-Instruct/xla.py", line 211, in <module>
-    compare_pytorch_and_tt_runs()
-  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/meta-llama/Llama-3.2-1B-Instruct/xla.py", line 186, in compare_pytorch_and_tt_runs
-    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
-           ^^^^^^^^^^^^^^^^
-AssertionError: PCC 1.0078125 does not match expected None
