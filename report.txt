@@ -1,0 +1,40 @@
+[meta]
+schema_version = 1
+benchmark_test = test_llama_3_1_8b_instruct_tp
+benchmark_file = tests/benchmark/test_llms.py
+model_id = meta-llama/Llama-3.1-8B-Instruct
+family = llm
+hw_target = qb2
+mesh_shape = 1x4
+worktree = /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/meta-llama/Llama-3.1-8B-Instruct-2
+branch = auto/benchmark/test_llama_3_1_8b_instruct_tp
+generated_at = 2026-05-26T00:00:00Z
+reached_step = 1
+final_status = failed
+final_step_name = run_pt
+
+[step_0_xla_py]
+status = passed
+notes = generated xla.py with stock-transformers imports; LLM patches + TP sharding (full FSDP shard spec for non-3.2 variant) inlined; retargeted n300-llmbox 1x8 -> QB2 1x4
+
+[step_1_run_pt]
+status = failed
+elapsed_s = 4.0
+exit_code = 1
+failure_summary = OSError: gated HF repo meta-llama/Llama-3.1-8B-Instruct; access request awaiting review (HTTP 403)
+log = run-logs/step-1.log
+
+[step_2_run_tt]
+status = not_attempted
+
+[step_3_golden]
+status = not_attempted
+
+[step_4_codegen]
+status = not_attempted
+
+[step_5_single_graph]
+status = not_attempted
+
+[step_6_run_graph]
+status = not_attempted
