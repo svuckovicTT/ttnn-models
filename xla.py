@@ -78,13 +78,31 @@ def load_input():
     # StaticCache lives on CPU and is moved to the device explicitly later — see
     # https://github.com/tenstorrent/tt-xla/issues/1645 for why we don't construct
     # it directly on the device.
+    # early_initialization is required to pre-allocate key/value tensors so that
+    # _inputs_to_device can move them to the XLA device before the forward pass
+    # (mirrors init_static_cache in benchmarks/llm_utils/decode_utils.py:113-145).
     model = load_pytorch_model()
+    cfg = model.config
+    head_dim = (
+        cfg.head_dim
+        if hasattr(cfg, "head_dim") and cfg.head_dim
+        else cfg.hidden_size // cfg.num_attention_heads
+    )
+    num_key_value_heads = getattr(cfg, "num_key_value_heads", cfg.num_attention_heads)
+
     past_key_values = StaticCache(
-        config=model.config,
+        config=cfg,
         max_batch_size=BATCH_SIZE,
         max_cache_len=INPUT_SEQUENCE_LENGTH,
         device="cpu",
         dtype=DATA_FORMAT,
+    )
+    past_key_values.early_initialization(
+        batch_size=BATCH_SIZE,
+        num_heads=num_key_value_heads,
+        head_dim=head_dim,
+        dtype=DATA_FORMAT,
+        device="cpu",
     )
 
     cache_position = torch.arange(0, input_ids.shape[1])
@@ -99,13 +117,22 @@ def load_input():
 
 def _inputs_to_device(inputs, device):
     """Mirrors transfer_to_device() from benchmarks/llm_benchmark.py:179-205 for the
-    StaticCache path (no MLA layers in Gemma 1.1-2b-it)."""
+    StaticCache path (no MLA layers in Gemma 1.1-2b-it).
+    Also moves cumulative_length to the device so that get_seq_length() returns a tensor
+    on the same device as inputs_embeds when the model computes position_ids."""
     out = dict(inputs)
     out["input_ids"] = out["input_ids"].to(device)
     out["cache_position"] = out["cache_position"].to(device)
     for layer in out["past_key_values"].layers:
         layer.keys = layer.keys.to(device)
         layer.values = layer.values.to(device)
+        if hasattr(layer, "cumulative_length") and isinstance(
+            layer.cumulative_length, torch.Tensor
+        ):
+            layer.cumulative_length = layer.cumulative_length.to(device)
+        # StaticLayer.device is used internally for torch.arange in update(); keep in sync.
+        if hasattr(layer, "device"):
+            layer.device = device
     return out
 
 
@@ -152,7 +179,7 @@ def codegen_model():
 
 def compare_pytorch_and_tt_runs():
     # Capture exact PCC from first --golden run and paste here.
-    exact_pcc = None
+    exact_pcc = 0.7578125
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()

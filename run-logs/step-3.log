@@ -1,0 +1,21 @@
+2026-05-26 10:08:21.772 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Loading weights:   0%|          | 0/164 [00:00<?, ?it/s]Loading weights: 100%|██████████| 164/164 [00:00<00:00, 31995.25it/s]
+Loading weights:   0%|          | 0/164 [00:00<?, ?it/s]Loading weights: 100%|██████████| 164/164 [00:00<00:00, 32209.49it/s]
+2026-05-26 10:08:24.660 (   2.887s) [        84CB2140]              stubs.inc:122   WARN| STUB: PJRT_Client_TopologyDescription
+2026-05-26 10:08:24.660257: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
+Loading weights:   0%|          | 0/164 [00:00<?, ?it/s]Loading weights: 100%|██████████| 164/164 [00:00<00:00, 27052.58it/s]
+Loading weights:   0%|          | 0/164 [00:00<?, ?it/s]Loading weights: 100%|██████████| 164/164 [00:00<00:00, 28944.49it/s]
+/usr/lib/python3.12/copyreg.py:99: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return cls.__new__(cls, *args)
+2026-05-26 10:08:35.067 (  13.294s) [        84CB2140]      module_builder.cc:975   WARN| `mhlo.num_partitions` attribute not found, assuming default number of partitions: 1
+2026-05-26 10:08:35.067 (  13.294s) [        84CB2140]      module_builder.cc:989   WARN| `mhlo.num_replicas` attribute not found, assuming default number of replicas: 1
+2026-05-26 10:08:35.067 (  13.294s) [        84CB2140]      module_builder.cc:999   WARN| Num replicas and num partitions are not set, inferring the number of devices from mesh shape
+2026-05-26 10:10:04.642 ( 102.870s) [        84CB2140]              stubs.inc:81    WARN| STUB: PJRT_Executable_GetCompiledMemoryStats
+PCC: 0.757812
+Traceback (most recent call last):
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/google/gemma-1.1-2b-it/xla.py", line 222, in <module>
+    compare_pytorch_and_tt_runs()
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/google/gemma-1.1-2b-it/xla.py", line 197, in compare_pytorch_and_tt_runs
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+           ^^^^^^^^^^^^^^^^
+AssertionError: PCC 0.7578125 does not match expected None
