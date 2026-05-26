@@ -1,0 +1,25 @@
+2026-05-26 12:26:09.576 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 16194.22it/s]
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 31574.64it/s]
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 43240.25it/s]
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 32382.18it/s]
+2026-05-26 12:26:14.619 (   5.043s) [        89F72140]              stubs.inc:122   WARN| STUB: PJRT_Client_TopologyDescription
+2026-05-26 12:26:14.619433: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 35772.32it/s]
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 24059.11it/s]
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 17810.21it/s]
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 29298.16it/s]
+/usr/lib/python3.12/copyreg.py:99: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return cls.__new__(cls, *args)
+2026-05-26 12:26:31.904 (  22.328s) [        89F72140]      module_builder.cc:975   WARN| `mhlo.num_partitions` attribute not found, assuming default number of partitions: 1
+2026-05-26 12:26:31.904 (  22.328s) [        89F72140]      module_builder.cc:989   WARN| `mhlo.num_replicas` attribute not found, assuming default number of replicas: 1
+2026-05-26 12:26:31.904 (  22.328s) [        89F72140]      module_builder.cc:999   WARN| Num replicas and num partitions are not set, inferring the number of devices from mesh shape
+2026-05-26 12:26:34.510 (  24.934s) [        89F72140]              stubs.inc:81    WARN| STUB: PJRT_Executable_GetCompiledMemoryStats
+PCC: 0.996094
+Traceback (most recent call last):
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/Qwen/Qwen2.5-7B-Instruct/xla.py", line 215, in <module>
+    compare_pytorch_and_tt_runs()
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/Qwen/Qwen2.5-7B-Instruct/xla.py", line 190, in compare_pytorch_and_tt_runs
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+           ^^^^^^^^^^^^^^^^
+AssertionError: PCC 0.99609375 does not match expected None
