@@ -1,0 +1,6 @@
+Both files parse correctly. Summary of changes:
+
+- **Created** `model_ttnn.py` containing `import ttnn`, the `ce_cache__main = {}` global, and the `_main` forward function with a deferred `from main import consteval__main` to avoid a circular import.
+- **Modified** `main.py`: added `from model_ttnn import _main` to the imports, removed the `ce_cache__main = {}` global and the entire `_main` function body (lines 3767–22588). The existing call sites in `main()` and `test_main()` still call `_main(...)` and now resolve to the imported version.
+
+--- Time taken: 402.8s ---
