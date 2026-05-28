@@ -1,0 +1,7 @@
+All three changes are in place:
+
+- **`params.py`**: removed `load_weights_for__main` (the `.tensorbin`-based loader) and its `_main_weights` global; kept `TILE_WEIGHTS`/`HOST_WEIGHTS`/`ALL_WEIGHTS` and `load_weights_for__main_from_state_dict`.
+- **`main.py`**: import and both call sites (`main()` and `test_main()`) now use `load_weights_for__main_from_state_dict`.
+- **`verify_weights.py`**: deleted.
+
+--- Time taken: 62.3s ---
