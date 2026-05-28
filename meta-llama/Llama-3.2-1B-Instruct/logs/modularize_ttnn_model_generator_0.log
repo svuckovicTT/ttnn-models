@@ -1,0 +1,10 @@
+The refactor is complete. The model_ttnn.py file has been restructured from a flat 18,831-line forward into a modular layout:
+
+- **`LightweightModule`** - base class (unchanged)
+- **`ModelTTNN`** - main class; `__init__` instantiates the modules, `forward` does args unpacking, embedding prologue, layer0 + 15-layer loop, then final norm/lm_head epilogue
+- **`LlamaDecoderLayer0`** - first decoder layer; also produces the shared RoPE cos/sin and the causal attention mask
+- **`LlamaDecoderLayer`** - standard decoder layer (one class, 15 instances for layers 1-15) parameterized by `layer_idx` for weight lookups
+
+Verified the new file imports cleanly, all classes extend `LightweightModule`, and no variable references are undefined across the three forward methods. File size dropped from 18,831 → 2,842 lines because the body of layers 1-15 is now one shared template.
+
+--- Time taken: 1242.0s ---
