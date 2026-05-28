@@ -1,0 +1,14 @@
+All three files parse and `DeviceGetter` is fully gone. Summary of changes:
+
+- **`utils.py`** — Removed the `DeviceGetter` singleton (and the now-unused `import math`).
+- **`params.py`** — `load_weights_for__main_from_state_dict` now takes `device` as a parameter; the `import utils` is gone.
+- **`main.py`**:
+  - Every `main_const_eval_X(...)` now accepts a trailing `device` parameter (or `(device)` if it had no args). Its body uses `device` directly instead of `utils_DeviceGetter_get_device_<N>`.
+  - `load_activations_for__main(device)` — same treatment.
+  - `consteval__main(ce_cache, weights, device)` threads `device` into all 88 `main_const_eval_X` calls.
+  - `_main(activations, weights, device)` passes `device` to `consteval__main`.
+  - `main()` and `test_main()` are now the only places that open the device (`ttnn.open_mesh_device(mesh_shape=ttnn.MeshShape((1, 1)), l1_small_size=1 << 15)`) and pipe it to all the downstream functions.
+
+`consteval.py` doesn't exist in this codegen dir, so nothing to do there.
+
+--- Time taken: 392.2s ---
