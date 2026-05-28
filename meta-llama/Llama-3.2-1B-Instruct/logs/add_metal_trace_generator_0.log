@@ -1,0 +1,17 @@
+All edits are in place. Summary of changes:
+
+**`main.py` — `test_main`:**
+- Replaced device-resident activation builders with host-side `from_torch` helpers.
+- Built `host_tensors` once, then allocated parallel persistent DRAM `device_tensors` via `ttnn.allocate_tensor_on_device`.
+- Added `copy_inputs_to_device()` helper that `ttnn.copy_host_to_device_tensor`s each host tensor into its device counterpart.
+- 5 timed runs: (1) compile/cache, (2) `begin_trace_capture` → `model()` → `end_trace_capture`, (3–5) `ttnn.execute_trace` against the persistent DRAM inputs.
+- PCC check reads `outputs[-1]` captured during trace capture (same address used by every subsequent trace execution).
+
+**`model_ttnn.py` — removed input-tensor deallocations:**
+- `ttnn.deallocate(args_0, False)` at the old line 251 (input_ids).
+- `ttnn.deallocate(args_1, False)` at the old line 1403 (layer-0 cumulative_length).
+- `ttnn.deallocate(args_attn, False)` at the old line 2676 (layers-1..15 cumulative_length, hit each iteration of the decoder-layer loop).
+
+Per the instructions, no `trace_region_size` or `enable_program_cache` was set on `open_mesh_device`.
+
+--- Time taken: 242.8s ---
