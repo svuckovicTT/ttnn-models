@@ -1,3 +1,5 @@
+import time
+
 import ttnn
 import utils
 import ttir_cpu
@@ -4710,25 +4712,37 @@ def test_main():
 
     pytorch_input = model_pt.load_input()
     layers = pytorch_input["past_key_values"].layers
+    num_tokens = pytorch_input["input_ids"].numel()
 
     # Mirror load_activations_for__main() ordering:
     #   [0]   layer 0 cumulative_length (INT32, ROW_MAJOR)
     #   [1]   input_ids                 (INT32, ROW_MAJOR)
     #   [2:4] layer 0 keys, values      (BFLOAT16, TILE)
     # then for each subsequent layer: cumulative_length, keys, values
-    activations = [
-        to_ttnn_int32_row_major(layers[0].cumulative_length),
-        to_ttnn_int32_row_major(pytorch_input["input_ids"]),
-        to_ttnn_bfloat16_tile(layers[0].keys),
-        to_ttnn_bfloat16_tile(layers[0].values),
-    ]
-    for layer in layers[1:]:
-        activations.append(to_ttnn_int32_row_major(layer.cumulative_length))
-        activations.append(to_ttnn_bfloat16_tile(layer.keys))
-        activations.append(to_ttnn_bfloat16_tile(layer.values))
+    def build_activations():
+        activations = [
+            to_ttnn_int32_row_major(layers[0].cumulative_length),
+            to_ttnn_int32_row_major(pytorch_input["input_ids"]),
+            to_ttnn_bfloat16_tile(layers[0].keys),
+            to_ttnn_bfloat16_tile(layers[0].values),
+        ]
+        for layer in layers[1:]:
+            activations.append(to_ttnn_int32_row_major(layer.cumulative_length))
+            activations.append(to_ttnn_bfloat16_tile(layer.keys))
+            activations.append(to_ttnn_bfloat16_tile(layer.values))
+        return activations
 
     model = ModelTTNN(device)
-    outputs = model(activations)
+
+    for i in range(3):
+        activations = build_activations()
+        start = time.perf_counter()
+        outputs = model(activations)
+        ttnn.synchronize_device(device)
+        end = time.perf_counter()
+        elapsed = end - start
+        tps = num_tokens / elapsed
+        print(f"Run {i + 1}: time={elapsed:.4f}s, TPS={tps:.2f}")
 
     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
     golden_output = model_pt.run_pytorch_model()
