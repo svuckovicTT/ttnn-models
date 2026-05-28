@@ -1,0 +1,12 @@
+The changes are in place. Summary of edits to `main.py`:
+
+1. **Added `import time`** at the top of the file.
+
+2. **Refactored `test_main()`** for perf logging:
+   - Extracted activation creation into a `build_activations()` helper since activations are consumed/deallocated on each forward pass.
+   - Computed `num_tokens = pytorch_input["input_ids"].numel()` (batch × seq_len = 32 × 128 = 4096 tokens per call).
+   - Added a loop running the model 3 times: rebuild activations, `time.perf_counter()` before, call model, `ttnn.synchronize_device(device)`, `time.perf_counter()` after.
+   - Logs each run as `Run {i+1}: time={elapsed:.4f}s, TPS={tps:.2f}` (TPS since Llama is an LLM).
+   - PCC check uses the outputs from the last (3rd) run.
+
+--- Time taken: 123.3s ---
