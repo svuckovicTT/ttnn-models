@@ -1,0 +1,18 @@
+All requirements are met. Here's a summary of what was done:
+
+**Created `constants.py`** (172 lines, down from 3700+ lines of consteval logic in `main.py`):
+- `_to_bfloat8_b_tile(weight, device)` — single deduplicated helper for the BFLOAT8_B TILE typecast pattern (replaces 65 nearly-identical functions: `main_const_eval_1, _2, _5, _6, _7, _9..._14, _18..._23, _28..._33, _35, _36, _38..._46, _49, _51..._60, _62..._64, _66, _67, _70..._73, _75..._80, _82, _84..._87`)
+- `_fuse_qkv_to_bfloat8_b_tile(k, v, q, device)` — single helper for QKV fusion (replaces 16 functions: `main_const_eval_3, _4, _15..._17, _24, _26, _27, _34, _37, _47, _48, _68, _69, _74, _81`); simplifies CPU [K, Q, V]-concat + on-device slice/reconcat into a direct CPU [Q, K, V]-concat
+- `_prepare_rotary_inv_freq` — for `main_const_eval_25`
+- `_embed_tokens_to_device` — for `main_const_eval_65`
+- `_make_int32_iota_tile`, `_make_full_tile` — for the five standalone constants
+- `run_consteval(weights, device)` — orchestrator using nested loops over 16 layers × 4 projections, plus QKV fuse per layer; mutates `weights` in place
+
+**Updated `model_ttnn.py`**:
+- Removed `ce_cache__main` global, the `from main import consteval__main` import, and the lazy invocation block in `forward`
+- Added `import constants` and `self.weights = constants.run_consteval(self.weights, device)` in `__init__`
+- Renamed all 88 `ce_cache__main["main_const_eval_N"]` references to descriptive `self.weights[...]` keys (e.g. `model.layers.3.self_attn.o_proj.weight`, `model.layers.0.self_attn.qkv_proj.weight`, `iota_seq_18`, `const_attn_mask_neg_inf`)
+
+Untouched: `main.py`, `params.py`, and all other files.
+
+--- Time taken: 1079.4s ---
