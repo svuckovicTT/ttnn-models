@@ -248,7 +248,6 @@ class LlamaModel(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(args_0, False)
         ttnn_reshape_0 = ttnn.reshape(
             ttnn_typecast_146,
             [576],
@@ -1400,7 +1399,6 @@ class LlamaDecoderLayerFirst(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_to_memory_config_8, False)
-        ttnn.deallocate(args_1, False)
         ttnn_to_memory_config_9 = ttnn.to_memory_config(
             ttnn_add_1,
             ttnn.MemoryConfig(
@@ -2673,7 +2671,6 @@ class LlamaDecoderLayer(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_to_memory_config_19, False)
-        ttnn.deallocate(args_attn, False)
         ttnn_to_memory_config_20 = ttnn.to_memory_config(
             ttnn_add_4,
             ttnn.MemoryConfig(

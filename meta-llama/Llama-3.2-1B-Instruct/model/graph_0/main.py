@@ -4692,22 +4692,18 @@ def test_main():
         ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
     )
 
-    def to_ttnn_int32_row_major(tensor):
+    def to_host_int32_row_major(tensor):
         return ttnn.from_torch(
             tensor,
             dtype=ttnn.DataType.INT32,
             layout=ttnn.Layout.ROW_MAJOR,
-            device=device,
-            memory_config=interleaved_dram_memory_config,
         )
 
-    def to_ttnn_bfloat16_tile(tensor):
+    def to_host_bfloat16_tile(tensor):
         return ttnn.from_torch(
             tensor,
             dtype=ttnn.DataType.BFLOAT16,
             layout=ttnn.Layout.TILE,
-            device=device,
-            memory_config=interleaved_dram_memory_config,
         )
 
     pytorch_input = model_pt.load_input()
@@ -4719,30 +4715,62 @@ def test_main():
     #   [1]   input_ids                 (INT32, ROW_MAJOR)
     #   [2:4] layer 0 keys, values      (BFLOAT16, TILE)
     # then for each subsequent layer: cumulative_length, keys, values
-    def build_activations():
-        activations = [
-            to_ttnn_int32_row_major(layers[0].cumulative_length),
-            to_ttnn_int32_row_major(pytorch_input["input_ids"]),
-            to_ttnn_bfloat16_tile(layers[0].keys),
-            to_ttnn_bfloat16_tile(layers[0].values),
-        ]
-        for layer in layers[1:]:
-            activations.append(to_ttnn_int32_row_major(layer.cumulative_length))
-            activations.append(to_ttnn_bfloat16_tile(layer.keys))
-            activations.append(to_ttnn_bfloat16_tile(layer.values))
-        return activations
+    host_tensors = [
+        to_host_int32_row_major(layers[0].cumulative_length),
+        to_host_int32_row_major(pytorch_input["input_ids"]),
+        to_host_bfloat16_tile(layers[0].keys),
+        to_host_bfloat16_tile(layers[0].values),
+    ]
+    for layer in layers[1:]:
+        host_tensors.append(to_host_int32_row_major(layer.cumulative_length))
+        host_tensors.append(to_host_bfloat16_tile(layer.keys))
+        host_tensors.append(to_host_bfloat16_tile(layer.values))
+
+    device_tensors = [
+        ttnn.allocate_tensor_on_device(
+            host_tensor.shape,
+            host_tensor.dtype,
+            host_tensor.layout,
+            device,
+            interleaved_dram_memory_config,
+        )
+        for host_tensor in host_tensors
+    ]
+
+    def copy_inputs_to_device():
+        for host_tensor, device_tensor in zip(host_tensors, device_tensors):
+            ttnn.copy_host_to_device_tensor(host_tensor, device_tensor, cq_id=0)
+
+    def log_run(run_idx, start, end):
+        elapsed = end - start
+        tps = num_tokens / elapsed
+        print(f"Run {run_idx}: time={elapsed:.4f}s, TPS={tps:.2f}")
 
     model = ModelTTNN(device)
 
+    # Run 1: compile ops and fill the program cache
+    copy_inputs_to_device()
+    start = time.perf_counter()
+    outputs = model(device_tensors)
+    ttnn.synchronize_device(device)
+    log_run(1, start, time.perf_counter())
+
+    # Run 2: capture trace
+    copy_inputs_to_device()
+    start = time.perf_counter()
+    tid = ttnn.begin_trace_capture(device, cq_id=0)
+    outputs = model(device_tensors)
+    ttnn.end_trace_capture(device, tid, cq_id=0)
+    ttnn.synchronize_device(device)
+    log_run(2, start, time.perf_counter())
+
+    # Runs 3-5: execute trace
     for i in range(3):
-        activations = build_activations()
+        copy_inputs_to_device()
         start = time.perf_counter()
-        outputs = model(activations)
+        ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
         ttnn.synchronize_device(device)
-        end = time.perf_counter()
-        elapsed = end - start
-        tps = num_tokens / elapsed
-        print(f"Run {i + 1}: time={elapsed:.4f}s, TPS={tps:.2f}")
+        log_run(i + 3, start, time.perf_counter())
 
     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
     golden_output = model_pt.run_pytorch_model()
