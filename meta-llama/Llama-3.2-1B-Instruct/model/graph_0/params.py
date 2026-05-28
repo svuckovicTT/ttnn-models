@@ -1,0 +1,1357 @@
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
+
+import ttnn
+import utils
+import model_pt
+
+
+_LAYER_INDICES = range(16)
+
+# Layer-norm weights (and the final RMSNorm) are loaded onto the device in TILE
+# layout. Everything else stays on host in ROW_MAJOR layout.
+TILE_WEIGHTS = {
+    "model.norm.weight",
+    *(f"model.layers.{i}.input_layernorm.weight" for i in _LAYER_INDICES),
+    *(f"model.layers.{i}.post_attention_layernorm.weight" for i in _LAYER_INDICES),
+}
+
+HOST_WEIGHTS = {
+    "lm_head.weight",
+    "model.embed_tokens.weight",
+    "model.rotary_emb.inv_freq",
+    *(
+        f"model.layers.{i}.{name}"
+        for i in _LAYER_INDICES
+        for name in (
+            "mlp.down_proj.weight",
+            "mlp.gate_proj.weight",
+            "mlp.up_proj.weight",
+            "self_attn.k_proj.weight",
+            "self_attn.o_proj.weight",
+            "self_attn.q_proj.weight",
+            "self_attn.v_proj.weight",
+        )
+    ),
+}
+
+ALL_WEIGHTS = TILE_WEIGHTS | HOST_WEIGHTS
+
+
+_main_weights = {}
+
+
+def load_weights_for__main():
+    utils_DeviceGetter_get_device_89 = utils.DeviceGetter.get_device((1, 1))
+    global _main_weights
+    utils_load_tensor_49 = utils.load_tensor(
+        "./tensors/arg1.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.rotary_emb.inv_freq"] = utils_load_tensor_49
+    utils_load_tensor_50 = utils.load_tensor(
+        "./tensors/arg2.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.0.self_attn.k_proj.weight"] = utils_load_tensor_50
+    utils_load_tensor_51 = utils.load_tensor(
+        "./tensors/arg3.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.0.input_layernorm.weight"] = utils_load_tensor_51
+    utils_load_tensor_52 = utils.load_tensor(
+        "./tensors/arg5.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.embed_tokens.weight"] = utils_load_tensor_52
+    utils_load_tensor_53 = utils.load_tensor(
+        "./tensors/arg7.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.0.self_attn.v_proj.weight"] = utils_load_tensor_53
+    utils_load_tensor_54 = utils.load_tensor(
+        "./tensors/arg9.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.1.self_attn.k_proj.weight"] = utils_load_tensor_54
+    utils_load_tensor_55 = utils.load_tensor(
+        "./tensors/arg10.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.1.input_layernorm.weight"] = utils_load_tensor_55
+    utils_load_tensor_56 = utils.load_tensor(
+        "./tensors/arg11.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.0.mlp.down_proj.weight"] = utils_load_tensor_56
+    utils_load_tensor_57 = utils.load_tensor(
+        "./tensors/arg12.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.0.mlp.up_proj.weight"] = utils_load_tensor_57
+    utils_load_tensor_58 = utils.load_tensor(
+        "./tensors/arg13.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.0.post_attention_layernorm.weight"] = (
+        utils_load_tensor_58
+    )
+    utils_load_tensor_59 = utils.load_tensor(
+        "./tensors/arg14.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.0.self_attn.o_proj.weight"] = utils_load_tensor_59
+    utils_load_tensor_60 = utils.load_tensor(
+        "./tensors/arg15.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.0.self_attn.q_proj.weight"] = utils_load_tensor_60
+    utils_load_tensor_61 = utils.load_tensor(
+        "./tensors/arg16.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.0.mlp.gate_proj.weight"] = utils_load_tensor_61
+    utils_load_tensor_62 = utils.load_tensor(
+        "./tensors/arg19.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.1.self_attn.v_proj.weight"] = utils_load_tensor_62
+    utils_load_tensor_63 = utils.load_tensor(
+        "./tensors/arg21.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.2.self_attn.k_proj.weight"] = utils_load_tensor_63
+    utils_load_tensor_64 = utils.load_tensor(
+        "./tensors/arg22.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.2.input_layernorm.weight"] = utils_load_tensor_64
+    utils_load_tensor_65 = utils.load_tensor(
+        "./tensors/arg23.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.1.mlp.down_proj.weight"] = utils_load_tensor_65
+    utils_load_tensor_66 = utils.load_tensor(
+        "./tensors/arg24.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.1.mlp.up_proj.weight"] = utils_load_tensor_66
+    utils_load_tensor_67 = utils.load_tensor(
+        "./tensors/arg25.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.1.post_attention_layernorm.weight"] = (
+        utils_load_tensor_67
+    )
+    utils_load_tensor_68 = utils.load_tensor(
+        "./tensors/arg26.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.1.self_attn.o_proj.weight"] = utils_load_tensor_68
+    utils_load_tensor_69 = utils.load_tensor(
+        "./tensors/arg27.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.1.self_attn.q_proj.weight"] = utils_load_tensor_69
+    utils_load_tensor_70 = utils.load_tensor(
+        "./tensors/arg28.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.1.mlp.gate_proj.weight"] = utils_load_tensor_70
+    utils_load_tensor_71 = utils.load_tensor(
+        "./tensors/arg31.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.2.self_attn.v_proj.weight"] = utils_load_tensor_71
+    utils_load_tensor_72 = utils.load_tensor(
+        "./tensors/arg33.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.3.self_attn.k_proj.weight"] = utils_load_tensor_72
+    utils_load_tensor_73 = utils.load_tensor(
+        "./tensors/arg34.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.3.input_layernorm.weight"] = utils_load_tensor_73
+    utils_load_tensor_74 = utils.load_tensor(
+        "./tensors/arg35.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.2.mlp.down_proj.weight"] = utils_load_tensor_74
+    utils_load_tensor_75 = utils.load_tensor(
+        "./tensors/arg36.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.2.mlp.up_proj.weight"] = utils_load_tensor_75
+    utils_load_tensor_76 = utils.load_tensor(
+        "./tensors/arg37.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.2.post_attention_layernorm.weight"] = (
+        utils_load_tensor_76
+    )
+    utils_load_tensor_77 = utils.load_tensor(
+        "./tensors/arg38.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.2.self_attn.o_proj.weight"] = utils_load_tensor_77
+    utils_load_tensor_78 = utils.load_tensor(
+        "./tensors/arg39.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.2.self_attn.q_proj.weight"] = utils_load_tensor_78
+    utils_load_tensor_79 = utils.load_tensor(
+        "./tensors/arg40.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.2.mlp.gate_proj.weight"] = utils_load_tensor_79
+    utils_load_tensor_80 = utils.load_tensor(
+        "./tensors/arg43.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.3.self_attn.v_proj.weight"] = utils_load_tensor_80
+    utils_load_tensor_81 = utils.load_tensor(
+        "./tensors/arg45.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.4.self_attn.k_proj.weight"] = utils_load_tensor_81
+    utils_load_tensor_82 = utils.load_tensor(
+        "./tensors/arg46.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.4.input_layernorm.weight"] = utils_load_tensor_82
+    utils_load_tensor_83 = utils.load_tensor(
+        "./tensors/arg47.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.3.mlp.down_proj.weight"] = utils_load_tensor_83
+    utils_load_tensor_84 = utils.load_tensor(
+        "./tensors/arg48.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.3.mlp.up_proj.weight"] = utils_load_tensor_84
+    utils_load_tensor_85 = utils.load_tensor(
+        "./tensors/arg49.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.3.post_attention_layernorm.weight"] = (
+        utils_load_tensor_85
+    )
+    utils_load_tensor_86 = utils.load_tensor(
+        "./tensors/arg50.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.3.self_attn.o_proj.weight"] = utils_load_tensor_86
+    utils_load_tensor_87 = utils.load_tensor(
+        "./tensors/arg51.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.3.self_attn.q_proj.weight"] = utils_load_tensor_87
+    utils_load_tensor_88 = utils.load_tensor(
+        "./tensors/arg52.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.3.mlp.gate_proj.weight"] = utils_load_tensor_88
+    utils_load_tensor_89 = utils.load_tensor(
+        "./tensors/arg55.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.4.self_attn.v_proj.weight"] = utils_load_tensor_89
+    utils_load_tensor_90 = utils.load_tensor(
+        "./tensors/arg57.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.5.self_attn.k_proj.weight"] = utils_load_tensor_90
+    utils_load_tensor_91 = utils.load_tensor(
+        "./tensors/arg58.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.5.input_layernorm.weight"] = utils_load_tensor_91
+    utils_load_tensor_92 = utils.load_tensor(
+        "./tensors/arg59.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.4.mlp.down_proj.weight"] = utils_load_tensor_92
+    utils_load_tensor_93 = utils.load_tensor(
+        "./tensors/arg60.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.4.mlp.up_proj.weight"] = utils_load_tensor_93
+    utils_load_tensor_94 = utils.load_tensor(
+        "./tensors/arg61.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.4.post_attention_layernorm.weight"] = (
+        utils_load_tensor_94
+    )
+    utils_load_tensor_95 = utils.load_tensor(
+        "./tensors/arg62.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.4.self_attn.o_proj.weight"] = utils_load_tensor_95
+    utils_load_tensor_96 = utils.load_tensor(
+        "./tensors/arg63.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.4.self_attn.q_proj.weight"] = utils_load_tensor_96
+    utils_load_tensor_97 = utils.load_tensor(
+        "./tensors/arg64.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.4.mlp.gate_proj.weight"] = utils_load_tensor_97
+    utils_load_tensor_98 = utils.load_tensor(
+        "./tensors/arg67.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.5.self_attn.v_proj.weight"] = utils_load_tensor_98
+    utils_load_tensor_99 = utils.load_tensor(
+        "./tensors/arg69.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.6.self_attn.k_proj.weight"] = utils_load_tensor_99
+    utils_load_tensor_100 = utils.load_tensor(
+        "./tensors/arg70.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.6.input_layernorm.weight"] = utils_load_tensor_100
+    utils_load_tensor_101 = utils.load_tensor(
+        "./tensors/arg71.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.5.mlp.down_proj.weight"] = utils_load_tensor_101
+    utils_load_tensor_102 = utils.load_tensor(
+        "./tensors/arg72.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.5.mlp.up_proj.weight"] = utils_load_tensor_102
+    utils_load_tensor_103 = utils.load_tensor(
+        "./tensors/arg73.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.5.post_attention_layernorm.weight"] = (
+        utils_load_tensor_103
+    )
+    utils_load_tensor_104 = utils.load_tensor(
+        "./tensors/arg74.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.5.self_attn.o_proj.weight"] = utils_load_tensor_104
+    utils_load_tensor_105 = utils.load_tensor(
+        "./tensors/arg75.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.5.self_attn.q_proj.weight"] = utils_load_tensor_105
+    utils_load_tensor_106 = utils.load_tensor(
+        "./tensors/arg76.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.5.mlp.gate_proj.weight"] = utils_load_tensor_106
+    utils_load_tensor_107 = utils.load_tensor(
+        "./tensors/arg79.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.6.self_attn.v_proj.weight"] = utils_load_tensor_107
+    utils_load_tensor_108 = utils.load_tensor(
+        "./tensors/arg81.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.7.self_attn.k_proj.weight"] = utils_load_tensor_108
+    utils_load_tensor_109 = utils.load_tensor(
+        "./tensors/arg82.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.7.input_layernorm.weight"] = utils_load_tensor_109
+    utils_load_tensor_110 = utils.load_tensor(
+        "./tensors/arg83.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.6.mlp.down_proj.weight"] = utils_load_tensor_110
+    utils_load_tensor_111 = utils.load_tensor(
+        "./tensors/arg84.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.6.mlp.up_proj.weight"] = utils_load_tensor_111
+    utils_load_tensor_112 = utils.load_tensor(
+        "./tensors/arg85.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.6.post_attention_layernorm.weight"] = (
+        utils_load_tensor_112
+    )
+    utils_load_tensor_113 = utils.load_tensor(
+        "./tensors/arg86.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.6.self_attn.o_proj.weight"] = utils_load_tensor_113
+    utils_load_tensor_114 = utils.load_tensor(
+        "./tensors/arg87.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.6.self_attn.q_proj.weight"] = utils_load_tensor_114
+    utils_load_tensor_115 = utils.load_tensor(
+        "./tensors/arg88.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.6.mlp.gate_proj.weight"] = utils_load_tensor_115
+    utils_load_tensor_116 = utils.load_tensor(
+        "./tensors/arg91.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.7.self_attn.v_proj.weight"] = utils_load_tensor_116
+    utils_load_tensor_117 = utils.load_tensor(
+        "./tensors/arg93.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.8.self_attn.k_proj.weight"] = utils_load_tensor_117
+    utils_load_tensor_118 = utils.load_tensor(
+        "./tensors/arg94.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.8.input_layernorm.weight"] = utils_load_tensor_118
+    utils_load_tensor_119 = utils.load_tensor(
+        "./tensors/arg95.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.7.mlp.down_proj.weight"] = utils_load_tensor_119
+    utils_load_tensor_120 = utils.load_tensor(
+        "./tensors/arg96.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.7.mlp.up_proj.weight"] = utils_load_tensor_120
+    utils_load_tensor_121 = utils.load_tensor(
+        "./tensors/arg97.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.7.post_attention_layernorm.weight"] = (
+        utils_load_tensor_121
+    )
+    utils_load_tensor_122 = utils.load_tensor(
+        "./tensors/arg98.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.7.self_attn.o_proj.weight"] = utils_load_tensor_122
+    utils_load_tensor_123 = utils.load_tensor(
+        "./tensors/arg99.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.7.self_attn.q_proj.weight"] = utils_load_tensor_123
+    utils_load_tensor_124 = utils.load_tensor(
+        "./tensors/arg100.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.7.mlp.gate_proj.weight"] = utils_load_tensor_124
+    utils_load_tensor_125 = utils.load_tensor(
+        "./tensors/arg103.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.8.self_attn.v_proj.weight"] = utils_load_tensor_125
+    utils_load_tensor_126 = utils.load_tensor(
+        "./tensors/arg105.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.9.self_attn.k_proj.weight"] = utils_load_tensor_126
+    utils_load_tensor_127 = utils.load_tensor(
+        "./tensors/arg106.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.9.input_layernorm.weight"] = utils_load_tensor_127
+    utils_load_tensor_128 = utils.load_tensor(
+        "./tensors/arg107.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.8.mlp.down_proj.weight"] = utils_load_tensor_128
+    utils_load_tensor_129 = utils.load_tensor(
+        "./tensors/arg108.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.8.mlp.up_proj.weight"] = utils_load_tensor_129
+    utils_load_tensor_130 = utils.load_tensor(
+        "./tensors/arg109.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.8.post_attention_layernorm.weight"] = (
+        utils_load_tensor_130
+    )
+    utils_load_tensor_131 = utils.load_tensor(
+        "./tensors/arg110.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.8.self_attn.o_proj.weight"] = utils_load_tensor_131
+    utils_load_tensor_132 = utils.load_tensor(
+        "./tensors/arg111.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.8.self_attn.q_proj.weight"] = utils_load_tensor_132
+    utils_load_tensor_133 = utils.load_tensor(
+        "./tensors/arg112.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.8.mlp.gate_proj.weight"] = utils_load_tensor_133
+    utils_load_tensor_134 = utils.load_tensor(
+        "./tensors/arg115.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.9.self_attn.v_proj.weight"] = utils_load_tensor_134
+    utils_load_tensor_135 = utils.load_tensor(
+        "./tensors/arg117.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.10.self_attn.k_proj.weight"] = utils_load_tensor_135
+    utils_load_tensor_136 = utils.load_tensor(
+        "./tensors/arg118.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.10.input_layernorm.weight"] = utils_load_tensor_136
+    utils_load_tensor_137 = utils.load_tensor(
+        "./tensors/arg119.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.9.mlp.down_proj.weight"] = utils_load_tensor_137
+    utils_load_tensor_138 = utils.load_tensor(
+        "./tensors/arg120.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.9.mlp.up_proj.weight"] = utils_load_tensor_138
+    utils_load_tensor_139 = utils.load_tensor(
+        "./tensors/arg121.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.9.post_attention_layernorm.weight"] = (
+        utils_load_tensor_139
+    )
+    utils_load_tensor_140 = utils.load_tensor(
+        "./tensors/arg122.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.9.self_attn.o_proj.weight"] = utils_load_tensor_140
+    utils_load_tensor_141 = utils.load_tensor(
+        "./tensors/arg123.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.9.self_attn.q_proj.weight"] = utils_load_tensor_141
+    utils_load_tensor_142 = utils.load_tensor(
+        "./tensors/arg124.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.9.mlp.gate_proj.weight"] = utils_load_tensor_142
+    utils_load_tensor_143 = utils.load_tensor(
+        "./tensors/arg127.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.10.self_attn.v_proj.weight"] = utils_load_tensor_143
+    utils_load_tensor_144 = utils.load_tensor(
+        "./tensors/arg129.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.11.self_attn.k_proj.weight"] = utils_load_tensor_144
+    utils_load_tensor_145 = utils.load_tensor(
+        "./tensors/arg130.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.11.input_layernorm.weight"] = utils_load_tensor_145
+    utils_load_tensor_146 = utils.load_tensor(
+        "./tensors/arg131.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.10.mlp.down_proj.weight"] = utils_load_tensor_146
+    utils_load_tensor_147 = utils.load_tensor(
+        "./tensors/arg132.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.10.mlp.up_proj.weight"] = utils_load_tensor_147
+    utils_load_tensor_148 = utils.load_tensor(
+        "./tensors/arg133.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.10.post_attention_layernorm.weight"] = (
+        utils_load_tensor_148
+    )
+    utils_load_tensor_149 = utils.load_tensor(
+        "./tensors/arg134.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.10.self_attn.o_proj.weight"] = utils_load_tensor_149
+    utils_load_tensor_150 = utils.load_tensor(
+        "./tensors/arg135.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.10.self_attn.q_proj.weight"] = utils_load_tensor_150
+    utils_load_tensor_151 = utils.load_tensor(
+        "./tensors/arg136.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.10.mlp.gate_proj.weight"] = utils_load_tensor_151
+    utils_load_tensor_152 = utils.load_tensor(
+        "./tensors/arg139.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.11.self_attn.v_proj.weight"] = utils_load_tensor_152
+    utils_load_tensor_153 = utils.load_tensor(
+        "./tensors/arg141.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.12.self_attn.k_proj.weight"] = utils_load_tensor_153
+    utils_load_tensor_154 = utils.load_tensor(
+        "./tensors/arg142.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.12.input_layernorm.weight"] = utils_load_tensor_154
+    utils_load_tensor_155 = utils.load_tensor(
+        "./tensors/arg143.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.11.mlp.down_proj.weight"] = utils_load_tensor_155
+    utils_load_tensor_156 = utils.load_tensor(
+        "./tensors/arg144.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.11.mlp.up_proj.weight"] = utils_load_tensor_156
+    utils_load_tensor_157 = utils.load_tensor(
+        "./tensors/arg145.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.11.post_attention_layernorm.weight"] = (
+        utils_load_tensor_157
+    )
+    utils_load_tensor_158 = utils.load_tensor(
+        "./tensors/arg146.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.11.self_attn.o_proj.weight"] = utils_load_tensor_158
+    utils_load_tensor_159 = utils.load_tensor(
+        "./tensors/arg147.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.11.self_attn.q_proj.weight"] = utils_load_tensor_159
+    utils_load_tensor_160 = utils.load_tensor(
+        "./tensors/arg148.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.11.mlp.gate_proj.weight"] = utils_load_tensor_160
+    utils_load_tensor_161 = utils.load_tensor(
+        "./tensors/arg151.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.12.self_attn.v_proj.weight"] = utils_load_tensor_161
+    utils_load_tensor_162 = utils.load_tensor(
+        "./tensors/arg153.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.13.self_attn.k_proj.weight"] = utils_load_tensor_162
+    utils_load_tensor_163 = utils.load_tensor(
+        "./tensors/arg154.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.13.input_layernorm.weight"] = utils_load_tensor_163
+    utils_load_tensor_164 = utils.load_tensor(
+        "./tensors/arg155.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.12.mlp.down_proj.weight"] = utils_load_tensor_164
+    utils_load_tensor_165 = utils.load_tensor(
+        "./tensors/arg156.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.12.mlp.up_proj.weight"] = utils_load_tensor_165
+    utils_load_tensor_166 = utils.load_tensor(
+        "./tensors/arg157.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.12.post_attention_layernorm.weight"] = (
+        utils_load_tensor_166
+    )
+    utils_load_tensor_167 = utils.load_tensor(
+        "./tensors/arg158.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.12.self_attn.o_proj.weight"] = utils_load_tensor_167
+    utils_load_tensor_168 = utils.load_tensor(
+        "./tensors/arg159.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.12.self_attn.q_proj.weight"] = utils_load_tensor_168
+    utils_load_tensor_169 = utils.load_tensor(
+        "./tensors/arg160.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.12.mlp.gate_proj.weight"] = utils_load_tensor_169
+    utils_load_tensor_170 = utils.load_tensor(
+        "./tensors/arg163.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.13.self_attn.v_proj.weight"] = utils_load_tensor_170
+    utils_load_tensor_171 = utils.load_tensor(
+        "./tensors/arg165.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.14.self_attn.k_proj.weight"] = utils_load_tensor_171
+    utils_load_tensor_172 = utils.load_tensor(
+        "./tensors/arg166.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.14.input_layernorm.weight"] = utils_load_tensor_172
+    utils_load_tensor_173 = utils.load_tensor(
+        "./tensors/arg167.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.13.mlp.down_proj.weight"] = utils_load_tensor_173
+    utils_load_tensor_174 = utils.load_tensor(
+        "./tensors/arg168.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.13.mlp.up_proj.weight"] = utils_load_tensor_174
+    utils_load_tensor_175 = utils.load_tensor(
+        "./tensors/arg169.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.13.post_attention_layernorm.weight"] = (
+        utils_load_tensor_175
+    )
+    utils_load_tensor_176 = utils.load_tensor(
+        "./tensors/arg170.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.13.self_attn.o_proj.weight"] = utils_load_tensor_176
+    utils_load_tensor_177 = utils.load_tensor(
+        "./tensors/arg171.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.13.self_attn.q_proj.weight"] = utils_load_tensor_177
+    utils_load_tensor_178 = utils.load_tensor(
+        "./tensors/arg172.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.13.mlp.gate_proj.weight"] = utils_load_tensor_178
+    utils_load_tensor_179 = utils.load_tensor(
+        "./tensors/arg175.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.14.self_attn.v_proj.weight"] = utils_load_tensor_179
+    utils_load_tensor_180 = utils.load_tensor(
+        "./tensors/arg177.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.15.self_attn.k_proj.weight"] = utils_load_tensor_180
+    utils_load_tensor_181 = utils.load_tensor(
+        "./tensors/arg178.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.15.input_layernorm.weight"] = utils_load_tensor_181
+    utils_load_tensor_182 = utils.load_tensor(
+        "./tensors/arg179.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.14.mlp.down_proj.weight"] = utils_load_tensor_182
+    utils_load_tensor_183 = utils.load_tensor(
+        "./tensors/arg180.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.14.mlp.up_proj.weight"] = utils_load_tensor_183
+    utils_load_tensor_184 = utils.load_tensor(
+        "./tensors/arg181.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.14.post_attention_layernorm.weight"] = (
+        utils_load_tensor_184
+    )
+    utils_load_tensor_185 = utils.load_tensor(
+        "./tensors/arg182.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.14.self_attn.o_proj.weight"] = utils_load_tensor_185
+    utils_load_tensor_186 = utils.load_tensor(
+        "./tensors/arg183.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.14.self_attn.q_proj.weight"] = utils_load_tensor_186
+    utils_load_tensor_187 = utils.load_tensor(
+        "./tensors/arg184.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.14.mlp.gate_proj.weight"] = utils_load_tensor_187
+    utils_load_tensor_188 = utils.load_tensor(
+        "./tensors/arg187.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.15.self_attn.v_proj.weight"] = utils_load_tensor_188
+    utils_load_tensor_189 = utils.load_tensor(
+        "./tensors/arg189.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["lm_head.weight"] = utils_load_tensor_189
+    utils_load_tensor_190 = utils.load_tensor(
+        "./tensors/arg190.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.norm.weight"] = utils_load_tensor_190
+    utils_load_tensor_191 = utils.load_tensor(
+        "./tensors/arg191.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.15.mlp.down_proj.weight"] = utils_load_tensor_191
+    utils_load_tensor_192 = utils.load_tensor(
+        "./tensors/arg192.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.15.mlp.up_proj.weight"] = utils_load_tensor_192
+    utils_load_tensor_193 = utils.load_tensor(
+        "./tensors/arg193.tensorbin",
+        ttnn.Layout.TILE,
+        ttnn.DataType.BFLOAT16,
+        utils_DeviceGetter_get_device_89,
+        ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    _main_weights["model.layers.15.post_attention_layernorm.weight"] = (
+        utils_load_tensor_193
+    )
+    utils_load_tensor_194 = utils.load_tensor(
+        "./tensors/arg194.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.15.self_attn.o_proj.weight"] = utils_load_tensor_194
+    utils_load_tensor_195 = utils.load_tensor(
+        "./tensors/arg195.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.15.self_attn.q_proj.weight"] = utils_load_tensor_195
+    utils_load_tensor_196 = utils.load_tensor(
+        "./tensors/arg196.tensorbin",
+        ttnn.Layout.ROW_MAJOR,
+        ttnn.DataType.BFLOAT16,
+        None,
+        None,
+    )
+    _main_weights["model.layers.15.mlp.gate_proj.weight"] = utils_load_tensor_196
+    return _main_weights
+
+
+def load_weights_for__main_from_state_dict():
+    device = utils.DeviceGetter.get_device((1, 1))
+
+    model = model_pt.load_pytorch_model()
+    state_dict = dict(model.state_dict())
+    for name, buf in model.named_buffers():
+        if name not in state_dict:
+            state_dict[name] = buf
+
+    weights = {}
+    for key in ALL_WEIGHTS:
+        ttnn_tensor = ttnn.from_torch(state_dict[key])
+
+        if key in TILE_WEIGHTS:
+            ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.TILE)
+            ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
+            ttnn_tensor = ttnn.to_device(ttnn_tensor, device, ttnn.DRAM_MEMORY_CONFIG)
+
+        if key in HOST_WEIGHTS:
+            ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.ROW_MAJOR)
+            ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
+
+        weights[key] = ttnn_tensor
+
+    return weights
