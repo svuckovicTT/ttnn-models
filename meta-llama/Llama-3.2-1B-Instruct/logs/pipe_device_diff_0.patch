@@ -1,0 +1,3145 @@
+diff --git a/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/main.py b/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/main.py
+index 8714414..502029c 100644
+--- a/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/main.py
++++ b/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/main.py
+@@ -7,14 +7,13 @@ from utils import calculate_pcc
+ from params import load_weights_for__main_from_state_dict
+ 
+ 
+-def main_const_eval_0():
+-    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_0(device):
+     ttnn_Tensor_0 = ttnn.Tensor(
+         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+         [18],
+         ttnn.DataType.INT32,
+         ttnn.Layout.TILE,
+-        utils_DeviceGetter_get_device_0,
++        device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -22,11 +21,10 @@ def main_const_eval_0():
+     return [ttnn_Tensor_0]
+ 
+ 
+-def main_const_eval_1(arg):
+-    utils_DeviceGetter_get_device_1 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_1(arg, device):
+     ttnn_to_device_0 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_1,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -48,7 +46,7 @@ def main_const_eval_1(arg):
+     ttnn.deallocate(ttnn_from_device_0, False)
+     ttnn_to_device_1 = ttnn.to_device(
+         ttnn_typecast_0,
+-        device=utils_DeviceGetter_get_device_1,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -57,11 +55,10 @@ def main_const_eval_1(arg):
+     return [ttnn_to_device_1]
+ 
+ 
+-def main_const_eval_2(arg):
+-    utils_DeviceGetter_get_device_2 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_2(arg, device):
+     ttnn_to_device_2 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -83,7 +80,7 @@ def main_const_eval_2(arg):
+     ttnn.deallocate(ttnn_from_device_1, False)
+     ttnn_to_device_3 = ttnn.to_device(
+         ttnn_typecast_1,
+-        device=utils_DeviceGetter_get_device_2,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -105,8 +102,7 @@ def cpu_hoisted_const_eval_de619321(arg_0, arg_1, arg_2):
+     return ttnn_from_torch_0
+ 
+ 
+-def main_const_eval_3(arg):
+-    utils_DeviceGetter_get_device_3 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_3(arg, device):
+     ttnn_typecast_2 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_3 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_4 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -126,7 +122,7 @@ def main_const_eval_3(arg):
+     ttnn.deallocate(ttnn_typecast_5, False)
+     ttnn_to_device_4 = ttnn.to_device(
+         ttnn_to_layout_2,
+-        device=utils_DeviceGetter_get_device_3,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -178,7 +174,7 @@ def main_const_eval_3(arg):
+     ttnn.deallocate(ttnn_from_device_2, False)
+     ttnn_to_device_5 = ttnn.to_device(
+         ttnn_typecast_6,
+-        device=utils_DeviceGetter_get_device_3,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -187,8 +183,7 @@ def main_const_eval_3(arg):
+     return [ttnn_to_device_5]
+ 
+ 
+-def main_const_eval_4(arg):
+-    utils_DeviceGetter_get_device_4 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_4(arg, device):
+     ttnn_typecast_7 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_8 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_9 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -208,7 +203,7 @@ def main_const_eval_4(arg):
+     ttnn.deallocate(ttnn_typecast_10, False)
+     ttnn_to_device_6 = ttnn.to_device(
+         ttnn_to_layout_3,
+-        device=utils_DeviceGetter_get_device_4,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -260,7 +255,7 @@ def main_const_eval_4(arg):
+     ttnn.deallocate(ttnn_from_device_3, False)
+     ttnn_to_device_7 = ttnn.to_device(
+         ttnn_typecast_11,
+-        device=utils_DeviceGetter_get_device_4,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -269,11 +264,10 @@ def main_const_eval_4(arg):
+     return [ttnn_to_device_7]
+ 
+ 
+-def main_const_eval_5(arg):
+-    utils_DeviceGetter_get_device_5 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_5(arg, device):
+     ttnn_to_device_8 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_5,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -295,7 +289,7 @@ def main_const_eval_5(arg):
+     ttnn.deallocate(ttnn_from_device_4, False)
+     ttnn_to_device_9 = ttnn.to_device(
+         ttnn_typecast_12,
+-        device=utils_DeviceGetter_get_device_5,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -304,11 +298,10 @@ def main_const_eval_5(arg):
+     return [ttnn_to_device_9]
+ 
+ 
+-def main_const_eval_6(arg):
+-    utils_DeviceGetter_get_device_6 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_6(arg, device):
+     ttnn_to_device_10 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_6,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -330,7 +323,7 @@ def main_const_eval_6(arg):
+     ttnn.deallocate(ttnn_from_device_5, False)
+     ttnn_to_device_11 = ttnn.to_device(
+         ttnn_typecast_13,
+-        device=utils_DeviceGetter_get_device_6,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -339,11 +332,10 @@ def main_const_eval_6(arg):
+     return [ttnn_to_device_11]
+ 
+ 
+-def main_const_eval_7(arg):
+-    utils_DeviceGetter_get_device_7 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_7(arg, device):
+     ttnn_to_device_12 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_7,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -365,7 +357,7 @@ def main_const_eval_7(arg):
+     ttnn.deallocate(ttnn_from_device_6, False)
+     ttnn_to_device_13 = ttnn.to_device(
+         ttnn_typecast_14,
+-        device=utils_DeviceGetter_get_device_7,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -374,14 +366,13 @@ def main_const_eval_7(arg):
+     return [ttnn_to_device_13]
+ 
+ 
+-def main_const_eval_8():
+-    utils_DeviceGetter_get_device_8 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_8(device):
+     ttnn_full_0 = ttnn.full(
+         shape=ttnn.Shape([1]),
+         fill_value=18,
+         dtype=ttnn.DataType.INT32,
+         layout=ttnn.Layout.TILE,
+-        device=utils_DeviceGetter_get_device_8,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -389,11 +380,10 @@ def main_const_eval_8():
+     return [ttnn_full_0]
+ 
+ 
+-def main_const_eval_9(arg):
+-    utils_DeviceGetter_get_device_9 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_9(arg, device):
+     ttnn_to_device_14 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_9,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -415,7 +405,7 @@ def main_const_eval_9(arg):
+     ttnn.deallocate(ttnn_from_device_7, False)
+     ttnn_to_device_15 = ttnn.to_device(
+         ttnn_typecast_15,
+-        device=utils_DeviceGetter_get_device_9,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -424,11 +414,10 @@ def main_const_eval_9(arg):
+     return [ttnn_to_device_15]
+ 
+ 
+-def main_const_eval_10(arg):
+-    utils_DeviceGetter_get_device_10 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_10(arg, device):
+     ttnn_to_device_16 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_10,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -450,7 +439,7 @@ def main_const_eval_10(arg):
+     ttnn.deallocate(ttnn_from_device_8, False)
+     ttnn_to_device_17 = ttnn.to_device(
+         ttnn_typecast_16,
+-        device=utils_DeviceGetter_get_device_10,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -459,11 +448,10 @@ def main_const_eval_10(arg):
+     return [ttnn_to_device_17]
+ 
+ 
+-def main_const_eval_11(arg):
+-    utils_DeviceGetter_get_device_11 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_11(arg, device):
+     ttnn_to_device_18 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_11,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -485,7 +473,7 @@ def main_const_eval_11(arg):
+     ttnn.deallocate(ttnn_from_device_9, False)
+     ttnn_to_device_19 = ttnn.to_device(
+         ttnn_typecast_17,
+-        device=utils_DeviceGetter_get_device_11,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -494,11 +482,10 @@ def main_const_eval_11(arg):
+     return [ttnn_to_device_19]
+ 
+ 
+-def main_const_eval_12(arg):
+-    utils_DeviceGetter_get_device_12 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_12(arg, device):
+     ttnn_to_device_20 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_12,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -520,7 +507,7 @@ def main_const_eval_12(arg):
+     ttnn.deallocate(ttnn_from_device_10, False)
+     ttnn_to_device_21 = ttnn.to_device(
+         ttnn_typecast_18,
+-        device=utils_DeviceGetter_get_device_12,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -529,11 +516,10 @@ def main_const_eval_12(arg):
+     return [ttnn_to_device_21]
+ 
+ 
+-def main_const_eval_13(arg):
+-    utils_DeviceGetter_get_device_13 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_13(arg, device):
+     ttnn_to_device_22 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_13,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -555,7 +541,7 @@ def main_const_eval_13(arg):
+     ttnn.deallocate(ttnn_from_device_11, False)
+     ttnn_to_device_23 = ttnn.to_device(
+         ttnn_typecast_19,
+-        device=utils_DeviceGetter_get_device_13,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -564,11 +550,10 @@ def main_const_eval_13(arg):
+     return [ttnn_to_device_23]
+ 
+ 
+-def main_const_eval_14(arg):
+-    utils_DeviceGetter_get_device_14 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_14(arg, device):
+     ttnn_to_device_24 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_14,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -590,7 +575,7 @@ def main_const_eval_14(arg):
+     ttnn.deallocate(ttnn_from_device_12, False)
+     ttnn_to_device_25 = ttnn.to_device(
+         ttnn_typecast_20,
+-        device=utils_DeviceGetter_get_device_14,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -599,8 +584,7 @@ def main_const_eval_14(arg):
+     return [ttnn_to_device_25]
+ 
+ 
+-def main_const_eval_15(arg):
+-    utils_DeviceGetter_get_device_15 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_15(arg, device):
+     ttnn_typecast_21 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_22 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_23 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -620,7 +604,7 @@ def main_const_eval_15(arg):
+     ttnn.deallocate(ttnn_typecast_24, False)
+     ttnn_to_device_26 = ttnn.to_device(
+         ttnn_to_layout_13,
+-        device=utils_DeviceGetter_get_device_15,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -672,7 +656,7 @@ def main_const_eval_15(arg):
+     ttnn.deallocate(ttnn_from_device_13, False)
+     ttnn_to_device_27 = ttnn.to_device(
+         ttnn_typecast_25,
+-        device=utils_DeviceGetter_get_device_15,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -681,8 +665,7 @@ def main_const_eval_15(arg):
+     return [ttnn_to_device_27]
+ 
+ 
+-def main_const_eval_16(arg):
+-    utils_DeviceGetter_get_device_16 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_16(arg, device):
+     ttnn_typecast_26 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_27 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_28 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -702,7 +685,7 @@ def main_const_eval_16(arg):
+     ttnn.deallocate(ttnn_typecast_29, False)
+     ttnn_to_device_28 = ttnn.to_device(
+         ttnn_to_layout_14,
+-        device=utils_DeviceGetter_get_device_16,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -754,7 +737,7 @@ def main_const_eval_16(arg):
+     ttnn.deallocate(ttnn_from_device_14, False)
+     ttnn_to_device_29 = ttnn.to_device(
+         ttnn_typecast_30,
+-        device=utils_DeviceGetter_get_device_16,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -763,8 +746,7 @@ def main_const_eval_16(arg):
+     return [ttnn_to_device_29]
+ 
+ 
+-def main_const_eval_17(arg):
+-    utils_DeviceGetter_get_device_17 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_17(arg, device):
+     ttnn_typecast_31 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_32 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_33 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -784,7 +766,7 @@ def main_const_eval_17(arg):
+     ttnn.deallocate(ttnn_typecast_34, False)
+     ttnn_to_device_30 = ttnn.to_device(
+         ttnn_to_layout_15,
+-        device=utils_DeviceGetter_get_device_17,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -836,7 +818,7 @@ def main_const_eval_17(arg):
+     ttnn.deallocate(ttnn_from_device_15, False)
+     ttnn_to_device_31 = ttnn.to_device(
+         ttnn_typecast_35,
+-        device=utils_DeviceGetter_get_device_17,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -845,11 +827,10 @@ def main_const_eval_17(arg):
+     return [ttnn_to_device_31]
+ 
+ 
+-def main_const_eval_18(arg):
+-    utils_DeviceGetter_get_device_18 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_18(arg, device):
+     ttnn_to_device_32 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_18,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -871,7 +852,7 @@ def main_const_eval_18(arg):
+     ttnn.deallocate(ttnn_from_device_16, False)
+     ttnn_to_device_33 = ttnn.to_device(
+         ttnn_typecast_36,
+-        device=utils_DeviceGetter_get_device_18,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -880,11 +861,10 @@ def main_const_eval_18(arg):
+     return [ttnn_to_device_33]
+ 
+ 
+-def main_const_eval_19(arg):
+-    utils_DeviceGetter_get_device_19 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_19(arg, device):
+     ttnn_to_device_34 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_19,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -906,7 +886,7 @@ def main_const_eval_19(arg):
+     ttnn.deallocate(ttnn_from_device_17, False)
+     ttnn_to_device_35 = ttnn.to_device(
+         ttnn_typecast_37,
+-        device=utils_DeviceGetter_get_device_19,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -915,11 +895,10 @@ def main_const_eval_19(arg):
+     return [ttnn_to_device_35]
+ 
+ 
+-def main_const_eval_20(arg):
+-    utils_DeviceGetter_get_device_20 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_20(arg, device):
+     ttnn_to_device_36 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_20,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -941,7 +920,7 @@ def main_const_eval_20(arg):
+     ttnn.deallocate(ttnn_from_device_18, False)
+     ttnn_to_device_37 = ttnn.to_device(
+         ttnn_typecast_38,
+-        device=utils_DeviceGetter_get_device_20,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -950,11 +929,10 @@ def main_const_eval_20(arg):
+     return [ttnn_to_device_37]
+ 
+ 
+-def main_const_eval_21(arg):
+-    utils_DeviceGetter_get_device_21 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_21(arg, device):
+     ttnn_to_device_38 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_21,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -976,7 +954,7 @@ def main_const_eval_21(arg):
+     ttnn.deallocate(ttnn_from_device_19, False)
+     ttnn_to_device_39 = ttnn.to_device(
+         ttnn_typecast_39,
+-        device=utils_DeviceGetter_get_device_21,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -985,11 +963,10 @@ def main_const_eval_21(arg):
+     return [ttnn_to_device_39]
+ 
+ 
+-def main_const_eval_22(arg):
+-    utils_DeviceGetter_get_device_22 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_22(arg, device):
+     ttnn_to_device_40 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_22,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1011,7 +988,7 @@ def main_const_eval_22(arg):
+     ttnn.deallocate(ttnn_from_device_20, False)
+     ttnn_to_device_41 = ttnn.to_device(
+         ttnn_typecast_40,
+-        device=utils_DeviceGetter_get_device_22,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1020,11 +997,10 @@ def main_const_eval_22(arg):
+     return [ttnn_to_device_41]
+ 
+ 
+-def main_const_eval_23(arg):
+-    utils_DeviceGetter_get_device_23 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_23(arg, device):
+     ttnn_to_device_42 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_23,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1046,7 +1022,7 @@ def main_const_eval_23(arg):
+     ttnn.deallocate(ttnn_from_device_21, False)
+     ttnn_to_device_43 = ttnn.to_device(
+         ttnn_typecast_41,
+-        device=utils_DeviceGetter_get_device_23,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1055,8 +1031,7 @@ def main_const_eval_23(arg):
+     return [ttnn_to_device_43]
+ 
+ 
+-def main_const_eval_24(arg):
+-    utils_DeviceGetter_get_device_24 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_24(arg, device):
+     ttnn_typecast_42 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_43 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_44 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -1076,7 +1051,7 @@ def main_const_eval_24(arg):
+     ttnn.deallocate(ttnn_typecast_45, False)
+     ttnn_to_device_44 = ttnn.to_device(
+         ttnn_to_layout_22,
+-        device=utils_DeviceGetter_get_device_24,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1128,7 +1103,7 @@ def main_const_eval_24(arg):
+     ttnn.deallocate(ttnn_from_device_22, False)
+     ttnn_to_device_45 = ttnn.to_device(
+         ttnn_typecast_46,
+-        device=utils_DeviceGetter_get_device_24,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1144,8 +1119,7 @@ def cpu_hoisted_const_eval_32c82fce(arg):
+     return ttnn_from_torch_1
+ 
+ 
+-def main_const_eval_25(arg):
+-    utils_DeviceGetter_get_device_25 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_25(arg, device):
+     ttnn_typecast_47 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+     cpu_hoisted_const_eval_32c82fce_0 = cpu_hoisted_const_eval_32c82fce(
+         ttnn_typecast_47
+@@ -1157,7 +1131,7 @@ def main_const_eval_25(arg):
+     ttnn.deallocate(cpu_hoisted_const_eval_32c82fce_0, False)
+     ttnn_to_device_46 = ttnn.to_device(
+         ttnn_to_layout_23,
+-        device=utils_DeviceGetter_get_device_25,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1166,8 +1140,7 @@ def main_const_eval_25(arg):
+     return [ttnn_to_device_46]
+ 
+ 
+-def main_const_eval_26(arg):
+-    utils_DeviceGetter_get_device_26 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_26(arg, device):
+     ttnn_typecast_48 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_49 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_50 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -1187,7 +1160,7 @@ def main_const_eval_26(arg):
+     ttnn.deallocate(ttnn_typecast_51, False)
+     ttnn_to_device_47 = ttnn.to_device(
+         ttnn_to_layout_24,
+-        device=utils_DeviceGetter_get_device_26,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1239,7 +1212,7 @@ def main_const_eval_26(arg):
+     ttnn.deallocate(ttnn_from_device_23, False)
+     ttnn_to_device_48 = ttnn.to_device(
+         ttnn_typecast_52,
+-        device=utils_DeviceGetter_get_device_26,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1248,8 +1221,7 @@ def main_const_eval_26(arg):
+     return [ttnn_to_device_48]
+ 
+ 
+-def main_const_eval_27(arg):
+-    utils_DeviceGetter_get_device_27 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_27(arg, device):
+     ttnn_typecast_53 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_54 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_55 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -1269,7 +1241,7 @@ def main_const_eval_27(arg):
+     ttnn.deallocate(ttnn_typecast_56, False)
+     ttnn_to_device_49 = ttnn.to_device(
+         ttnn_to_layout_25,
+-        device=utils_DeviceGetter_get_device_27,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1321,7 +1293,7 @@ def main_const_eval_27(arg):
+     ttnn.deallocate(ttnn_from_device_24, False)
+     ttnn_to_device_50 = ttnn.to_device(
+         ttnn_typecast_57,
+-        device=utils_DeviceGetter_get_device_27,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1330,11 +1302,10 @@ def main_const_eval_27(arg):
+     return [ttnn_to_device_50]
+ 
+ 
+-def main_const_eval_28(arg):
+-    utils_DeviceGetter_get_device_28 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_28(arg, device):
+     ttnn_to_device_51 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_28,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1356,7 +1327,7 @@ def main_const_eval_28(arg):
+     ttnn.deallocate(ttnn_from_device_25, False)
+     ttnn_to_device_52 = ttnn.to_device(
+         ttnn_typecast_58,
+-        device=utils_DeviceGetter_get_device_28,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1365,11 +1336,10 @@ def main_const_eval_28(arg):
+     return [ttnn_to_device_52]
+ 
+ 
+-def main_const_eval_29(arg):
+-    utils_DeviceGetter_get_device_29 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_29(arg, device):
+     ttnn_to_device_53 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_29,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1391,7 +1361,7 @@ def main_const_eval_29(arg):
+     ttnn.deallocate(ttnn_from_device_26, False)
+     ttnn_to_device_54 = ttnn.to_device(
+         ttnn_typecast_59,
+-        device=utils_DeviceGetter_get_device_29,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1400,11 +1370,10 @@ def main_const_eval_29(arg):
+     return [ttnn_to_device_54]
+ 
+ 
+-def main_const_eval_30(arg):
+-    utils_DeviceGetter_get_device_30 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_30(arg, device):
+     ttnn_to_device_55 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_30,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1426,7 +1395,7 @@ def main_const_eval_30(arg):
+     ttnn.deallocate(ttnn_from_device_27, False)
+     ttnn_to_device_56 = ttnn.to_device(
+         ttnn_typecast_60,
+-        device=utils_DeviceGetter_get_device_30,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1435,11 +1404,10 @@ def main_const_eval_30(arg):
+     return [ttnn_to_device_56]
+ 
+ 
+-def main_const_eval_31(arg):
+-    utils_DeviceGetter_get_device_31 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_31(arg, device):
+     ttnn_to_device_57 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_31,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1461,7 +1429,7 @@ def main_const_eval_31(arg):
+     ttnn.deallocate(ttnn_from_device_28, False)
+     ttnn_to_device_58 = ttnn.to_device(
+         ttnn_typecast_61,
+-        device=utils_DeviceGetter_get_device_31,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1470,11 +1438,10 @@ def main_const_eval_31(arg):
+     return [ttnn_to_device_58]
+ 
+ 
+-def main_const_eval_32(arg):
+-    utils_DeviceGetter_get_device_32 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_32(arg, device):
+     ttnn_to_device_59 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_32,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1496,7 +1463,7 @@ def main_const_eval_32(arg):
+     ttnn.deallocate(ttnn_from_device_29, False)
+     ttnn_to_device_60 = ttnn.to_device(
+         ttnn_typecast_62,
+-        device=utils_DeviceGetter_get_device_32,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1505,11 +1472,10 @@ def main_const_eval_32(arg):
+     return [ttnn_to_device_60]
+ 
+ 
+-def main_const_eval_33(arg):
+-    utils_DeviceGetter_get_device_33 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_33(arg, device):
+     ttnn_to_device_61 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_33,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1531,7 +1497,7 @@ def main_const_eval_33(arg):
+     ttnn.deallocate(ttnn_from_device_30, False)
+     ttnn_to_device_62 = ttnn.to_device(
+         ttnn_typecast_63,
+-        device=utils_DeviceGetter_get_device_33,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1540,8 +1506,7 @@ def main_const_eval_33(arg):
+     return [ttnn_to_device_62]
+ 
+ 
+-def main_const_eval_34(arg):
+-    utils_DeviceGetter_get_device_34 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_34(arg, device):
+     ttnn_typecast_64 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_65 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_66 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -1561,7 +1526,7 @@ def main_const_eval_34(arg):
+     ttnn.deallocate(ttnn_typecast_67, False)
+     ttnn_to_device_63 = ttnn.to_device(
+         ttnn_to_layout_32,
+-        device=utils_DeviceGetter_get_device_34,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1613,7 +1578,7 @@ def main_const_eval_34(arg):
+     ttnn.deallocate(ttnn_from_device_31, False)
+     ttnn_to_device_64 = ttnn.to_device(
+         ttnn_typecast_68,
+-        device=utils_DeviceGetter_get_device_34,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1622,11 +1587,10 @@ def main_const_eval_34(arg):
+     return [ttnn_to_device_64]
+ 
+ 
+-def main_const_eval_35(arg):
+-    utils_DeviceGetter_get_device_35 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_35(arg, device):
+     ttnn_to_device_65 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_35,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1648,7 +1612,7 @@ def main_const_eval_35(arg):
+     ttnn.deallocate(ttnn_from_device_32, False)
+     ttnn_to_device_66 = ttnn.to_device(
+         ttnn_typecast_69,
+-        device=utils_DeviceGetter_get_device_35,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1657,11 +1621,10 @@ def main_const_eval_35(arg):
+     return [ttnn_to_device_66]
+ 
+ 
+-def main_const_eval_36(arg):
+-    utils_DeviceGetter_get_device_36 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_36(arg, device):
+     ttnn_to_device_67 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_36,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1683,7 +1646,7 @@ def main_const_eval_36(arg):
+     ttnn.deallocate(ttnn_from_device_33, False)
+     ttnn_to_device_68 = ttnn.to_device(
+         ttnn_typecast_70,
+-        device=utils_DeviceGetter_get_device_36,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1692,8 +1655,7 @@ def main_const_eval_36(arg):
+     return [ttnn_to_device_68]
+ 
+ 
+-def main_const_eval_37(arg):
+-    utils_DeviceGetter_get_device_37 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_37(arg, device):
+     ttnn_typecast_71 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_72 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_73 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -1713,7 +1675,7 @@ def main_const_eval_37(arg):
+     ttnn.deallocate(ttnn_typecast_74, False)
+     ttnn_to_device_69 = ttnn.to_device(
+         ttnn_to_layout_35,
+-        device=utils_DeviceGetter_get_device_37,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1765,7 +1727,7 @@ def main_const_eval_37(arg):
+     ttnn.deallocate(ttnn_from_device_34, False)
+     ttnn_to_device_70 = ttnn.to_device(
+         ttnn_typecast_75,
+-        device=utils_DeviceGetter_get_device_37,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1774,11 +1736,10 @@ def main_const_eval_37(arg):
+     return [ttnn_to_device_70]
+ 
+ 
+-def main_const_eval_38(arg):
+-    utils_DeviceGetter_get_device_38 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_38(arg, device):
+     ttnn_to_device_71 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_38,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1800,7 +1761,7 @@ def main_const_eval_38(arg):
+     ttnn.deallocate(ttnn_from_device_35, False)
+     ttnn_to_device_72 = ttnn.to_device(
+         ttnn_typecast_76,
+-        device=utils_DeviceGetter_get_device_38,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1809,11 +1770,10 @@ def main_const_eval_38(arg):
+     return [ttnn_to_device_72]
+ 
+ 
+-def main_const_eval_39(arg):
+-    utils_DeviceGetter_get_device_39 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_39(arg, device):
+     ttnn_to_device_73 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_39,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1835,7 +1795,7 @@ def main_const_eval_39(arg):
+     ttnn.deallocate(ttnn_from_device_36, False)
+     ttnn_to_device_74 = ttnn.to_device(
+         ttnn_typecast_77,
+-        device=utils_DeviceGetter_get_device_39,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1844,11 +1804,10 @@ def main_const_eval_39(arg):
+     return [ttnn_to_device_74]
+ 
+ 
+-def main_const_eval_40(arg):
+-    utils_DeviceGetter_get_device_40 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_40(arg, device):
+     ttnn_to_device_75 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_40,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1870,7 +1829,7 @@ def main_const_eval_40(arg):
+     ttnn.deallocate(ttnn_from_device_37, False)
+     ttnn_to_device_76 = ttnn.to_device(
+         ttnn_typecast_78,
+-        device=utils_DeviceGetter_get_device_40,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1879,11 +1838,10 @@ def main_const_eval_40(arg):
+     return [ttnn_to_device_76]
+ 
+ 
+-def main_const_eval_41(arg):
+-    utils_DeviceGetter_get_device_41 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_41(arg, device):
+     ttnn_to_device_77 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_41,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1905,7 +1863,7 @@ def main_const_eval_41(arg):
+     ttnn.deallocate(ttnn_from_device_38, False)
+     ttnn_to_device_78 = ttnn.to_device(
+         ttnn_typecast_79,
+-        device=utils_DeviceGetter_get_device_41,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1914,11 +1872,10 @@ def main_const_eval_41(arg):
+     return [ttnn_to_device_78]
+ 
+ 
+-def main_const_eval_42(arg):
+-    utils_DeviceGetter_get_device_42 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_42(arg, device):
+     ttnn_to_device_79 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_42,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1940,7 +1897,7 @@ def main_const_eval_42(arg):
+     ttnn.deallocate(ttnn_from_device_39, False)
+     ttnn_to_device_80 = ttnn.to_device(
+         ttnn_typecast_80,
+-        device=utils_DeviceGetter_get_device_42,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1949,11 +1906,10 @@ def main_const_eval_42(arg):
+     return [ttnn_to_device_80]
+ 
+ 
+-def main_const_eval_43(arg):
+-    utils_DeviceGetter_get_device_43 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_43(arg, device):
+     ttnn_to_device_81 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_43,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1975,7 +1931,7 @@ def main_const_eval_43(arg):
+     ttnn.deallocate(ttnn_from_device_40, False)
+     ttnn_to_device_82 = ttnn.to_device(
+         ttnn_typecast_81,
+-        device=utils_DeviceGetter_get_device_43,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -1984,11 +1940,10 @@ def main_const_eval_43(arg):
+     return [ttnn_to_device_82]
+ 
+ 
+-def main_const_eval_44(arg):
+-    utils_DeviceGetter_get_device_44 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_44(arg, device):
+     ttnn_to_device_83 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_44,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2010,7 +1965,7 @@ def main_const_eval_44(arg):
+     ttnn.deallocate(ttnn_from_device_41, False)
+     ttnn_to_device_84 = ttnn.to_device(
+         ttnn_typecast_82,
+-        device=utils_DeviceGetter_get_device_44,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2019,11 +1974,10 @@ def main_const_eval_44(arg):
+     return [ttnn_to_device_84]
+ 
+ 
+-def main_const_eval_45(arg):
+-    utils_DeviceGetter_get_device_45 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_45(arg, device):
+     ttnn_to_device_85 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_45,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2045,7 +1999,7 @@ def main_const_eval_45(arg):
+     ttnn.deallocate(ttnn_from_device_42, False)
+     ttnn_to_device_86 = ttnn.to_device(
+         ttnn_typecast_83,
+-        device=utils_DeviceGetter_get_device_45,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2054,11 +2008,10 @@ def main_const_eval_45(arg):
+     return [ttnn_to_device_86]
+ 
+ 
+-def main_const_eval_46(arg):
+-    utils_DeviceGetter_get_device_46 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_46(arg, device):
+     ttnn_to_device_87 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_46,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2080,7 +2033,7 @@ def main_const_eval_46(arg):
+     ttnn.deallocate(ttnn_from_device_43, False)
+     ttnn_to_device_88 = ttnn.to_device(
+         ttnn_typecast_84,
+-        device=utils_DeviceGetter_get_device_46,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2089,8 +2042,7 @@ def main_const_eval_46(arg):
+     return [ttnn_to_device_88]
+ 
+ 
+-def main_const_eval_47(arg):
+-    utils_DeviceGetter_get_device_47 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_47(arg, device):
+     ttnn_typecast_85 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_86 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_87 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -2110,7 +2062,7 @@ def main_const_eval_47(arg):
+     ttnn.deallocate(ttnn_typecast_88, False)
+     ttnn_to_device_89 = ttnn.to_device(
+         ttnn_to_layout_45,
+-        device=utils_DeviceGetter_get_device_47,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2162,7 +2114,7 @@ def main_const_eval_47(arg):
+     ttnn.deallocate(ttnn_from_device_44, False)
+     ttnn_to_device_90 = ttnn.to_device(
+         ttnn_typecast_89,
+-        device=utils_DeviceGetter_get_device_47,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2171,8 +2123,7 @@ def main_const_eval_47(arg):
+     return [ttnn_to_device_90]
+ 
+ 
+-def main_const_eval_48(arg):
+-    utils_DeviceGetter_get_device_48 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_48(arg, device):
+     ttnn_typecast_90 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_91 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_92 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -2192,7 +2143,7 @@ def main_const_eval_48(arg):
+     ttnn.deallocate(ttnn_typecast_93, False)
+     ttnn_to_device_91 = ttnn.to_device(
+         ttnn_to_layout_46,
+-        device=utils_DeviceGetter_get_device_48,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2244,7 +2195,7 @@ def main_const_eval_48(arg):
+     ttnn.deallocate(ttnn_from_device_45, False)
+     ttnn_to_device_92 = ttnn.to_device(
+         ttnn_typecast_94,
+-        device=utils_DeviceGetter_get_device_48,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2253,11 +2204,10 @@ def main_const_eval_48(arg):
+     return [ttnn_to_device_92]
+ 
+ 
+-def main_const_eval_49(arg):
+-    utils_DeviceGetter_get_device_49 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_49(arg, device):
+     ttnn_to_device_93 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_49,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2279,7 +2229,7 @@ def main_const_eval_49(arg):
+     ttnn.deallocate(ttnn_from_device_46, False)
+     ttnn_to_device_94 = ttnn.to_device(
+         ttnn_typecast_95,
+-        device=utils_DeviceGetter_get_device_49,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2288,14 +2238,13 @@ def main_const_eval_49(arg):
+     return [ttnn_to_device_94]
+ 
+ 
+-def main_const_eval_50():
+-    utils_DeviceGetter_get_device_50 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_50(device):
+     ttnn_full_1 = ttnn.full(
+         shape=ttnn.Shape([1, 1, 1, 1]),
+         fill_value=float("-inf"),
+         dtype=ttnn.DataType.BFLOAT16,
+         layout=ttnn.Layout.TILE,
+-        device=utils_DeviceGetter_get_device_50,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2303,11 +2252,10 @@ def main_const_eval_50():
+     return [ttnn_full_1]
+ 
+ 
+-def main_const_eval_51(arg):
+-    utils_DeviceGetter_get_device_51 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_51(arg, device):
+     ttnn_to_device_95 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_51,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2329,7 +2277,7 @@ def main_const_eval_51(arg):
+     ttnn.deallocate(ttnn_from_device_47, False)
+     ttnn_to_device_96 = ttnn.to_device(
+         ttnn_typecast_96,
+-        device=utils_DeviceGetter_get_device_51,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2338,11 +2286,10 @@ def main_const_eval_51(arg):
+     return [ttnn_to_device_96]
+ 
+ 
+-def main_const_eval_52(arg):
+-    utils_DeviceGetter_get_device_52 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_52(arg, device):
+     ttnn_to_device_97 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_52,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2364,7 +2311,7 @@ def main_const_eval_52(arg):
+     ttnn.deallocate(ttnn_from_device_48, False)
+     ttnn_to_device_98 = ttnn.to_device(
+         ttnn_typecast_97,
+-        device=utils_DeviceGetter_get_device_52,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2373,11 +2320,10 @@ def main_const_eval_52(arg):
+     return [ttnn_to_device_98]
+ 
+ 
+-def main_const_eval_53(arg):
+-    utils_DeviceGetter_get_device_53 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_53(arg, device):
+     ttnn_to_device_99 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_53,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2399,7 +2345,7 @@ def main_const_eval_53(arg):
+     ttnn.deallocate(ttnn_from_device_49, False)
+     ttnn_to_device_100 = ttnn.to_device(
+         ttnn_typecast_98,
+-        device=utils_DeviceGetter_get_device_53,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2408,11 +2354,10 @@ def main_const_eval_53(arg):
+     return [ttnn_to_device_100]
+ 
+ 
+-def main_const_eval_54(arg):
+-    utils_DeviceGetter_get_device_54 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_54(arg, device):
+     ttnn_to_device_101 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_54,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2434,7 +2379,7 @@ def main_const_eval_54(arg):
+     ttnn.deallocate(ttnn_from_device_50, False)
+     ttnn_to_device_102 = ttnn.to_device(
+         ttnn_typecast_99,
+-        device=utils_DeviceGetter_get_device_54,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2443,11 +2388,10 @@ def main_const_eval_54(arg):
+     return [ttnn_to_device_102]
+ 
+ 
+-def main_const_eval_55(arg):
+-    utils_DeviceGetter_get_device_55 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_55(arg, device):
+     ttnn_to_device_103 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_55,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2469,7 +2413,7 @@ def main_const_eval_55(arg):
+     ttnn.deallocate(ttnn_from_device_51, False)
+     ttnn_to_device_104 = ttnn.to_device(
+         ttnn_typecast_100,
+-        device=utils_DeviceGetter_get_device_55,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2478,11 +2422,10 @@ def main_const_eval_55(arg):
+     return [ttnn_to_device_104]
+ 
+ 
+-def main_const_eval_56(arg):
+-    utils_DeviceGetter_get_device_56 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_56(arg, device):
+     ttnn_to_device_105 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_56,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2504,7 +2447,7 @@ def main_const_eval_56(arg):
+     ttnn.deallocate(ttnn_from_device_52, False)
+     ttnn_to_device_106 = ttnn.to_device(
+         ttnn_typecast_101,
+-        device=utils_DeviceGetter_get_device_56,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2513,11 +2456,10 @@ def main_const_eval_56(arg):
+     return [ttnn_to_device_106]
+ 
+ 
+-def main_const_eval_57(arg):
+-    utils_DeviceGetter_get_device_57 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_57(arg, device):
+     ttnn_to_device_107 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_57,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2539,7 +2481,7 @@ def main_const_eval_57(arg):
+     ttnn.deallocate(ttnn_from_device_53, False)
+     ttnn_to_device_108 = ttnn.to_device(
+         ttnn_typecast_102,
+-        device=utils_DeviceGetter_get_device_57,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2548,11 +2490,10 @@ def main_const_eval_57(arg):
+     return [ttnn_to_device_108]
+ 
+ 
+-def main_const_eval_58(arg):
+-    utils_DeviceGetter_get_device_58 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_58(arg, device):
+     ttnn_to_device_109 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_58,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2574,7 +2515,7 @@ def main_const_eval_58(arg):
+     ttnn.deallocate(ttnn_from_device_54, False)
+     ttnn_to_device_110 = ttnn.to_device(
+         ttnn_typecast_103,
+-        device=utils_DeviceGetter_get_device_58,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2583,11 +2524,10 @@ def main_const_eval_58(arg):
+     return [ttnn_to_device_110]
+ 
+ 
+-def main_const_eval_59(arg):
+-    utils_DeviceGetter_get_device_59 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_59(arg, device):
+     ttnn_to_device_111 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_59,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2609,7 +2549,7 @@ def main_const_eval_59(arg):
+     ttnn.deallocate(ttnn_from_device_55, False)
+     ttnn_to_device_112 = ttnn.to_device(
+         ttnn_typecast_104,
+-        device=utils_DeviceGetter_get_device_59,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2618,11 +2558,10 @@ def main_const_eval_59(arg):
+     return [ttnn_to_device_112]
+ 
+ 
+-def main_const_eval_60(arg):
+-    utils_DeviceGetter_get_device_60 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_60(arg, device):
+     ttnn_to_device_113 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_60,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2644,7 +2583,7 @@ def main_const_eval_60(arg):
+     ttnn.deallocate(ttnn_from_device_56, False)
+     ttnn_to_device_114 = ttnn.to_device(
+         ttnn_typecast_105,
+-        device=utils_DeviceGetter_get_device_60,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2653,8 +2592,7 @@ def main_const_eval_60(arg):
+     return [ttnn_to_device_114]
+ 
+ 
+-def main_const_eval_61():
+-    utils_DeviceGetter_get_device_61 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_61(device):
+     ttnn_Tensor_1 = ttnn.Tensor(
+         [
+             0,
+@@ -2789,7 +2727,7 @@ def main_const_eval_61():
+         [1, 1, 1, 128],
+         ttnn.DataType.INT32,
+         ttnn.Layout.TILE,
+-        utils_DeviceGetter_get_device_61,
++        device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2797,11 +2735,10 @@ def main_const_eval_61():
+     return [ttnn_Tensor_1]
+ 
+ 
+-def main_const_eval_62(arg):
+-    utils_DeviceGetter_get_device_62 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_62(arg, device):
+     ttnn_to_device_115 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_62,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2823,7 +2760,7 @@ def main_const_eval_62(arg):
+     ttnn.deallocate(ttnn_from_device_57, False)
+     ttnn_to_device_116 = ttnn.to_device(
+         ttnn_typecast_106,
+-        device=utils_DeviceGetter_get_device_62,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2832,11 +2769,10 @@ def main_const_eval_62(arg):
+     return [ttnn_to_device_116]
+ 
+ 
+-def main_const_eval_63(arg):
+-    utils_DeviceGetter_get_device_63 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_63(arg, device):
+     ttnn_to_device_117 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_63,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2858,7 +2794,7 @@ def main_const_eval_63(arg):
+     ttnn.deallocate(ttnn_from_device_58, False)
+     ttnn_to_device_118 = ttnn.to_device(
+         ttnn_typecast_107,
+-        device=utils_DeviceGetter_get_device_63,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2867,11 +2803,10 @@ def main_const_eval_63(arg):
+     return [ttnn_to_device_118]
+ 
+ 
+-def main_const_eval_64(arg):
+-    utils_DeviceGetter_get_device_64 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_64(arg, device):
+     ttnn_to_device_119 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_64,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2893,7 +2828,7 @@ def main_const_eval_64(arg):
+     ttnn.deallocate(ttnn_from_device_59, False)
+     ttnn_to_device_120 = ttnn.to_device(
+         ttnn_typecast_108,
+-        device=utils_DeviceGetter_get_device_64,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2902,11 +2837,10 @@ def main_const_eval_64(arg):
+     return [ttnn_to_device_120]
+ 
+ 
+-def main_const_eval_65(arg):
+-    utils_DeviceGetter_get_device_65 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_65(arg, device):
+     ttnn_to_device_121 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_65,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2914,11 +2848,10 @@ def main_const_eval_65(arg):
+     return [ttnn_to_device_121]
+ 
+ 
+-def main_const_eval_66(arg):
+-    utils_DeviceGetter_get_device_66 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_66(arg, device):
+     ttnn_to_device_122 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_66,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2940,7 +2873,7 @@ def main_const_eval_66(arg):
+     ttnn.deallocate(ttnn_from_device_60, False)
+     ttnn_to_device_123 = ttnn.to_device(
+         ttnn_typecast_109,
+-        device=utils_DeviceGetter_get_device_66,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2949,11 +2882,10 @@ def main_const_eval_66(arg):
+     return [ttnn_to_device_123]
+ 
+ 
+-def main_const_eval_67(arg):
+-    utils_DeviceGetter_get_device_67 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_67(arg, device):
+     ttnn_to_device_124 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_67,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2975,7 +2907,7 @@ def main_const_eval_67(arg):
+     ttnn.deallocate(ttnn_from_device_61, False)
+     ttnn_to_device_125 = ttnn.to_device(
+         ttnn_typecast_110,
+-        device=utils_DeviceGetter_get_device_67,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2984,8 +2916,7 @@ def main_const_eval_67(arg):
+     return [ttnn_to_device_125]
+ 
+ 
+-def main_const_eval_68(arg):
+-    utils_DeviceGetter_get_device_68 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_68(arg, device):
+     ttnn_typecast_111 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_112 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_113 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -3005,7 +2936,7 @@ def main_const_eval_68(arg):
+     ttnn.deallocate(ttnn_typecast_114, False)
+     ttnn_to_device_126 = ttnn.to_device(
+         ttnn_to_layout_63,
+-        device=utils_DeviceGetter_get_device_68,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3057,7 +2988,7 @@ def main_const_eval_68(arg):
+     ttnn.deallocate(ttnn_from_device_62, False)
+     ttnn_to_device_127 = ttnn.to_device(
+         ttnn_typecast_115,
+-        device=utils_DeviceGetter_get_device_68,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3066,8 +2997,7 @@ def main_const_eval_68(arg):
+     return [ttnn_to_device_127]
+ 
+ 
+-def main_const_eval_69(arg):
+-    utils_DeviceGetter_get_device_69 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_69(arg, device):
+     ttnn_typecast_116 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_117 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_118 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -3087,7 +3017,7 @@ def main_const_eval_69(arg):
+     ttnn.deallocate(ttnn_typecast_119, False)
+     ttnn_to_device_128 = ttnn.to_device(
+         ttnn_to_layout_64,
+-        device=utils_DeviceGetter_get_device_69,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3139,7 +3069,7 @@ def main_const_eval_69(arg):
+     ttnn.deallocate(ttnn_from_device_63, False)
+     ttnn_to_device_129 = ttnn.to_device(
+         ttnn_typecast_120,
+-        device=utils_DeviceGetter_get_device_69,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3148,11 +3078,10 @@ def main_const_eval_69(arg):
+     return [ttnn_to_device_129]
+ 
+ 
+-def main_const_eval_70(arg):
+-    utils_DeviceGetter_get_device_70 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_70(arg, device):
+     ttnn_to_device_130 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_70,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3174,7 +3103,7 @@ def main_const_eval_70(arg):
+     ttnn.deallocate(ttnn_from_device_64, False)
+     ttnn_to_device_131 = ttnn.to_device(
+         ttnn_typecast_121,
+-        device=utils_DeviceGetter_get_device_70,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3183,11 +3112,10 @@ def main_const_eval_70(arg):
+     return [ttnn_to_device_131]
+ 
+ 
+-def main_const_eval_71(arg):
+-    utils_DeviceGetter_get_device_71 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_71(arg, device):
+     ttnn_to_device_132 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_71,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3209,7 +3137,7 @@ def main_const_eval_71(arg):
+     ttnn.deallocate(ttnn_from_device_65, False)
+     ttnn_to_device_133 = ttnn.to_device(
+         ttnn_typecast_122,
+-        device=utils_DeviceGetter_get_device_71,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3218,11 +3146,10 @@ def main_const_eval_71(arg):
+     return [ttnn_to_device_133]
+ 
+ 
+-def main_const_eval_72(arg):
+-    utils_DeviceGetter_get_device_72 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_72(arg, device):
+     ttnn_to_device_134 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_72,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3244,7 +3171,7 @@ def main_const_eval_72(arg):
+     ttnn.deallocate(ttnn_from_device_66, False)
+     ttnn_to_device_135 = ttnn.to_device(
+         ttnn_typecast_123,
+-        device=utils_DeviceGetter_get_device_72,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3253,11 +3180,10 @@ def main_const_eval_72(arg):
+     return [ttnn_to_device_135]
+ 
+ 
+-def main_const_eval_73(arg):
+-    utils_DeviceGetter_get_device_73 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_73(arg, device):
+     ttnn_to_device_136 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_73,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3279,7 +3205,7 @@ def main_const_eval_73(arg):
+     ttnn.deallocate(ttnn_from_device_67, False)
+     ttnn_to_device_137 = ttnn.to_device(
+         ttnn_typecast_124,
+-        device=utils_DeviceGetter_get_device_73,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3288,8 +3214,7 @@ def main_const_eval_73(arg):
+     return [ttnn_to_device_137]
+ 
+ 
+-def main_const_eval_74(arg):
+-    utils_DeviceGetter_get_device_74 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_74(arg, device):
+     ttnn_typecast_125 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_126 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_127 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -3309,7 +3234,7 @@ def main_const_eval_74(arg):
+     ttnn.deallocate(ttnn_typecast_128, False)
+     ttnn_to_device_138 = ttnn.to_device(
+         ttnn_to_layout_69,
+-        device=utils_DeviceGetter_get_device_74,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3361,7 +3286,7 @@ def main_const_eval_74(arg):
+     ttnn.deallocate(ttnn_from_device_68, False)
+     ttnn_to_device_139 = ttnn.to_device(
+         ttnn_typecast_129,
+-        device=utils_DeviceGetter_get_device_74,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3370,11 +3295,10 @@ def main_const_eval_74(arg):
+     return [ttnn_to_device_139]
+ 
+ 
+-def main_const_eval_75(arg):
+-    utils_DeviceGetter_get_device_75 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_75(arg, device):
+     ttnn_to_device_140 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_75,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3396,7 +3320,7 @@ def main_const_eval_75(arg):
+     ttnn.deallocate(ttnn_from_device_69, False)
+     ttnn_to_device_141 = ttnn.to_device(
+         ttnn_typecast_130,
+-        device=utils_DeviceGetter_get_device_75,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3405,11 +3329,10 @@ def main_const_eval_75(arg):
+     return [ttnn_to_device_141]
+ 
+ 
+-def main_const_eval_76(arg):
+-    utils_DeviceGetter_get_device_76 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_76(arg, device):
+     ttnn_to_device_142 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_76,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3431,7 +3354,7 @@ def main_const_eval_76(arg):
+     ttnn.deallocate(ttnn_from_device_70, False)
+     ttnn_to_device_143 = ttnn.to_device(
+         ttnn_typecast_131,
+-        device=utils_DeviceGetter_get_device_76,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3440,11 +3363,10 @@ def main_const_eval_76(arg):
+     return [ttnn_to_device_143]
+ 
+ 
+-def main_const_eval_77(arg):
+-    utils_DeviceGetter_get_device_77 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_77(arg, device):
+     ttnn_to_device_144 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_77,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3466,7 +3388,7 @@ def main_const_eval_77(arg):
+     ttnn.deallocate(ttnn_from_device_71, False)
+     ttnn_to_device_145 = ttnn.to_device(
+         ttnn_typecast_132,
+-        device=utils_DeviceGetter_get_device_77,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3475,11 +3397,10 @@ def main_const_eval_77(arg):
+     return [ttnn_to_device_145]
+ 
+ 
+-def main_const_eval_78(arg):
+-    utils_DeviceGetter_get_device_78 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_78(arg, device):
+     ttnn_to_device_146 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_78,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3501,7 +3422,7 @@ def main_const_eval_78(arg):
+     ttnn.deallocate(ttnn_from_device_72, False)
+     ttnn_to_device_147 = ttnn.to_device(
+         ttnn_typecast_133,
+-        device=utils_DeviceGetter_get_device_78,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3510,11 +3431,10 @@ def main_const_eval_78(arg):
+     return [ttnn_to_device_147]
+ 
+ 
+-def main_const_eval_79(arg):
+-    utils_DeviceGetter_get_device_79 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_79(arg, device):
+     ttnn_to_device_148 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_79,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3536,7 +3456,7 @@ def main_const_eval_79(arg):
+     ttnn.deallocate(ttnn_from_device_73, False)
+     ttnn_to_device_149 = ttnn.to_device(
+         ttnn_typecast_134,
+-        device=utils_DeviceGetter_get_device_79,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3545,11 +3465,10 @@ def main_const_eval_79(arg):
+     return [ttnn_to_device_149]
+ 
+ 
+-def main_const_eval_80(arg):
+-    utils_DeviceGetter_get_device_80 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_80(arg, device):
+     ttnn_to_device_150 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_80,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3571,7 +3490,7 @@ def main_const_eval_80(arg):
+     ttnn.deallocate(ttnn_from_device_74, False)
+     ttnn_to_device_151 = ttnn.to_device(
+         ttnn_typecast_135,
+-        device=utils_DeviceGetter_get_device_80,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3580,8 +3499,7 @@ def main_const_eval_80(arg):
+     return [ttnn_to_device_151]
+ 
+ 
+-def main_const_eval_81(arg):
+-    utils_DeviceGetter_get_device_81 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_81(arg, device):
+     ttnn_typecast_136 = ttnn.typecast(arg[2], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_137 = ttnn.typecast(arg[1], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_138 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -3601,7 +3519,7 @@ def main_const_eval_81(arg):
+     ttnn.deallocate(ttnn_typecast_139, False)
+     ttnn_to_device_152 = ttnn.to_device(
+         ttnn_to_layout_76,
+-        device=utils_DeviceGetter_get_device_81,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3653,7 +3571,7 @@ def main_const_eval_81(arg):
+     ttnn.deallocate(ttnn_from_device_75, False)
+     ttnn_to_device_153 = ttnn.to_device(
+         ttnn_typecast_140,
+-        device=utils_DeviceGetter_get_device_81,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3662,11 +3580,10 @@ def main_const_eval_81(arg):
+     return [ttnn_to_device_153]
+ 
+ 
+-def main_const_eval_82(arg):
+-    utils_DeviceGetter_get_device_82 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_82(arg, device):
+     ttnn_to_device_154 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_82,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3688,7 +3605,7 @@ def main_const_eval_82(arg):
+     ttnn.deallocate(ttnn_from_device_76, False)
+     ttnn_to_device_155 = ttnn.to_device(
+         ttnn_typecast_141,
+-        device=utils_DeviceGetter_get_device_82,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3697,14 +3614,13 @@ def main_const_eval_82(arg):
+     return [ttnn_to_device_155]
+ 
+ 
+-def main_const_eval_83():
+-    utils_DeviceGetter_get_device_83 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_83(device):
+     ttnn_full_2 = ttnn.full(
+         shape=ttnn.Shape([1, 1, 1, 1]),
+         fill_value=0.0,
+         dtype=ttnn.DataType.BFLOAT16,
+         layout=ttnn.Layout.TILE,
+-        device=utils_DeviceGetter_get_device_83,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3712,11 +3628,10 @@ def main_const_eval_83():
+     return [ttnn_full_2]
+ 
+ 
+-def main_const_eval_84(arg):
+-    utils_DeviceGetter_get_device_84 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_84(arg, device):
+     ttnn_to_device_156 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_84,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3738,7 +3653,7 @@ def main_const_eval_84(arg):
+     ttnn.deallocate(ttnn_from_device_77, False)
+     ttnn_to_device_157 = ttnn.to_device(
+         ttnn_typecast_142,
+-        device=utils_DeviceGetter_get_device_84,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3747,11 +3662,10 @@ def main_const_eval_84(arg):
+     return [ttnn_to_device_157]
+ 
+ 
+-def main_const_eval_85(arg):
+-    utils_DeviceGetter_get_device_85 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_85(arg, device):
+     ttnn_to_device_158 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_85,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3773,7 +3687,7 @@ def main_const_eval_85(arg):
+     ttnn.deallocate(ttnn_from_device_78, False)
+     ttnn_to_device_159 = ttnn.to_device(
+         ttnn_typecast_143,
+-        device=utils_DeviceGetter_get_device_85,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3782,11 +3696,10 @@ def main_const_eval_85(arg):
+     return [ttnn_to_device_159]
+ 
+ 
+-def main_const_eval_86(arg):
+-    utils_DeviceGetter_get_device_86 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_86(arg, device):
+     ttnn_to_device_160 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_86,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3808,7 +3721,7 @@ def main_const_eval_86(arg):
+     ttnn.deallocate(ttnn_from_device_79, False)
+     ttnn_to_device_161 = ttnn.to_device(
+         ttnn_typecast_144,
+-        device=utils_DeviceGetter_get_device_86,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3817,11 +3730,10 @@ def main_const_eval_86(arg):
+     return [ttnn_to_device_161]
+ 
+ 
+-def main_const_eval_87(arg):
+-    utils_DeviceGetter_get_device_87 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_87(arg, device):
+     ttnn_to_device_162 = ttnn.to_device(
+         arg[0],
+-        device=utils_DeviceGetter_get_device_87,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3843,7 +3755,7 @@ def main_const_eval_87(arg):
+     ttnn.deallocate(ttnn_from_device_80, False)
+     ttnn_to_device_163 = ttnn.to_device(
+         ttnn_typecast_145,
+-        device=utils_DeviceGetter_get_device_87,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3855,9 +3767,9 @@ def main_const_eval_87(arg):
+ ce_cache__main = {}
+ 
+ 
+-def _main(activations, weights):
++def _main(activations, weights, device):
+     global ce_cache__main
+-    ce_cache__main = consteval__main(ce_cache__main, weights)
++    ce_cache__main = consteval__main(ce_cache__main, weights, device)
+     args_1 = activations[0]
+     args_0 = activations[1]
+     args_2 = activations[2]
+@@ -22674,16 +22586,16 @@ def _main(activations, weights):
+     ]
+ 
+ 
+-def consteval__main(ce_cache, weights):
++def consteval__main(ce_cache, weights, device):
+     if not ce_cache:
+-        main_const_eval_0_0 = main_const_eval_0()
++        main_const_eval_0_0 = main_const_eval_0(device)
+         ce_cache["main_const_eval_0"] = main_const_eval_0_0[0]
+         main_const_eval_1_0 = main_const_eval_1(
+-            [weights["model.layers.3.self_attn.o_proj.weight"]]
++            [weights["model.layers.3.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_1"] = main_const_eval_1_0[0]
+         main_const_eval_2_0 = main_const_eval_2(
+-            [weights["model.layers.14.mlp.down_proj.weight"]]
++            [weights["model.layers.14.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_2"] = main_const_eval_2_0[0]
+         main_const_eval_3_0 = main_const_eval_3(
+@@ -22691,7 +22603,7 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.14.self_attn.k_proj.weight"],
+                 weights["model.layers.14.self_attn.v_proj.weight"],
+                 weights["model.layers.14.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_3"] = main_const_eval_3_0[0]
+         main_const_eval_4_0 = main_const_eval_4(
+@@ -22699,45 +22611,45 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.4.self_attn.k_proj.weight"],
+                 weights["model.layers.4.self_attn.v_proj.weight"],
+                 weights["model.layers.4.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_4"] = main_const_eval_4_0[0]
+         main_const_eval_5_0 = main_const_eval_5(
+-            [weights["model.layers.7.mlp.down_proj.weight"]]
++            [weights["model.layers.7.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_5"] = main_const_eval_5_0[0]
+         main_const_eval_6_0 = main_const_eval_6(
+-            [weights["model.layers.2.mlp.gate_proj.weight"]]
++            [weights["model.layers.2.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_6"] = main_const_eval_6_0[0]
+         main_const_eval_7_0 = main_const_eval_7(
+-            [weights["model.layers.4.mlp.down_proj.weight"]]
++            [weights["model.layers.4.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_7"] = main_const_eval_7_0[0]
+-        main_const_eval_8_0 = main_const_eval_8()
++        main_const_eval_8_0 = main_const_eval_8(device)
+         ce_cache["main_const_eval_8"] = main_const_eval_8_0[0]
+         main_const_eval_9_0 = main_const_eval_9(
+-            [weights["model.layers.12.mlp.gate_proj.weight"]]
++            [weights["model.layers.12.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_9"] = main_const_eval_9_0[0]
+         main_const_eval_10_0 = main_const_eval_10(
+-            [weights["model.layers.9.mlp.gate_proj.weight"]]
++            [weights["model.layers.9.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_10"] = main_const_eval_10_0[0]
+         main_const_eval_11_0 = main_const_eval_11(
+-            [weights["model.layers.6.mlp.gate_proj.weight"]]
++            [weights["model.layers.6.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_11"] = main_const_eval_11_0[0]
+         main_const_eval_12_0 = main_const_eval_12(
+-            [weights["model.layers.6.self_attn.o_proj.weight"]]
++            [weights["model.layers.6.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_12"] = main_const_eval_12_0[0]
+         main_const_eval_13_0 = main_const_eval_13(
+-            [weights["model.layers.0.mlp.down_proj.weight"]]
++            [weights["model.layers.0.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_13"] = main_const_eval_13_0[0]
+         main_const_eval_14_0 = main_const_eval_14(
+-            [weights["model.layers.11.mlp.up_proj.weight"]]
++            [weights["model.layers.11.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_14"] = main_const_eval_14_0[0]
+         main_const_eval_15_0 = main_const_eval_15(
+@@ -22745,7 +22657,7 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.1.self_attn.k_proj.weight"],
+                 weights["model.layers.1.self_attn.v_proj.weight"],
+                 weights["model.layers.1.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_15"] = main_const_eval_15_0[0]
+         main_const_eval_16_0 = main_const_eval_16(
+@@ -22753,7 +22665,7 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.7.self_attn.k_proj.weight"],
+                 weights["model.layers.7.self_attn.v_proj.weight"],
+                 weights["model.layers.7.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_16"] = main_const_eval_16_0[0]
+         main_const_eval_17_0 = main_const_eval_17(
+@@ -22761,31 +22673,31 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.11.self_attn.k_proj.weight"],
+                 weights["model.layers.11.self_attn.v_proj.weight"],
+                 weights["model.layers.11.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_17"] = main_const_eval_17_0[0]
+         main_const_eval_18_0 = main_const_eval_18(
+-            [weights["model.layers.0.self_attn.o_proj.weight"]]
++            [weights["model.layers.0.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_18"] = main_const_eval_18_0[0]
+         main_const_eval_19_0 = main_const_eval_19(
+-            [weights["model.layers.10.self_attn.o_proj.weight"]]
++            [weights["model.layers.10.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_19"] = main_const_eval_19_0[0]
+         main_const_eval_20_0 = main_const_eval_20(
+-            [weights["model.layers.1.mlp.up_proj.weight"]]
++            [weights["model.layers.1.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_20"] = main_const_eval_20_0[0]
+         main_const_eval_21_0 = main_const_eval_21(
+-            [weights["model.layers.5.mlp.up_proj.weight"]]
++            [weights["model.layers.5.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_21"] = main_const_eval_21_0[0]
+         main_const_eval_22_0 = main_const_eval_22(
+-            [weights["model.layers.8.mlp.down_proj.weight"]]
++            [weights["model.layers.8.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_22"] = main_const_eval_22_0[0]
+         main_const_eval_23_0 = main_const_eval_23(
+-            [weights["model.layers.14.self_attn.o_proj.weight"]]
++            [weights["model.layers.14.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_23"] = main_const_eval_23_0[0]
+         main_const_eval_24_0 = main_const_eval_24(
+@@ -22793,11 +22705,11 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.15.self_attn.k_proj.weight"],
+                 weights["model.layers.15.self_attn.v_proj.weight"],
+                 weights["model.layers.15.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_24"] = main_const_eval_24_0[0]
+         main_const_eval_25_0 = main_const_eval_25(
+-            [weights["model.rotary_emb.inv_freq"]]
++            [weights["model.rotary_emb.inv_freq"]], device
+         )
+         ce_cache["main_const_eval_25"] = main_const_eval_25_0[0]
+         main_const_eval_26_0 = main_const_eval_26(
+@@ -22805,7 +22717,7 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.3.self_attn.k_proj.weight"],
+                 weights["model.layers.3.self_attn.v_proj.weight"],
+                 weights["model.layers.3.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_26"] = main_const_eval_26_0[0]
+         main_const_eval_27_0 = main_const_eval_27(
+@@ -22813,31 +22725,31 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.10.self_attn.k_proj.weight"],
+                 weights["model.layers.10.self_attn.v_proj.weight"],
+                 weights["model.layers.10.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_27"] = main_const_eval_27_0[0]
+         main_const_eval_28_0 = main_const_eval_28(
+-            [weights["model.layers.13.mlp.down_proj.weight"]]
++            [weights["model.layers.13.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_28"] = main_const_eval_28_0[0]
+         main_const_eval_29_0 = main_const_eval_29(
+-            [weights["model.layers.8.mlp.gate_proj.weight"]]
++            [weights["model.layers.8.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_29"] = main_const_eval_29_0[0]
+         main_const_eval_30_0 = main_const_eval_30(
+-            [weights["model.layers.0.mlp.gate_proj.weight"]]
++            [weights["model.layers.0.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_30"] = main_const_eval_30_0[0]
+         main_const_eval_31_0 = main_const_eval_31(
+-            [weights["model.layers.3.mlp.gate_proj.weight"]]
++            [weights["model.layers.3.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_31"] = main_const_eval_31_0[0]
+         main_const_eval_32_0 = main_const_eval_32(
+-            [weights["model.layers.15.mlp.gate_proj.weight"]]
++            [weights["model.layers.15.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_32"] = main_const_eval_32_0[0]
+         main_const_eval_33_0 = main_const_eval_33(
+-            [weights["model.layers.1.mlp.down_proj.weight"]]
++            [weights["model.layers.1.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_33"] = main_const_eval_33_0[0]
+         main_const_eval_34_0 = main_const_eval_34(
+@@ -22845,15 +22757,15 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.2.self_attn.k_proj.weight"],
+                 weights["model.layers.2.self_attn.v_proj.weight"],
+                 weights["model.layers.2.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_34"] = main_const_eval_34_0[0]
+         main_const_eval_35_0 = main_const_eval_35(
+-            [weights["model.layers.5.mlp.down_proj.weight"]]
++            [weights["model.layers.5.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_35"] = main_const_eval_35_0[0]
+         main_const_eval_36_0 = main_const_eval_36(
+-            [weights["model.layers.11.self_attn.o_proj.weight"]]
++            [weights["model.layers.11.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_36"] = main_const_eval_36_0[0]
+         main_const_eval_37_0 = main_const_eval_37(
+@@ -22861,43 +22773,43 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.6.self_attn.k_proj.weight"],
+                 weights["model.layers.6.self_attn.v_proj.weight"],
+                 weights["model.layers.6.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_37"] = main_const_eval_37_0[0]
+         main_const_eval_38_0 = main_const_eval_38(
+-            [weights["model.layers.7.self_attn.o_proj.weight"]]
++            [weights["model.layers.7.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_38"] = main_const_eval_38_0[0]
+         main_const_eval_39_0 = main_const_eval_39(
+-            [weights["model.layers.15.self_attn.o_proj.weight"]]
++            [weights["model.layers.15.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_39"] = main_const_eval_39_0[0]
+         main_const_eval_40_0 = main_const_eval_40(
+-            [weights["model.layers.0.mlp.up_proj.weight"]]
++            [weights["model.layers.0.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_40"] = main_const_eval_40_0[0]
+         main_const_eval_41_0 = main_const_eval_41(
+-            [weights["model.layers.4.mlp.up_proj.weight"]]
++            [weights["model.layers.4.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_41"] = main_const_eval_41_0[0]
+         main_const_eval_42_0 = main_const_eval_42(
+-            [weights["model.layers.8.mlp.up_proj.weight"]]
++            [weights["model.layers.8.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_42"] = main_const_eval_42_0[0]
+         main_const_eval_43_0 = main_const_eval_43(
+-            [weights["model.layers.12.mlp.up_proj.weight"]]
++            [weights["model.layers.12.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_43"] = main_const_eval_43_0[0]
+         main_const_eval_44_0 = main_const_eval_44(
+-            [weights["model.layers.14.mlp.gate_proj.weight"]]
++            [weights["model.layers.14.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_44"] = main_const_eval_44_0[0]
+         main_const_eval_45_0 = main_const_eval_45(
+-            [weights["model.layers.9.mlp.down_proj.weight"]]
++            [weights["model.layers.9.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_45"] = main_const_eval_45_0[0]
+         main_const_eval_46_0 = main_const_eval_46(
+-            [weights["model.layers.15.mlp.up_proj.weight"]]
++            [weights["model.layers.15.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_46"] = main_const_eval_46_0[0]
+         main_const_eval_47_0 = main_const_eval_47(
+@@ -22905,7 +22817,7 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.0.self_attn.k_proj.weight"],
+                 weights["model.layers.0.self_attn.v_proj.weight"],
+                 weights["model.layers.0.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_47"] = main_const_eval_47_0[0]
+         main_const_eval_48_0 = main_const_eval_48(
+@@ -22913,79 +22825,79 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.9.self_attn.k_proj.weight"],
+                 weights["model.layers.9.self_attn.v_proj.weight"],
+                 weights["model.layers.9.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_48"] = main_const_eval_48_0[0]
+         main_const_eval_49_0 = main_const_eval_49(
+-            [weights["model.layers.12.mlp.down_proj.weight"]]
++            [weights["model.layers.12.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_49"] = main_const_eval_49_0[0]
+-        main_const_eval_50_0 = main_const_eval_50()
++        main_const_eval_50_0 = main_const_eval_50(device)
+         ce_cache["main_const_eval_50"] = main_const_eval_50_0[0]
+         main_const_eval_51_0 = main_const_eval_51(
+-            [weights["model.layers.2.mlp.down_proj.weight"]]
++            [weights["model.layers.2.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_51"] = main_const_eval_51_0[0]
+         main_const_eval_52_0 = main_const_eval_52(
+-            [weights["model.layers.4.mlp.gate_proj.weight"]]
++            [weights["model.layers.4.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_52"] = main_const_eval_52_0[0]
+         main_const_eval_53_0 = main_const_eval_53(
+-            [weights["model.layers.7.mlp.gate_proj.weight"]]
++            [weights["model.layers.7.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_53"] = main_const_eval_53_0[0]
+         main_const_eval_54_0 = main_const_eval_54(
+-            [weights["model.layers.11.mlp.gate_proj.weight"]]
++            [weights["model.layers.11.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_54"] = main_const_eval_54_0[0]
+         main_const_eval_55_0 = main_const_eval_55(
+-            [weights["model.layers.6.mlp.down_proj.weight"]]
++            [weights["model.layers.6.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_55"] = main_const_eval_55_0[0]
+         main_const_eval_56_0 = main_const_eval_56(
+-            [weights["model.layers.12.self_attn.o_proj.weight"]]
++            [weights["model.layers.12.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_56"] = main_const_eval_56_0[0]
+         main_const_eval_57_0 = main_const_eval_57(
+-            [weights["model.layers.7.mlp.up_proj.weight"]]
++            [weights["model.layers.7.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_57"] = main_const_eval_57_0[0]
+         main_const_eval_58_0 = main_const_eval_58(
+-            [weights["model.layers.2.self_attn.o_proj.weight"]]
++            [weights["model.layers.2.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_58"] = main_const_eval_58_0[0]
+         main_const_eval_59_0 = main_const_eval_59(
+-            [weights["model.layers.8.self_attn.o_proj.weight"]]
++            [weights["model.layers.8.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_59"] = main_const_eval_59_0[0]
+         main_const_eval_60_0 = main_const_eval_60(
+-            [weights["model.layers.9.mlp.up_proj.weight"]]
++            [weights["model.layers.9.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_60"] = main_const_eval_60_0[0]
+-        main_const_eval_61_0 = main_const_eval_61()
++        main_const_eval_61_0 = main_const_eval_61(device)
+         ce_cache["main_const_eval_61"] = main_const_eval_61_0[0]
+         main_const_eval_62_0 = main_const_eval_62(
+-            [weights["model.layers.3.mlp.up_proj.weight"]]
++            [weights["model.layers.3.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_62"] = main_const_eval_62_0[0]
+         main_const_eval_63_0 = main_const_eval_63(
+-            [weights["model.layers.9.self_attn.o_proj.weight"]]
++            [weights["model.layers.9.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_63"] = main_const_eval_63_0[0]
+         main_const_eval_64_0 = main_const_eval_64(
+-            [weights["model.layers.4.self_attn.o_proj.weight"]]
++            [weights["model.layers.4.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_64"] = main_const_eval_64_0[0]
+         main_const_eval_65_0 = main_const_eval_65(
+-            [weights["model.embed_tokens.weight"]]
++            [weights["model.embed_tokens.weight"]], device
+         )
+         ce_cache["main_const_eval_65"] = main_const_eval_65_0[0]
+         main_const_eval_66_0 = main_const_eval_66(
+-            [weights["model.layers.3.mlp.down_proj.weight"]]
++            [weights["model.layers.3.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_66"] = main_const_eval_66_0[0]
+         main_const_eval_67_0 = main_const_eval_67(
+-            [weights["model.layers.14.mlp.up_proj.weight"]]
++            [weights["model.layers.14.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_67"] = main_const_eval_67_0[0]
+         main_const_eval_68_0 = main_const_eval_68(
+@@ -22993,7 +22905,7 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.5.self_attn.k_proj.weight"],
+                 weights["model.layers.5.self_attn.v_proj.weight"],
+                 weights["model.layers.5.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_68"] = main_const_eval_68_0[0]
+         main_const_eval_69_0 = main_const_eval_69(
+@@ -23001,23 +22913,23 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.8.self_attn.k_proj.weight"],
+                 weights["model.layers.8.self_attn.v_proj.weight"],
+                 weights["model.layers.8.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_69"] = main_const_eval_69_0[0]
+         main_const_eval_70_0 = main_const_eval_70(
+-            [weights["model.layers.5.mlp.gate_proj.weight"]]
++            [weights["model.layers.5.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_70"] = main_const_eval_70_0[0]
+         main_const_eval_71_0 = main_const_eval_71(
+-            [weights["model.layers.10.mlp.down_proj.weight"]]
++            [weights["model.layers.10.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_71"] = main_const_eval_71_0[0]
+         main_const_eval_72_0 = main_const_eval_72(
+-            [weights["model.layers.10.mlp.gate_proj.weight"]]
++            [weights["model.layers.10.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_72"] = main_const_eval_72_0[0]
+         main_const_eval_73_0 = main_const_eval_73(
+-            [weights["model.layers.13.mlp.up_proj.weight"]]
++            [weights["model.layers.13.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_73"] = main_const_eval_73_0[0]
+         main_const_eval_74_0 = main_const_eval_74(
+@@ -23025,31 +22937,31 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.13.self_attn.k_proj.weight"],
+                 weights["model.layers.13.self_attn.v_proj.weight"],
+                 weights["model.layers.13.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_74"] = main_const_eval_74_0[0]
+         main_const_eval_75_0 = main_const_eval_75(
+-            [weights["model.layers.13.mlp.gate_proj.weight"]]
++            [weights["model.layers.13.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_75"] = main_const_eval_75_0[0]
+         main_const_eval_76_0 = main_const_eval_76(
+-            [weights["model.layers.11.mlp.down_proj.weight"]]
++            [weights["model.layers.11.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_76"] = main_const_eval_76_0[0]
+         main_const_eval_77_0 = main_const_eval_77(
+-            [weights["model.layers.6.mlp.up_proj.weight"]]
++            [weights["model.layers.6.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_77"] = main_const_eval_77_0[0]
+         main_const_eval_78_0 = main_const_eval_78(
+-            [weights["model.layers.1.self_attn.o_proj.weight"]]
++            [weights["model.layers.1.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_78"] = main_const_eval_78_0[0]
+         main_const_eval_79_0 = main_const_eval_79(
+-            [weights["model.layers.15.mlp.down_proj.weight"]]
++            [weights["model.layers.15.mlp.down_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_79"] = main_const_eval_79_0[0]
+         main_const_eval_80_0 = main_const_eval_80(
+-            [weights["model.layers.1.mlp.gate_proj.weight"]]
++            [weights["model.layers.1.mlp.gate_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_80"] = main_const_eval_80_0[0]
+         main_const_eval_81_0 = main_const_eval_81(
+@@ -23057,39 +22969,38 @@ def consteval__main(ce_cache, weights):
+                 weights["model.layers.12.self_attn.k_proj.weight"],
+                 weights["model.layers.12.self_attn.v_proj.weight"],
+                 weights["model.layers.12.self_attn.q_proj.weight"],
+-            ]
++            ], device
+         )
+         ce_cache["main_const_eval_81"] = main_const_eval_81_0[0]
+-        main_const_eval_82_0 = main_const_eval_82([weights["lm_head.weight"]])
++        main_const_eval_82_0 = main_const_eval_82([weights["lm_head.weight"]], device)
+         ce_cache["main_const_eval_82"] = main_const_eval_82_0[0]
+-        main_const_eval_83_0 = main_const_eval_83()
++        main_const_eval_83_0 = main_const_eval_83(device)
+         ce_cache["main_const_eval_83"] = main_const_eval_83_0[0]
+         main_const_eval_84_0 = main_const_eval_84(
+-            [weights["model.layers.2.mlp.up_proj.weight"]]
++            [weights["model.layers.2.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_84"] = main_const_eval_84_0[0]
+         main_const_eval_85_0 = main_const_eval_85(
+-            [weights["model.layers.10.mlp.up_proj.weight"]]
++            [weights["model.layers.10.mlp.up_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_85"] = main_const_eval_85_0[0]
+         main_const_eval_86_0 = main_const_eval_86(
+-            [weights["model.layers.5.self_attn.o_proj.weight"]]
++            [weights["model.layers.5.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_86"] = main_const_eval_86_0[0]
+         main_const_eval_87_0 = main_const_eval_87(
+-            [weights["model.layers.13.self_attn.o_proj.weight"]]
++            [weights["model.layers.13.self_attn.o_proj.weight"]], device
+         )
+         ce_cache["main_const_eval_87"] = main_const_eval_87_0[0]
+     return ce_cache
+ 
+ 
+-def load_activations_for__main():
+-    utils_DeviceGetter_get_device_88 = utils.DeviceGetter.get_device((1, 1))
++def load_activations_for__main(device):
+     utils_load_tensor_0 = utils.load_tensor(
+         "./tensors/arg0.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23098,7 +23009,7 @@ def load_activations_for__main():
+         "./tensors/arg4.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23107,7 +23018,7 @@ def load_activations_for__main():
+         "./tensors/arg6.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23116,7 +23027,7 @@ def load_activations_for__main():
+         "./tensors/arg8.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23125,7 +23036,7 @@ def load_activations_for__main():
+         "./tensors/arg17.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23134,7 +23045,7 @@ def load_activations_for__main():
+         "./tensors/arg18.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23143,7 +23054,7 @@ def load_activations_for__main():
+         "./tensors/arg20.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23152,7 +23063,7 @@ def load_activations_for__main():
+         "./tensors/arg29.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23161,7 +23072,7 @@ def load_activations_for__main():
+         "./tensors/arg30.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23170,7 +23081,7 @@ def load_activations_for__main():
+         "./tensors/arg32.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23179,7 +23090,7 @@ def load_activations_for__main():
+         "./tensors/arg41.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23188,7 +23099,7 @@ def load_activations_for__main():
+         "./tensors/arg42.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23197,7 +23108,7 @@ def load_activations_for__main():
+         "./tensors/arg44.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23206,7 +23117,7 @@ def load_activations_for__main():
+         "./tensors/arg53.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23215,7 +23126,7 @@ def load_activations_for__main():
+         "./tensors/arg54.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23224,7 +23135,7 @@ def load_activations_for__main():
+         "./tensors/arg56.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23233,7 +23144,7 @@ def load_activations_for__main():
+         "./tensors/arg65.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23242,7 +23153,7 @@ def load_activations_for__main():
+         "./tensors/arg66.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23251,7 +23162,7 @@ def load_activations_for__main():
+         "./tensors/arg68.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23260,7 +23171,7 @@ def load_activations_for__main():
+         "./tensors/arg77.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23269,7 +23180,7 @@ def load_activations_for__main():
+         "./tensors/arg78.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23278,7 +23189,7 @@ def load_activations_for__main():
+         "./tensors/arg80.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23287,7 +23198,7 @@ def load_activations_for__main():
+         "./tensors/arg89.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23296,7 +23207,7 @@ def load_activations_for__main():
+         "./tensors/arg90.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23305,7 +23216,7 @@ def load_activations_for__main():
+         "./tensors/arg92.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23314,7 +23225,7 @@ def load_activations_for__main():
+         "./tensors/arg101.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23323,7 +23234,7 @@ def load_activations_for__main():
+         "./tensors/arg102.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23332,7 +23243,7 @@ def load_activations_for__main():
+         "./tensors/arg104.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23341,7 +23252,7 @@ def load_activations_for__main():
+         "./tensors/arg113.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23350,7 +23261,7 @@ def load_activations_for__main():
+         "./tensors/arg114.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23359,7 +23270,7 @@ def load_activations_for__main():
+         "./tensors/arg116.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23368,7 +23279,7 @@ def load_activations_for__main():
+         "./tensors/arg125.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23377,7 +23288,7 @@ def load_activations_for__main():
+         "./tensors/arg126.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23386,7 +23297,7 @@ def load_activations_for__main():
+         "./tensors/arg128.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23395,7 +23306,7 @@ def load_activations_for__main():
+         "./tensors/arg137.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23404,7 +23315,7 @@ def load_activations_for__main():
+         "./tensors/arg138.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23413,7 +23324,7 @@ def load_activations_for__main():
+         "./tensors/arg140.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23422,7 +23333,7 @@ def load_activations_for__main():
+         "./tensors/arg149.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23431,7 +23342,7 @@ def load_activations_for__main():
+         "./tensors/arg150.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23440,7 +23351,7 @@ def load_activations_for__main():
+         "./tensors/arg152.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23449,7 +23360,7 @@ def load_activations_for__main():
+         "./tensors/arg161.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23458,7 +23369,7 @@ def load_activations_for__main():
+         "./tensors/arg162.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23467,7 +23378,7 @@ def load_activations_for__main():
+         "./tensors/arg164.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23476,7 +23387,7 @@ def load_activations_for__main():
+         "./tensors/arg173.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23485,7 +23396,7 @@ def load_activations_for__main():
+         "./tensors/arg174.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23494,7 +23405,7 @@ def load_activations_for__main():
+         "./tensors/arg176.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23503,7 +23414,7 @@ def load_activations_for__main():
+         "./tensors/arg185.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23512,7 +23423,7 @@ def load_activations_for__main():
+         "./tensors/arg186.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23521,7 +23432,7 @@ def load_activations_for__main():
+         "./tensors/arg188.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_88,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -23580,16 +23491,23 @@ def load_activations_for__main():
+ 
+ 
+ def main():
+-    load_activations_for__main_0 = load_activations_for__main()
+-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
++    device = ttnn.open_mesh_device(
++        mesh_shape=ttnn.MeshShape((1, 1)),
++        l1_small_size=1 << 15,
++    )
++    load_activations_for__main_0 = load_activations_for__main(device)
++    load_weights_for__main_0 = load_weights_for__main_from_state_dict(device)
++    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
+     return 0
+ 
+ 
+ def test_main():
+     exact_pcc = 1.0078125
+ 
+-    device = utils.DeviceGetter.get_device((1, 1))
++    device = ttnn.open_mesh_device(
++        mesh_shape=ttnn.MeshShape((1, 1)),
++        l1_small_size=1 << 15,
++    )
+     interleaved_dram_memory_config = ttnn.MemoryConfig(
+         ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+     )
+@@ -23631,8 +23549,8 @@ def test_main():
+         activations.append(to_ttnn_bfloat16_tile(layer.keys))
+         activations.append(to_ttnn_bfloat16_tile(layer.values))
+ 
+-    weights = load_weights_for__main_from_state_dict()
+-    outputs = _main(activations, weights)
++    weights = load_weights_for__main_from_state_dict(device)
++    outputs = _main(activations, weights, device)
+ 
+     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+     golden_output = model_pt.run_pytorch_model()
+diff --git a/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/params.py b/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/params.py
+index 8cc1ce4..0220d05 100644
+--- a/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/params.py
++++ b/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/params.py
+@@ -3,7 +3,6 @@
+ # SPDX-License-Identifier: Apache-2.0
+ 
+ import ttnn
+-import utils
+ import model_pt
+ 
+ 
+@@ -39,9 +38,7 @@ HOST_WEIGHTS = {
+ ALL_WEIGHTS = TILE_WEIGHTS | HOST_WEIGHTS
+ 
+ 
+-def load_weights_for__main_from_state_dict():
+-    device = utils.DeviceGetter.get_device((1, 1))
+-
++def load_weights_for__main_from_state_dict(device):
+     model = model_pt.load_pytorch_model()
+     state_dict = dict(model.state_dict())
+     for name, buf in model.named_buffers():
+diff --git a/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/utils.py b/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/utils.py
+index abbc304..4abcd04 100644
+--- a/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/utils.py
++++ b/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/utils.py
+@@ -2,53 +2,9 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ import ttnn
+-import math
+ import torch
+ 
+ 
+-class DeviceGetter:
+-    _instance = None
+-    _mesh_shape = None
+-    l1_small_size = 1 << 15
+-
+-    def __init__(self):
+-        raise RuntimeError("This is Singleton, invoke get_device() instead.")
+-
+-    def __del__(self):
+-        if self._instance is not None:
+-            ttnn.close_mesh_device(self._instance)
+-            ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
+-
+-    @classmethod
+-    def get_device(cls, mesh_shape):
+-        if cls._instance == None:
+-            if (
+-                not isinstance(mesh_shape, (list, tuple))
+-                or len(mesh_shape) == 0
+-                or not all(isinstance(x, int) and x > 0 for x in mesh_shape)
+-            ):
+-                raise ValueError(
+-                    f"mesh_shape must be a non-empty list or tuple of positive integers, got {mesh_shape}"
+-                )
+-            cls._mesh_shape = mesh_shape
+-
+-            if math.prod(mesh_shape) >= 2:
+-                ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D)
+-            cls._instance = ttnn.open_mesh_device(
+-                mesh_shape=ttnn.MeshShape(mesh_shape),
+-                l1_small_size=cls.l1_small_size,
+-            )
+-            print(f"Device: {cls._instance}")
+-
+-        # Compare requested mesh_shape with _mesh_shape used to initialize the device
+-        if tuple(cls._mesh_shape) != tuple(mesh_shape):
+-            raise ValueError(
+-                f"Device already initialized with mesh_shape={cls._mesh_shape}, but got mesh_shape={mesh_shape}"
+-            )
+-
+-        return cls._instance
+-
+-
+ def get_scalar_from_tensor(tensor: ttnn.Tensor) -> int:
+     assert tensor.logical_volume() == 1, "expected scalar tensor"
+     assert tensor.dtype == ttnn.DataType.UINT32, "expected uint32 tensor"
