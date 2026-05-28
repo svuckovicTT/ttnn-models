@@ -1,0 +1,3 @@
+Done. Created `model_pt.py` with `load_pytorch_model()`, `load_input()`, and `run_pytorch_model()` mirroring xla.py's CPU path (no tt-xla imports). Added `calculate_pcc()` to `utils.py` (with `import torch`) and imported it into `main.py` via `from utils import calculate_pcc`.
+
+--- Time taken: 72.6s ---
