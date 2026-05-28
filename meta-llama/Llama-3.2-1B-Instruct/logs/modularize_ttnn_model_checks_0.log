@@ -1,0 +1,90 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/meta-llama/Llama-3.2-1B-Instruct/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+___________________________ ERROR collecting main.py ___________________________
+ImportError while importing test module '/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/meta-llama/Llama-3.2-1B-Instruct/model/graph_0/main.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+main.py:7: in <module>
+    from model_ttnn import ModelTTNN
+model_ttnn.py:2: in <module>
+    import constants
+E   ModuleNotFoundError: No module named 'constants'
+=============================== warnings summary ===============================
+../../../../../tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: 14 warnings
+  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR main.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+======================== 16 warnings, 1 error in 3.23s =========================
+2026-05-28 11:32:26.076 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x4d226c0 of type "ttnn._ttnn.operations.data_movement.squeeze_t"
+ - leaked instance 0x24a4430 of type "ttnn._ttnn.operations.unary.silu_t"
+ - leaked instance 0x4e0a350 of type "ttnn._ttnn.operations.moreh.moreh_dot_backward_t"
+ - leaked instance 0x24abee0 of type "ttnn._ttnn.operations.unary.softsign_t"
+ - leaked instance 0x4d91580 of type "ttnn._ttnn.operations.kv_cache.fill_cache_t"
+ - leaked instance 0x4d1bbf0 of type "ttnn._ttnn.operations.data_movement.interleaved_to_sharded_partial_t"
+ - leaked instance 0x4ca2160 of type "ttnn._ttnn.operations.binary_backward.fmod_bw_t"
+ - leaked instance 0x439b640 of type "ttnn._ttnn.operations.unary.rpow_t"
+ - leaked instance 0x44c2d30 of type "ttnn._ttnn.operations.unary.identity_t"
+ - leaked instance 0x45ad1d0 of type "ttnn._ttnn.operations.unary.polygamma_t"
+ - leaked instance 0x454aac0 of type "ttnn._ttnn.operations.unary.round_t"
+ - leaked instance 0x24a57d0 of type "ttnn._ttnn.operations.unary.sin_t"
+ - leaked instance 0x4d19e80 of type "ttnn._ttnn.operations.data_movement.expand_t"
+ - leaked instance 0x4c937a0 of type "ttnn._ttnn.operations.unary_backward.div_no_nan_bw_t"
+ - leaked instance 0x4d4f600 of type "ttnn._ttnn.operations.normalization.scale_mask_softmax_t"
+ - leaked instance 0x4e25690 of type "ttnn._ttnn.operations.randn.randn_t"
+ - leaked instance 0x4cadf00 of type "ttnn._ttnn.operations.ternary_backward.addcmul_bw_t"
+ - leaked instance 0x4d10280 of type "ttnn._ttnn.operations.data_movement.transpose_t"
+ - leaked instance 0x4d0ad20 of type "ttnn._ttnn.operations.data_movement.slice_t"
+ - leaked instance 0x4c6e990 of type "ttnn._ttnn.operations.unary_backward.elu_bw_t"
+ - ... skipped remainder
+nanobind: leaked 532 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2335 functions!
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - leaked function "reshape"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step modularize_ttnn_model, as expected

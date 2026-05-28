@@ -1,0 +1,19 @@
+The modularization is complete. Here's a summary of what was done:
+
+**Structure** (model_ttnn.py reduced from 18,831 → 2,976 lines):
+
+1. **`ModelTTNN`** (top of file, line 11) — equivalent to `LlamaForCausalLM`:
+   - `__init__`: loads weights, instantiates `self.model = LlamaModel(...)`
+   - `forward`: unpacks activations, calls `self.model`, applies `lm_head` matmul + reshape, builds return list
+
+2. **`LlamaModel`** (line 150) — equivalent to PyTorch's `LlamaModel`:
+   - `__init__`: instantiates `self.layer_0 = LlamaDecoderLayerFirst(...)` and `self.layers = [LlamaDecoderLayer(i, ...) for i in 1..15]`
+   - `forward`: runs token embedding setup, calls `self.layer_0` (which also returns `cos`/`sin`/`causal_mask`), then loops over `self.layers`, then applies final RMSNorm
+
+3. **`LlamaDecoderLayerFirst`** (line 361) — handles layer 0, which is structurally different because it also computes rotary embeddings (`cos`/`sin`) and the causal mask (`ttnn_where_0`) that are shared across all subsequent layers
+
+4. **`LlamaDecoderLayer`** (line 1808) — generic decoder layer instantiated 15 times (layers 1-15). Uses `self.layer_idx` to select layer-specific weight keys. Has `is_last=True` for layer 15, which inserts conditional `ttnn.deallocate(cos/sin/causal_mask)` calls at the appropriate points to match the original deallocation pattern.
+
+The same 1024 `fill_cache` operations execute at runtime (64 in layer 0 + 15 × 64 in the shared layer template), preserving semantic equivalence with the original flat code.
+
+--- Time taken: 1264.6s ---
