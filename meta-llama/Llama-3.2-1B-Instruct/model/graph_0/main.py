@@ -2,6 +2,7 @@ import ttnn
 import utils
 import ttir_cpu
 import torch
+import model_pt
 from utils import calculate_pcc
 
 
@@ -24876,7 +24877,59 @@ def main():
 
 
 def test_main():
-    return 0
+    exact_pcc = 1.0078125
+
+    device = utils.DeviceGetter.get_device((1, 1))
+    interleaved_dram_memory_config = ttnn.MemoryConfig(
+        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+    )
+
+    def to_ttnn_int32_row_major(tensor):
+        return ttnn.from_torch(
+            tensor,
+            dtype=ttnn.DataType.INT32,
+            layout=ttnn.Layout.ROW_MAJOR,
+            device=device,
+            memory_config=interleaved_dram_memory_config,
+        )
+
+    def to_ttnn_bfloat16_tile(tensor):
+        return ttnn.from_torch(
+            tensor,
+            dtype=ttnn.DataType.BFLOAT16,
+            layout=ttnn.Layout.TILE,
+            device=device,
+            memory_config=interleaved_dram_memory_config,
+        )
+
+    pytorch_input = model_pt.load_input()
+    layers = pytorch_input["past_key_values"].layers
+
+    # Mirror load_activations_for__main() ordering:
+    #   [0]   layer 0 cumulative_length (INT32, ROW_MAJOR)
+    #   [1]   input_ids                 (INT32, ROW_MAJOR)
+    #   [2:4] layer 0 keys, values      (BFLOAT16, TILE)
+    # then for each subsequent layer: cumulative_length, keys, values
+    activations = [
+        to_ttnn_int32_row_major(layers[0].cumulative_length),
+        to_ttnn_int32_row_major(pytorch_input["input_ids"]),
+        to_ttnn_bfloat16_tile(layers[0].keys),
+        to_ttnn_bfloat16_tile(layers[0].values),
+    ]
+    for layer in layers[1:]:
+        activations.append(to_ttnn_int32_row_major(layer.cumulative_length))
+        activations.append(to_ttnn_bfloat16_tile(layer.keys))
+        activations.append(to_ttnn_bfloat16_tile(layer.values))
+
+    weights = load_weights_for__main()
+    outputs = _main(activations, weights)
+
+    ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+    golden_output = model_pt.run_pytorch_model()
+
+    pcc = calculate_pcc(ttnn_output, golden_output)
+    print(f"\nPCC: {pcc:.6f}")
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
 
 if __name__ == "__main__":
