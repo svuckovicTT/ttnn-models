@@ -1,0 +1,18 @@
+Refactor complete. Summary of changes:
+
+**`model_ttnn.py`**:
+- Added `import params`
+- Added `LightweightModule` class with `__call__` delegating to `forward`
+- Created `ModelTTNN(LightweightModule)` with:
+  - `__init__(self, device)` storing `self.device` and loading `self.weights = params.load_weights_for__main_from_state_dict(device)`
+  - `forward(self, activations)` — body of the previous `_main` function, indented one level deeper, with `weights[...]` rewritten to `self.weights[...]` and the lone `device` reference inside the body rewritten to `self.device`
+- Module-level `ce_cache__main = {}` retained (still used via `global`)
+
+**`main.py`**:
+- Import: `from model_ttnn import _main` → `from model_ttnn import ModelTTNN`; removed now-unused `from params import load_weights_for__main_from_state_dict`
+- `main()`: replaced the `load_weights_for__main_from_state_dict` + `_main(...)` calls with `model = ModelTTNN(device)` and `model(load_activations_for__main_0)`
+- `test_main()`: same pattern — model is instantiated, then called via the call operator with `activations`
+
+Both files parse cleanly. Semantic equivalence preserved: weights are still loaded via the same `params.load_weights_for__main_from_state_dict(device)` call, the forward body is byte-equivalent to the prior `_main` body modulo the `self.`/indentation rewrites, and `consteval__main` is still invoked first with the same `(ce_cache__main, weights, device)` triple.
+
+--- Time taken: 271.1s ---
