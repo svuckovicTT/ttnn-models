@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import ttnn
 import math
+import torch
 
 
 class DeviceGetter:
@@ -69,6 +70,26 @@ def load_tensor(file_path: str, layout, dtype, device, memory_config) -> ttnn.Te
         loaded_tensor = ttnn.to_device(loaded_tensor, device, memory_config)
 
     return loaded_tensor
+
+
+def calculate_pcc(x, y):
+    # This function calculates the PCC between two torch tensors
+
+    # Assert both are torch tensors
+    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
+    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
+
+    if x.shape != y.shape:
+        raise ValueError(
+            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
+        )
+
+    # Calculate PCC
+    x_flat, y_flat = x.flatten(), y.flatten()
+    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
+    denom = vx.norm() * vy.norm()
+
+    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()
 
 
 # Helpers for distributed RMS norm EmitPy support.
