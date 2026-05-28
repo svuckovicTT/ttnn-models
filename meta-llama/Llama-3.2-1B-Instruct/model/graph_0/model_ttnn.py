@@ -1,8 +1,6 @@
 import ttnn
+import constants
 import params
-
-
-ce_cache__main = {}
 
 
 class LightweightModule:
@@ -14,12 +12,9 @@ class ModelTTNN(LightweightModule):
     def __init__(self, device):
         self.device = device
         self.weights = params.load_weights_for__main_from_state_dict(device)
+        self.weights = constants.run_consteval(self.weights, device)
 
     def forward(self, activations):
-        from main import consteval__main
-
-        global ce_cache__main
-        ce_cache__main = consteval__main(ce_cache__main, self.weights, self.device)
         args_1 = activations[0]
         args_0 = activations[1]
         args_2 = activations[2]
@@ -69,9 +64,9 @@ class ModelTTNN(LightweightModule):
         args_46 = activations[46]
         args_47 = activations[47]
         args_48 = activations[48]
-        var_0 = ce_cache__main["main_const_eval_8"]
+        var_0 = self.weights["const_seq_len_18"]
         ttnn_to_memory_config_0 = ttnn.to_memory_config(
-            ce_cache__main["main_const_eval_0"],
+            self.weights["iota_seq_18"],
             ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
                 ttnn.BufferType.L1,
@@ -126,7 +121,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_0, False)
         ttnn_embedding_0 = ttnn.embedding(
             ttnn_to_memory_config_1,
-            ce_cache__main["main_const_eval_65"],
+            self.weights["model.embed_tokens.weight"],
             padding_idx=None,
             layout=ttnn.Layout.TILE,
             dtype=ttnn.DataType.BFLOAT16,
@@ -177,7 +172,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_to_memory_config_2, False)
         ttnn_matmul_0 = ttnn.matmul(
             ttnn_rms_norm_0,
-            ce_cache__main["main_const_eval_47"],
+            self.weights["model.layers.0.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -251,7 +246,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_typecast_147, False)
         ttnn_matmul_1 = ttnn.matmul(
-            ce_cache__main["main_const_eval_25"],
+            self.weights["model.rotary_emb.inv_freq"],
             ttnn_reshape_2,
             transpose_a=False,
             transpose_b=False,
@@ -1243,7 +1238,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_reshape_4, False)
         ttnn_to_memory_config_13 = ttnn.to_memory_config(
-            ce_cache__main["main_const_eval_61"],
+            self.weights["iota_kv_128"],
             ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
                 ttnn.BufferType.L1,
@@ -1275,7 +1270,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_to_memory_config_13, False)
         ttnn.deallocate(ttnn_to_memory_config_12, False)
         ttnn_to_memory_config_14 = ttnn.to_memory_config(
-            ce_cache__main["main_const_eval_50"],
+            self.weights["const_attn_mask_neg_inf"],
             ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
                 ttnn.BufferType.L1,
@@ -1289,7 +1284,7 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn_to_memory_config_15 = ttnn.to_memory_config(
-            ce_cache__main["main_const_eval_83"],
+            self.weights["const_attn_mask_zero"],
             ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
                 ttnn.BufferType.L1,
@@ -1360,7 +1355,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_0, False)
         ttnn_matmul_2 = ttnn.matmul(
             ttnn_reshape_5,
-            ce_cache__main["main_const_eval_18"],
+            self.weights["model.layers.0.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -1437,7 +1432,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_3 = ttnn.matmul(
             ttnn_rms_norm_1,
-            ce_cache__main["main_const_eval_30"],
+            self.weights["model.layers.0.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -1470,7 +1465,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_4 = ttnn.matmul(
             ttnn_rms_norm_1,
-            ce_cache__main["main_const_eval_40"],
+            self.weights["model.layers.0.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -1522,7 +1517,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_3, False)
         ttnn_matmul_5 = ttnn.matmul(
             ttnn_multiply_0,
-            ce_cache__main["main_const_eval_13"],
+            self.weights["model.layers.0.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -1599,7 +1594,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_6 = ttnn.matmul(
             ttnn_rms_norm_2,
-            ce_cache__main["main_const_eval_15"],
+            self.weights["model.layers.1.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -2504,7 +2499,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_1, False)
         ttnn_matmul_7 = ttnn.matmul(
             ttnn_reshape_7,
-            ce_cache__main["main_const_eval_78"],
+            self.weights["model.layers.1.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -2581,7 +2576,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_8 = ttnn.matmul(
             ttnn_rms_norm_3,
-            ce_cache__main["main_const_eval_80"],
+            self.weights["model.layers.1.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -2614,7 +2609,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_9 = ttnn.matmul(
             ttnn_rms_norm_3,
-            ce_cache__main["main_const_eval_20"],
+            self.weights["model.layers.1.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -2666,7 +2661,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_8, False)
         ttnn_matmul_10 = ttnn.matmul(
             ttnn_multiply_1,
-            ce_cache__main["main_const_eval_33"],
+            self.weights["model.layers.1.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -2743,7 +2738,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_11 = ttnn.matmul(
             ttnn_rms_norm_4,
-            ce_cache__main["main_const_eval_34"],
+            self.weights["model.layers.2.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -3648,7 +3643,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_2, False)
         ttnn_matmul_12 = ttnn.matmul(
             ttnn_reshape_9,
-            ce_cache__main["main_const_eval_58"],
+            self.weights["model.layers.2.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -3725,7 +3720,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_13 = ttnn.matmul(
             ttnn_rms_norm_5,
-            ce_cache__main["main_const_eval_6"],
+            self.weights["model.layers.2.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -3758,7 +3753,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_14 = ttnn.matmul(
             ttnn_rms_norm_5,
-            ce_cache__main["main_const_eval_84"],
+            self.weights["model.layers.2.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -3810,7 +3805,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_13, False)
         ttnn_matmul_15 = ttnn.matmul(
             ttnn_multiply_2,
-            ce_cache__main["main_const_eval_51"],
+            self.weights["model.layers.2.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -3887,7 +3882,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_16 = ttnn.matmul(
             ttnn_rms_norm_6,
-            ce_cache__main["main_const_eval_26"],
+            self.weights["model.layers.3.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -4792,7 +4787,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_3, False)
         ttnn_matmul_17 = ttnn.matmul(
             ttnn_reshape_11,
-            ce_cache__main["main_const_eval_1"],
+            self.weights["model.layers.3.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -4869,7 +4864,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_18 = ttnn.matmul(
             ttnn_rms_norm_7,
-            ce_cache__main["main_const_eval_31"],
+            self.weights["model.layers.3.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -4902,7 +4897,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_19 = ttnn.matmul(
             ttnn_rms_norm_7,
-            ce_cache__main["main_const_eval_62"],
+            self.weights["model.layers.3.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -4954,7 +4949,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_18, False)
         ttnn_matmul_20 = ttnn.matmul(
             ttnn_multiply_3,
-            ce_cache__main["main_const_eval_66"],
+            self.weights["model.layers.3.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -5031,7 +5026,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_21 = ttnn.matmul(
             ttnn_rms_norm_8,
-            ce_cache__main["main_const_eval_4"],
+            self.weights["model.layers.4.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -5936,7 +5931,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_4, False)
         ttnn_matmul_22 = ttnn.matmul(
             ttnn_reshape_13,
-            ce_cache__main["main_const_eval_64"],
+            self.weights["model.layers.4.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -6013,7 +6008,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_23 = ttnn.matmul(
             ttnn_rms_norm_9,
-            ce_cache__main["main_const_eval_52"],
+            self.weights["model.layers.4.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -6046,7 +6041,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_24 = ttnn.matmul(
             ttnn_rms_norm_9,
-            ce_cache__main["main_const_eval_41"],
+            self.weights["model.layers.4.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -6098,7 +6093,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_23, False)
         ttnn_matmul_25 = ttnn.matmul(
             ttnn_multiply_4,
-            ce_cache__main["main_const_eval_7"],
+            self.weights["model.layers.4.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -6175,7 +6170,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_26 = ttnn.matmul(
             ttnn_rms_norm_10,
-            ce_cache__main["main_const_eval_68"],
+            self.weights["model.layers.5.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -7080,7 +7075,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_5, False)
         ttnn_matmul_27 = ttnn.matmul(
             ttnn_reshape_15,
-            ce_cache__main["main_const_eval_86"],
+            self.weights["model.layers.5.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -7157,7 +7152,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_28 = ttnn.matmul(
             ttnn_rms_norm_11,
-            ce_cache__main["main_const_eval_70"],
+            self.weights["model.layers.5.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -7190,7 +7185,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_29 = ttnn.matmul(
             ttnn_rms_norm_11,
-            ce_cache__main["main_const_eval_21"],
+            self.weights["model.layers.5.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -7242,7 +7237,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_28, False)
         ttnn_matmul_30 = ttnn.matmul(
             ttnn_multiply_5,
-            ce_cache__main["main_const_eval_35"],
+            self.weights["model.layers.5.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -7319,7 +7314,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_31 = ttnn.matmul(
             ttnn_rms_norm_12,
-            ce_cache__main["main_const_eval_37"],
+            self.weights["model.layers.6.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -8224,7 +8219,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_6, False)
         ttnn_matmul_32 = ttnn.matmul(
             ttnn_reshape_17,
-            ce_cache__main["main_const_eval_12"],
+            self.weights["model.layers.6.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -8301,7 +8296,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_33 = ttnn.matmul(
             ttnn_rms_norm_13,
-            ce_cache__main["main_const_eval_11"],
+            self.weights["model.layers.6.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -8334,7 +8329,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_34 = ttnn.matmul(
             ttnn_rms_norm_13,
-            ce_cache__main["main_const_eval_77"],
+            self.weights["model.layers.6.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -8386,7 +8381,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_33, False)
         ttnn_matmul_35 = ttnn.matmul(
             ttnn_multiply_6,
-            ce_cache__main["main_const_eval_55"],
+            self.weights["model.layers.6.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -8463,7 +8458,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_36 = ttnn.matmul(
             ttnn_rms_norm_14,
-            ce_cache__main["main_const_eval_16"],
+            self.weights["model.layers.7.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -9368,7 +9363,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_7, False)
         ttnn_matmul_37 = ttnn.matmul(
             ttnn_reshape_19,
-            ce_cache__main["main_const_eval_38"],
+            self.weights["model.layers.7.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -9445,7 +9440,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_38 = ttnn.matmul(
             ttnn_rms_norm_15,
-            ce_cache__main["main_const_eval_53"],
+            self.weights["model.layers.7.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -9478,7 +9473,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_39 = ttnn.matmul(
             ttnn_rms_norm_15,
-            ce_cache__main["main_const_eval_57"],
+            self.weights["model.layers.7.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -9530,7 +9525,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_38, False)
         ttnn_matmul_40 = ttnn.matmul(
             ttnn_multiply_7,
-            ce_cache__main["main_const_eval_5"],
+            self.weights["model.layers.7.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -9607,7 +9602,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_41 = ttnn.matmul(
             ttnn_rms_norm_16,
-            ce_cache__main["main_const_eval_69"],
+            self.weights["model.layers.8.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -10512,7 +10507,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_8, False)
         ttnn_matmul_42 = ttnn.matmul(
             ttnn_reshape_21,
-            ce_cache__main["main_const_eval_59"],
+            self.weights["model.layers.8.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -10589,7 +10584,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_43 = ttnn.matmul(
             ttnn_rms_norm_17,
-            ce_cache__main["main_const_eval_29"],
+            self.weights["model.layers.8.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -10622,7 +10617,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_44 = ttnn.matmul(
             ttnn_rms_norm_17,
-            ce_cache__main["main_const_eval_42"],
+            self.weights["model.layers.8.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -10674,7 +10669,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_43, False)
         ttnn_matmul_45 = ttnn.matmul(
             ttnn_multiply_8,
-            ce_cache__main["main_const_eval_22"],
+            self.weights["model.layers.8.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -10751,7 +10746,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_46 = ttnn.matmul(
             ttnn_rms_norm_18,
-            ce_cache__main["main_const_eval_48"],
+            self.weights["model.layers.9.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -11656,7 +11651,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_9, False)
         ttnn_matmul_47 = ttnn.matmul(
             ttnn_reshape_23,
-            ce_cache__main["main_const_eval_63"],
+            self.weights["model.layers.9.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -11733,7 +11728,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_48 = ttnn.matmul(
             ttnn_rms_norm_19,
-            ce_cache__main["main_const_eval_10"],
+            self.weights["model.layers.9.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -11766,7 +11761,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_49 = ttnn.matmul(
             ttnn_rms_norm_19,
-            ce_cache__main["main_const_eval_60"],
+            self.weights["model.layers.9.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -11818,7 +11813,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_48, False)
         ttnn_matmul_50 = ttnn.matmul(
             ttnn_multiply_9,
-            ce_cache__main["main_const_eval_45"],
+            self.weights["model.layers.9.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -11895,7 +11890,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_51 = ttnn.matmul(
             ttnn_rms_norm_20,
-            ce_cache__main["main_const_eval_27"],
+            self.weights["model.layers.10.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -12800,7 +12795,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_10, False)
         ttnn_matmul_52 = ttnn.matmul(
             ttnn_reshape_25,
-            ce_cache__main["main_const_eval_19"],
+            self.weights["model.layers.10.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -12877,7 +12872,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_53 = ttnn.matmul(
             ttnn_rms_norm_21,
-            ce_cache__main["main_const_eval_72"],
+            self.weights["model.layers.10.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -12910,7 +12905,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_54 = ttnn.matmul(
             ttnn_rms_norm_21,
-            ce_cache__main["main_const_eval_85"],
+            self.weights["model.layers.10.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -12962,7 +12957,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_53, False)
         ttnn_matmul_55 = ttnn.matmul(
             ttnn_multiply_10,
-            ce_cache__main["main_const_eval_71"],
+            self.weights["model.layers.10.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -13039,7 +13034,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_56 = ttnn.matmul(
             ttnn_rms_norm_22,
-            ce_cache__main["main_const_eval_17"],
+            self.weights["model.layers.11.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -13944,7 +13939,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_11, False)
         ttnn_matmul_57 = ttnn.matmul(
             ttnn_reshape_27,
-            ce_cache__main["main_const_eval_36"],
+            self.weights["model.layers.11.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -14021,7 +14016,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_58 = ttnn.matmul(
             ttnn_rms_norm_23,
-            ce_cache__main["main_const_eval_54"],
+            self.weights["model.layers.11.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -14054,7 +14049,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_59 = ttnn.matmul(
             ttnn_rms_norm_23,
-            ce_cache__main["main_const_eval_14"],
+            self.weights["model.layers.11.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -14106,7 +14101,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_58, False)
         ttnn_matmul_60 = ttnn.matmul(
             ttnn_multiply_11,
-            ce_cache__main["main_const_eval_76"],
+            self.weights["model.layers.11.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -14183,7 +14178,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_61 = ttnn.matmul(
             ttnn_rms_norm_24,
-            ce_cache__main["main_const_eval_81"],
+            self.weights["model.layers.12.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -15088,7 +15083,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_12, False)
         ttnn_matmul_62 = ttnn.matmul(
             ttnn_reshape_29,
-            ce_cache__main["main_const_eval_56"],
+            self.weights["model.layers.12.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -15165,7 +15160,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_63 = ttnn.matmul(
             ttnn_rms_norm_25,
-            ce_cache__main["main_const_eval_9"],
+            self.weights["model.layers.12.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -15198,7 +15193,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_64 = ttnn.matmul(
             ttnn_rms_norm_25,
-            ce_cache__main["main_const_eval_43"],
+            self.weights["model.layers.12.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -15250,7 +15245,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_63, False)
         ttnn_matmul_65 = ttnn.matmul(
             ttnn_multiply_12,
-            ce_cache__main["main_const_eval_49"],
+            self.weights["model.layers.12.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -15327,7 +15322,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_66 = ttnn.matmul(
             ttnn_rms_norm_26,
-            ce_cache__main["main_const_eval_74"],
+            self.weights["model.layers.13.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -16232,7 +16227,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_13, False)
         ttnn_matmul_67 = ttnn.matmul(
             ttnn_reshape_31,
-            ce_cache__main["main_const_eval_87"],
+            self.weights["model.layers.13.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -16309,7 +16304,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_68 = ttnn.matmul(
             ttnn_rms_norm_27,
-            ce_cache__main["main_const_eval_75"],
+            self.weights["model.layers.13.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -16342,7 +16337,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_69 = ttnn.matmul(
             ttnn_rms_norm_27,
-            ce_cache__main["main_const_eval_73"],
+            self.weights["model.layers.13.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -16394,7 +16389,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_68, False)
         ttnn_matmul_70 = ttnn.matmul(
             ttnn_multiply_13,
-            ce_cache__main["main_const_eval_28"],
+            self.weights["model.layers.13.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -16471,7 +16466,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_71 = ttnn.matmul(
             ttnn_rms_norm_28,
-            ce_cache__main["main_const_eval_3"],
+            self.weights["model.layers.14.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -17376,7 +17371,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_14, False)
         ttnn_matmul_72 = ttnn.matmul(
             ttnn_reshape_33,
-            ce_cache__main["main_const_eval_23"],
+            self.weights["model.layers.14.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -17453,7 +17448,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_73 = ttnn.matmul(
             ttnn_rms_norm_29,
-            ce_cache__main["main_const_eval_44"],
+            self.weights["model.layers.14.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -17486,7 +17481,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_74 = ttnn.matmul(
             ttnn_rms_norm_29,
-            ce_cache__main["main_const_eval_67"],
+            self.weights["model.layers.14.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -17538,7 +17533,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_73, False)
         ttnn_matmul_75 = ttnn.matmul(
             ttnn_multiply_14,
-            ce_cache__main["main_const_eval_2"],
+            self.weights["model.layers.14.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -17615,7 +17610,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_76 = ttnn.matmul(
             ttnn_rms_norm_30,
-            ce_cache__main["main_const_eval_24"],
+            self.weights["model.layers.15.self_attn.qkv_proj.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -18523,7 +18518,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_transformer_concatenate_heads_15, False)
         ttnn_matmul_77 = ttnn.matmul(
             ttnn_reshape_35,
-            ce_cache__main["main_const_eval_39"],
+            self.weights["model.layers.15.self_attn.o_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -18600,7 +18595,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_78 = ttnn.matmul(
             ttnn_rms_norm_31,
-            ce_cache__main["main_const_eval_32"],
+            self.weights["model.layers.15.mlp.gate_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -18633,7 +18628,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_matmul_79 = ttnn.matmul(
             ttnn_rms_norm_31,
-            ce_cache__main["main_const_eval_46"],
+            self.weights["model.layers.15.mlp.up_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -18685,7 +18680,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_matmul_78, False)
         ttnn_matmul_80 = ttnn.matmul(
             ttnn_multiply_15,
-            ce_cache__main["main_const_eval_79"],
+            self.weights["model.layers.15.mlp.down_proj.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
@@ -18763,7 +18758,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_48, False)
         ttnn_matmul_81 = ttnn.matmul(
             ttnn_rms_norm_32,
-            ce_cache__main["main_const_eval_82"],
+            self.weights["lm_head.weight"],
             transpose_a=False,
             transpose_b=True,
             memory_config=ttnn.MemoryConfig(
