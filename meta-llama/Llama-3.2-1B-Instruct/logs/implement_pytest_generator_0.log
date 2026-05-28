@@ -1,0 +1,14 @@
+The implementation is complete. Summary of changes to `main.py`:
+
+1. **Added `import model_pt`** to the imports block.
+2. **Implemented `test_main()`**:
+   - Sets `exact_pcc = 1.0078125` (from `xla.py`'s `compare_pytorch_and_tt_runs`).
+   - Loads PyTorch inputs via `model_pt.load_input()`.
+   - Converts each input tensor via `ttnn.from_torch()` with the same dtype/layout/device/memory-config that `load_activations_for__main()` applies (INT32 + ROW_MAJOR for cumulative_lengths and input_ids; BFLOAT16 + TILE for KV cache tensors; INTERLEAVED DRAM throughout).
+   - Builds the 49-element activations list in the exact order the MLIR `@main` expects: `layer[0].cumulative_length`, `input_ids`, `layer[0].keys`, `layer[0].values`, then for each subsequent layer `cumulative_length, keys, values`.
+   - Calls `load_weights_for__main()` and `_main(activations, weights)`.
+   - Extracts the final logits tensor (`outputs[-1]`), brings it to host with `ttnn.from_device`, and converts to torch with `ttnn.to_torch`.
+   - Runs the golden via `model_pt.run_pytorch_model()`.
+   - Computes PCC via `calculate_pcc`, prints to 6 decimal places, and asserts `pcc == exact_pcc`.
+
+--- Time taken: 489.1s ---
