@@ -1,0 +1,12 @@
+All references to `_main_weights` are gone from main.py — the global and function were fully moved. Summary:
+
+**`params.py`** (new): contains `_main_weights = {}`, the original `load_weights_for__main` (verbatim), and the new `load_weights_for__main_from_state_dict`. The latter builds a combined dict (state_dict + non-persistent buffers), then loops over `ALL_WEIGHTS = TILE_WEIGHTS | HOST_WEIGHTS` applying `to_layout` → `to_dtype` → `to_device` (for tile only, with `ttnn.DRAM_MEMORY_CONFIG`).
+
+- `TILE_WEIGHTS` (33 keys): `model.norm.weight` + per-layer `input_layernorm.weight` & `post_attention_layernorm.weight`.
+- `HOST_WEIGHTS` (115 keys): `lm_head.weight`, `model.embed_tokens.weight`, `model.rotary_emb.inv_freq`, and per-layer mlp/self_attn projection weights.
+
+**`main.py`**: lines holding the global dict and function were removed; added `from params import load_weights_for__main`. `main()` and `test_main()` still call `load_weights_for__main()` unchanged.
+
+**`verify_weights.py`** (new): pytest test `test_verify_weights` asserts element-count equality, key-set equality, and exact tensor equality (bringing both to host via `ttnn.from_device` + `ttnn.to_torch` then `torch.equal`).
+
+--- Time taken: 283.2s ---
