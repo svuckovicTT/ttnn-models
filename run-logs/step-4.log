@@ -1,14 +1,0 @@
-2026-05-26 12:29:42.976 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
-Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 136400.13it/s]
-Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 31691.46it/s]
-Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 16178.61it/s]
-Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 31714.08it/s]
-2026-05-26 12:29:44.854 (   1.878s) [        E4C7F140]              stubs.inc:122   WARN| STUB: PJRT_Client_TopologyDescription
-2026-05-26 12:29:44.854287: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
-/usr/lib/python3.12/copyreg.py:99: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
-  return cls.__new__(cls, *args)
-2026-05-26 12:30:01.177 (  18.201s) [        E4C7F140]      module_builder.cc:975   WARN| `mhlo.num_partitions` attribute not found, assuming default number of partitions: 1
-2026-05-26 12:30:01.177 (  18.201s) [        E4C7F140]      module_builder.cc:989   WARN| `mhlo.num_replicas` attribute not found, assuming default number of replicas: 1
-2026-05-26 12:30:01.177 (  18.201s) [        E4C7F140]      module_builder.cc:999   WARN| Num replicas and num partitions are not set, inferring the number of devices from mesh shape
-2026-05-26 12:30:22.929 (  39.953s) [        E4C7F140]              stubs.inc:81    WARN| STUB: PJRT_Executable_GetCompiledMemoryStats
-Python codegen successful. Check /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/Qwen/Qwen2.5-7B-Instruct/model/graph_0 for the results.

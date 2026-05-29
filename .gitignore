@@ -1,5 +1,4 @@
 *.tensorbin
 __pycache__/
 .pytest_cache/
-model/
-*.pyc
+
