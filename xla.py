@@ -15,6 +15,7 @@ import torch_xla.runtime as xr
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 from transformers.cache_utils import StaticCache
 from tt_torch import codegen_py
+from tt_torch.weight_dtype import apply_weight_dtype_overrides
 
 MODEL_ID = "google/gemma-1.1-2b-it"
 DATA_FORMAT = torch.bfloat16     # test_llms.py: DEFAULT_DATA_FORMAT = "bfloat16"
@@ -58,6 +59,26 @@ def load_pytorch_model():
 
     model.eval()
     return model
+
+
+class LastTokenLogitsWrapper(torch.nn.Module):
+    """Mirrors LLMSamplingWrapper from llm_utils/decode_utils.py."""
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, input_ids, past_key_values, cache_position, use_cache=True):
+        output = self.model(
+            input_ids=input_ids,
+            past_key_values=past_key_values,
+            cache_position=cache_position,
+            use_cache=use_cache,
+        )
+        logits = output.logits
+        next_token_ids = logits[:, -1].argmax(dim=-1, keepdim=True)
+        next_cache_position = cache_position[-1:] + 1
+        return next_token_ids, next_token_ids, next_cache_position
 
 
 def load_input():
@@ -147,19 +168,24 @@ def run_pytorch_model():
 
 
 def run_tt_model():
+    xr.set_device_type("TT")
     device = torch_xla.device()
 
-    torch_xla.set_custom_compile_options(COMPILE_OPTIONS)
-
     model = load_pytorch_model()
-    model.compile(backend="tt", options={"tt_legacy_compile": True})
-    model = model.to(device)
+    model = model.to(device, dtype=DATA_FORMAT)
+
+    torch_xla.set_custom_compile_options(COMPILE_OPTIONS)
+    apply_weight_dtype_overrides(model, {"default": "bfp_bf8"})
+
+    wrapper = LastTokenLogitsWrapper(model)
+    compiled = torch.compile(wrapper, backend="tt")
+
     inputs = _inputs_to_device(load_input(), device)
 
     with torch.no_grad():
-        output = model(**inputs)
+        next_token_ids, _, _ = compiled(**inputs)
 
-    return output.logits.cpu()
+    return next_token_ids.cpu()
 
 
 def codegen_model():
