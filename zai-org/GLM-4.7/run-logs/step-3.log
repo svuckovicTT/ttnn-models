@@ -1,0 +1,97 @@
+2026-06-10 14:26:21.795 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-06-10 14:26:33.894 | critical |          Always | TT_FATAL: Chip 0 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 0
+2026-06-10 14:26:33.917 | critical |          Always | TT_FATAL: Chip 0 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 0
+2026-06-10 14:26:33.940 | critical |          Always | TT_FATAL: Chip 1 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 1
+2026-06-10 14:26:33.964 | critical |          Always | TT_FATAL: Chip 1 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 1
+2026-06-10 14:26:33.988 | critical |          Always | TT_FATAL: Chip 4 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 4
+2026-06-10 14:26:34.011 | critical |          Always | TT_FATAL: Chip 4 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 4
+2026-06-10 14:26:34.035 | critical |          Always | TT_FATAL: Chip 5 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 5
+2026-06-10 14:26:34.059 | critical |          Always | TT_FATAL: Chip 5 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 5
+2026-06-10 14:26:34.083 | critical |          Always | TT_FATAL: Chip 8 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 8
+2026-06-10 14:26:34.107 | critical |          Always | TT_FATAL: Chip 8 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 8
+2026-06-10 14:26:34.133 | critical |          Always | TT_FATAL: Chip 9 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 9
+2026-06-10 14:26:34.158 | critical |          Always | TT_FATAL: Chip 9 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 9
+2026-06-10 14:26:34.183 | critical |          Always | TT_FATAL: Chip 12 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 12
+2026-06-10 14:26:34.207 | critical |          Always | TT_FATAL: Chip 12 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 12
+2026-06-10 14:26:34.231 | critical |          Always | TT_FATAL: Chip 13 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 13
+2026-06-10 14:26:34.256 | critical |          Always | TT_FATAL: Chip 13 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 13
+2026-06-10 14:26:34.280 | critical |          Always | TT_FATAL: Chip 16 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 16
+2026-06-10 14:26:34.305 | critical |          Always | TT_FATAL: Chip 16 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 16
+2026-06-10 14:26:34.329 | critical |          Always | TT_FATAL: Chip 17 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 17
+2026-06-10 14:26:34.353 | critical |          Always | TT_FATAL: Chip 17 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 17
+2026-06-10 14:26:34.377 | critical |          Always | TT_FATAL: Chip 20 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 20
+2026-06-10 14:26:34.401 | critical |          Always | TT_FATAL: Chip 20 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 20
+2026-06-10 14:26:34.425 | critical |          Always | TT_FATAL: Chip 21 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 21
+2026-06-10 14:26:34.449 | critical |          Always | TT_FATAL: Chip 21 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 21
+2026-06-10 14:26:34.474 | critical |          Always | TT_FATAL: Chip 24 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 24
+2026-06-10 14:26:34.498 | critical |          Always | TT_FATAL: Chip 24 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 24
+2026-06-10 14:26:34.523 | critical |          Always | TT_FATAL: Chip 25 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 25
+2026-06-10 14:26:34.547 | critical |          Always | TT_FATAL: Chip 25 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 25
+2026-06-10 14:26:34.571 | critical |          Always | TT_FATAL: Chip 28 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 28
+2026-06-10 14:26:34.596 | critical |          Always | TT_FATAL: Chip 28 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 28
+2026-06-10 14:26:34.620 | critical |          Always | TT_FATAL: Chip 29 logical eth core 0-9 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-9) on chip 29
+2026-06-10 14:26:34.644 | critical |          Always | TT_FATAL: Chip 29 logical eth core 0-8 connects to a remote mmio device (assert.hpp:104)
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | Skipping ethernet core (0-8) on chip 29
+2026-06-10 14:26:36.638 (  14.842s) [        81C3C140]              stubs.inc:122   WARN| STUB: PJRT_Client_TopologyDescription
+2026-06-10 14:26:36.638304: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
+/usr/lib/python3.12/copyreg.py:99: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return cls.__new__(cls, *args)
+2026-06-10 14:28:28.360 ( 126.565s) [        81C3C140]      module_builder.cc:981   WARN| `mhlo.num_partitions` attribute not found, assuming default number of partitions: 1
+2026-06-10 14:28:28.360 ( 126.565s) [        81C3C140]      module_builder.cc:995   WARN| `mhlo.num_replicas` attribute not found, assuming default number of replicas: 1
+2026-06-10 14:28:28.360 ( 126.565s) [        81C3C140]      module_builder.cc:1005  WARN| Num replicas and num partitions are not set, inferring the number of devices from mesh shape
+2026-06-10 14:28:32.055 ( 130.260s) [        81C3C140]              stubs.inc:81    WARN| STUB: PJRT_Executable_GetCompiledMemoryStats
+[meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+[meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+PCC: 0.858482
+Traceback (most recent call last):
+  File "/home/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/zai-org__GLM-4.7/zai-org/GLM-4.7/xla.py", line 694, in <module>
+    compare_pytorch_and_tt_runs()
+  File "/home/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/zai-org__GLM-4.7/zai-org/GLM-4.7/xla.py", line 667, in compare_pytorch_and_tt_runs
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+           ^^^^^^^^^^^^^^^^
+AssertionError: PCC 0.8584824204444885 does not match expected None

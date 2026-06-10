@@ -44,7 +44,7 @@ from transformers import AutoTokenizer
 from transformers.cache_utils import StaticCache
 
 # tt_torch is a framework package — fair game to import.
-from tt_torch.sharding import sharding_constraint_hook
+from tt_torch.sharding import sharding_constraint_hook, sharding_constraint_tensor
 from tt_torch.sparse_mlp import A2aSparseMLPWithSharedExperts, enable_sparse_mlp
 
 MODEL_ID = "zai-org/GLM-4.7"
@@ -310,22 +310,82 @@ def load_pytorch_model():
     return model
 
 
-class LastTokenLogitsWrapper(torch.nn.Module):
-    """Keeps the last-token logits slice inside the compiled graph so the full
-    [batch, seq, vocab] tensor is never materialized on device."""
+def default_read_logits_fn(output):
+    # test_llms.py: default_read_logits_fn
+    return output.logits
 
-    def __init__(self, model):
+
+class LLMSamplingWrapper(torch.nn.Module):
+    """VERBATIM copy of LLMSamplingWrapper from
+    tt-xla/tests/benchmark/llm_utils/decode_utils.py — so the traced decode graph
+    is byte-for-byte the benchmark's graph (same argmax, same next_token_ids /
+    next_cache_position ops, same two sharding constraints, position_ids computed
+    inside forward from cache_position, full replicated logits returned).
+
+    Keeping token selection + cache-position increment inside the compiled graph
+    is exactly what the benchmark does; reproducing it 1:1 is required to get the
+    same IR (and the same on-device output layout that the host transfer needs)."""
+
+    def __init__(
+        self,
+        model,
+        read_logits_fn,
+        return_logits: bool = True,
+        mesh=None,
+        output_sharding_spec=None,
+    ):
         super().__init__()
         self.model = model
+        self.read_logits_fn = read_logits_fn
+        self.return_logits = return_logits
+        self.mesh = mesh
+        self.output_sharding_spec = output_sharding_spec
 
-    def forward(self, **kwargs):
-        output = self.model(**kwargs)
-        return output.logits[:, -1]
+    def forward(self, input_ids, past_key_values, cache_position, use_cache=True):
+        position_ids = cache_position.unsqueeze(0)
+        output = self.model(
+            input_ids=input_ids,
+            past_key_values=past_key_values,
+            position_ids=position_ids,
+            cache_position=cache_position,
+            use_cache=use_cache,
+        )
+        logits = self.read_logits_fn(output)
+        # Only take logits for last token in prefill.
+        # This is a noop for decode.
+        next_token_ids = logits[:, -1].argmax(dim=-1, keepdim=True)
+        next_token_ids_replicated = next_token_ids
+        if self.mesh and self.output_sharding_spec:
+            replicate_spec = tuple(None for _ in self.output_sharding_spec)
+            next_token_ids = sharding_constraint_tensor(
+                next_token_ids, self.mesh, self.output_sharding_spec
+            )
+            next_token_ids_replicated = sharding_constraint_tensor(
+                next_token_ids, self.mesh, replicate_spec
+            )
+        next_cache_position = cache_position[-1:] + 1
+        if self.return_logits:
+            logits_out = logits
+            if self.mesh and self.output_sharding_spec:
+                replicate_spec = tuple(None for _ in range(logits_out.dim()))
+                logits_out = sharding_constraint_tensor(
+                    logits, self.mesh, replicate_spec
+                )
+            return (
+                next_token_ids,
+                next_token_ids_replicated,
+                next_cache_position,
+                logits_out,
+            )
+        return next_token_ids, next_token_ids_replicated, next_cache_position
 
 
-def _build_prefill_inputs(config):
-    """Prefill inputs + a fresh StaticCache (CPU), mirroring construct_inputs() +
-    init_static_cache() from benchmarks/llm_benchmark.py for the StaticCache path."""
+def construct_inputs(config):
+    """Mirrors construct_inputs() + init_static_cache() from benchmarks/
+    llm_benchmark.py (StaticCache path). Returns EXACTLY the four keys the
+    benchmark passes to the model — input_ids, past_key_values, cache_position,
+    use_cache — with NO position_ids (LLMSamplingWrapper computes position_ids
+    internally from cache_position)."""
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
     tokenizer.pad_token = tokenizer.eos_token
 
@@ -338,8 +398,8 @@ def _build_prefill_inputs(config):
     )
     input_ids = tokenized["input_ids"]
 
-    # StaticCache lives on CPU and is moved to device explicitly later
-    # (see tt-xla#1645 for why we don't construct it directly on device).
+    # init_static_cache(): StaticCache on CPU + early_initialization() to
+    # pre-allocate backing tensors (moved to device explicitly later; tt-xla#1645).
     if hasattr(config, "head_dim") and getattr(config, "head_dim"):
         head_dim = config.head_dim
     else:
@@ -363,70 +423,62 @@ def _build_prefill_inputs(config):
         device="cpu",
     )
 
-    seq_len = input_ids.shape[1]
-    cache_position = torch.arange(0, seq_len)
-    position_ids = cache_position.unsqueeze(0)
+    cache_position = torch.arange(0, input_ids.shape[1])
 
     return {
         "input_ids": input_ids,
         "past_key_values": past_key_values,
         "cache_position": cache_position,
-        "position_ids": position_ids,
         "use_cache": True,
     }
 
 
-def build_decode_inputs(model):
-    """Reproduce the benchmark's first-decode step (the graph that matters — the
-    benchmark keeps only the decode perf metrics and the test checks decode PCC).
+def cpu_prefill_to_decode_state(model):
+    """Reproduce the benchmark's decode_only CPU prefill (benchmark iter 0):
+    run ONE prefill step through LLMSamplingWrapper to populate the StaticCache
+    (cumulative_length advanced to prompt_len) and produce the first decode token.
 
-    The benchmark's default path runs prefill then decode in sequence on device,
-    so the decode forward sees a cache populated by the prefill with
-    cumulative_length advanced to prompt_len. We reproduce that decode graph in a
-    single forward by running the prefill on CPU to populate the cache + advance
-    cumulative_length, then handing the populated cache to the decode forward.
+    Returns the post-prefill decode-state input dict — input_ids = next_token_0,
+    cache_position = [prompt_len], past_key_values = the populated cache — exactly
+    the state the benchmark snapshots as (first_decode_input_ids,
+    decode_only_cache_position, decode_only_cache)."""
+    input_args = construct_inputs(model.config)
 
-    StaticLayer.update() (transformers 5.5.1) writes new K/V at an index derived
-    from cumulative_length (NOT the passed cache_position), so cumulative_length
-    must be preserved at prompt_len for the decode to write at the right slot and
-    attend to the real prefill K/V. This is why we do NOT zero it on transfer
-    (unlike transfer_to_device, which targets fresh pre-prefill caches).
-
-    Returns decode inputs whose cache is populated and lives on the same device
-    as `model` (CPU here; callers move it afterwards via _decode_inputs_to_device).
-    """
-    prefill = _build_prefill_inputs(model.config)
-
+    cpu_wrapper = LLMSamplingWrapper(
+        model, default_read_logits_fn, return_logits=True
+    )
+    cpu_wrapper.eval()
     with torch.no_grad():
-        prefill_out = model(**prefill)
+        next_token_ids, _, next_cache_position, _ = cpu_wrapper(**input_args)
 
-    # First decode token = argmax of prefill's last-token logits (matches
-    # LLMSamplingWrapper). Cache + cumulative_length are now populated in-place.
-    next_token_ids = prefill_out.logits[:, -1].argmax(dim=-1, keepdim=True)
-    next_cache_position = prefill["cache_position"][-1:] + 1  # [prompt_len]
-
-    return {
-        "input_ids": next_token_ids,
-        "past_key_values": prefill["past_key_values"],
-        "cache_position": next_cache_position,
-        "position_ids": next_cache_position.unsqueeze(0),
-        "use_cache": True,
-    }
+    # generate_and_benchmark advances input_args after the prefill step.
+    input_args["input_ids"] = next_token_ids
+    input_args["cache_position"] = next_cache_position
+    return input_args
 
 
-def _decode_inputs_to_device(inputs, device):
-    """Move decode inputs to device, PRESERVING cumulative_length (do not zero —
-    the cache is already prefill-populated and the decode must write past it)."""
-    out = dict(inputs)
-    out["input_ids"] = out["input_ids"].to(device)
-    out["cache_position"] = out["cache_position"].to(device)
-    out["position_ids"] = out["position_ids"].to(device)
-    for layer in out["past_key_values"].layers:
+def transfer_to_device(input_args, device):
+    """Mirrors transfer_to_device() from benchmarks/llm_benchmark.py (StaticCache
+    path — GLM has no MLA layers).
+
+    ONE intentional deviation: we do NOT call cumulative_length.zero_(). The
+    benchmark's helper zeroes it because it is also used for the fresh pre-prefill
+    warmup cache, but here the cache is already prefill-populated and
+    StaticLayer.update() (transformers cache_utils.py:327) derives the write index
+    from cumulative_length, not the passed cache_position. Zeroing would make the
+    device decode overwrite prefill[0] and lose context, producing a meaningless
+    PCC vs the CPU golden (which keeps cumulative_length = prompt_len). This is a
+    runtime-value choice only — it does NOT change the traced IR (cumulative_length
+    is a static-address tensor input; the arange/add ops are identical either way)."""
+    for layer in input_args["past_key_values"].layers:
         layer.keys = layer.keys.to(device)
         layer.values = layer.values.to(device)
+        # See docstring: preserve cumulative_length (benchmark zeroes it here).
         layer.cumulative_length = layer.cumulative_length.to(device)
         layer.device = device
-    return out
+    input_args["input_ids"] = input_args["input_ids"].to(device)
+    input_args["cache_position"] = input_args["cache_position"].to(device)
+    return input_args
 
 
 def _shard_kv_cache(past_key_values, mesh):
@@ -460,18 +512,18 @@ def _apply_tp_sharding(model):
 # ---------------------------------------------------------------------------
 def run_pytorch_model():
     # CPU reference for the first DECODE step (matches the benchmark's
-    # cpu_decode_logits): prefill populates the cache, then a single decode
-    # forward. cumulative_length stays at prompt_len so decode writes past the
-    # prefill K/V.
+    # cpu_decode_logits): prefill populates the cache (cumulative_length ->
+    # prompt_len), then a single decode forward through the same wrapper. Returns
+    # the full logits (element [3] of the wrapper's 4-tuple).
     model = load_pytorch_model()
-    decode_inputs = build_decode_inputs(model)
+    decode_args = cpu_prefill_to_decode_state(model)
 
-    wrapper = LastTokenLogitsWrapper(model)
-    wrapper.eval()
+    cpu_wrapper = LLMSamplingWrapper(model, default_read_logits_fn, return_logits=True)
+    cpu_wrapper.eval()
     with torch.no_grad():
-        output = wrapper(**decode_inputs)
+        _, _, _, logits = cpu_wrapper(**decode_args)
 
-    return output
+    return logits
 
 
 def run_tt_model():
@@ -486,7 +538,7 @@ def run_tt_model():
     #    only the DECODE graph is traced/run. (Benchmark also runs its CPU
     #    prefill after use_spmd().)
     model = load_pytorch_model()
-    decode_inputs = build_decode_inputs(model)
+    decode_args = cpu_prefill_to_decode_state(model)
 
     # 3. Move model to device WITH dtype (casts buffers, e.g. rotary inv_freq).
     model = model.to(device, dtype=DATA_FORMAT)
@@ -497,31 +549,39 @@ def run_tt_model():
     # 5. Compile options.
     torch_xla.set_custom_compile_options(COMPILE_OPTIONS)
 
-    # 6. Wrap model, compile the wrapper (not the raw model).
-    wrapper = LastTokenLogitsWrapper(model)
+    # 6. Verbatim LLMSamplingWrapper (mesh + output spec, as the benchmark's
+    #    compiled_logits wrapper); compile the wrapper (not the raw model).
+    wrapper = LLMSamplingWrapper(
+        model,
+        default_read_logits_fn,
+        return_logits=True,
+        mesh=mesh,
+        output_sharding_spec=INPUT_OUTPUT_SHARDING_SPEC,
+    )
+    wrapper.eval()
     compiled = torch.compile(wrapper, backend="tt")
 
     # 7. Decode inputs: move to device (cumulative_length preserved), shard.
-    inputs = _decode_inputs_to_device(decode_inputs, device)
+    inputs = transfer_to_device(decode_args, device)
     _shard_kv_cache(inputs["past_key_values"], mesh)
     xs.mark_sharding(inputs["input_ids"], mesh, INPUT_OUTPUT_SHARDING_SPEC)
 
-    # 8. Decode forward.
+    # 8. Decode forward. Take the replicated logits (4-tuple element [3]).
     with torch.no_grad():
-        output = compiled(**inputs)
+        _, _, _, logits = compiled(**inputs)
 
-    return output.cpu()
+    return logits.cpu()
 
 
 def codegen_model():
     os.environ["XLA_HLO_DEBUG"] = "1"
 
-    # Same TP init order as run_tt_model, but with the codegen_py backend so the
-    # sharded graph is emitted. We inline codegen_py's body (rather than calling
-    # tt_torch.codegen_py) to control the to(device) / mark_sharding ordering:
-    # mark_sharding must run after the tensors are on the XLA device and before
-    # the forward, and codegen_py's own arg handling would drop the non-tensor
-    # past_key_values / use_cache kwargs.
+    # Same TP init order + wrapper as run_tt_model, but with the codegen_py backend
+    # so the sharded decode graph is emitted. We inline codegen_py's body (rather
+    # than calling tt_torch.codegen_py) to control the to(device) / mark_sharding
+    # ordering: mark_sharding must run after the tensors are on the XLA device and
+    # before the forward, and codegen_py's own arg handling would drop the
+    # non-tensor past_key_values / use_cache kwargs.
     xr.set_device_type("TT")
     os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
     xr.use_spmd()
@@ -529,7 +589,7 @@ def codegen_model():
 
     model = load_pytorch_model()
     # Populate the cache with a CPU prefill so codegen emits ONLY the decode graph.
-    decode_inputs = build_decode_inputs(model)
+    decode_args = cpu_prefill_to_decode_state(model)
 
     model = model.to(device, dtype=DATA_FORMAT)
 
@@ -543,11 +603,17 @@ def codegen_model():
     }
     torch_xla.set_custom_compile_options(options)
 
-    wrapper = LastTokenLogitsWrapper(model)
+    wrapper = LLMSamplingWrapper(
+        model,
+        default_read_logits_fn,
+        return_logits=True,
+        mesh=mesh,
+        output_sharding_spec=INPUT_OUTPUT_SHARDING_SPEC,
+    )
     wrapper.eval()
     wrapper.compile(backend="tt", options={"tt_legacy_compile": True})
 
-    inputs = _decode_inputs_to_device(decode_inputs, device)
+    inputs = transfer_to_device(decode_args, device)
     _shard_kv_cache(inputs["past_key_values"], mesh)
     xs.mark_sharding(inputs["input_ids"], mesh, INPUT_OUTPUT_SHARDING_SPEC)
 
@@ -557,11 +623,35 @@ def codegen_model():
     xm.wait_device_ops()
 
 
+def compute_pcc(golden_output, device_output):
+    """VERBATIM copy of compute_pcc from tt-xla/tests/benchmark/utils.py — the
+    exact PCC the benchmark's decode check uses (float32 cast, centered Pearson,
+    clamped to [-1, 1])."""
+    golden_flat = golden_output.to(torch.float32).flatten()
+    device_flat = device_output.to(torch.float32).flatten()
+
+    golden_centered = golden_flat - golden_flat.mean()
+    device_centered = device_flat - device_flat.mean()
+    denom = golden_centered.norm() * device_centered.norm()
+
+    if denom == 0:
+        if torch.allclose(golden_flat, device_flat, rtol=1e-2, atol=1e-2):
+            return 1.0
+        raise ValueError(
+            "PCC computation failed: denominator is zero but tensors are not close"
+        )
+
+    pcc = ((golden_centered @ device_centered) / denom).item()
+    return max(-1.0, min(1.0, pcc))
+
+
 def compare_pytorch_and_tt_runs():
     # Capture exact PCC from first --golden run and paste here.
-    # Decode-step PCC (both PT and TT read the same CPU-prefilled cache, isolating
-    # the decode compute). ~ benchmark's first-decode required_pcc of 0.86.
-    exact_pcc = None
+    # First-decode PCC: PT (CPU decode) vs TT (device decode), both reading the
+    # same CPU-prefilled cache — exactly the benchmark's decode_only PCC check
+    # (compute_pcc(device_decode_logits, cpu_decode_logits)). The test's
+    # required_pcc for this 4-layer GLM-4.7 decode is 0.86.
+    exact_pcc = 0.858482
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()
@@ -572,9 +662,7 @@ def compare_pytorch_and_tt_runs():
     assert pt_output.dtype == tt_output.dtype, (
         f"dtype mismatch: {pt_output.dtype} vs {tt_output.dtype}"
     )
-    x, y = pt_output.flatten(), tt_output.flatten()
-    vx, vy = x - x.mean(), y - y.mean()
-    pcc = ((vx @ vy) / (vx.norm() * vy.norm())).item()
+    pcc = compute_pcc(pt_output, tt_output)
     print(f"PCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
