@@ -1,0 +1,17 @@
+All three files are in place. Here's a summary of what was done:
+
+1. **params.py** (new) - Contains:
+   - `load_weights_for__main()` - moved verbatim from main.py (loads weights from serialized `.tensorbin` files on disk)
+   - `load_weights_for__main_from_state_dict()` - new function that loads the same weights from PyTorch model's state_dict via `model_pt.load_pytorch_model()`, with:
+     - Combined state_dict + non-persistent buffers (captures `rotary_emb.inv_freq`, `e_score_correction_bias`, etc.)
+     - `gate_up_proj` split into separate `gate_proj` and `up_proj` tensors
+     - Closure-mangled key remapping for `e_score_correction_bias`
+     - Defensive `mlp.mlp.` ↔ `mlp.` path normalization
+     - Three property groups: `NORM_WEIGHTS` (TILE/BF16/on-device), `INT32_WEIGHTS` (ROW_MAJOR/INT32/host), everything else (ROW_MAJOR/BF16/host)
+   - Weight group constants: `NORM_WEIGHTS`, `INT32_WEIGHTS`, `ROW_MAJOR_BF16_WEIGHTS`, `ALL_WEIGHTS` (66 total)
+
+2. **main.py** (updated) - Added `from params import load_weights_for__main`, removed the original function definition and `_main_weights` global
+
+3. **verify_weights.py** (new) - pytest test `test_verify_weights` that loads weights both ways and compares keys + values (exact match via `torch.equal`)
+
+--- Time taken: 891.7s ---

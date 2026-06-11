@@ -1,0 +1,222 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0
+plugins: jaxtyping-0.3.10, json-report-1.5.0, split-0.11.0, forked-1.6.0, metadata-3.1.1, anyio-4.13.0
+collected 1 item
+
+main.py Device: MeshDevice(4x8 grid, 32 devices)
+[meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+
+PCC: 0.855469
+.
+
+=============================== warnings summary ===============================
+main.py: 14 warnings
+  /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 1 passed, 16 warnings in 223.63s (0:03:43) ==================
+2026-06-11 18:05:06.347 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x3855d110 of type "ttnn._ttnn.operations.moreh.moreh_softmin_t"
+ - leaked instance 0x384d2ab0 of type "ttnn._ttnn.operations.kv_cache.fill_cache_t"
+ - leaked instance 0x3838efb0 of type "ttnn._ttnn.operations.binary.polyval_t"
+ - leaked instance 0x383ae090 of type "ttnn._ttnn.operations.unary_backward.hardshrink_bw_t"
+ - leaked instance 0x38492e70 of type "ttnn._ttnn.operations.normalization.scale_mask_softmax_in_place_t"
+ - leaked instance 0x38316540 of type "ttnn._ttnn.operations.ccl.all_to_all_combine_t"
+ - leaked instance 0x383d3180 of type "ttnn._ttnn.operations.unary_backward.cosh_bw_t"
+ - leaked instance 0x3837b190 of type "ttnn._ttnn.operations.binary.logical_xor__t"
+ - leaked instance 0x38383ac0 of type "ttnn._ttnn.operations.binary.addalpha_t"
+ - leaked instance 0x384564c0 of type "ttnn._ttnn.operations.data_movement.assign_t"
+ - leaked instance 0x383e8e90 of type "ttnn._ttnn.operations.binary_backward.logaddexp_bw_t"
+ - leaked instance 0x38358a60 of type "ttnn._ttnn.operations.unary_backward.digamma_bw_t"
+ - leaked instance 0x384be8c0 of type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked instance 0x37c1b2b0 of type "ttnn._ttnn.operations.unary.xielu_t"
+ - leaked instance 0x383b67e0 of type "ttnn._ttnn.operations.unary_backward.exp_bw_t"
+ - leaked instance 0x38546c30 of type "ttnn._ttnn.operations.moreh.moreh_abs_pow_t"
+ - leaked instance 0x38395390 of type "ttnn._ttnn.operations.binary.le__t"
+ - leaked instance 0x383f1100 of type "ttnn._ttnn.operations.ternary_backward.where_bw_t"
+ - leaked instance 0x37a24310 of type "ttnn._ttnn.operations.unary.isfinite_t"
+ - leaked instance 0x3837ddb0 of type "ttnn._ttnn.operations.binary.logical_or__t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0
+plugins: jaxtyping-0.3.10, json-report-1.5.0, split-0.11.0, forked-1.6.0, metadata-3.1.1, anyio-4.13.0
+collected 1 item
+
+verify_weights.py Device: MeshDevice(4x8 grid, 32 devices)
+[meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+F
+
+=================================== FAILURES ===================================
+_____________________________ test_verify_weights ______________________________
+
+    def test_verify_weights():
+        disk_weights = load_weights_for__main()
+>       sd_weights = load_weights_for__main_from_state_dict()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+verify_weights.py:9: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_weights_for__main_from_state_dict():
+        import model_pt
+    
+        model = model_pt.load_pytorch_model()
+    
+        sd = dict(model.state_dict())
+        for name, buf in model.named_buffers():
+            if name not in sd:
+                sd[name] = buf
+    
+        sd = {"model." + k: v for k, v in sd.items()}
+    
+        for candidate in [
+            "model.model.layers.3.mlp.mlp.experts.gate_up_proj",
+            "model.model.layers.3.mlp.experts.gate_up_proj",
+        ]:
+            if candidate in sd:
+                gate_up = sd.pop(candidate)
+                gate, up = gate_up.chunk(2, dim=1)
+                sd["model.model.layers.3.mlp.mlp.experts.gate_proj"] = gate.contiguous()
+                sd["model.model.layers.3.mlp.mlp.experts.up_proj"] = up.contiguous()
+                break
+    
+        for candidate in [
+            "model.model.layers.3.mlp.mlp.router.e_score_correction_bias",
+            "model.model.layers.3.mlp.router.e_score_correction_bias",
+        ]:
+            if candidate in sd:
+                sd[_MANGLED_E_SCORE_KEY] = sd.pop(candidate)
+                break
+    
+        device = utils.DeviceGetter.get_device((4, 8))
+    
+        weights = {}
+        for key in ALL_WEIGHTS:
+            sd_key = _resolve_sd_key(sd, key)
+>           assert sd_key is not None, f"Weight key not found in state_dict: {key}"
+                   ^^^^^^^^^^^^^^^^^^
+E           AssertionError: Weight key not found in state_dict: model.model.layers.3.mlp.mlp.router.gate.weight
+
+params.py:687: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  huggingface_hub.utils._http:_http.py:904 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+=============================== warnings summary ===============================
+verify_weights.py: 14 warnings
+  /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+verify_weights.py::test_verify_weights
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+verify_weights.py::test_verify_weights
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED verify_weights.py::test_verify_weights - AssertionError: Weight key no...
+======================= 1 failed, 16 warnings in 17.20s ========================
+2026-06-11 18:09:10.762 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x21a00e00 of type "ttnn._ttnn.operations.unary_backward.sigmoid_bw_t"
+ - leaked instance 0x21a2dac0 of type "ttnn._ttnn.operations.binary_backward.bias_gelu_bw_t"
+ - leaked instance 0x219daf60 of type "ttnn._ttnn.operations.binary.logaddexp2__t"
+ - leaked instance 0x21a2c780 of type "ttnn._ttnn.operations.binary_backward.max_bw_t"
+ - leaked instance 0x2103e0c0 of type "ttnn._ttnn.operations.unary.bitcast_t"
+ - leaked instance 0x752d5dfcaec8 of type "ttnn._ttnn.tensor.CoreRangeSet"
+ - leaked instance 0x2159d360 of type "ttnn._ttnn.operations.unary.mish_t"
+ - leaked instance 0x752d5e0e1008 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x2195c5d0 of type "ttnn._ttnn.operations.ccl.reduce_scatter_t"
+ - leaked instance 0x21add570 of type "ttnn._ttnn.operations.normalization.rms_norm_t"
+ - leaked instance 0x212f1b60 of type "ttnn._ttnn.operations.unary.normalize_global_t"
+ - leaked instance 0x21955700 of type "ttnn._ttnn.operations.ccl.all_broadcast_t"
+ - leaked instance 0x21afeb30 of type "ttnn._ttnn.operations.reduction.std_t"
+ - leaked instance 0x2195d550 of type "ttnn._ttnn.operations.ccl.all_reduce_t"
+ - leaked instance 0x219fd5b0 of type "ttnn._ttnn.operations.unary_backward.frac_bw_t"
+ - leaked instance 0x21ad05b0 of type "ttnn._ttnn.operations.normalization.softmax_in_place_t"
+ - leaked instance 0x21b92ad0 of type "ttnn._ttnn.operations.moreh.moreh_nll_loss_unreduced_backward_t"
+ - leaked instance 0x21b91140 of type "ttnn._ttnn.operations.moreh.moreh_mean_backward_t"
+ - leaked instance 0x219f26c0 of type "ttnn._ttnn.operations.unary_backward.repeat_bw_t"
+ - leaked instance 0x219f75a0 of type "ttnn._ttnn.operations.unary_backward.round_bw_t"
+ - ... skipped remainder
+nanobind: leaked 532 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2335 functions!
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
