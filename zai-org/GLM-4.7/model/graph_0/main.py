@@ -3174,10 +3174,10 @@ def test_main():
     weights = load_weights_for__main()
     outputs = _main(activations, weights)
 
-    ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+    ttnn_output = [ttnn.from_device(output) for output in outputs]
     golden_output = model_pt.run_pytorch_model()
 
-    pcc = calculate_pcc(ttnn_output, golden_output)
+    pcc = calculate_pcc(ttnn.to_torch(ttnn_output[-1]), golden_output)
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 

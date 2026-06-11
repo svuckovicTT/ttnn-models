@@ -1,26 +1,17 @@
 diff --git a/zai-org/GLM-4.7/model/graph_0/main.py b/zai-org/GLM-4.7/model/graph_0/main.py
-index 0168f55..ca1c093 100644
+index eee1789..4ef5ccb 100644
 --- a/zai-org/GLM-4.7/model/graph_0/main.py
 +++ b/zai-org/GLM-4.7/model/graph_0/main.py
-@@ -3166,7 +3166,20 @@ def main():
+@@ -3174,10 +3174,10 @@ def test_main():
+     weights = load_weights_for__main()
+     outputs = _main(activations, weights)
  
+-    ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
++    ttnn_output = [ttnn.from_device(output) for output in outputs]
+     golden_output = model_pt.run_pytorch_model()
  
- def test_main():
--    return 0
-+    import model_pt
-+
-+    exact_pcc = 0.858482
-+
-+    activations = load_activations_for__main()
-+    weights = load_weights_for__main()
-+    outputs = _main(activations, weights)
-+
-+    ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
-+    golden_output = model_pt.run_pytorch_model()
-+
-+    pcc = calculate_pcc(ttnn_output, golden_output)
-+    print(f"\nPCC: {pcc:.6f}")
-+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+-    pcc = calculate_pcc(ttnn_output, golden_output)
++    pcc = calculate_pcc(ttnn.to_torch(ttnn_output[-1]), golden_output)
+     print(f"\nPCC: {pcc:.6f}")
+     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
  
- 
- if __name__ == "__main__":
