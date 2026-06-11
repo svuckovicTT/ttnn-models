@@ -1,0 +1,8 @@
+Implemented `test_main()` in `main.py`. The test:
+1. Loads TTNN activations and weights via existing `load_activations_for__main()` / `load_weights_for__main()`
+2. Runs the TTNN model via `_main(activations, weights)`
+3. Extracts the logits (last output, index -1) and converts to PyTorch via `ttnn.to_torch(ttnn.from_device(...))`
+4. Gets the golden logits from `model_pt.run_pytorch_model()`
+5. Computes PCC using `calculate_pcc()` and asserts exact match against `0.858482` (from `xla.py`)
+
+--- Time taken: 626.3s ---
