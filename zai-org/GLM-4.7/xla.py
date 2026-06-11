@@ -651,7 +651,7 @@ def compare_pytorch_and_tt_runs():
     # same CPU-prefilled cache — exactly the benchmark's decode_only PCC check
     # (compute_pcc(device_decode_logits, cpu_decode_logits)). The test's
     # required_pcc for this 4-layer GLM-4.7 decode is 0.86.
-    exact_pcc = 0.858482
+    exact_pcc = 0.8584824204444885
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()

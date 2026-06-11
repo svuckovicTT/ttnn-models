@@ -22453,13 +22453,18 @@ def main():
 
 
 def test_main():
-    exact_pcc = 0.858482
+    exact_pcc = 0.8584824204444885
 
     activations = load_activations_for__main()
     weights = load_weights_for__main()
     outputs = _main(activations, weights)
 
-    ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[15]))
+    # outputs[15] (ttnn_all_gather_17) is gathered across both mesh axes, so it
+    # is replicated on every device. from_device therefore returns a multi-shard
+    # host tensor; ttnn.to_torch with no mesh_composer would hit the
+    # buffers.size() == 1 TT_FATAL. Take one (full) shard for a replicated tensor.
+    _last_host = ttnn.from_device(outputs[15])
+    ttnn_output = ttnn.to_torch(ttnn.get_device_tensors(_last_host)[0])
     golden_output = model_pt.run_pytorch_model()
 
     pcc = calculate_pcc(ttnn_output, golden_output)
