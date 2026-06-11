@@ -1,0 +1,78 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0
+plugins: jaxtyping-0.3.10, json-report-1.5.0, split-0.11.0, forked-1.6.0, metadata-3.1.1, anyio-4.13.0
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+___________________________ ERROR collecting main.py ___________________________
+ImportError while importing test module '/home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0/main.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+main.py:3: in <module>
+    from model_ttnn import _main
+model_ttnn.py:3: in <module>
+    from main import consteval__main
+main.py:3: in <module>
+    from model_ttnn import _main
+E   ImportError: cannot import name '_main' from partially initialized module 'model_ttnn' (most likely due to a circular import) (/home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0/model_ttnn.py)
+=========================== short test summary info ============================
+ERROR main.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 2.96s ===============================
+nanobind: leaked 473 instances!
+ - leaked instance 0xfff1340 of type "ttnn._ttnn.operations.binary.polyval_t"
+ - leaked instance 0x1008aac0 of type "ttnn._ttnn.operations.loss.mse_loss_t"
+ - leaked instance 0xf9cc390 of type "ttnn._ttnn.operations.unary.square_t"
+ - leaked instance 0x101369e0 of type "ttnn._ttnn.operations.copy.typecast_t"
+ - leaked instance 0xf8ea430 of type "ttnn._ttnn.operations.unary.selu_t"
+ - leaked instance 0x1011f6f0 of type "ttnn._ttnn.operations.prefetcher.dram_prefetcher_t"
+ - leaked instance 0xe360250 of type "ttnn._ttnn.operations.unary.exp2_t"
+ - leaked instance 0x101acbc0 of type "ttnn._ttnn.operations.moreh.moreh_cumsum_backward_t"
+ - leaked instance 0x1009cbd0 of type "ttnn._ttnn.operations.matmul.addmm_t"
+ - leaked instance 0x1004b160 of type "ttnn._ttnn.operations.binary_backward.logaddexp_bw_t"
+ - leaked instance 0x1004db90 of type "ttnn._ttnn.operations.binary_backward.concat_bw_t"
+ - leaked instance 0xffa6420 of type "ttnn._ttnn.operations.unary.triu_t"
+ - leaked instance 0xf752720 of type "ttnn._ttnn.operations.unary.log10_t"
+ - leaked instance 0xffc8100 of type "ttnn._ttnn.operations.binary.logical_right_shift_t"
+ - leaked instance 0x100b1ac0 of type "ttnn._ttnn.operations.data_movement.tilize_t"
+ - leaked instance 0xf768cc0 of type "ttnn._ttnn.operations.unary.softshrink_t"
+ - leaked instance 0xffcba20 of type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked instance 0x10101030 of type "ttnn._ttnn.operations.normalization.rms_norm_t"
+ - leaked instance 0xd847020 of type "ttnn._ttnn.operations.unary.relu6_t"
+ - leaked instance 0xfb83e50 of type "ttnn._ttnn.operations.unary.multigammaln_t"
+ - ... skipped remainder
+nanobind: leaked 532 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2335 functions!
+ - leaked function ""
+ - leaked function "allocate_tensor_on_device"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step create_empty_pytest, as expected
