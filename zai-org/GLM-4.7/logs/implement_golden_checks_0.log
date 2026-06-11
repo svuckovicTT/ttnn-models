@@ -1,0 +1,70 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0
+plugins: jaxtyping-0.3.10, json-report-1.5.0, split-0.11.0, forked-1.6.0, metadata-3.1.1, anyio-4.13.0
+collected 1 item
+
+main.py .
+
+=============================== warnings summary ===============================
+main.py::test_main
+  /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but main.py::test_main returned <class 'int'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 1 passed, 1 warning in 2.85s =========================
+nanobind: leaked 473 instances!
+ - leaked instance 0x3c8357b0 of type "ttnn._ttnn.operations.normalization.softmax_t"
+ - leaked instance 0x3c7dc980 of type "ttnn._ttnn.operations.matmul.matmul_t"
+ - leaked instance 0x3bf75aa0 of type "ttnn._ttnn.operations.unary.cosh_t"
+ - leaked instance 0x3c90a930 of type "ttnn._ttnn.operations.generic.generic_op_t"
+ - leaked instance 0x7bf56c199548 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x3c8f55d0 of type "ttnn._ttnn.operations.moreh.moreh_layer_norm_t"
+ - leaked instance 0x3c792400 of type "ttnn._ttnn.operations.binary_backward.rsub_bw_t"
+ - leaked instance 0x3c72b060 of type "ttnn._ttnn.operations.binary.div_t"
+ - leaked instance 0x3c8a21e0 of type "ttnn._ttnn.operations.experimental.plus_one_t"
+ - leaked instance 0x3c904410 of type "ttnn._ttnn.operations.moreh.moreh_sum_backward_t"
+ - leaked instance 0x3bf2a1b0 of type "ttnn._ttnn.operations.binary.ne_t"
+ - leaked instance 0x3c7ea320 of type "ttnn._ttnn.operations.data_movement.fill_rm_t"
+ - leaked instance 0x3c82ebd0 of type "ttnn._ttnn.operations.pool.rotate_t"
+ - leaked instance 0x3c6bc240 of type "ttnn._ttnn.operations.ccl.mesh_partition_t"
+ - leaked instance 0x3c6bd1f0 of type "ttnn._ttnn.operations.ccl.all_broadcast_t"
+ - leaked instance 0x3c72e270 of type "ttnn._ttnn.operations.binary.maximum_t"
+ - leaked instance 0x3c7733c0 of type "ttnn._ttnn.operations.unary_backward.asin_bw_t"
+ - leaked instance 0x3c6cce30 of type "ttnn._ttnn.operations.creation.empty_t"
+ - leaked instance 0x3c720af0 of type "ttnn._ttnn.operations.binary.minimum_t"
+ - leaked instance 0x3c7ce630 of type "ttnn._ttnn.operations.loss.mse_loss_t"
+ - ... skipped remainder
+nanobind: leaked 532 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2335 functions!
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__init__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "from_json"
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step implement_golden, as expected

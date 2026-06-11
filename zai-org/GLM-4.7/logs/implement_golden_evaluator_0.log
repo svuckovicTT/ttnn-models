@@ -1,0 +1,7 @@
+{
+  "is_approved": true,
+  "failed_criteria": [],
+  "reasoning": "All three criteria are satisfied. TASK COMPLETION: model_pt.py was created with load_pytorch_model(), load_input(), and run_pytorch_model() correctly derived from xla.py with tt-xla specific code (enable_sparse_mlp, mesh/sharding, torch_xla imports) properly omitted; calculate_pcc() was added to utils.py matching the specified snippet exactly; from utils import calculate_pcc was added to main.py. SCOPE CONTAINMENT: Only the three permitted files (model_pt.py, utils.py, main.py) inside the codegen dir were touched; the logs/implement_golden_diff_0.patch file is a harness artifact, not a Generator-authored change. SEMANTIC EQUIVALENCE: No existing TTNN operations, MemoryConfig arguments, or tensor operations were altered; utils.py and main.py existing code is untouched; the new model_pt.py contains only CPU PyTorch logic with no TTNN operations."
+}
+
+--- Time taken: 73.0s ---

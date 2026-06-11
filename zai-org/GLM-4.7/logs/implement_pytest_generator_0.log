@@ -1,0 +1,11 @@
+The implementation is complete. Here's what `test_main()` does:
+
+1. Sets `exact_pcc = 0.858482` matching the value from `xla.py`
+2. Loads TTNN activations and weights via the existing loader functions
+3. Runs the TTNN model via `_main()`
+4. Extracts the logits output (index 15 — the fully replicated logits after all-gather across both DP and TP dimensions)
+5. Converts it to a PyTorch tensor via `ttnn.from_device()` + `ttnn.to_torch()`
+6. Gets the golden logits from `model_pt.run_pytorch_model()`
+7. Computes PCC using `calculate_pcc()` from `utils.py` and asserts exact match
+
+--- Time taken: 318.4s ---
