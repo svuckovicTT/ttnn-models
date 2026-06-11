@@ -1,0 +1,24 @@
+Everything looks good. Let me do a quick summary of all the changes:
+
+**Summary of changes:**
+
+1. **`params.py`** (new file) - Contains:
+   - `load_weights_for__main()` - moved verbatim from `main.py`, loads weights from serialized `.tensorbin` files
+   - `load_weights_for__main_from_state_dict()` - new function that loads the same weights from the PyTorch model's `state_dict`:
+     - Gets the model via `model_pt.load_pytorch_model()`
+     - Builds combined state_dict including non-persistent buffers (for `rotary_emb.inv_freq`)
+     - Adds `"model."` prefix to simulate the `_LLMSamplingWrapper` naming
+     - Splits `gate_up_proj` into separate `gate_proj` and `up_proj` tensors
+     - Remaps `e_score_correction_bias` to the mangled TTNN key name
+     - Uses `_resolve_sd_key()` to handle potential `.mlp.mlp.` vs `.mlp.` naming differences
+     - Groups weights into 3 categories based on tensor properties:
+       - `NORM_WEIGHTS_ON_DEVICE`: TILE layout, BFLOAT16, placed on device with DRAM memory config (17 normalization weights)
+       - `INT32_WEIGHTS`: ROW_MAJOR layout, INT32, host-only (just `expert_mapping`)
+       - Everything else: ROW_MAJOR layout, BFLOAT16, host-only
+     - Applies `ttnn.to_layout`, `ttnn.to_dtype`, `ttnn.to_device` in that order per group
+
+2. **`main.py`** (modified) - Added `from params import load_weights_for__main`, removed the original `_main_weights` global and `load_weights_for__main()` function body
+
+3. **`verify_weights.py`** (new file) - pytest test `test_verify_weights()` that loads weights from both paths and verifies keys match and tensor values are identical
+
+--- Time taken: 1100.4s ---
