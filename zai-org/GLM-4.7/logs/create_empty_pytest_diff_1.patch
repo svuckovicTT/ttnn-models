@@ -1,0 +1,14 @@
+diff --git a/zai-org/GLM-4.7/model/graph_0/main.py b/zai-org/GLM-4.7/model/graph_0/main.py
+index ebbe9a5..24a4fcd 100644
+--- a/zai-org/GLM-4.7/model/graph_0/main.py
++++ b/zai-org/GLM-4.7/model/graph_0/main.py
+@@ -22449,5 +22449,9 @@ def main():
+     return 0
+ 
+ 
++def test_main():
++    return 0
++
++
+ if __name__ == "__main__":
+     main()
