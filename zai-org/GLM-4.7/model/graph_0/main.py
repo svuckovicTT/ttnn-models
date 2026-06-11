@@ -1,5 +1,6 @@
 import ttnn
 import utils
+from utils import calculate_pcc
 
 from model_ttnn import _main
 
