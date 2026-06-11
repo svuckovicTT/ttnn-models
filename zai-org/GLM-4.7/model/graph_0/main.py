@@ -3168,7 +3168,7 @@ def main():
 def test_main():
     import model_pt
 
-    exact_pcc = 0.858482
+    exact_pcc = 0.85546875
 
     activations = load_activations_for__main()
     weights = load_weights_for__main()
@@ -3177,7 +3177,12 @@ def test_main():
     ttnn_output = [ttnn.from_device(output) for output in outputs]
     golden_output = model_pt.run_pytorch_model()
 
-    pcc = calculate_pcc(ttnn.to_torch(ttnn_output[-1]), golden_output)
+    # outputs[-1] is the final logits, fully replicated across the 4x8 mesh by
+    # the trailing all_gathers (dim 0 over cluster_axis 0, dim 2 over cluster_axis 1).
+    # Every device holds an identical copy, so grab a single shard before converting.
+    final_output = ttnn.get_device_tensors(ttnn_output[-1])[0]
+
+    pcc = calculate_pcc(ttnn.to_torch(final_output), golden_output)
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
