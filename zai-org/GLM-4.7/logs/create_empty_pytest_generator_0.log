@@ -1,0 +1,7 @@
+All three tasks are complete:
+
+1. **`test_main()` added** to `main.py` just above `if __name__ == "__main__":` (line 3211)
+2. **`model_ttnn.py` created** with the `_main` function, its `ce_cache__main` global, and imports for `ttnn`, `utils`, and `consteval__main` from `main`
+3. **References updated** — `main.py` imports `_main` from `model_ttnn` via `from model_ttnn import _main`, and the call site in `main()` continues to work unchanged
+
+--- Time taken: 168.0s ---
