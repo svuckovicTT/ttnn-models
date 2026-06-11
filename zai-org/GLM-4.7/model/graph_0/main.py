@@ -2222,10 +2222,10 @@ def main_const_eval_45(device):
 
 
 
-def consteval__main(ce_cache, weights):
+def consteval__main(ce_cache, weights, device):
     if not ce_cache:
         main_const_eval_0_0 = main_const_eval_0(
-            [weights["model.model.embed_tokens.weight"]]
+            [weights["model.model.embed_tokens.weight"]], device
         )
         ce_cache["main_const_eval_0"] = main_const_eval_0_0[0]
         main_const_eval_1_0 = main_const_eval_1(
@@ -2233,7 +2233,7 @@ def consteval__main(ce_cache, weights):
                 weights["model.model.layers.3.self_attn.k_proj.weight"],
                 weights["model.model.layers.3.self_attn.v_proj.weight"],
                 weights["model.model.layers.3.self_attn.q_proj.weight"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_1"] = main_const_eval_1_0[0]
         main_const_eval_2_0 = main_const_eval_2(
@@ -2241,7 +2241,7 @@ def consteval__main(ce_cache, weights):
                 weights["model.model.layers.0.self_attn.k_proj.weight"],
                 weights["model.model.layers.0.self_attn.v_proj.weight"],
                 weights["model.model.layers.0.self_attn.q_proj.weight"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_2"] = main_const_eval_2_0[0]
         main_const_eval_3_0 = main_const_eval_3(
@@ -2249,45 +2249,45 @@ def consteval__main(ce_cache, weights):
                 weights[
                     "L__self___model_model_layers_3_mlp_mlp_router__route_fn___closure___0_cell_contents_e_score_correction_bias"
                 ]
-            ]
+            ], device
         )
         ce_cache["main_const_eval_3"] = main_const_eval_3_0[0]
         main_const_eval_4_0 = main_const_eval_4(
-            [weights["model.model.layers.2.self_attn.o_proj.weight"]]
+            [weights["model.model.layers.2.self_attn.o_proj.weight"]], device
         )
         ce_cache["main_const_eval_4"] = main_const_eval_4_0[0]
-        main_const_eval_5_0 = main_const_eval_5()
+        main_const_eval_5_0 = main_const_eval_5(device)
         ce_cache["main_const_eval_5"] = main_const_eval_5_0[0]
-        main_const_eval_6_0 = main_const_eval_6()
+        main_const_eval_6_0 = main_const_eval_6(device)
         ce_cache["main_const_eval_6"] = main_const_eval_6_0[0]
-        main_const_eval_7_0 = main_const_eval_7()
+        main_const_eval_7_0 = main_const_eval_7(device)
         ce_cache["main_const_eval_7"] = main_const_eval_7_0[0]
         main_const_eval_8_0 = main_const_eval_8(
-            [weights["model.model.layers.2.mlp.up_proj.weight"]]
+            [weights["model.model.layers.2.mlp.up_proj.weight"]], device
         )
         ce_cache["main_const_eval_8"] = main_const_eval_8_0[0]
         main_const_eval_9_0 = main_const_eval_9(
-            [weights["model.model.layers.3.mlp.shared_experts.down_proj.weight"]]
+            [weights["model.model.layers.3.mlp.shared_experts.down_proj.weight"]], device
         )
         ce_cache["main_const_eval_9"] = main_const_eval_9_0[0]
-        main_const_eval_10_0 = main_const_eval_10()
+        main_const_eval_10_0 = main_const_eval_10(device)
         ce_cache["main_const_eval_10"] = main_const_eval_10_0[0]
-        main_const_eval_11_0 = main_const_eval_11()
+        main_const_eval_11_0 = main_const_eval_11(device)
         ce_cache["main_const_eval_11"] = main_const_eval_11_0[0]
         main_const_eval_12_0 = main_const_eval_12(
             [
                 weights["model.model.layers.1.self_attn.k_proj.weight"],
                 weights["model.model.layers.1.self_attn.v_proj.weight"],
                 weights["model.model.layers.1.self_attn.q_proj.weight"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_12"] = main_const_eval_12_0[0]
         main_const_eval_13_0 = main_const_eval_13(
-            [weights["model.model.layers.3.mlp.mlp.experts.gate_proj"]]
+            [weights["model.model.layers.3.mlp.mlp.experts.gate_proj"]], device
         )
         ce_cache["main_const_eval_13"] = main_const_eval_13_0[0]
         main_const_eval_14_0 = main_const_eval_14(
-            [weights["model.model.layers.3.mlp.mlp.experts.up_proj"]]
+            [weights["model.model.layers.3.mlp.mlp.experts.up_proj"]], device
         )
         ce_cache["main_const_eval_14"] = main_const_eval_14_0[0]
         main_const_eval_15_0 = main_const_eval_15(
@@ -2295,19 +2295,19 @@ def consteval__main(ce_cache, weights):
                 weights["model.model.layers.1.self_attn.k_proj.bias"],
                 weights["model.model.layers.1.self_attn.v_proj.bias"],
                 weights["model.model.layers.1.self_attn.q_proj.bias"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_15"] = main_const_eval_15_0[0]
         main_const_eval_16_0 = main_const_eval_16(
-            [weights["model.model.layers.3.mlp.shared_experts.gate_proj.weight"]]
+            [weights["model.model.layers.3.mlp.shared_experts.gate_proj.weight"]], device
         )
         ce_cache["main_const_eval_16"] = main_const_eval_16_0[0]
         main_const_eval_17_0 = main_const_eval_17(
-            [weights["model.model.layers.3.mlp.mlp.experts.down_proj"]]
+            [weights["model.model.layers.3.mlp.mlp.experts.down_proj"]], device
         )
         ce_cache["main_const_eval_17"] = main_const_eval_17_0[0]
         main_const_eval_18_0 = main_const_eval_18(
-            [weights["model.model.layers.0.mlp.gate_proj.weight"]]
+            [weights["model.model.layers.0.mlp.gate_proj.weight"]], device
         )
         ce_cache["main_const_eval_18"] = main_const_eval_18_0[0]
         main_const_eval_19_0 = main_const_eval_19(
@@ -2315,51 +2315,51 @@ def consteval__main(ce_cache, weights):
                 weights["model.model.layers.2.self_attn.k_proj.weight"],
                 weights["model.model.layers.2.self_attn.v_proj.weight"],
                 weights["model.model.layers.2.self_attn.q_proj.weight"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_19"] = main_const_eval_19_0[0]
-        main_const_eval_20_0 = main_const_eval_20([weights["model.lm_head.weight"]])
+        main_const_eval_20_0 = main_const_eval_20([weights["model.lm_head.weight"]], device)
         ce_cache["main_const_eval_20"] = main_const_eval_20_0[0]
-        main_const_eval_21_0 = main_const_eval_21()
+        main_const_eval_21_0 = main_const_eval_21(device)
         ce_cache["main_const_eval_21"] = main_const_eval_21_0[0]
         main_const_eval_22_0 = main_const_eval_22(
-            [weights["model.model.layers.1.mlp.up_proj.weight"]]
+            [weights["model.model.layers.1.mlp.up_proj.weight"]], device
         )
         ce_cache["main_const_eval_22"] = main_const_eval_22_0[0]
         main_const_eval_23_0 = main_const_eval_23(
-            [weights["model.model.layers.3.self_attn.o_proj.weight"]]
+            [weights["model.model.layers.3.self_attn.o_proj.weight"]], device
         )
         ce_cache["main_const_eval_23"] = main_const_eval_23_0[0]
-        main_const_eval_24_0 = main_const_eval_24()
+        main_const_eval_24_0 = main_const_eval_24(device)
         ce_cache["main_const_eval_24"] = main_const_eval_24_0[0]
         main_const_eval_25_0 = main_const_eval_25(
             [
                 weights["model.model.layers.0.self_attn.k_proj.bias"],
                 weights["model.model.layers.0.self_attn.v_proj.bias"],
                 weights["model.model.layers.0.self_attn.q_proj.bias"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_25"] = main_const_eval_25_0[0]
         main_const_eval_26_0 = main_const_eval_26(
-            [weights["model.model.layers.3.mlp.mlp.router.gate.weight"]]
+            [weights["model.model.layers.3.mlp.mlp.router.gate.weight"]], device
         )
         ce_cache["main_const_eval_26"] = main_const_eval_26_0[0]
         main_const_eval_27_0 = main_const_eval_27(
-            [weights["model.model.rotary_emb.inv_freq"]]
+            [weights["model.model.rotary_emb.inv_freq"]], device
         )
         ce_cache["main_const_eval_27"] = main_const_eval_27_0[0]
         main_const_eval_28_0 = main_const_eval_28(
-            [weights["model.model.layers.2.mlp.down_proj.weight"]]
+            [weights["model.model.layers.2.mlp.down_proj.weight"]], device
         )
         ce_cache["main_const_eval_28"] = main_const_eval_28_0[0]
-        main_const_eval_29_0 = main_const_eval_29()
+        main_const_eval_29_0 = main_const_eval_29(device)
         ce_cache["main_const_eval_29"] = main_const_eval_29_0[0]
-        main_const_eval_30_0 = main_const_eval_30()
+        main_const_eval_30_0 = main_const_eval_30(device)
         ce_cache["main_const_eval_30"] = main_const_eval_30_0[0]
-        main_const_eval_31_0 = main_const_eval_31()
+        main_const_eval_31_0 = main_const_eval_31(device)
         ce_cache["main_const_eval_31"] = main_const_eval_31_0[0]
         main_const_eval_32_0 = main_const_eval_32(
-            [weights["model.model.layers.0.mlp.up_proj.weight"]]
+            [weights["model.model.layers.0.mlp.up_proj.weight"]], device
         )
         ce_cache["main_const_eval_32"] = main_const_eval_32_0[0]
         main_const_eval_33_0 = main_const_eval_33(
@@ -2367,19 +2367,19 @@ def consteval__main(ce_cache, weights):
                 weights["model.model.layers.3.self_attn.k_proj.bias"],
                 weights["model.model.layers.3.self_attn.v_proj.bias"],
                 weights["model.model.layers.3.self_attn.q_proj.bias"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_33"] = main_const_eval_33_0[0]
         main_const_eval_34_0 = main_const_eval_34(
-            [weights["model.model.layers.1.self_attn.o_proj.weight"]]
+            [weights["model.model.layers.1.self_attn.o_proj.weight"]], device
         )
         ce_cache["main_const_eval_34"] = main_const_eval_34_0[0]
         main_const_eval_35_0 = main_const_eval_35(
-            [weights["model.model.layers.1.mlp.gate_proj.weight"]]
+            [weights["model.model.layers.1.mlp.gate_proj.weight"]], device
         )
         ce_cache["main_const_eval_35"] = main_const_eval_35_0[0]
         main_const_eval_36_0 = main_const_eval_36(
-            [weights["model.model.layers.1.mlp.down_proj.weight"]]
+            [weights["model.model.layers.1.mlp.down_proj.weight"]], device
         )
         ce_cache["main_const_eval_36"] = main_const_eval_36_0[0]
         main_const_eval_37_0 = main_const_eval_37(
@@ -2387,34 +2387,34 @@ def consteval__main(ce_cache, weights):
                 weights["model.model.layers.2.self_attn.k_proj.bias"],
                 weights["model.model.layers.2.self_attn.v_proj.bias"],
                 weights["model.model.layers.2.self_attn.q_proj.bias"],
-            ]
+            ], device
         )
         ce_cache["main_const_eval_37"] = main_const_eval_37_0[0]
-        main_const_eval_38_0 = main_const_eval_38()
+        main_const_eval_38_0 = main_const_eval_38(device)
         ce_cache["main_const_eval_38"] = main_const_eval_38_0[0]
         main_const_eval_39_0 = main_const_eval_39(
-            [weights["model.model.layers.3.mlp.mlp.expert_mapping"]]
+            [weights["model.model.layers.3.mlp.mlp.expert_mapping"]], device
         )
         ce_cache["main_const_eval_39"] = main_const_eval_39_0[0]
         main_const_eval_40_0 = main_const_eval_40(
-            [weights["model.model.layers.0.self_attn.o_proj.weight"]]
+            [weights["model.model.layers.0.self_attn.o_proj.weight"]], device
         )
         ce_cache["main_const_eval_40"] = main_const_eval_40_0[0]
         main_const_eval_41_0 = main_const_eval_41(
-            [weights["model.model.layers.2.mlp.gate_proj.weight"]]
+            [weights["model.model.layers.2.mlp.gate_proj.weight"]], device
         )
         ce_cache["main_const_eval_41"] = main_const_eval_41_0[0]
         main_const_eval_42_0 = main_const_eval_42(
-            [weights["model.model.layers.3.mlp.shared_experts.up_proj.weight"]]
+            [weights["model.model.layers.3.mlp.shared_experts.up_proj.weight"]], device
         )
         ce_cache["main_const_eval_42"] = main_const_eval_42_0[0]
-        main_const_eval_43_0 = main_const_eval_43()
+        main_const_eval_43_0 = main_const_eval_43(device)
         ce_cache["main_const_eval_43"] = main_const_eval_43_0[0]
         main_const_eval_44_0 = main_const_eval_44(
-            [weights["model.model.layers.0.mlp.down_proj.weight"]]
+            [weights["model.model.layers.0.mlp.down_proj.weight"]], device
         )
         ce_cache["main_const_eval_44"] = main_const_eval_44_0[0]
-        main_const_eval_45_0 = main_const_eval_45()
+        main_const_eval_45_0 = main_const_eval_45(device)
         ce_cache["main_const_eval_45"] = main_const_eval_45_0[0]
     return ce_cache
 

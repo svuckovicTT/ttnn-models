@@ -6,8 +6,9 @@ ce_cache__main = {}
 
 def _main(activations, weights):
     global ce_cache__main
+    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((4, 8))
     from main import consteval__main
-    ce_cache__main = consteval__main(ce_cache__main, weights)
+    ce_cache__main = consteval__main(ce_cache__main, weights, utils_DeviceGetter_get_device_0)
     args_1 = activations[0]
     args_0 = activations[1]
     args_3 = activations[3]
@@ -25,7 +26,6 @@ def _main(activations, weights):
     var_0 = ce_cache__main["main_const_eval_10"]
     var_1 = ce_cache__main["main_const_eval_11"]
     var_2 = ce_cache__main["main_const_eval_39"]
-    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((4, 8))
     ttnn_typecast_29 = ttnn.typecast(
         args_1,
         ttnn.DataType.UINT32,
