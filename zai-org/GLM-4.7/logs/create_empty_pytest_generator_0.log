@@ -1,0 +1,7 @@
+Both files pass syntax checks. Summary of changes:
+
+1. **`main.py`**: Added `from model_ttnn import _main` import (line 4), removed `ce_cache__main = {}` global and the entire `_main()` function (~19,237 lines), added `test_main()` returning 0 just above `if __name__ == "__main__":`.
+
+2. **`model_ttnn.py`** (new): Contains `import ttnn`, the `ce_cache__main = {}` global, and the `_main()` function with a lazy `from main import consteval__main` import inside the function body to avoid circular imports.
+
+--- Time taken: 217.8s ---
