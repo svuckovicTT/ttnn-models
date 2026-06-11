@@ -1,0 +1,7 @@
+All three files are done:
+
+- **`model_pt.py`** — Created with `load_pytorch_model()`, `load_input()`, and `run_pytorch_model()`. Copies all pure-PyTorch logic from `xla.py` (meta-device model loading, HF shard resolution, state dict fusion, config building, tokenization, StaticCache construction, CPU prefill-to-decode, LLMSamplingWrapper). All tt-xla imports (`torch_xla`, `tt_torch.sharding`, `tt_torch.sparse_mlp`, SPMD mesh/sharding) are excluded.
+- **`utils.py`** — Added `import torch` and the `calculate_pcc()` function at the end.
+- **`main.py`** — Added `from utils import calculate_pcc` import.
+
+--- Time taken: 176.5s ---
