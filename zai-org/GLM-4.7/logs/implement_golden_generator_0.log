@@ -1,0 +1,9 @@
+All three files have been updated:
+
+1. **`model_pt.py`** — Created with `load_pytorch_model()`, `load_input()`, and `run_pytorch_model()` extracted from `xla.py`. Stripped all tt-xla/SPMD/sharding code (`torch_xla`, `tt_torch`, `enable_sparse_mlp`, mesh/sharding specs, device transfer). The `LLMSamplingWrapper` is simplified to CPU-only (no mesh/output_sharding_spec). `load_input()` returns both the decode-state inputs and the model (needed to construct them).
+
+2. **`utils.py`** — Added `import torch` and appended the exact `calculate_pcc` function as specified.
+
+3. **`main.py`** — Added `from utils import calculate_pcc` import alongside the existing imports. No other changes.
+
+--- Time taken: 92.1s ---
