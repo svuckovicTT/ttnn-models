@@ -1,0 +1,17 @@
+All three files are in place. Here's a summary of what was done:
+
+**params.py** (new file):
+- Contains `load_weights_for__main()` — moved verbatim from main.py, preserving the `_main_weights` global and all `utils.load_tensor()` calls
+- Contains weight group sets: `TILE_ON_DEVICE_WEIGHTS` (17 norm/layernorm weights with TILE layout + BF16 + on-device DRAM), `INT32_WEIGHTS` (1 expert_mapping), `ROW_MAJOR_BF16_WEIGHTS` (48 remaining weights)
+- Contains `load_weights_for__main_from_state_dict()` — loads the same 66 weights from the golden PyTorch model's state_dict via `_LLMSamplingWrapper`, including non-persistent buffers (e.g. `rotary_emb.inv_freq`). Uses `ttnn.from_torch()` for conversion, then applies `ttnn.to_layout` → `ttnn.to_dtype` → `ttnn.to_device` per group. Uses `ttnn.DRAM_MEMORY_CONFIG` for device placement.
+- Contains `_resolve_state_dict_tensor()` helper that handles key mismatches: TTNN's `.mlp.mlp.` vs PyTorch's `.mlp.` paths, the mangled `e_score_correction_bias` key, and splitting `gate_up_proj` into separate `gate_proj`/`up_proj` tensors.
+
+**main.py** (updated):
+- Added `from params import load_weights_for__main`
+- Removed the original `_main_weights = {}` global and `load_weights_for__main()` function definition
+- All callers (`main()`, `test_main()`) unchanged — they still call `load_weights_for__main()` via the import
+
+**verify_weights.py** (new file):
+- Single pytest function `test_verify_weights()` that loads weights from both paths, asserts key sets are identical, compares tensor values via `torch.equal` after bringing to host, and reports mismatches with max diff.
+
+--- Time taken: 1000.0s ---
