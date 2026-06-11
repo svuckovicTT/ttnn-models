@@ -1,0 +1,75 @@
+#loc = loc(unknown)
+module @SyncTensorsGraph.2012 attributes {mhlo.cross_program_prefetches = [], mhlo.input_output_alias = [], mhlo.is_dynamic = false, mhlo.spmd_output_sharding = "{{devices=[4,8,1,1]<=[32]},{devices=[4,8,1,1]<=[32]},{replicated},{devices=[4,8,1,1]<=[32]},{devices=[4,8,1,1]<=[32]},{replicated},{devices=[4,8,1,1]<=[32]},{devices=[4,8,1,1]<=[32]},{replicated},{devices=[4,8,1,1]<=[32]},{devices=[4,8,1,1]<=[32]},{replicated},{devices=[4,1,8]<=[32] last_tile_dim_replicate},{replicated},{replicated},{replicated}}", mhlo.use_auto_spmd_partitioning = false} {
+  func.func @main(%arg0: tensor<128xbf16> loc(unknown), %arg1: tensor<1024xbf16> loc(unknown), %arg2: tensor<1024x5120xbf16> loc(unknown), %arg3: tensor<5120xbf16> loc(unknown), %arg4: tensor<64x1xi64> loc(unknown), %arg5: tensor<151552x5120xbf16> loc(unknown), %arg6: tensor<1xi64> loc(unknown), %arg7: tensor<32xbf16> loc(unknown), %arg8: tensor<1xi64> loc(unknown), %arg9: tensor<64x8x128x128xbf16> loc(unknown), %arg10: tensor<1024xbf16> loc(unknown), %arg11: tensor<1024x5120xbf16> loc(unknown), %arg12: tensor<64x8x128x128xbf16> loc(unknown), %arg13: tensor<128xbf16> loc(unknown), %arg14: tensor<1024xbf16> loc(unknown), %arg15: tensor<1024x5120xbf16> loc(unknown), %arg16: tensor<5120xbf16> loc(unknown), %arg17: tensor<5120x12288xbf16> loc(unknown), %arg18: tensor<12288x5120xbf16> loc(unknown), %arg19: tensor<5120xbf16> loc(unknown), %arg20: tensor<5120x12288xbf16> loc(unknown), %arg21: tensor<128xbf16> loc(unknown), %arg22: tensor<12288xbf16> loc(unknown), %arg23: tensor<12288x5120xbf16> loc(unknown), %arg24: tensor<12288x5120xbf16> loc(unknown), %arg25: tensor<1xi64> loc(unknown), %arg26: tensor<64x8x128x128xbf16> loc(unknown), %arg27: tensor<1024xbf16> loc(unknown), %arg28: tensor<1024x5120xbf16> loc(unknown), %arg29: tensor<64x8x128x128xbf16> loc(unknown), %arg30: tensor<128xbf16> loc(unknown), %arg31: tensor<1024xbf16> loc(unknown), %arg32: tensor<1024x5120xbf16> loc(unknown), %arg33: tensor<5120xbf16> loc(unknown), %arg34: tensor<5120x12288xbf16> loc(unknown), %arg35: tensor<12288x5120xbf16> loc(unknown), %arg36: tensor<5120xbf16> loc(unknown), %arg37: tensor<5120x12288xbf16> loc(unknown), %arg38: tensor<128xbf16> loc(unknown), %arg39: tensor<12288xbf16> loc(unknown), %arg40: tensor<12288x5120xbf16> loc(unknown), %arg41: tensor<12288x5120xbf16> loc(unknown), %arg42: tensor<1xi64> loc(unknown), %arg43: tensor<64x8x128x128xbf16> loc(unknown), %arg44: tensor<1024xbf16> loc(unknown), %arg45: tensor<1024x5120xbf16> loc(unknown), %arg46: tensor<64x8x128x128xbf16> loc(unknown), %arg47: tensor<128xbf16> loc(unknown), %arg48: tensor<1024xbf16> loc(unknown), %arg49: tensor<1024x5120xbf16> loc(unknown), %arg50: tensor<5120xbf16> loc(unknown), %arg51: tensor<5120x12288xbf16> loc(unknown), %arg52: tensor<12288x5120xbf16> loc(unknown), %arg53: tensor<5120xbf16> loc(unknown), %arg54: tensor<5120x12288xbf16> loc(unknown), %arg55: tensor<128xbf16> loc(unknown), %arg56: tensor<12288xbf16> loc(unknown), %arg57: tensor<12288x5120xbf16> loc(unknown), %arg58: tensor<12288x5120xbf16> loc(unknown), %arg59: tensor<1xi64> loc(unknown), %arg60: tensor<64x8x128x128xbf16> loc(unknown), %arg61: tensor<1024xbf16> loc(unknown), %arg62: tensor<1024x5120xbf16> loc(unknown), %arg63: tensor<64x8x128x128xbf16> loc(unknown), %arg64: tensor<151552x5120xbf16> loc(unknown), %arg65: tensor<5120xbf16> loc(unknown), %arg66: tensor<5120x1536xbf16> loc(unknown), %arg67: tensor<1536x5120xbf16> loc(unknown), %arg68: tensor<5120xbf16> loc(unknown), %arg69: tensor<5120x12288xbf16> loc(unknown), %arg70: tensor<128xbf16> loc(unknown), %arg71: tensor<12288xbf16> loc(unknown), %arg72: tensor<12288x5120xbf16> loc(unknown), %arg73: tensor<1536x5120xbf16> loc(unknown), %arg74: tensor<160xbf16> loc(unknown), %arg75: tensor<160x5120xbf16> loc(unknown), %arg76: tensor<1x1x160x32xi64> loc(unknown), %arg77: tensor<160x1536x5120xbf16> loc(unknown), %arg78: tensor<160x5120x1536xbf16> loc(unknown), %arg79: tensor<160x5120x1536xbf16> loc(unknown)) -> (tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x1xi64>, tensor<64x1xi64>, tensor<1xi64>, tensor<64x1x151552xbf16>) {
+    %cst = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %cst_0 = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %c = stablehlo.constant dense<0> : tensor<1xi64> loc(#loc)
+    %cst_1 = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %cst_2 = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %c_3 = stablehlo.constant dense<0> : tensor<1xi64> loc(#loc)
+    %cst_4 = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %cst_5 = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %c_6 = stablehlo.constant dense<0> : tensor<1xi64> loc(#loc)
+    %cst_7 = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %cst_8 = stablehlo.constant dense<0.000000e+00> : tensor<64x8x128x128xbf16> loc(#loc)
+    %c_9 = stablehlo.constant dense<0> : tensor<1xi64> loc(#loc)
+    %c_10 = stablehlo.constant dense<0> : tensor<64x1xi64> loc(#loc)
+    %c_11 = stablehlo.constant dense<0> : tensor<64x1xi64> loc(#loc)
+    %c_12 = stablehlo.constant dense<0> : tensor<1xi64> loc(#loc)
+    %cst_13 = stablehlo.constant dense<0.000000e+00> : tensor<64x1x151552xbf16> loc(#loc)
+    return %cst, %cst_0, %c, %cst_1, %cst_2, %c_3, %cst_4, %cst_5, %c_6, %cst_7, %cst_8, %c_9, %c_10, %c_11, %c_12, %cst_13 : tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x8x128x128xbf16>, tensor<64x8x128x128xbf16>, tensor<1xi64>, tensor<64x1xi64>, tensor<64x1xi64>, tensor<1xi64>, tensor<64x1x151552xbf16> loc(#loc)
+  } loc(#loc)
+  func.func private @sdy.all_slice1(%arg0: tensor<64x1xf32> loc(unknown)) -> tensor<16x1xf32> {
+    %0 = stablehlo.reshape %arg0 : (tensor<64x1xf32>) -> tensor<4x16x1xf32> loc(#loc)
+    %1 = "stablehlo.all_to_all"(%0) <{channel_handle = #stablehlo.channel_handle<handle = 1, type = 1>, concat_dimension = 0 : i64, replica_groups = dense<[[0, 8, 16, 24], [1, 9, 17, 25], [2, 10, 18, 26], [3, 11, 19, 27], [4, 12, 20, 28], [5, 13, 21, 29], [6, 14, 22, 30], [7, 15, 23, 31]]> : tensor<8x4xi64>, split_count = 4 : i64, split_dimension = 0 : i64}> : (tensor<4x16x1xf32>) -> tensor<4x16x1xf32> loc(#loc)
+    %2 = stablehlo.slice %1 [0:1, 0:16, 0:1] : (tensor<4x16x1xf32>) -> tensor<1x16x1xf32> loc(#loc)
+    %3 = stablehlo.reshape %2 : (tensor<1x16x1xf32>) -> tensor<16x1xf32> loc(#loc)
+    return %3 : tensor<16x1xf32> loc(#loc)
+  } loc(#loc)
+  func.func private @sdy.all_slice2(%arg0: tensor<8x1x64x5120xbf16> loc(unknown)) -> tensor<8x1x16x5120xbf16> {
+    %0 = stablehlo.reshape %arg0 : (tensor<8x1x64x5120xbf16>) -> tensor<8x1x4x16x5120xbf16> loc(#loc)
+    %1 = "stablehlo.all_to_all"(%0) <{channel_handle = #stablehlo.channel_handle<handle = 1, type = 1>, concat_dimension = 2 : i64, replica_groups = dense<[[0, 8, 16, 24], [1, 9, 17, 25], [2, 10, 18, 26], [3, 11, 19, 27], [4, 12, 20, 28], [5, 13, 21, 29], [6, 14, 22, 30], [7, 15, 23, 31]]> : tensor<8x4xi64>, split_count = 4 : i64, split_dimension = 2 : i64}> : (tensor<8x1x4x16x5120xbf16>) -> tensor<8x1x4x16x5120xbf16> loc(#loc)
+    %2 = stablehlo.slice %1 [0:8, 0:1, 0:1, 0:16, 0:5120] : (tensor<8x1x4x16x5120xbf16>) -> tensor<8x1x1x16x5120xbf16> loc(#loc)
+    %3 = stablehlo.reshape %2 : (tensor<8x1x1x16x5120xbf16>) -> tensor<8x1x16x5120xbf16> loc(#loc)
+    return %3 : tensor<8x1x16x5120xbf16> loc(#loc)
+  } loc(#loc)
+  func.func private @sdy.all_slice3(%arg0: tensor<64x1x151552xbf16> loc(unknown)) -> tensor<16x1x151552xbf16> {
+    %0 = stablehlo.reshape %arg0 : (tensor<64x1x151552xbf16>) -> tensor<4x16x1x151552xbf16> loc(#loc)
+    %1 = "stablehlo.all_to_all"(%0) <{channel_handle = #stablehlo.channel_handle<handle = 1, type = 1>, concat_dimension = 0 : i64, replica_groups = dense<[[0, 8, 16, 24], [1, 9, 17, 25], [2, 10, 18, 26], [3, 11, 19, 27], [4, 12, 20, 28], [5, 13, 21, 29], [6, 14, 22, 30], [7, 15, 23, 31]]> : tensor<8x4xi64>, split_count = 4 : i64, split_dimension = 0 : i64}> : (tensor<4x16x1x151552xbf16>) -> tensor<4x16x1x151552xbf16> loc(#loc)
+    %2 = stablehlo.slice %1 [0:1, 0:16, 0:1, 0:151552] : (tensor<4x16x1x151552xbf16>) -> tensor<1x16x1x151552xbf16> loc(#loc)
+    %3 = stablehlo.reshape %2 : (tensor<1x16x1x151552xbf16>) -> tensor<16x1x151552xbf16> loc(#loc)
+    return %3 : tensor<16x1x151552xbf16> loc(#loc)
+  } loc(#loc)
+  func.func private @outlined_composite_tenstorrent.topk_values.impl(%arg0: tensor<16x1x160xf32> loc(unknown)) -> tensor<16x1x2xf32> {
+    %0 = "stablehlo.sort"(%arg0) <{dimension = 2 : i64}> ({
+    ^bb0(%arg1: tensor<f32> loc(unknown), %arg2: tensor<f32> loc(unknown)):
+      %2 = stablehlo.compare  GT, %arg1, %arg2,  TOTALORDER : (tensor<f32>, tensor<f32>) -> tensor<i1> loc(#loc)
+      stablehlo.return %2 : tensor<i1> loc(#loc)
+    }) : (tensor<16x1x160xf32>) -> tensor<16x1x160xf32> loc(#loc)
+    %1 = stablehlo.slice %0 [0:16, 0:1, 0:2] : (tensor<16x1x160xf32>) -> tensor<16x1x2xf32> loc(#loc)
+    return %1 : tensor<16x1x2xf32> loc(#loc)
+  } loc(#loc)
+  func.func private @outlined_composite_tenstorrent.topk_indices.impl_0(%arg0: tensor<16x1xf32> loc(unknown)) -> tensor<16x1xi64> {
+    %c = stablehlo.constant dense<0> : tensor<i32> loc(#loc)
+    %0 = stablehlo.broadcast_in_dim %c, dims = [] : (tensor<i32>) -> tensor<16x1xi32> loc(#loc)
+    %1:2 = "stablehlo.sort"(%arg0, %0) <{dimension = 1 : i64}> ({
+    ^bb0(%arg1: tensor<f32> loc(unknown), %arg2: tensor<f32> loc(unknown), %arg3: tensor<i32> loc(unknown), %arg4: tensor<i32> loc(unknown)):
+      %3 = stablehlo.compare  GT, %arg1, %arg2,  TOTALORDER : (tensor<f32>, tensor<f32>) -> tensor<i1> loc(#loc)
+      stablehlo.return %3 : tensor<i1> loc(#loc)
+    }) : (tensor<16x1xf32>, tensor<16x1xi32>) -> (tensor<16x1xf32>, tensor<16x1xi32>) loc(#loc)
+    %2 = stablehlo.convert %1#1 : (tensor<16x1xi32>) -> tensor<16x1xi64> loc(#loc)
+    return %2 : tensor<16x1xi64> loc(#loc)
+  } loc(#loc)
+  func.func private @outlined_composite_tenstorrent.topk_indices.impl(%arg0: tensor<16x160xf32> loc(unknown)) -> tensor<16x8xi64> {
+    %0 = stablehlo.iota dim = 0 : tensor<160xi32> loc(#loc)
+    %1 = stablehlo.broadcast_in_dim %0, dims = [1] : (tensor<160xi32>) -> tensor<16x160xi32> loc(#loc)
+    %2:2 = "stablehlo.sort"(%arg0, %1) <{dimension = 1 : i64}> ({
+    ^bb0(%arg1: tensor<f32> loc(unknown), %arg2: tensor<f32> loc(unknown), %arg3: tensor<i32> loc(unknown), %arg4: tensor<i32> loc(unknown)):
+      %5 = stablehlo.compare  GT, %arg1, %arg2,  TOTALORDER : (tensor<f32>, tensor<f32>) -> tensor<i1> loc(#loc)
+      stablehlo.return %5 : tensor<i1> loc(#loc)
+    }) : (tensor<16x160xf32>, tensor<16x160xi32>) -> (tensor<16x160xf32>, tensor<16x160xi32>) loc(#loc)
+    %3 = stablehlo.slice %2#1 [0:16, 0:8] : (tensor<16x160xi32>) -> tensor<16x8xi32> loc(#loc)
+    %4 = stablehlo.convert %3 : (tensor<16x8xi32>) -> tensor<16x8xi64> loc(#loc)
+    return %4 : tensor<16x8xi64> loc(#loc)
+  } loc(#loc)
+} loc(#loc)
