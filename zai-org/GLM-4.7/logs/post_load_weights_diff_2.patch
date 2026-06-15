@@ -1,0 +1,757 @@
+diff --git a/zai-org/GLM-4.7/model/graph_0/main.py b/zai-org/GLM-4.7/model/graph_0/main.py
+index 70dba0d..8bb2e04 100644
+--- a/zai-org/GLM-4.7/model/graph_0/main.py
++++ b/zai-org/GLM-4.7/model/graph_0/main.py
+@@ -3,7 +3,7 @@ import utils
+ from utils import calculate_pcc
+ 
+ from model_ttnn import _main
+-from params import load_weights_for__main
++from params import load_weights_for__main_from_state_dict
+ 
+ 
+ def main_const_eval_0(arg_0, device):
+@@ -2569,7 +2569,7 @@ def load_activations_for__main():
+ 
+ def main():
+     load_activations_for__main_0 = load_activations_for__main()
+-    load_weights_for__main_0 = load_weights_for__main()
++    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+     _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+     return 0
+ 
+@@ -2580,7 +2580,7 @@ def test_main():
+     exact_pcc = 0.85546875
+ 
+     activations = load_activations_for__main()
+-    weights = load_weights_for__main()
++    weights = load_weights_for__main_from_state_dict()
+     outputs = _main(activations, weights)
+ 
+     ttnn_output = [ttnn.from_device(output) for output in outputs]
+diff --git a/zai-org/GLM-4.7/model/graph_0/params.py b/zai-org/GLM-4.7/model/graph_0/params.py
+index 1ee9141..333df96 100644
+--- a/zai-org/GLM-4.7/model/graph_0/params.py
++++ b/zai-org/GLM-4.7/model/graph_0/params.py
+@@ -64,599 +64,6 @@ ROW_MAJOR_BF16_WEIGHTS = (
+ ALL_WEIGHTS = NORM_WEIGHTS | INT32_WEIGHTS | ROW_MAJOR_BF16_WEIGHTS
+ 
+ 
+-_main_weights = {}
+-
+-
+-def load_weights_for__main():
+-    utils_DeviceGetter_get_device_2 = utils.DeviceGetter.get_device((4, 8))
+-    global _main_weights
+-    utils_load_tensor_14 = utils.load_tensor(
+-        "./tensors/arg0.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.0.self_attn.k_norm.weight"] = utils_load_tensor_14
+-    utils_load_tensor_15 = utils.load_tensor(
+-        "./tensors/arg1.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.self_attn.k_proj.bias"] = utils_load_tensor_15
+-    utils_load_tensor_16 = utils.load_tensor(
+-        "./tensors/arg2.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.self_attn.k_proj.weight"] = utils_load_tensor_16
+-    utils_load_tensor_17 = utils.load_tensor(
+-        "./tensors/arg3.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.0.input_layernorm.weight"] = utils_load_tensor_17
+-    utils_load_tensor_18 = utils.load_tensor(
+-        "./tensors/arg5.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.embed_tokens.weight"] = utils_load_tensor_18
+-    utils_load_tensor_19 = utils.load_tensor(
+-        "./tensors/arg7.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.rotary_emb.inv_freq"] = utils_load_tensor_19
+-    utils_load_tensor_20 = utils.load_tensor(
+-        "./tensors/arg10.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.self_attn.v_proj.bias"] = utils_load_tensor_20
+-    utils_load_tensor_21 = utils.load_tensor(
+-        "./tensors/arg11.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.self_attn.v_proj.weight"] = utils_load_tensor_21
+-    utils_load_tensor_22 = utils.load_tensor(
+-        "./tensors/arg13.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.1.self_attn.k_norm.weight"] = utils_load_tensor_22
+-    utils_load_tensor_23 = utils.load_tensor(
+-        "./tensors/arg14.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.self_attn.k_proj.bias"] = utils_load_tensor_23
+-    utils_load_tensor_24 = utils.load_tensor(
+-        "./tensors/arg15.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.self_attn.k_proj.weight"] = utils_load_tensor_24
+-    utils_load_tensor_25 = utils.load_tensor(
+-        "./tensors/arg16.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.1.input_layernorm.weight"] = utils_load_tensor_25
+-    utils_load_tensor_26 = utils.load_tensor(
+-        "./tensors/arg17.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.mlp.down_proj.weight"] = utils_load_tensor_26
+-    utils_load_tensor_27 = utils.load_tensor(
+-        "./tensors/arg18.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.mlp.up_proj.weight"] = utils_load_tensor_27
+-    utils_load_tensor_28 = utils.load_tensor(
+-        "./tensors/arg19.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.0.post_attention_layernorm.weight"] = (
+-        utils_load_tensor_28
+-    )
+-    utils_load_tensor_29 = utils.load_tensor(
+-        "./tensors/arg20.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.self_attn.o_proj.weight"] = utils_load_tensor_29
+-    utils_load_tensor_30 = utils.load_tensor(
+-        "./tensors/arg21.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.0.self_attn.q_norm.weight"] = utils_load_tensor_30
+-    utils_load_tensor_31 = utils.load_tensor(
+-        "./tensors/arg22.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.self_attn.q_proj.bias"] = utils_load_tensor_31
+-    utils_load_tensor_32 = utils.load_tensor(
+-        "./tensors/arg23.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.self_attn.q_proj.weight"] = utils_load_tensor_32
+-    utils_load_tensor_33 = utils.load_tensor(
+-        "./tensors/arg24.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.0.mlp.gate_proj.weight"] = utils_load_tensor_33
+-    utils_load_tensor_34 = utils.load_tensor(
+-        "./tensors/arg27.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.self_attn.v_proj.bias"] = utils_load_tensor_34
+-    utils_load_tensor_35 = utils.load_tensor(
+-        "./tensors/arg28.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.self_attn.v_proj.weight"] = utils_load_tensor_35
+-    utils_load_tensor_36 = utils.load_tensor(
+-        "./tensors/arg30.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.2.self_attn.k_norm.weight"] = utils_load_tensor_36
+-    utils_load_tensor_37 = utils.load_tensor(
+-        "./tensors/arg31.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.self_attn.k_proj.bias"] = utils_load_tensor_37
+-    utils_load_tensor_38 = utils.load_tensor(
+-        "./tensors/arg32.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.self_attn.k_proj.weight"] = utils_load_tensor_38
+-    utils_load_tensor_39 = utils.load_tensor(
+-        "./tensors/arg33.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.2.input_layernorm.weight"] = utils_load_tensor_39
+-    utils_load_tensor_40 = utils.load_tensor(
+-        "./tensors/arg34.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.mlp.down_proj.weight"] = utils_load_tensor_40
+-    utils_load_tensor_41 = utils.load_tensor(
+-        "./tensors/arg35.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.mlp.up_proj.weight"] = utils_load_tensor_41
+-    utils_load_tensor_42 = utils.load_tensor(
+-        "./tensors/arg36.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.1.post_attention_layernorm.weight"] = (
+-        utils_load_tensor_42
+-    )
+-    utils_load_tensor_43 = utils.load_tensor(
+-        "./tensors/arg37.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.self_attn.o_proj.weight"] = utils_load_tensor_43
+-    utils_load_tensor_44 = utils.load_tensor(
+-        "./tensors/arg38.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.1.self_attn.q_norm.weight"] = utils_load_tensor_44
+-    utils_load_tensor_45 = utils.load_tensor(
+-        "./tensors/arg39.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.self_attn.q_proj.bias"] = utils_load_tensor_45
+-    utils_load_tensor_46 = utils.load_tensor(
+-        "./tensors/arg40.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.self_attn.q_proj.weight"] = utils_load_tensor_46
+-    utils_load_tensor_47 = utils.load_tensor(
+-        "./tensors/arg41.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.1.mlp.gate_proj.weight"] = utils_load_tensor_47
+-    utils_load_tensor_48 = utils.load_tensor(
+-        "./tensors/arg44.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.self_attn.v_proj.bias"] = utils_load_tensor_48
+-    utils_load_tensor_49 = utils.load_tensor(
+-        "./tensors/arg45.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.self_attn.v_proj.weight"] = utils_load_tensor_49
+-    utils_load_tensor_50 = utils.load_tensor(
+-        "./tensors/arg47.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.3.self_attn.k_norm.weight"] = utils_load_tensor_50
+-    utils_load_tensor_51 = utils.load_tensor(
+-        "./tensors/arg48.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.self_attn.k_proj.bias"] = utils_load_tensor_51
+-    utils_load_tensor_52 = utils.load_tensor(
+-        "./tensors/arg49.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.self_attn.k_proj.weight"] = utils_load_tensor_52
+-    utils_load_tensor_53 = utils.load_tensor(
+-        "./tensors/arg50.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.3.input_layernorm.weight"] = utils_load_tensor_53
+-    utils_load_tensor_54 = utils.load_tensor(
+-        "./tensors/arg51.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.mlp.down_proj.weight"] = utils_load_tensor_54
+-    utils_load_tensor_55 = utils.load_tensor(
+-        "./tensors/arg52.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.mlp.up_proj.weight"] = utils_load_tensor_55
+-    utils_load_tensor_56 = utils.load_tensor(
+-        "./tensors/arg53.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.2.post_attention_layernorm.weight"] = (
+-        utils_load_tensor_56
+-    )
+-    utils_load_tensor_57 = utils.load_tensor(
+-        "./tensors/arg54.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.self_attn.o_proj.weight"] = utils_load_tensor_57
+-    utils_load_tensor_58 = utils.load_tensor(
+-        "./tensors/arg55.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.2.self_attn.q_norm.weight"] = utils_load_tensor_58
+-    utils_load_tensor_59 = utils.load_tensor(
+-        "./tensors/arg56.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.self_attn.q_proj.bias"] = utils_load_tensor_59
+-    utils_load_tensor_60 = utils.load_tensor(
+-        "./tensors/arg57.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.self_attn.q_proj.weight"] = utils_load_tensor_60
+-    utils_load_tensor_61 = utils.load_tensor(
+-        "./tensors/arg58.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.2.mlp.gate_proj.weight"] = utils_load_tensor_61
+-    utils_load_tensor_62 = utils.load_tensor(
+-        "./tensors/arg61.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.self_attn.v_proj.bias"] = utils_load_tensor_62
+-    utils_load_tensor_63 = utils.load_tensor(
+-        "./tensors/arg62.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.self_attn.v_proj.weight"] = utils_load_tensor_63
+-    utils_load_tensor_64 = utils.load_tensor(
+-        "./tensors/arg64.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.lm_head.weight"] = utils_load_tensor_64
+-    utils_load_tensor_65 = utils.load_tensor(
+-        "./tensors/arg65.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.norm.weight"] = utils_load_tensor_65
+-    utils_load_tensor_66 = utils.load_tensor(
+-        "./tensors/arg66.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.shared_experts.down_proj.weight"] = (
+-        utils_load_tensor_66
+-    )
+-    utils_load_tensor_67 = utils.load_tensor(
+-        "./tensors/arg67.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.shared_experts.up_proj.weight"] = (
+-        utils_load_tensor_67
+-    )
+-    utils_load_tensor_68 = utils.load_tensor(
+-        "./tensors/arg68.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.3.post_attention_layernorm.weight"] = (
+-        utils_load_tensor_68
+-    )
+-    utils_load_tensor_69 = utils.load_tensor(
+-        "./tensors/arg69.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.self_attn.o_proj.weight"] = utils_load_tensor_69
+-    utils_load_tensor_70 = utils.load_tensor(
+-        "./tensors/arg70.tensorbin",
+-        ttnn.Layout.TILE,
+-        ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_2,
+-        ttnn.MemoryConfig(
+-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-        ),
+-    )
+-    _main_weights["model.model.layers.3.self_attn.q_norm.weight"] = utils_load_tensor_70
+-    utils_load_tensor_71 = utils.load_tensor(
+-        "./tensors/arg71.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.self_attn.q_proj.bias"] = utils_load_tensor_71
+-    utils_load_tensor_72 = utils.load_tensor(
+-        "./tensors/arg72.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.self_attn.q_proj.weight"] = utils_load_tensor_72
+-    utils_load_tensor_73 = utils.load_tensor(
+-        "./tensors/arg73.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.shared_experts.gate_proj.weight"] = (
+-        utils_load_tensor_73
+-    )
+-    utils_load_tensor_74 = utils.load_tensor(
+-        "./tensors/arg74.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "L__self___model_model_layers_3_mlp_mlp_router__route_fn___closure___0_cell_contents_e_score_correction_bias"
+-    ] = utils_load_tensor_74
+-    utils_load_tensor_75 = utils.load_tensor(
+-        "./tensors/arg75.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.mlp.router.gate.weight"] = (
+-        utils_load_tensor_75
+-    )
+-    utils_load_tensor_76 = utils.load_tensor(
+-        "./tensors/arg76.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.INT32,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.mlp.expert_mapping"] = utils_load_tensor_76
+-    utils_load_tensor_77 = utils.load_tensor(
+-        "./tensors/arg77.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.mlp.experts.down_proj"] = (
+-        utils_load_tensor_77
+-    )
+-    utils_load_tensor_78 = utils.load_tensor(
+-        "./tensors/arg78.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.mlp.experts.up_proj"] = utils_load_tensor_78
+-    utils_load_tensor_79 = utils.load_tensor(
+-        "./tensors/arg79.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["model.model.layers.3.mlp.mlp.experts.gate_proj"] = (
+-        utils_load_tensor_79
+-    )
+-    return _main_weights
+-
+-
+ def load_weights_for__main_from_state_dict():
+     import model_pt
+ 
+diff --git a/zai-org/GLM-4.7/model/graph_0/verify_weights.py b/zai-org/GLM-4.7/model/graph_0/verify_weights.py
+deleted file mode 100644
+index 833e777..0000000
+--- a/zai-org/GLM-4.7/model/graph_0/verify_weights.py
++++ /dev/null
+@@ -1,116 +0,0 @@
+-import torch
+-import ttnn
+-
+-from params import load_weights_for__main, load_weights_for__main_from_state_dict
+-
+-
+-def _unique_shards(t):
+-    """Return the list of distinct per-device shards (as torch tensors) of a
+-    (possibly mesh-distributed) ttnn tensor, in first-seen device order.
+-
+-    Plain ttnn.to_torch raises on mesh-distributed tensors, so we convert
+-    shard-by-shard. Shards are converted lazily and dropped when they duplicate
+-    an already-seen shard, so replicated tensors (e.g. embed_tokens, which is the
+-    full weight replicated on all 32 devices) don't blow up host memory."""
+-    if t.device() is not None:
+-        t = ttnn.from_device(t)
+-    uniq = []
+-    for s in ttnn.get_device_tensors(t):
+-        p = ttnn.to_torch(s)
+-        if not any(p.shape == u.shape and torch.equal(p, u) for u in uniq):
+-            uniq.append(p)
+-    return uniq
+-
+-
+-MESH_ROWS, MESH_COLS = 4, 8
+-
+-
+-def _mesh_reorder_column_major(shards):
+-    """Reorder shards from physical row-major device order (as returned by
+-    get_device_tensors over the (4, 8) mesh) into column-major order.
+-
+-    Weights sharded across the *whole* mesh (the MoE experts, one shard per
+-    device) are laid out column-major, whereas get_device_tensors yields device
+-    p = row*MESH_COLS + col in row-major order. Map physical p=(r,c) to logical
+-    c*MESH_ROWS + r so concatenation reconstructs the original expert order."""
+-    reordered = [None] * len(shards)
+-    for p, shard in enumerate(shards):
+-        r, c = divmod(p, MESH_COLS)
+-        reordered[c * MESH_ROWS + r] = shard
+-    return reordered
+-
+-
+-def _logical_tensor(t, reference):
+-    """Reconstruct the logical (un-sharded) tensor from a mesh-distributed ttnn
+-    tensor, matching it to `reference` (the full single-device tensor).
+-
+-    The disk loader stores weights sharded across the 4x8 mesh with a per-tensor
+-    layout: replicated (identical on every device), row/col sharded (concat along
+-    dim 0 or 1), expert-dim sharded, and the expert weights are additionally
+-    transposed on their last two dims relative to the HF state_dict. We don't know
+-    each tensor's scheme a priori, so reconstruct by concatenating the distinct
+-    shards along whichever dim (optionally with a last-two-dim transpose) yields
+-    the reference shape."""
+-    shards = _unique_shards(t)
+-    if len(shards) == 1:
+-        return shards[0]
+-
+-    # A tensor with one distinct shard per device is sharded across the whole
+-    # mesh (the experts); those are laid out column-major, so reorder first.
+-    if len(shards) == MESH_ROWS * MESH_COLS:
+-        shards = _mesh_reorder_column_major(shards)
+-
+-    for dim in range(shards[0].ndim):
+-        cat = torch.cat(shards, dim=dim)
+-        if cat.shape == reference.shape:
+-            return cat
+-        if cat.ndim >= 2:
+-            cat_t = cat.transpose(-1, -2).contiguous()
+-            if cat_t.shape == reference.shape:
+-                return cat_t
+-
+-    raise AssertionError(
+-        f"Could not reconstruct shape {tuple(reference.shape)} from "
+-        f"{len(shards)} shard(s) of shape {tuple(shards[0].shape)}"
+-    )
+-
+-
+-def test_verify_weights():
+-    disk_weights = load_weights_for__main()
+-    sd_weights = load_weights_for__main_from_state_dict()
+-
+-    disk_keys = set(disk_weights.keys())
+-    sd_keys = set(sd_weights.keys())
+-    assert disk_keys == sd_keys, (
+-        f"Key mismatch. In disk but not state_dict: {disk_keys - sd_keys}. "
+-        f"In state_dict but not disk: {sd_keys - disk_keys}."
+-    )
+-
+-    mismatches = []
+-    for key in sorted(disk_weights.keys()):
+-        # sd weights are full single-device tensors (layernorms are replicated);
+-        # collapse any replication to get the reference logical tensor.
+-        sd_logical = _unique_shards(sd_weights[key])
+-        assert len(sd_logical) == 1, (
+-            f"{key}: expected a single logical state_dict tensor, "
+-            f"got {len(sd_logical)} distinct shards"
+-        )
+-        reference = sd_logical[0]
+-
+-        disk_logical = _logical_tensor(disk_weights[key], reference)
+-
+-        pt1 = disk_logical.flatten()
+-        pt2 = reference.flatten()
+-
+-        if not torch.equal(pt1, pt2):
+-            max_diff = (pt1.float() - pt2.float()).abs().max().item()
+-            mismatches.append((key, max_diff))
+-            print(f"  MISMATCH: {key} (max diff: {max_diff})")
+-        else:
+-            print(f"  OK: {key}")
+-
+-    assert not mismatches, (
+-        f"{len(mismatches)} / {len(disk_weights)} weights mismatch: "
+-        + ", ".join(f"{k}={d}" for k, d in mismatches)
+-    )
+-    print(f"All {len(disk_weights)} weights match!")
