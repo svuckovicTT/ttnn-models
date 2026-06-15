@@ -1,0 +1,16 @@
+Both files pass syntax checks. Here's a summary of the changes:
+
+**`model_ttnn.py`:**
+- Added `import params`
+- Added `LightweightModule` base class with `__call__` → `forward` delegation
+- Created `ModelTTNN(LightweightModule)` class with:
+  - `__init__(self, device)`: stores `self.device`, loads `self.weights` via `params.load_weights_for__main_from_state_dict(device)`, initializes `self.ce_cache = {}`
+  - `forward(self, activations)`: contains the former `_main` function body, with `device` → `self.device`, `weights` → `self.weights`, `ce_cache__main` → `self.ce_cache`
+- Removed the global `ce_cache__main` dict and standalone `_main` function
+
+**`main.py`:**
+- Changed import from `from model_ttnn import _main` + `from params import load_weights_for__main_from_state_dict` to `from model_ttnn import ModelTTNN`
+- `main()`: instantiates `model = ModelTTNN(device)`, calls `model(activations)` via the `__call__` operator
+- `test_main()`: same pattern — `model = ModelTTNN(device)`, `outputs = model(activations)`
+
+--- Time taken: 183.4s ---

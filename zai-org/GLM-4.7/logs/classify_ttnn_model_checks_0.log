@@ -1,0 +1,190 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0
+plugins: jaxtyping-0.3.10, json-report-1.5.0, split-0.11.0, forked-1.6.0, metadata-3.1.1, anyio-4.13.0
+collected 1 item
+
+main.py [meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        import model_pt
+    
+        exact_pcc = 0.85546875
+    
+        device = open_device()
+        model = ModelTTNN(device)
+        activations = load_activations_for__main(device)
+>       outputs = model(activations)
+                  ^^^^^^^^^^^^^^^^^^
+
+main.py:2606: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+model_ttnn.py:8: in __call__
+    return self.forward(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <model_ttnn.ModelTTNN object at 0x74cf3b727dd0>
+activations = [ttnn.Tensor(<buffer is not allocated>, shape=Shape([16, 1]), dtype=DataType::INT32, layout=Layout::TILE), device_id: ...:TILE), ttnn.Tensor(<buffer is not allocated>, shape=Shape([1]), dtype=DataType::INT32, layout=Layout::ROW_MAJOR), ...]
+
+    def forward(self, activations):
+        from main import consteval__main
+        self._ce_cache = consteval__main(self._ce_cache, self.weights, self.device)
+        device = self.device
+        args_1 = activations[0]
+        args_0 = activations[1]
+        args_3 = activations[3]
+        args_4 = activations[4]
+        args_6 = activations[6]
+        args_7 = activations[7]
+        args_9 = activations[9]
+        args_10 = activations[10]
+        args_11 = activations[11]
+        args_12 = activations[12]
+        args_13 = activations[13]
+        ttnn.deallocate(activations[8], False)
+        ttnn.deallocate(activations[5], False)
+        ttnn.deallocate(activations[2], False)
+        var_0 = self._ce_cache["main_const_eval_10"]
+        var_1 = self._ce_cache["main_const_eval_11"]
+        var_2 = self._ce_cache["main_const_eval_39"]
+        ttnn_typecast_29 = ttnn.typecast(
+            args_1,
+            ttnn.DataType.UINT32,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(args_1, False)
+        ttnn_reshape_9 = ttnn.reshape(
+            ttnn_typecast_29,
+            [16],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_typecast_29, False)
+        ttnn_to_layout_49 = ttnn.to_layout(
+            ttnn_reshape_9,
+            ttnn.Layout.ROW_MAJOR,
+            None,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_reshape_9, False)
+        ttnn_embedding_0 = ttnn.embedding(
+            ttnn_to_layout_49,
+            self._ce_cache["main_const_eval_0"],
+            padding_idx=None,
+            layout=ttnn.Layout.TILE,
+            dtype=ttnn.DataType.BFLOAT16,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_to_layout_49, False)
+        ttnn_rms_norm_0 = ttnn.rms_norm(
+            ttnn_embedding_0,
+            epsilon=9.9999997473787516e-06,
+>           weight=weights["model.model.layers.0.input_layernorm.weight"],
+                   ^^^^^^^
+            bias=None,
+            residual_input_tensor=None,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            program_config=None,
+            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
+                math_fidelity=ttnn.MathFidelity.HiFi4,
+                math_approx_mode=False,
+                fp32_dest_acc_en=True,
+                packer_l1_acc=True,
+            ),
+        )
+E       NameError: name 'weights' is not defined
+
+model_ttnn.py:77: NameError
+------------------------------ Captured log call -------------------------------
+WARNING  huggingface_hub.utils._http:_http.py:904 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+=============================== warnings summary ===============================
+main.py: 14 warnings
+  /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - NameError: name 'weights' is not defined
+================== 1 failed, 16 warnings in 144.47s (0:02:24) ==================
+2026-06-15 14:12:19.335 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0xf8cd4e0 of type "ttnn._ttnn.operations.binary.subtract_t"
+ - leaked instance 0xfbfba20 of type "ttnn._ttnn.operations.data_movement.sort_t"
+ - leaked instance 0xfd22080 of type "ttnn._ttnn.operations.pool.grid_sample_t"
+ - leaked instance 0xfcee980 of type "ttnn._ttnn.operations.data_movement.moe_expert_token_remap_t"
+ - leaked instance 0xfc58d30 of type "ttnn._ttnn.operations.unary_backward.rsqrt_bw_t"
+ - leaked instance 0xf8cd490 of type "ttnn._ttnn.operations.binary.add_t"
+ - leaked instance 0xfba6ad0 of type "ttnn._ttnn.operations.complex_unary_backward.angle_bw_t"
+ - leaked instance 0xfccf570 of type "ttnn._ttnn.operations.matmul.matmul_batched_weights_t"
+ - leaked instance 0xfc436b0 of type "ttnn._ttnn.operations.unary_backward.clip_bw_t"
+ - leaked instance 0xfc8a790 of type "ttnn._ttnn.operations.complex_unary.angle_t"
+ - leaked instance 0xfdfd260 of type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked instance 0xfcd0b20 of type "ttnn._ttnn.operations.matmul.addmm_t"
+ - leaked instance 0xfc29000 of type "ttnn._ttnn.operations.binary.ge__t"
+ - leaked instance 0xf382a30 of type "ttnn._ttnn.operations.unary.relu_max_t"
+ - leaked instance 0xf479200 of type "ttnn._ttnn.operations.unary.lez_t"
+ - leaked instance 0xfde03e0 of type "ttnn._ttnn.operations.moreh.moreh_cumsum_backward_t"
+ - leaked instance 0xfd30030 of type "ttnn._ttnn.operations.normalization.layer_norm_t"
+ - leaked instance 0xfc89380 of type "ttnn._ttnn.operations.complex.complex_tensor_t"
+ - leaked instance 0xfc83f30 of type "ttnn._ttnn.operations.binary_backward.max_bw_t"
+ - leaked instance 0xfcf58a0 of type "ttnn._ttnn.operations.data_movement.reshape_on_device_t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step classify_ttnn_model, as expected
