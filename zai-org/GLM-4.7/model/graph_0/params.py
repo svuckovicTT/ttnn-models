@@ -1,3 +1,4 @@
+import torch
 import ttnn
 import utils
 
@@ -712,17 +713,73 @@ def load_weights_for__main_from_state_dict():
             if single_mlp_key in sd:
                 sd[key] = sd.pop(single_mlp_key)
 
-    # expert_mapping is a routing constant baked into the traced graph (it maps
-    # experts to mesh devices); it has no HF state_dict origin and is stored as a
-    # multi-device tensor, so load it directly from the serialized constant the
-    # disk loader uses rather than reconstructing it from a torch tensor.
-    _EXPERT_MAPPING_KEY = "model.model.layers.3.mlp.mlp.expert_mapping"
-
     device = utils.DeviceGetter.get_device((4, 8))
+
+    # The disk tensorbins are distributed across the 4x8 mesh. To make these
+    # weights usable as a drop-in replacement we must reproduce that exact
+    # distribution rather than producing single-device tensors.
+    MESH_ROWS, MESH_COLS = 4, 8
+
+    # Replicated on every device: norms, embeddings, rotary freqs, the router
+    # gate weight and its e_score correction bias.
+    REPLICATED = NORM_WEIGHTS | {
+        "model.model.embed_tokens.weight",
+        "model.model.rotary_emb.inv_freq",
+        "model.model.layers.3.mlp.mlp.router.gate.weight",
+        _E_SCORE_MANGLED_KEY,
+    }
+    # Sharded along the mesh's 8-axis (replicated across the 4-axis) on tensor
+    # dim 0 (output features) ...
+    SHARD_DIM0 = (
+        {"model.lm_head.weight"}
+        | {
+            f"model.model.layers.{i}.self_attn.{p}"
+            for i in range(4)
+            for p in [
+                "q_proj.weight", "k_proj.weight", "v_proj.weight",
+                "q_proj.bias", "k_proj.bias", "v_proj.bias",
+            ]
+        }
+        | {
+            f"model.model.layers.{i}.mlp.{p}.weight"
+            for i in range(3)
+            for p in ["gate_proj", "up_proj"]
+        }
+        | {
+            "model.model.layers.3.mlp.shared_experts.gate_proj.weight",
+            "model.model.layers.3.mlp.shared_experts.up_proj.weight",
+        }
+    )
+    # ... or on tensor dim 1 (input features, for the down/out projections).
+    SHARD_DIM1 = (
+        {f"model.model.layers.{i}.self_attn.o_proj.weight" for i in range(4)}
+        | {f"model.model.layers.{i}.mlp.down_proj.weight" for i in range(3)}
+        | {"model.model.layers.3.mlp.shared_experts.down_proj.weight"}
+    )
+    # Experts are sharded across the whole mesh (one block of experts per device)
+    # in column-major device order, and stored transposed on their last two dims.
+    EXPERTS = {
+        f"model.model.layers.3.mlp.mlp.experts.{p}"
+        for p in ["gate_proj", "up_proj", "down_proj"]
+    }
+
+    def _arrange_experts(t):
+        # (num_experts, A, B) -> transpose each expert -> reorder expert blocks
+        # into physical (row-major) device order so a 1-D shard over the mesh
+        # reproduces the codegen's column-major expert layout.
+        t = t.transpose(-1, -2).contiguous()
+        per = t.shape[0] // (MESH_ROWS * MESH_COLS)
+        blocks = []
+        for p in range(MESH_ROWS * MESH_COLS):
+            block = (p % MESH_COLS) * MESH_ROWS + (p // MESH_COLS)
+            blocks.append(t[per * block : per * block + per])
+        return torch.cat(blocks, dim=0)
 
     weights = {}
     for key in ALL_WEIGHTS:
-        if key == _EXPERT_MAPPING_KEY:
+        if key in INT32_WEIGHTS:
+            # expert_mapping is a routing constant baked into the traced graph; it
+            # has no HF state_dict origin, so load it from the serialized constant.
             weights[key] = utils.load_tensor(
                 "./tensors/arg76.tensorbin",
                 ttnn.Layout.ROW_MAJOR,
@@ -733,15 +790,29 @@ def load_weights_for__main_from_state_dict():
             continue
 
         pt_tensor = sd[key]
-        ttnn_tensor = ttnn.from_torch(pt_tensor)
+
+        if key in REPLICATED:
+            mesh_mapper = ttnn.ReplicateTensorToMesh(device)
+        elif key in SHARD_DIM0:
+            mesh_mapper = ttnn.ShardTensor2dMesh(
+                device, (MESH_ROWS, MESH_COLS), (None, 0)
+            )
+        elif key in SHARD_DIM1:
+            mesh_mapper = ttnn.ShardTensor2dMesh(
+                device, (MESH_ROWS, MESH_COLS), (None, 1)
+            )
+        elif key in EXPERTS:
+            pt_tensor = _arrange_experts(pt_tensor)
+            mesh_mapper = ttnn.ShardTensorToMesh(device, 0)
+        else:
+            raise KeyError(f"No mesh distribution defined for weight '{key}'")
+
+        ttnn_tensor = ttnn.from_torch(pt_tensor, mesh_mapper=mesh_mapper)
 
         if key in NORM_WEIGHTS:
             ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.TILE)
             ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
             ttnn_tensor = ttnn.to_device(ttnn_tensor, device, ttnn.DRAM_MEMORY_CONFIG)
-        elif key in INT32_WEIGHTS:
-            ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.ROW_MAJOR)
-            ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.INT32)
         else:
             ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.ROW_MAJOR)
             ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
