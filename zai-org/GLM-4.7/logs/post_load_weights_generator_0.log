@@ -1,0 +1,7 @@
+All three changes are complete:
+
+1. **`params.py`**: Deleted the original `load_weights_for__main` function and the `_main_weights` global (~590 lines of tensorbin loading code removed). Only `load_weights_for__main_from_state_dict` remains.
+2. **`main.py`**: Updated the import and all 3 call sites (`main()` and `test_main()`) to use `load_weights_for__main_from_state_dict`.
+3. **`verify_weights.py`**: Deleted.
+
+--- Time taken: 137.7s ---
