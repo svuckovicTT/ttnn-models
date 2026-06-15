@@ -1,0 +1,332 @@
+diff --git a/zai-org/GLM-4.7/model/graph_0/main.py b/zai-org/GLM-4.7/model/graph_0/main.py
+index 8bb2e04..85b473e 100644
+--- a/zai-org/GLM-4.7/model/graph_0/main.py
++++ b/zai-org/GLM-4.7/model/graph_0/main.py
+@@ -1,3 +1,5 @@
++import math
++
+ import ttnn
+ import utils
+ from utils import calculate_pcc
+@@ -5,6 +7,25 @@ from utils import calculate_pcc
+ from model_ttnn import _main
+ from params import load_weights_for__main_from_state_dict
+ 
++MESH_SHAPE = (4, 8)
++L1_SMALL_SIZE = 1 << 15
++
++
++def open_device():
++    if math.prod(MESH_SHAPE) >= 2:
++        ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
++    device = ttnn.open_mesh_device(
++        mesh_shape=ttnn.MeshShape(MESH_SHAPE),
++        l1_small_size=L1_SMALL_SIZE,
++    )
++    return device
++
++
++def close_device(device):
++    ttnn.close_mesh_device(device)
++    if math.prod(MESH_SHAPE) >= 2:
++        ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
++
+ 
+ def main_const_eval_0(arg_0, device):
+     ttnn_to_device_0 = ttnn.to_device(
+@@ -2420,13 +2441,12 @@ def consteval__main(ce_cache, weights, device):
+     return ce_cache
+ 
+ 
+-def load_activations_for__main():
+-    utils_DeviceGetter_get_device_1 = utils.DeviceGetter.get_device((4, 8))
++def load_activations_for__main(device):
+     utils_load_tensor_0 = utils.load_tensor(
+         "./tensors/arg4.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2435,7 +2455,7 @@ def load_activations_for__main():
+         "./tensors/arg6.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2444,7 +2464,7 @@ def load_activations_for__main():
+         "./tensors/arg8.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2453,7 +2473,7 @@ def load_activations_for__main():
+         "./tensors/arg9.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2462,7 +2482,7 @@ def load_activations_for__main():
+         "./tensors/arg12.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2471,7 +2491,7 @@ def load_activations_for__main():
+         "./tensors/arg25.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2480,7 +2500,7 @@ def load_activations_for__main():
+         "./tensors/arg26.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2489,7 +2509,7 @@ def load_activations_for__main():
+         "./tensors/arg29.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2498,7 +2518,7 @@ def load_activations_for__main():
+         "./tensors/arg42.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2507,7 +2527,7 @@ def load_activations_for__main():
+         "./tensors/arg43.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2516,7 +2536,7 @@ def load_activations_for__main():
+         "./tensors/arg46.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2525,7 +2545,7 @@ def load_activations_for__main():
+         "./tensors/arg59.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.INT32,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2534,7 +2554,7 @@ def load_activations_for__main():
+         "./tensors/arg60.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2543,7 +2563,7 @@ def load_activations_for__main():
+         "./tensors/arg63.tensorbin",
+         ttnn.Layout.TILE,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -2568,9 +2588,11 @@ def load_activations_for__main():
+ 
+ 
+ def main():
+-    load_activations_for__main_0 = load_activations_for__main()
+-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
++    device = open_device()
++    load_activations_for__main_0 = load_activations_for__main(device)
++    load_weights_for__main_0 = load_weights_for__main_from_state_dict(device)
++    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
++    close_device(device)
+     return 0
+ 
+ 
+@@ -2579,9 +2601,10 @@ def test_main():
+ 
+     exact_pcc = 0.85546875
+ 
+-    activations = load_activations_for__main()
+-    weights = load_weights_for__main_from_state_dict()
+-    outputs = _main(activations, weights)
++    device = open_device()
++    activations = load_activations_for__main(device)
++    weights = load_weights_for__main_from_state_dict(device)
++    outputs = _main(activations, weights, device)
+ 
+     ttnn_output = [ttnn.from_device(output) for output in outputs]
+     golden_output = model_pt.run_pytorch_model()
+@@ -2594,6 +2617,7 @@ def test_main():
+     pcc = calculate_pcc(ttnn.to_torch(final_output), golden_output)
+     print(f"\nPCC: {pcc:.6f}")
+     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
++    close_device(device)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/zai-org/GLM-4.7/model/graph_0/model_ttnn.py b/zai-org/GLM-4.7/model/graph_0/model_ttnn.py
+index 85f3472..d79828c 100644
+--- a/zai-org/GLM-4.7/model/graph_0/model_ttnn.py
++++ b/zai-org/GLM-4.7/model/graph_0/model_ttnn.py
+@@ -1,15 +1,13 @@
+ import ttnn
+-import utils
+ 
+ 
+ ce_cache__main = {}
+ 
+ 
+-def _main(activations, weights):
++def _main(activations, weights, device):
+     global ce_cache__main
+-    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((4, 8))
+     from main import consteval__main
+-    ce_cache__main = consteval__main(ce_cache__main, weights, utils_DeviceGetter_get_device_0)
++    ce_cache__main = consteval__main(ce_cache__main, weights, device)
+     args_1 = activations[0]
+     args_0 = activations[1]
+     args_3 = activations[3]
+@@ -18478,7 +18476,7 @@ def _main(activations, weights):
+     ttnn.deallocate(ttnn_from_device_25, False)
+     ttnn_to_device_74 = ttnn.to_device(
+         ttnn_to_layout_58,
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -18562,7 +18560,7 @@ def _main(activations, weights):
+     ttnn.deallocate(ttnn_from_device_26, False)
+     ttnn_to_device_75 = ttnn.to_device(
+         ttnn_to_layout_62,
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -18738,7 +18736,7 @@ def _main(activations, weights):
+     ttnn.deallocate(ttnn_from_device_27, False)
+     ttnn_to_device_76 = ttnn.to_device(
+         ttnn_typecast_53,
+-        device=utils_DeviceGetter_get_device_0,
++        device=device,
+         memory_config=ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+diff --git a/zai-org/GLM-4.7/model/graph_0/params.py b/zai-org/GLM-4.7/model/graph_0/params.py
+index d9671f9..7e78680 100644
+--- a/zai-org/GLM-4.7/model/graph_0/params.py
++++ b/zai-org/GLM-4.7/model/graph_0/params.py
+@@ -65,7 +65,7 @@ ROW_MAJOR_BF16_WEIGHTS = (
+ ALL_WEIGHTS = NORM_WEIGHTS | INT32_WEIGHTS | ROW_MAJOR_BF16_WEIGHTS
+ 
+ 
+-def load_weights_for__main_from_state_dict():
++def load_weights_for__main_from_state_dict(device):
+     import model_pt
+ 
+     model = model_pt.load_pytorch_model()
+@@ -120,8 +120,6 @@ def load_weights_for__main_from_state_dict():
+             if single_mlp_key in sd:
+                 sd[key] = sd.pop(single_mlp_key)
+ 
+-    device = utils.DeviceGetter.get_device((4, 8))
+-
+     # The disk tensorbins are distributed across the 4x8 mesh. To make these
+     # weights usable as a drop-in replacement we must reproduce that exact
+     # distribution rather than producing single-device tensors.
+diff --git a/zai-org/GLM-4.7/model/graph_0/utils.py b/zai-org/GLM-4.7/model/graph_0/utils.py
+index 049d569..bc2308b 100644
+--- a/zai-org/GLM-4.7/model/graph_0/utils.py
++++ b/zai-org/GLM-4.7/model/graph_0/utils.py
+@@ -3,50 +3,6 @@
+ # SPDX-License-Identifier: Apache-2.0
+ import torch
+ import ttnn
+-import math
+-
+-
+-class DeviceGetter:
+-    _instance = None
+-    _mesh_shape = None
+-    l1_small_size = 1 << 15
+-
+-    def __init__(self):
+-        raise RuntimeError("This is Singleton, invoke get_device() instead.")
+-
+-    def __del__(self):
+-        if self._instance is not None:
+-            ttnn.close_mesh_device(self._instance)
+-            ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
+-
+-    @classmethod
+-    def get_device(cls, mesh_shape):
+-        if cls._instance == None:
+-            if (
+-                not isinstance(mesh_shape, (list, tuple))
+-                or len(mesh_shape) == 0
+-                or not all(isinstance(x, int) and x > 0 for x in mesh_shape)
+-            ):
+-                raise ValueError(
+-                    f"mesh_shape must be a non-empty list or tuple of positive integers, got {mesh_shape}"
+-                )
+-            cls._mesh_shape = mesh_shape
+-
+-            if math.prod(mesh_shape) >= 2:
+-                ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
+-            cls._instance = ttnn.open_mesh_device(
+-                mesh_shape=ttnn.MeshShape(mesh_shape),
+-                l1_small_size=cls.l1_small_size,
+-            )
+-            print(f"Device: {cls._instance}")
+-
+-        # Compare requested mesh_shape with _mesh_shape used to initialize the device
+-        if tuple(cls._mesh_shape) != tuple(mesh_shape):
+-            raise ValueError(
+-                f"Device already initialized with mesh_shape={cls._mesh_shape}, but got mesh_shape={mesh_shape}"
+-            )
+-
+-        return cls._instance
+ 
+ 
+ def get_scalar_from_tensor(tensor: ttnn.Tensor) -> int:

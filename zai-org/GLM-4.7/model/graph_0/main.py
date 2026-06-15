@@ -1,9 +1,30 @@
+import math
+
 import ttnn
 import utils
 from utils import calculate_pcc
 
 from model_ttnn import _main
 from params import load_weights_for__main_from_state_dict
+
+MESH_SHAPE = (4, 8)
+L1_SMALL_SIZE = 1 << 15
+
+
+def open_device():
+    if math.prod(MESH_SHAPE) >= 2:
+        ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
+    device = ttnn.open_mesh_device(
+        mesh_shape=ttnn.MeshShape(MESH_SHAPE),
+        l1_small_size=L1_SMALL_SIZE,
+    )
+    return device
+
+
+def close_device(device):
+    ttnn.close_mesh_device(device)
+    if math.prod(MESH_SHAPE) >= 2:
+        ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
 
 
 def main_const_eval_0(arg_0, device):
@@ -2420,13 +2441,12 @@ def consteval__main(ce_cache, weights, device):
     return ce_cache
 
 
-def load_activations_for__main():
-    utils_DeviceGetter_get_device_1 = utils.DeviceGetter.get_device((4, 8))
+def load_activations_for__main(device):
     utils_load_tensor_0 = utils.load_tensor(
         "./tensors/arg4.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2435,7 +2455,7 @@ def load_activations_for__main():
         "./tensors/arg6.tensorbin",
         ttnn.Layout.ROW_MAJOR,
         ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2444,7 +2464,7 @@ def load_activations_for__main():
         "./tensors/arg8.tensorbin",
         ttnn.Layout.ROW_MAJOR,
         ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2453,7 +2473,7 @@ def load_activations_for__main():
         "./tensors/arg9.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2462,7 +2482,7 @@ def load_activations_for__main():
         "./tensors/arg12.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2471,7 +2491,7 @@ def load_activations_for__main():
         "./tensors/arg25.tensorbin",
         ttnn.Layout.ROW_MAJOR,
         ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2480,7 +2500,7 @@ def load_activations_for__main():
         "./tensors/arg26.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2489,7 +2509,7 @@ def load_activations_for__main():
         "./tensors/arg29.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2498,7 +2518,7 @@ def load_activations_for__main():
         "./tensors/arg42.tensorbin",
         ttnn.Layout.ROW_MAJOR,
         ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2507,7 +2527,7 @@ def load_activations_for__main():
         "./tensors/arg43.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2516,7 +2536,7 @@ def load_activations_for__main():
         "./tensors/arg46.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2525,7 +2545,7 @@ def load_activations_for__main():
         "./tensors/arg59.tensorbin",
         ttnn.Layout.ROW_MAJOR,
         ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2534,7 +2554,7 @@ def load_activations_for__main():
         "./tensors/arg60.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2543,7 +2563,7 @@ def load_activations_for__main():
         "./tensors/arg63.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_1,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -2568,9 +2588,11 @@ def load_activations_for__main():
 
 
 def main():
-    load_activations_for__main_0 = load_activations_for__main()
-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+    device = open_device()
+    load_activations_for__main_0 = load_activations_for__main(device)
+    load_weights_for__main_0 = load_weights_for__main_from_state_dict(device)
+    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
+    close_device(device)
     return 0
 
 
@@ -2579,9 +2601,10 @@ def test_main():
 
     exact_pcc = 0.85546875
 
-    activations = load_activations_for__main()
-    weights = load_weights_for__main_from_state_dict()
-    outputs = _main(activations, weights)
+    device = open_device()
+    activations = load_activations_for__main(device)
+    weights = load_weights_for__main_from_state_dict(device)
+    outputs = _main(activations, weights, device)
 
     ttnn_output = [ttnn.from_device(output) for output in outputs]
     golden_output = model_pt.run_pytorch_model()
@@ -2594,6 +2617,7 @@ def test_main():
     pcc = calculate_pcc(ttnn.to_torch(final_output), golden_output)
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+    close_device(device)
 
 
 if __name__ == "__main__":

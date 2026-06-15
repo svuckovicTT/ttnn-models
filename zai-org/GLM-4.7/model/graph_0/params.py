@@ -65,7 +65,7 @@ ROW_MAJOR_BF16_WEIGHTS = (
 ALL_WEIGHTS = NORM_WEIGHTS | INT32_WEIGHTS | ROW_MAJOR_BF16_WEIGHTS
 
 
-def load_weights_for__main_from_state_dict():
+def load_weights_for__main_from_state_dict(device):
     import model_pt
 
     model = model_pt.load_pytorch_model()
@@ -119,8 +119,6 @@ def load_weights_for__main_from_state_dict():
             single_mlp_key = key.replace(".mlp.mlp.", ".mlp.", 1)
             if single_mlp_key in sd:
                 sd[key] = sd.pop(single_mlp_key)
-
-    device = utils.DeviceGetter.get_device((4, 8))
 
     # The disk tensorbins are distributed across the 4x8 mesh. To make these
     # weights usable as a drop-in replacement we must reproduce that exact

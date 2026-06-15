@@ -1,15 +1,13 @@
 import ttnn
-import utils
 
 
 ce_cache__main = {}
 
 
-def _main(activations, weights):
+def _main(activations, weights, device):
     global ce_cache__main
-    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((4, 8))
     from main import consteval__main
-    ce_cache__main = consteval__main(ce_cache__main, weights, utils_DeviceGetter_get_device_0)
+    ce_cache__main = consteval__main(ce_cache__main, weights, device)
     args_1 = activations[0]
     args_0 = activations[1]
     args_3 = activations[3]
@@ -18478,7 +18476,7 @@ def _main(activations, weights):
     ttnn.deallocate(ttnn_from_device_25, False)
     ttnn_to_device_74 = ttnn.to_device(
         ttnn_to_layout_58,
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         memory_config=ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -18562,7 +18560,7 @@ def _main(activations, weights):
     ttnn.deallocate(ttnn_from_device_26, False)
     ttnn_to_device_75 = ttnn.to_device(
         ttnn_to_layout_62,
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         memory_config=ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -18738,7 +18736,7 @@ def _main(activations, weights):
     ttnn.deallocate(ttnn_from_device_27, False)
     ttnn_to_device_76 = ttnn.to_device(
         ttnn_typecast_53,
-        device=utils_DeviceGetter_get_device_0,
+        device=device,
         memory_config=ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
