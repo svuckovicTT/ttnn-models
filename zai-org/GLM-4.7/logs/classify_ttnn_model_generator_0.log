@@ -1,0 +1,15 @@
+Done. Here's a summary of the changes:
+
+**model_ttnn.py:**
+- Added `import params`
+- Defined `LightweightModule` base class with `__call__` delegating to `forward`
+- Created `ModelTTNN(LightweightModule)` class with:
+  - `__init__(self, device)`: stores `self.device`, loads weights via `params.load_weights_for__main_from_state_dict(device)` into `self.weights`, initializes `self._ce_cache = {}`
+  - `forward(self, activations)`: contains the entire former `_main` body, using `self.device`, `self.weights`, and `self._ce_cache` instead of parameters/globals
+- Removed the standalone `_main` function and `ce_cache__main` global
+
+**main.py:**
+- Changed import from `from model_ttnn import _main` + `from params import load_weights_for__main_from_state_dict` to `from model_ttnn import ModelTTNN`
+- Updated `main()` and `test_main()` to instantiate `ModelTTNN(device)` and call the model via `model(activations)` (using the `__call__` operator)
+
+--- Time taken: 148.0s ---
