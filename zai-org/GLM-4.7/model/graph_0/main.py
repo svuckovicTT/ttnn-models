@@ -3,7 +3,7 @@ import utils
 from utils import calculate_pcc
 
 from model_ttnn import _main
-from params import load_weights_for__main_from_state_dict
+from params import load_weights_for__main
 
 
 def main_const_eval_0(arg_0, device):
@@ -2569,7 +2569,7 @@ def load_activations_for__main():
 
 def main():
     load_activations_for__main_0 = load_activations_for__main()
-    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
+    load_weights_for__main_0 = load_weights_for__main()
     _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
     return 0
 
@@ -2580,7 +2580,7 @@ def test_main():
     exact_pcc = 0.85546875
 
     activations = load_activations_for__main()
-    weights = load_weights_for__main_from_state_dict()
+    weights = load_weights_for__main()
     outputs = _main(activations, weights)
 
     ttnn_output = [ttnn.from_device(output) for output in outputs]
