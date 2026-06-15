@@ -1,0 +1,93 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0
+plugins: jaxtyping-0.3.10, json-report-1.5.0, split-0.11.0, forked-1.6.0, metadata-3.1.1, anyio-4.13.0
+collected 1 item
+
+main.py [meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+[meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+
+PCC: 0.855469
+.
+
+=============================== warnings summary ===============================
+main.py: 14 warnings
+  /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 1 passed, 16 warnings in 237.38s (0:03:57) ==================
+2026-06-15 14:31:18.084 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x3b89a100 of type "ttnn._ttnn.operations.unary_backward.sin_bw_t"
+ - leaked instance 0x3ba2b580 of type "ttnn._ttnn.operations.moreh.moreh_clip_grad_norm_t"
+ - leaked instance 0x3b85e750 of type "ttnn._ttnn.operations.binary.ge__t"
+ - leaked instance 0x3b868ff0 of type "ttnn._ttnn.operations.binary.squared_difference__t"
+ - leaked instance 0x3b9d0b40 of type "ttnn._ttnn.operations.experimental.ccl_experimental.fused_rms_minimal_t"
+ - leaked instance 0x3b7f3c10 of type "ttnn._ttnn.operations.embedding_backward.embedding_bw_t"
+ - leaked instance 0x3b847af0 of type "ttnn._ttnn.operations.binary.logical_xor_t"
+ - leaked instance 0x3b98b5e0 of type "ttnn._ttnn.operations.reduction.std_t"
+ - leaked instance 0x3ba1b700 of type "ttnn._ttnn.operations.moreh.moreh_linear_backward_t"
+ - leaked instance 0x3b7ec8e0 of type "ttnn._ttnn.operations.creation.full_like_t"
+ - leaked instance 0x3ade02c0 of type "ttnn._ttnn.operations.unary.softshrink_t"
+ - leaked instance 0x3b087ce0 of type "ttnn._ttnn.operations.unary.mish_t"
+ - leaked instance 0x3b6c6a90 of type "ttnn._ttnn.operations.binary.logical_or_t"
+ - leaked instance 0x3ba1d5b0 of type "ttnn._ttnn.operations.moreh.moreh_matmul_t"
+ - leaked instance 0x3b825bb0 of type "ttnn._ttnn.operations.unary_backward.digamma_bw_t"
+ - leaked instance 0x3b149600 of type "ttnn._ttnn.operations.binary.xlogy_t"
+ - leaked instance 0x3b7f6960 of type "ttnn._ttnn.operations.binary.logical_right_shift_t"
+ - leaked instance 0x7c85912fee68 of type "ttnn._ttnn.tensor.CoreRangeSet"
+ - leaked instance 0x3b9c1590 of type "ttnn._ttnn.operations.experimental.adaptive_avg_pool2d_t"
+ - leaked instance 0x3b8950a0 of type "ttnn._ttnn.operations.unary_backward.silu_bw_t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step simplify_consteval, as expected

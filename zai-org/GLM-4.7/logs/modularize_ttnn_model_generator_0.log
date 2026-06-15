@@ -1,0 +1,11 @@
+The modularized file is 1990 lines (down from 19251), is syntactically correct, and has the following module structure:
+
+- **`ModelTTNN`** (line 10) - Main class at the top. Handles embedding, rotary embedding, shared attention utilities (mask, cache index), layer loop, final norm, lm_head, argmax, and return list.
+- **`Glm4MoeRotaryEmbedding`** (line 322) - Computes cos/sin from cache position, shared across all layers.
+- **`_kv_cache_distribute_p2p`** (line 417) - Helper function that replaces ~2000 lines of unrolled P2P calls per cache tensor with a loop-based implementation (4 rows x 8 columns mesh all-to-all).
+- **`Glm4MoeAttention`** (line 497) - Per-layer attention: QKV projection, head splitting, Q/K norm, rotary embedding application, KV cache distribution + update, SDPA, O projection with reduce_scatter/all_gather.
+- **`Glm4MoeMLP`** (line 799) - Dense MLP for layers 0-2: gate_proj(silu), up_proj, multiply, down_proj, reduce_scatter, all_gather.
+- **`A2aSparseMLPWithSharedExperts`** (line 899) - MoE MLP for layer 3: router gate, topk routing, all-to-all dispatch, sparse_matmul experts, shared experts, combine.
+- **`Glm4MoeDecoderLayer`** (line 1891) - Wraps attention + MLP with input/post-attention layernorm and residual connections. Handles both dense and MoE paths.
+
+--- Time taken: 1882.8s ---
