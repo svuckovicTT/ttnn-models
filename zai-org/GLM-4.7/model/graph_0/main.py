@@ -4,7 +4,8 @@ import ttnn
 import utils
 from utils import calculate_pcc
 
-from model_ttnn import ModelTTNN
+from model_ttnn import _main
+from params import load_weights_for__main_from_state_dict
 
 MESH_SHAPE = (4, 8)
 L1_SMALL_SIZE = 1 << 15
@@ -2588,9 +2589,9 @@ def load_activations_for__main(device):
 
 def main():
     device = open_device()
-    model = ModelTTNN(device)
-    activations = load_activations_for__main(device)
-    model(activations)
+    load_activations_for__main_0 = load_activations_for__main(device)
+    load_weights_for__main_0 = load_weights_for__main_from_state_dict(device)
+    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
     close_device(device)
     return 0
 
@@ -2601,9 +2602,9 @@ def test_main():
     exact_pcc = 0.85546875
 
     device = open_device()
-    model = ModelTTNN(device)
     activations = load_activations_for__main(device)
-    outputs = model(activations)
+    weights = load_weights_for__main_from_state_dict(device)
+    outputs = _main(activations, weights, device)
 
     ttnn_output = [ttnn.from_device(output) for output in outputs]
     golden_output = model_pt.run_pytorch_model()
