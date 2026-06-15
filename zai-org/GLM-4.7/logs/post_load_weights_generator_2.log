@@ -1,0 +1,7 @@
+All three changes are complete:
+
+1. **`main.py`**: Updated import and all call sites to use `load_weights_for__main_from_state_dict` instead of `load_weights_for__main`
+2. **`params.py`**: Deleted the original `load_weights_for__main` function (and its `_main_weights` global), keeping only `load_weights_for__main_from_state_dict`
+3. **`verify_weights.py`**: Deleted
+
+--- Time taken: 127.9s ---

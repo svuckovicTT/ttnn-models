@@ -1,0 +1,189 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/svuckovic/_workspace/repos/project-alchemy/ttnn-models/zai-org/GLM-4.7/model/graph_0
+plugins: jaxtyping-0.3.10, json-report-1.5.0, split-0.11.0, forked-1.6.0, metadata-3.1.1, anyio-4.13.0
+collected 1 item
+
+main.py 2026-06-15 13:06:51.586 | critical |          Always | TT_FATAL: Invalid arguments to reshape (assert.hpp:104)
+Device: MeshDevice(4x8 grid, 32 devices)
+[meta_loading] Resolving shards for zai-org/GLM-4.7 (first 4 layer(s))
+[meta_loading] Need 5 shard(s) for first 4 layer(s)
+[meta_loading] Downloading shard 1/5: model-00001-of-00092.safetensors
+[meta_loading] Downloading shard 2/5: model-00002-of-00092.safetensors
+[meta_loading] Downloading shard 3/5: model-00003-of-00092.safetensors
+[meta_loading] Downloading shard 4/5: model-00004-of-00092.safetensors
+[meta_loading] Downloading shard 5/5: model-00092-of-00092.safetensors
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        import model_pt
+    
+        exact_pcc = 0.85546875
+    
+        activations = load_activations_for__main()
+        weights = load_weights_for__main()
+>       outputs = _main(activations, weights)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+main.py:2584: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+model_ttnn.py:12: in _main
+    ce_cache__main = consteval__main(ce_cache__main, weights, utils_DeviceGetter_get_device_0)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+main.py:2286: in consteval__main
+    main_const_eval_13_0 = main_const_eval_13(
+main.py:737: in main_const_eval_13
+    ttnn_reshape_2 = ttnn.reshape(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FastOperation(python_fully_qualified_name='ttnn.reshape', function=<ttnn._ttnn.operations.data_movement.reshape_t obje...<function default_postprocess_golden_function_outputs at 0x7ea0f85afc40>, is_cpp_operation=True, is_experimental=False)
+function_args = (device_id: 0, MeshCoordinate([0, 0])
+ttnn.Tensor([[[ 3.4485e-03,  4.0039e-02,  ..., -5.4626e-03, -1.3062e-02],
+      ...02,  1.3062e-02]]], shape=Shape([160, 1536, 5120]), dtype=DataType::BFLOAT16, layout=Layout::TILE), [1, 5, 5120, 1536])
+function_kwargs = {'memory_config': MemoryConfig(memory_layout=TensorMemoryLayout::INTERLEAVED,buffer_type=BufferType::DRAM,shard_spec=std::nullopt,nd_shard_spec=std::nullopt,created_with_nd_shard_spec=0)}
+cq_id = None, recording = False
+
+    def __call__(self, *function_args, **function_kwargs):
+        cq_id = None
+        if "queue_id" in function_kwargs:
+            cq_id = function_kwargs.pop("queue_id")
+        elif "cq_id" in function_kwargs:
+            cq_id = function_kwargs.pop("cq_id")
+    
+        recording = ttnn.graph.is_python_io_recording_enabled()
+        if recording:
+            ttnn.graph.track_function_start(self.python_fully_qualified_name)
+            ttnn.graph.record_python_operation(self.python_fully_qualified_name, function_args, function_kwargs)
+            input_tensors = get_all_tensors((function_args, function_kwargs))
+            set_tensor_id(input_tensors)
+    
+        try:
+            if cq_id is None:
+>               result = self.function(*function_args, **function_kwargs)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               RuntimeError: TT_FATAL @ /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn/cpp/ttnn/operations/data_movement/reshape_view/reshape_common.cpp:50: new_volume == old_volume
+E               info:
+E               Invalid arguments to reshape
+E               backtrace:
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/python_package/ttnn/_original/_ttnn.so(+0x350d64) [0x7ea1ba599d64]
+E                --- ttnn::operations::data_movement::detail::infer_dims_for_reshape(tt::tt_metal::Tensor const&, std::span<int const, 18446744073709551615ul>)
+E                --- ttnn::reshape(tt::tt_metal::Tensor const&, std::span<int const, 18446744073709551615ul>, std::optional<tt::tt_metal::MemoryConfig> const&, std::optional<std::variant<unsigned int, float> > const&, ttnn::TileReshapeMapMode, std::optional<tt::tt_metal::CoreRangeSet> const&)
+E                --- ttnn::operations::data_movement::detail::reshape_shape_vector_wrapper(tt::tt_metal::Tensor const&, ttsl::SmallVector<int, 8ul> const&, std::optional<tt::tt_metal::MemoryConfig> const&, std::optional<std::variant<unsigned int, float> > const&, ttnn::TileReshapeMapMode, std::optional<tt::tt_metal::CoreRangeSet> const&)
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/python_package/ttnn/_original/_ttnn.so(+0x646698) [0x7ea1ba88f698]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/python_package/ttnn/_original/_ttnn.so(+0x294b35) [0x7ea1ba4ddb35]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x3ab) [0x54adeb]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(PyObject_Call+0x9c) [0x54b45c]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0x4c32) [0x5db532]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(PyObject_Call+0x9c) [0x54b45c]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0x4c32) [0x5db532]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(PyEval_EvalCode+0x15b) [0x5d58bb]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x608b52]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x6b5263]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyRun_SimpleFileObject+0x1aa) [0x6b4fca]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyRun_AnyFileObject+0x4f) [0x6b4dff]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(Py_RunMain+0x3b5) [0x6bce65]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(Py_BytesMain+0x2d) [0x6bc94d]
+E                --- /lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca) [0x7ea261b931ca]
+E                --- /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b) [0x7ea261b9328b]
+E                --- /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_start+0x25) [0x657b05]
+
+../../../../../tt-xla/python_package/ttnn/_original/decorators.py:473: RuntimeError
+------------------------------ Captured log call -------------------------------
+WARNING  huggingface_hub.utils._http:_http.py:904 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+=============================== warnings summary ===============================
+main.py: 14 warnings
+  /home/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+main.py::test_main
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - RuntimeError: TT_FATAL @ /home/svuckovic/_workspa...
+================== 1 failed, 16 warnings in 212.80s (0:03:32) ==================
+2026-06-15 13:04:26.963 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x7ea0f8f3d308 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x2e43f0e0 of type "ttnn._ttnn.operations.unary_backward.abs_bw_t"
+ - leaked instance 0x2e425f20 of type "ttnn._ttnn.operations.unary_backward.leaky_relu_bw_t"
+ - leaked instance 0x2e4432c0 of type "ttnn._ttnn.operations.unary_backward.asin_bw_t"
+ - leaked instance 0x2e51f150 of type "ttnn._ttnn.operations.normalization.batch_norm_t"
+ - leaked instance 0x2e5da640 of type "ttnn._ttnn.operations.generic.generic_op_t"
+ - leaked instance 0x2e4ca4d0 of type "ttnn._ttnn.operations.data_movement.scatter_add_t"
+ - leaked instance 0x2e34c850 of type "ttnn._ttnn.operations.binary.minimum_t"
+ - leaked instance 0x2e45caf0 of type "ttnn._ttnn.operations.binary_backward.addalpha_bw_t"
+ - leaked instance 0x2e46a2b0 of type "ttnn._ttnn.operations.complex_unary.angle_t"
+ - leaked instance 0x2e43a250 of type "ttnn._ttnn.operations.unary_backward.relu_bw_t"
+ - leaked instance 0x2e42bdc0 of type "ttnn._ttnn.operations.unary_backward.gelu_bw_t"
+ - leaked instance 0x2e5066f0 of type "ttnn._ttnn.operations.normalization.scale_mask_softmax_t"
+ - leaked instance 0x2defa870 of type "ttnn._ttnn.operations.binary.ge_t"
+ - leaked instance 0x2e3568a0 of type "ttnn._ttnn.operations.unary.ceil_t"
+ - leaked instance 0x2e44c260 of type "ttnn._ttnn.operations.unary_backward.expm1_bw_t"
+ - leaked instance 0x2e426de0 of type "ttnn._ttnn.operations.unary_backward.celu_bw_t"
+ - leaked instance 0x2e3a2ca0 of type "ttnn._ttnn.operations.binary.logical_or__t"
+ - leaked instance 0x2e462930 of type "ttnn._ttnn.operations.binary_backward.min_bw_t"
+ - leaked instance 0x2e42ea40 of type "ttnn._ttnn.operations.unary_backward.rpow_bw_t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step post_load_weights, as expected
