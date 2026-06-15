@@ -1,0 +1,14 @@
+The refactored file is 6175 lines (down from 19251), with 8 classes matching the PyTorch model hierarchy:
+
+- **`LightweightModule`** (line 5) - base class
+- **`ModelTTNN`** (line 10) - main model, stays at top
+- **`Glm4MoeRotaryEmbedding`** (line 294) - computes cos/sin from cache position
+- **`Glm4MoeAttention`** (line 384) - QKV projection, rotary embedding, KV cache, SDPA, output projection
+- **`Glm4MoeMLP`** (line 4680) - dense MLP (gate/up/down projections with SwiGLU)
+- **`Glm4MoeDecoderLayer`** (line 4786) - dense decoder layer wrapping attention + MLP with residuals
+- **`A2aSparseMLPWithSharedExperts`** (line 4856) - MoE MLP with router, sparse experts, and shared experts
+- **`Glm4MoeDecoderLayerMoE`** (line 6099) - MoE decoder layer wrapping attention + MoE MLP with residuals
+
+Each module has `__init__` and `forward` methods. The `ModelTTNN.__init__` instantiates all submodules. The 3 identical dense layers (0-2) are parameterized by `layer_idx` and share the same `Glm4MoeAttention` and `Glm4MoeMLP` classes. Layer 3 uses a separate `Glm4MoeDecoderLayerMoE` with `A2aSparseMLPWithSharedExperts`.
+
+--- Time taken: 1325.7s ---
