@@ -683,13 +683,24 @@ def load_weights_for__main_from_state_dict():
             sd[f"{target}.up_proj"] = gate_up[:, half:, :].contiguous()
             break
 
+    # The traced graph names the MoE router submodule "router.gate", but the HF
+    # state_dict names it just "gate" (transformers Glm4MoeMoE.gate).
+    _ROUTER_WEIGHT_DISK_KEY = "model.model.layers.3.mlp.mlp.router.gate.weight"
+    for candidate in [
+        "model.model.layers.3.mlp.gate.weight",
+        "model.model.layers.3.mlp.mlp.gate.weight",
+    ]:
+        if candidate in sd:
+            sd[_ROUTER_WEIGHT_DISK_KEY] = sd.pop(candidate)
+            break
+
     _E_SCORE_MANGLED_KEY = (
         "L__self___model_model_layers_3_mlp_mlp_router"
         "__route_fn___closure___0_cell_contents_e_score_correction_bias"
     )
     for candidate in [
-        "model.model.layers.3.mlp.mlp.router.e_score_correction_bias",
-        "model.model.layers.3.mlp.router.e_score_correction_bias",
+        "model.model.layers.3.mlp.gate.e_score_correction_bias",
+        "model.model.layers.3.mlp.mlp.gate.e_score_correction_bias",
     ]:
         if candidate in sd:
             sd[_E_SCORE_MANGLED_KEY] = sd.pop(candidate)
@@ -701,10 +712,26 @@ def load_weights_for__main_from_state_dict():
             if single_mlp_key in sd:
                 sd[key] = sd.pop(single_mlp_key)
 
+    # expert_mapping is a routing constant baked into the traced graph (it maps
+    # experts to mesh devices); it has no HF state_dict origin and is stored as a
+    # multi-device tensor, so load it directly from the serialized constant the
+    # disk loader uses rather than reconstructing it from a torch tensor.
+    _EXPERT_MAPPING_KEY = "model.model.layers.3.mlp.mlp.expert_mapping"
+
     device = utils.DeviceGetter.get_device((4, 8))
 
     weights = {}
     for key in ALL_WEIGHTS:
+        if key == _EXPERT_MAPPING_KEY:
+            weights[key] = utils.load_tensor(
+                "./tensors/arg76.tensorbin",
+                ttnn.Layout.ROW_MAJOR,
+                ttnn.DataType.INT32,
+                None,
+                None,
+            )
+            continue
+
         pt_tensor = sd[key]
         ttnn_tensor = ttnn.from_torch(pt_tensor)
 
