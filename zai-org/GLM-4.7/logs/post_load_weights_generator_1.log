@@ -1,0 +1,7 @@
+All done:
+
+1. **`params.py`**: Deleted the old `load_weights_for__main` (590+ lines of tensorbin loading) and its `_main_weights` global. Renamed `load_weights_for__main_from_state_dict` to `load_weights_for__main`.
+2. **`main.py`**: No changes needed — the import `from params import load_weights_for__main` and all call sites now resolve to the state_dict-based implementation.
+3. **`verify_weights.py`**: Deleted. No remaining references to it or to the old `_from_state_dict` suffix.
+
+--- Time taken: 141.5s ---
