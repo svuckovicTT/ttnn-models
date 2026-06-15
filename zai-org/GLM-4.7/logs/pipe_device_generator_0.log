@@ -1,0 +1,8 @@
+All changes are complete. Here's a summary:
+
+1. **`utils.py`**: Removed the `DeviceGetter` class entirely (and the now-unused `math` import)
+2. **`main.py`**: Added `open_device()` and `close_device(device)` functions that replicate the same device initialization logic (mesh shape `(4, 8)`, `l1_small_size=1<<15`, fabric config for multi-device). Both `main()` and `test_main()` open the device at the start, pipe it to `load_activations_for__main(device)`, `load_weights_for__main_from_state_dict(device)`, and `_main(..., device)`, then close it at the end.
+3. **`params.py`**: `load_weights_for__main_from_state_dict` now takes `device` as a parameter instead of calling `DeviceGetter` internally.
+4. **`model_ttnn.py`**: `_main` now takes `device` as a third parameter instead of calling `DeviceGetter`; removed the `import utils` since it's no longer needed.
+
+--- Time taken: 159.3s ---
