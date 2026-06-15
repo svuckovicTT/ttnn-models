@@ -1,0 +1,16 @@
+Zero remaining references. Here's a summary of what was done:
+
+**`consteval.py` (new file):** Consolidated 46 auto-generated `main_const_eval_*` functions into 8 reusable helpers:
+- `_transpose_weight_bf8b` — used by 17 single-weight transpose+cast operations
+- `_transpose_weight_f32_bf8b` — router gate weight (extra f32 intermediate precision cast)
+- `_concat_qkv_weights` — merges Q/K/V projection weights (4 layers)
+- `_concat_qkv_biases` — merges Q/K/V projection biases (4 layers)
+- `_reshape_expert_bf8b` — reshapes expert projection weights (3 projections)
+- `_to_device_tile_reshape_f32` — reshapes + casts to f32 (e_score bias, rotary inv_freq)
+- `_allgather_reshape_row_major` — mesh-wide zeros/ones via all_gather
+
+The `run_consteval(weights, device)` function uses loops over layers/projections to call these helpers and stores each result as a single tensor under a descriptive key in the weights dict.
+
+**`model_ttnn.py`:** Removed `ce_cache`, added `consteval.run_consteval` call in `__init__`, replaced all 46 `self.ce_cache["main_const_eval_X"]` references with `self.weights["descriptive_key"]`.
+
+--- Time taken: 481.2s ---
