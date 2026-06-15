@@ -1,0 +1,3 @@
+Everything is already in place. The `_main` function lives in `model_ttnn.py`, it's imported on line 7 of `main.py`, and all references in `main.py` use the imported name. This step has already been completed — no changes needed.
+
+--- Time taken: 50.9s ---
