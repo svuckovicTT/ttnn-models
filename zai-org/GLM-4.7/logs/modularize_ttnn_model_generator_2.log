@@ -1,0 +1,19 @@
+The modularization is complete. Here's a summary of what was done:
+
+**Model structure** (matching PyTorch's `Glm4MoeForCausalLM` hierarchy):
+
+- **`ModelTTNN`** (stays at top) - instantiates `Glm4MoeModel`, delegates `forward()`
+- **`Glm4MoeRotaryEmbedding`** - computes cos/sin from cache_position using rotary inverse frequencies
+- **`Glm4MoeAttention`** - per-layer self-attention (qkv_proj, q/k_norm, rotary application, KV cache management with point-to-point mesh ops, SDPA decode, o_proj, reduce_scatter, all_gather)
+- **`Glm4MoeMLP`** - dense feed-forward for layers 0-2 (gate_proj+silu, up_proj, multiply, down_proj, reduce_scatter, all_gather)
+- **`Glm4MoeMoE`** - Mixture of Experts for layer 3 (router, top-k expert selection, all-to-all dispatch/combine, sparse matmul experts, shared experts MLP, weighted combination)
+- **`Glm4MoeDecoderLayer`** - wraps attention + MLP/MoE with residual connections and layer norms
+- **`Glm4MoeModel`** - embedding, rotary embedding, 4 decoder layers, final norm, lm_head, post-processing
+
+**Key design choices:**
+- Attention/MLP are parameterized by `layer_idx` using f-string weight lookups, reducing 4 copies to 1
+- Shared tensors (cos/sin, update_indices, attn_mask) computed once at model level, passed to layers, deallocated after last layer
+- Layer 3's MoE path handled via `use_moe` flag with proper intermediate tensor deallocation
+- File reduced from 19,251 to 6,137 lines while preserving 100% semantic equivalence
+
+--- Time taken: 1544.3s ---
