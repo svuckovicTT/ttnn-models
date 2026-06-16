@@ -1,5 +1,6 @@
 import math
 
+import torch
 import ttnn
 import utils
 from utils import calculate_pcc
@@ -8,6 +9,21 @@ from model_ttnn import ModelTTNN
 
 MESH_SHAPE = (4, 8)
 L1_SMALL_SIZE = 1 << 15
+
+_decode_state = None
+
+
+def _decode_inputs():
+    """Load the PyTorch model and run a CPU prefill to reach the decode state
+    (mirrors xla.py, which produced the serialized activations). Cached so the
+    expensive prefill runs once even if activations are requested repeatedly."""
+    global _decode_state
+    if _decode_state is None:
+        import model_pt
+
+        model = model_pt.load_pytorch_model()
+        _decode_state = model_pt._cpu_prefill_to_decode_state(model)
+    return _decode_state
 
 
 def open_device():
@@ -28,149 +44,77 @@ def close_device(device):
 
 
 def load_activations_for__main(device):
-    utils_load_tensor_0 = utils.load_tensor(
-        "./tensors/arg4.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.INT32,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_1 = utils.load_tensor(
-        "./tensors/arg6.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_2 = utils.load_tensor(
-        "./tensors/arg8.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_3 = utils.load_tensor(
-        "./tensors/arg9.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_4 = utils.load_tensor(
-        "./tensors/arg12.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_5 = utils.load_tensor(
-        "./tensors/arg25.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_6 = utils.load_tensor(
-        "./tensors/arg26.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_7 = utils.load_tensor(
-        "./tensors/arg29.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_8 = utils.load_tensor(
-        "./tensors/arg42.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_9 = utils.load_tensor(
-        "./tensors/arg43.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_10 = utils.load_tensor(
-        "./tensors/arg46.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_11 = utils.load_tensor(
-        "./tensors/arg59.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_12 = utils.load_tensor(
-        "./tensors/arg60.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_13 = utils.load_tensor(
-        "./tensors/arg63.tensorbin",
-        ttnn.Layout.TILE,
-        ttnn.DataType.BFLOAT16,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    return [
-        utils_load_tensor_0,
-        utils_load_tensor_1,
-        utils_load_tensor_2,
-        utils_load_tensor_3,
-        utils_load_tensor_4,
-        utils_load_tensor_5,
-        utils_load_tensor_6,
-        utils_load_tensor_7,
-        utils_load_tensor_8,
-        utils_load_tensor_9,
-        utils_load_tensor_10,
-        utils_load_tensor_11,
-        utils_load_tensor_12,
-        utils_load_tensor_13,
-    ]
+    """Construct the decode-step inputs the way xla.py did when it produced the
+    serialized activation tensorbins: load the PyTorch model, run a CPU prefill to
+    populate the StaticCache, and snapshot the resulting decode state (next-token
+    input_ids, advanced cache_position, populated per-layer KV caches), then
+    distribute them across the mesh. Replaces loading the serialized tensors from
+    disk."""
+    decode_args = _decode_inputs()
+    input_ids = decode_args["input_ids"]
+    cache_position = decode_args["cache_position"]
+    layers = decode_args["past_key_values"].layers
+    # cumulative_length == number of prefilled tokens == the decode cache position.
+    cumulative_length = int(cache_position.reshape(-1)[0].item())
 
+    dram = ttnn.MemoryConfig(
+        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+    )
+
+    def to_device_tensor(torch_tensor, dtype, layout, mesh_mapper):
+        ttnn_tensor = ttnn.from_torch(torch_tensor, mesh_mapper=mesh_mapper)
+        ttnn_tensor = ttnn.to_layout(ttnn_tensor, layout)
+        ttnn_tensor = ttnn.to_dtype(ttnn_tensor, dtype)
+        return ttnn.to_device(ttnn_tensor, device, dram)
+
+    # input_ids and the KV caches are sharded along the mesh "batch" axis (the 4
+    # rows); cache_position and the per-layer cumulative_length are replicated.
+    def batch_sharded():
+        return ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (0, None))
+
+    def replicated():
+        return ttnn.ReplicateTensorToMesh(device)
+
+    activations = [
+        to_device_tensor(
+            input_ids.to(torch.int32),
+            ttnn.DataType.INT32,
+            ttnn.Layout.TILE,
+            batch_sharded(),
+        ),
+        to_device_tensor(
+            cache_position.to(torch.int32),
+            ttnn.DataType.INT32,
+            ttnn.Layout.ROW_MAJOR,
+            replicated(),
+        ),
+    ]
+    for layer in layers:
+        activations.append(
+            to_device_tensor(
+                torch.tensor([cumulative_length], dtype=torch.int32),
+                ttnn.DataType.INT32,
+                ttnn.Layout.ROW_MAJOR,
+                replicated(),
+            )
+        )
+        activations.append(
+            to_device_tensor(
+                layer.keys.to(torch.bfloat16),
+                ttnn.DataType.BFLOAT16,
+                ttnn.Layout.TILE,
+                batch_sharded(),
+            )
+        )
+        activations.append(
+            to_device_tensor(
+                layer.values.to(torch.bfloat16),
+                ttnn.DataType.BFLOAT16,
+                ttnn.Layout.TILE,
+                batch_sharded(),
+            )
+        )
+    return activations
 
 
 def main():
