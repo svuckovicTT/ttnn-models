@@ -12,7 +12,8 @@ L1_SMALL_SIZE = 1 << 15
 
 def open_device():
     if math.prod(MESH_SHAPE) >= 2:
-        ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
+        # ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
+        ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D)
     device = ttnn.open_mesh_device(
         mesh_shape=ttnn.MeshShape(MESH_SHAPE),
         l1_small_size=L1_SMALL_SIZE,

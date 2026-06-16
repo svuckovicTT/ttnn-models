@@ -206,7 +206,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_reshape_93, False)
         ttnn_all_gather_17 = ttnn.all_gather(
@@ -218,7 +218,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_all_gather_16, False)
         ttnn_mesh_partition_2 = ttnn.mesh_partition(
@@ -283,7 +283,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn_add_13 = ttnn.add(
             args_0,
@@ -761,7 +761,7 @@ class Glm4MoeAttention(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
                 math_approx_mode=False,
@@ -783,7 +783,7 @@ class Glm4MoeAttention(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(o_reshaped2, False)
         return attn_output, key_cache_out, value_cache_out
@@ -861,7 +861,7 @@ class Glm4MoeMLP(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
                 math_approx_mode=False,
@@ -883,7 +883,7 @@ class Glm4MoeMLP(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(rs_reshaped, False)
         return mlp_output
@@ -1015,7 +1015,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_concat_25, False)
         ttnn_reshape_67 = ttnn.reshape(
@@ -1176,7 +1176,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_matmul_14, False)
         ttnn_reshape_71 = ttnn.reshape(
@@ -1346,7 +1346,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_concat_27, False)
         ttnn_reshape_78 = ttnn.reshape(
@@ -1374,7 +1374,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_reshape_79, False)
         ttnn_all_gather_13 = ttnn.all_gather(
@@ -1384,7 +1384,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_reshape_80, False)
         ttnn_to_layout_57 = ttnn.to_layout(
@@ -1675,7 +1675,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
                 math_approx_mode=False,
@@ -1691,7 +1691,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_reduce_scatter_7, False)
         ttnn_to_layout_67 = ttnn.to_layout(
@@ -1844,7 +1844,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
                 math_approx_mode=False,
@@ -1866,7 +1866,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Ring,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(shared_rs_reshaped, False)
         # Combine sparse + shared
