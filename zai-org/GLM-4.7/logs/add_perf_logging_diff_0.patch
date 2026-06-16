@@ -1,0 +1,31 @@
+diff --git a/zai-org/GLM-4.7/model/graph_0/main.py b/zai-org/GLM-4.7/model/graph_0/main.py
+index 50b1081..3d621c0 100644
+--- a/zai-org/GLM-4.7/model/graph_0/main.py
++++ b/zai-org/GLM-4.7/model/graph_0/main.py
+@@ -2596,6 +2596,7 @@ def main():
+ 
+ 
+ def test_main():
++    import time
+     import model_pt
+ 
+     exact_pcc = 0.85546875
+@@ -2616,6 +2617,18 @@ def test_main():
+     pcc = calculate_pcc(ttnn.to_torch(final_output), golden_output)
+     print(f"\nPCC: {pcc:.6f}")
+     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
++
++    for i in range(3):
++        activations = load_activations_for__main(device)
++        num_tokens = math.prod(activations[0].shape)
++        start = time.perf_counter()
++        outputs = model(activations)
++        ttnn.synchronize_device(device)
++        end = time.perf_counter()
++        elapsed = end - start
++        tps = num_tokens / elapsed
++        print(f"Run {i}: {elapsed:.4f}s, TPS: {tps:.2f}")
++
+     close_device(device)
+ 
+ 
