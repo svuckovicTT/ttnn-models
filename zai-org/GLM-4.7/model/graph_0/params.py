@@ -183,14 +183,29 @@ def load_weights_for__main_from_state_dict(device):
     weights = {}
     for key in ALL_WEIGHTS:
         if key in INT32_WEIGHTS:
-            # expert_mapping is a routing constant baked into the traced graph; it
-            # has no HF state_dict origin, so load it from the serialized constant.
-            weights[key] = utils.load_tensor(
-                "./tensors/arg76.tensorbin",
-                ttnn.Layout.ROW_MAJOR,
-                ttnn.DataType.INT32,
-                None,
-                None,
+            # expert_mapping is a routing constant with no HF state_dict origin.
+            # It is a one-hot [1, 1, num_experts, num_devices] tensor assigning a
+            # contiguous block of experts to each device (expert e -> device
+            # e // experts_per_device), replicated on every device. This is fully
+            # determined by the model config and mesh, so we build it at runtime
+            # instead of carrying a serialized constant.
+            num_experts = model.config.n_routed_experts
+            num_devices = MESH_ROWS * MESH_COLS
+            assert num_experts % num_devices == 0, (
+                f"expert_mapping assumes experts ({num_experts}) divide evenly "
+                f"across devices ({num_devices})"
+            )
+            experts_per_device = num_experts // num_devices
+            device_of_expert = torch.arange(num_experts) // experts_per_device
+            expert_mapping = torch.zeros(
+                1, 1, num_experts, num_devices, dtype=torch.int32
+            )
+            expert_mapping[0, 0, torch.arange(num_experts), device_of_expert] = 1
+            weights[key] = ttnn.from_torch(
+                expert_mapping,
+                dtype=ttnn.DataType.INT32,
+                layout=ttnn.Layout.ROW_MAJOR,
+                mesh_mapper=ttnn.ReplicateTensorToMesh(device),
             )
             continue
 
