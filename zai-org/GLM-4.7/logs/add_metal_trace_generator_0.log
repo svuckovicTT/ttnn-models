@@ -1,0 +1,15 @@
+All input tensor deallocations removed from `model_ttnn.py` (zero grep matches). The `test_main` in `main.py` looks correct.
+
+Here's a summary of the changes:
+
+**`model_ttnn.py`** — Removed 7 `ttnn.deallocate` calls on input tensors:
+- `activations[8]`, `activations[5]`, `activations[2]` (direct deallocations of unused inputs)
+- `args_1` (= `activations[0]`), `args_11` (= `activations[11]`), `args_0` (= `activations[1]`)
+- `cache_input` in `_kv_cache_distribute_p2p` (called for all 8 KV cache tensors from activations)
+
+**`main.py`** — Rewrote `test_main` with metal trace pattern (5 timed runs):
+1. **Run 0 (compile)**: Allocates persistent DRAM input buffers, copies host data, runs the model to fill program cache. PCC is checked on this run's output.
+2. **Run 1 (trace capture)**: Copies host data, captures trace via `begin_trace_capture` / `end_trace_capture`.
+3. **Runs 2-4 (trace execute)**: Copies host data, executes the captured trace via `execute_trace`, reads output with `.cpu(blocking=False)`.
+
+--- Time taken: 266.0s ---
