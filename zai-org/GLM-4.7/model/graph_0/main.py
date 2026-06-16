@@ -2602,11 +2602,34 @@ def test_main():
     exact_pcc = 0.85546875
 
     device = open_device()
-    activations = load_activations_for__main(device)
     model = ModelTTNN(device)
-    outputs = model(activations)
 
-    ttnn_output = [ttnn.from_device(output) for output in outputs]
+    activations = load_activations_for__main(device)
+    host_activations = [ttnn.from_device(a) for a in activations]
+
+    input_dram_tensors = []
+    for a in activations:
+        input_dram_tensors.append(
+            ttnn.allocate_tensor_on_device(
+                a.shape, a.dtype, a.layout, device, a.memory_config()
+            )
+        )
+    for a in activations:
+        ttnn.deallocate(a, False)
+
+    num_tokens = math.prod(host_activations[0].shape)
+
+    for h, d in zip(host_activations, input_dram_tensors):
+        ttnn.copy_host_to_device_tensor(h, d, cq_id=0)
+    start = time.perf_counter()
+    output_tensors = model(input_dram_tensors)
+    ttnn.synchronize_device(device)
+    end = time.perf_counter()
+    elapsed = end - start
+    tps = num_tokens / elapsed
+    print(f"Run 0 (compile): {elapsed:.4f}s, TPS: {tps:.2f}")
+
+    ttnn_output = [ttnn.from_device(output) for output in output_tensors]
     golden_output = model_pt.run_pytorch_model()
 
     # outputs[-1] is the final logits, fully replicated across the 4x8 mesh by
@@ -2618,17 +2641,31 @@ def test_main():
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
+    for h, d in zip(host_activations, input_dram_tensors):
+        ttnn.copy_host_to_device_tensor(h, d, cq_id=0)
+    start = time.perf_counter()
+    tid = ttnn.begin_trace_capture(device, cq_id=0)
+    output_tensors = model(input_dram_tensors)
+    ttnn.end_trace_capture(device, tid, cq_id=0)
+    ttnn.synchronize_device(device)
+    end = time.perf_counter()
+    elapsed = end - start
+    tps = num_tokens / elapsed
+    print(f"Run 1 (trace capture): {elapsed:.4f}s, TPS: {tps:.2f}")
+
     for i in range(3):
-        activations = load_activations_for__main(device)
-        num_tokens = math.prod(activations[0].shape)
+        for h, d in zip(host_activations, input_dram_tensors):
+            ttnn.copy_host_to_device_tensor(h, d, cq_id=0)
         start = time.perf_counter()
-        outputs = model(activations)
+        ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
+        host_output = output_tensors[-1].cpu(blocking=False)
         ttnn.synchronize_device(device)
         end = time.perf_counter()
         elapsed = end - start
         tps = num_tokens / elapsed
-        print(f"Run {i}: {elapsed:.4f}s, TPS: {tps:.2f}")
+        print(f"Run {i + 2} (trace execute): {elapsed:.4f}s, TPS: {tps:.2f}")
 
+    ttnn.release_trace(device, tid)
     close_device(device)
 
 

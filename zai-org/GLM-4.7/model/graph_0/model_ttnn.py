@@ -35,9 +35,6 @@ class ModelTTNN(LightweightModule):
         args_11 = activations[11]
         args_12 = activations[12]
         args_13 = activations[13]
-        ttnn.deallocate(activations[8], False)
-        ttnn.deallocate(activations[5], False)
-        ttnn.deallocate(activations[2], False)
         var_0 = self.weights["consteval.scalar_zero_f32"]
         var_1 = self.weights["consteval.scalar_one_i32"]
         var_2 = self.weights["consteval.expert_mapping_u16"]
@@ -49,7 +46,6 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(args_1, False)
         ttnn_reshape_9 = ttnn.reshape(
             ttnn_typecast_29,
             [16],
@@ -130,7 +126,6 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(args_11, False)
         # Layer inputs: (key_cache, value_cache) per layer
         layer_kv_caches = [
             (args_3, args_4),
@@ -298,7 +293,6 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(args_0, False)
         return [
             key_cache_outs[0],
             value_cache_outs[0],
@@ -424,7 +418,6 @@ def _kv_cache_distribute_p2p(cache_input, num_rows=4, num_cols=8):
         ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
     )
     reshaped = ttnn.reshape(cache_input, [16, 8, 1, 128, 128], memory_config=dram_mem)
-    ttnn.deallocate(cache_input, False)
     # Slice into 8 chunks along dim 1
     slices = []
     for i in range(num_cols):
