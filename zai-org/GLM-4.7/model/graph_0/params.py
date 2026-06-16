@@ -185,10 +185,20 @@ def load_weights_for__main_from_state_dict(device):
         if key in INT32_WEIGHTS:
             # expert_mapping is a routing constant with no HF state_dict origin.
             # It is a one-hot [1, 1, num_experts, num_devices] tensor assigning a
-            # contiguous block of experts to each device (expert e -> device
-            # e // experts_per_device), replicated on every device. This is fully
-            # determined by the model config and mesh, so we build it at runtime
-            # instead of carrying a serialized constant.
+            # contiguous block of experts to each device, replicated on every
+            # device. Fully determined by the model config and mesh, so we build
+            # it at runtime instead of carrying a serialized constant.
+            #
+            # The physical expert placement is column-major: _arrange_experts()
+            # reorders blocks so the 1-D ShardTensorToMesh(dim 0) lands expert
+            # block B on device d = MESH_COLS*r + c where c*MESH_ROWS + r == B.
+            # The dispatch/combine must therefore route expert e (block
+            # e // experts_per_device) to that same device. Routing row-major
+            # (device e // experts_per_device), as the old MoE sharding did,
+            # sends tokens to the device holding a DIFFERENT block of experts and
+            # caps decode PCC (~0.86 here). See tt-xla issue 5096: the correct
+            # ("batch","model") layout = contiguous experts per device; we
+            # reproduce it by inverting the column-major placement below.
             num_experts = model.config.n_routed_experts
             num_devices = MESH_ROWS * MESH_COLS
             assert num_experts % num_devices == 0, (
@@ -196,7 +206,10 @@ def load_weights_for__main_from_state_dict(device):
                 f"across devices ({num_devices})"
             )
             experts_per_device = num_experts // num_devices
-            device_of_expert = torch.arange(num_experts) // experts_per_device
+            block = torch.arange(num_experts) // experts_per_device
+            row = block % MESH_ROWS
+            col = block // MESH_ROWS
+            device_of_expert = row * MESH_COLS + col
             expert_mapping = torch.zeros(
                 1, 1, num_experts, num_devices, dtype=torch.int32
             )
