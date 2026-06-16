@@ -28,8 +28,9 @@ def _decode_inputs():
 
 def open_device():
     if math.prod(MESH_SHAPE) >= 2:
-        # ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
-        ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D)
+        # FABRIC_1D_RING is required by the fused moe_compute / dispatch_metadata
+        # CCL ops (ring topology); also matches the original run-graph config.
+        ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
     device = ttnn.open_mesh_device(
         mesh_shape=ttnn.MeshShape(MESH_SHAPE),
         l1_small_size=L1_SMALL_SIZE,
