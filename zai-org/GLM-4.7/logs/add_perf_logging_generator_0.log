@@ -1,0 +1,9 @@
+Done. I edited `test_main` in `main.py` to:
+
+1. Import `time` at the top of the function
+2. After the PCC assertion, run the model 3 times in a loop
+3. Each iteration: reload activations, compute `num_tokens` from the input_ids shape (`activations[0]`), time the forward pass with `time.perf_counter()`, call `ttnn.synchronize_device(device)` before capturing end time
+4. Print time with 4 decimal places and TPS with 2 decimal places (since GLM-4.7 is an LLM)
+5. `math.prod` is used for computing token count (already imported at the top of the file)
+
+--- Time taken: 153.3s ---
