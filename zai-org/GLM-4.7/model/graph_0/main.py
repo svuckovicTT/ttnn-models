@@ -139,7 +139,20 @@ def main():
         exact_pcc = 0.85546875
 
         ttnn_output = [ttnn.from_device(output) for output in outputs]
-        golden_output = model_pt.run_pytorch_model()
+
+        # The CPU golden decode is deterministic (fixed model + prefill) and
+        # independent of any device-side change, so compute it once and cache it
+        # to disk; every subsequent PCC run reuses it instead of re-running the
+        # expensive pytorch decode. Delete golden_output.pt if model_pt or the
+        # decode inputs ever change.
+        golden_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "golden_output.pt")
+        if os.path.exists(golden_path):
+            golden_output = torch.load(golden_path)
+            print(f"Loaded cached golden from {golden_path}")
+        else:
+            golden_output = model_pt.run_pytorch_model()
+            torch.save(golden_output, golden_path)
+            print(f"Computed and cached golden to {golden_path}")
 
         # outputs[-1] is the final logits, fully replicated across the 4x8 mesh
         # by the trailing all_gathers (dim 0 over cluster_axis 0, dim 2 over
