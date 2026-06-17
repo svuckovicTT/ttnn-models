@@ -2,6 +2,84 @@ import torch
 import ttnn
 import utils
 
+# moe_compute fused-MoE constants (GLM-4.7 layer 3). See MOE_COMPUTE_INTEGRATION.md.
+_MOE_H = 5120          # hidden
+_MOE_N = 1536          # moe intermediate
+_MOE_EXPERTS = 160
+_MOE_CLUSTER_AXIS = 0
+_MOE_NUM_DEV = 32
+_MOE_NUM_REPLICATED = 8          # devices along cluster_axis=1 (cols)
+_MOE_EXPERTS_PER_DEV = _MOE_EXPERTS // _MOE_NUM_DEV          # 5
+_MOE_EXPERTS_PER_CLUSTER = _MOE_EXPERTS // _MOE_NUM_REPLICATED  # 20
+
+
+def _moe_linearized_coord(e):
+    """Owning-device linearized coord for expert e (cluster_axis=0). Equals the
+    column-major device_of_expert used by the one-hot expert_mapping and the
+    _arrange_experts weight placement (verified identical)."""
+    cluster_id = e // _MOE_EXPERTS_PER_CLUSTER
+    eic = e % _MOE_EXPERTS_PER_CLUSTER
+    dev_in_cluster = eic // _MOE_EXPERTS_PER_DEV
+    return dev_in_cluster * _MOE_NUM_REPLICATED + cluster_id
+
+
+def build_moe_compute_weights(sd, device):
+    """Build the fused moe_compute weights (bf4, DRAM-sharded, per-device-different
+    via ShardTensorToMesh dim0) and the rank-2 [devices, experts] linearized
+    expert_mapping. Reads the raw stacked GLM experts from the state dict:
+    gate_proj/up_proj [E, N, H], down_proj [E, H, N]."""
+    from ttnn.experimental.moe_compute_utils import (
+        get_weight_core_shard_maps,
+        get_weight_mem_configs,
+        prepare_w0_w1_tensor_for_moe_compute,
+        prepare_w2_tensor_for_moe_compute,
+    )
+
+    pfx = "model.model.layers.3.mlp.mlp.experts"
+    gate = sd[f"{pfx}.gate_proj"].to(torch.float32)   # [E, N, H]
+    up = sd[f"{pfx}.up_proj"].to(torch.float32)       # [E, N, H]
+    down = sd[f"{pfx}.down_proj"].to(torch.float32)   # [E, H, N]
+    H, N, E = _MOE_H, _MOE_N, _MOE_EXPERTS_PER_DEV
+    # prepare_w0_w1 wants (L,E,K=H,N); prepare_w2 wants (L,E,N,K=H).
+    gate_t = gate.transpose(-1, -2).contiguous()      # [E, H, N]
+    up_t = up.transpose(-1, -2).contiguous()          # [E, H, N]
+    down_t = down.transpose(-1, -2).contiguous()      # [E, N, H]
+
+    w0w1_map, w2_map, dram_crs = get_weight_core_shard_maps(device, H, N)
+    w0w1_per_dev = [None] * _MOE_NUM_DEV
+    w2_per_dev = [None] * _MOE_NUM_DEV
+    for e in range(0, _MOE_EXPERTS, E):
+        w0 = torch.cat([gate_t[e + j].view(1, 1, H, N) for j in range(E)], dim=1)
+        w1 = torch.cat([up_t[e + j].view(1, 1, H, N) for j in range(E)], dim=1)
+        w2 = torch.cat([down_t[e + j].view(1, 1, N, H) for j in range(E)], dim=1)
+        w0w1_r = prepare_w0_w1_tensor_for_moe_compute(w0, w1, 1, E, H, N, w0w1_map)
+        w2_r = prepare_w2_tensor_for_moe_compute(w2, 1, E, N, H, w2_map, w0w1_map)
+        d = _moe_linearized_coord(e)
+        w0w1_per_dev[d] = w0w1_r
+        w2_per_dev[d] = w2_r
+    torch_w0w1 = torch.cat(w0w1_per_dev, dim=0)
+    torch_w2 = torch.cat(w2_per_dev, dim=0)
+    w0w1_mem, w2_mem, _, _ = get_weight_mem_configs(1, E, H, N, w0w1_map, w2_map, dram_crs)
+    tt_w0w1 = ttnn.from_torch(torch_w0w1, device=device, layout=ttnn.TILE_LAYOUT,
+                              dtype=ttnn.bfloat4_b, memory_config=w0w1_mem,
+                              mesh_mapper=ttnn.ShardTensorToMesh(device, dim=0))
+    tt_w2 = ttnn.from_torch(torch_w2, device=device, layout=ttnn.TILE_LAYOUT,
+                            dtype=ttnn.bfloat4_b, memory_config=w2_mem,
+                            mesh_mapper=ttnn.ShardTensorToMesh(device, dim=0))
+
+    lin = torch.zeros(1, _MOE_EXPERTS, dtype=torch.int64)
+    for e in range(_MOE_EXPERTS):
+        lin[0, e] = _moe_linearized_coord(e)
+    lin = lin.repeat(_MOE_NUM_DEV, 1).to(torch.int32)  # [32, 160], replicated
+    tt_lin = ttnn.from_torch(lin, device=device, layout=ttnn.ROW_MAJOR_LAYOUT,
+                             dtype=ttnn.uint16, memory_config=ttnn.DRAM_MEMORY_CONFIG,
+                             mesh_mapper=ttnn.ShardTensor2dMesh(device, (4, 8), (None, None)))
+    return {
+        "moe_compute.w0_w1": tt_w0w1,
+        "moe_compute.w2": tt_w2,
+        "moe_compute.expert_mapping_lin": tt_lin,
+    }
+
 
 NORM_WEIGHTS = {
     f"model.model.layers.{i}.{s}"
@@ -251,5 +329,9 @@ def load_weights_for__main_from_state_dict(device):
             ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
 
         weights[key] = ttnn_tensor
+
+    # Fused moe_compute weights (bf4) + linearized expert_mapping, built from the
+    # raw stacked experts in sd. Replaces the bf8 sparse_matmul experts path.
+    weights.update(build_moe_compute_weights(sd, device))
 
     return weights
