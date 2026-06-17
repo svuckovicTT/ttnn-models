@@ -1,6 +1,17 @@
 import ttnn
 import params
 
+try:
+    # tracy signpost marks regions so tt-perf-report can be scoped per model
+    # segment (preamble / per-layer attn+mlp / lm_head) for full-model
+    # device-time extrapolation. No-op when tracy tooling is unavailable
+    # (e.g. plain PCC runs).
+    from tracy import signpost
+except Exception:  # pragma: no cover
+
+    def signpost(header, message=None):
+        pass
+
 
 class LightweightModule:
     def __call__(self, *args, **kwargs):
@@ -41,6 +52,9 @@ class ModelTTNN(LightweightModule):
         var_0 = self.weights["consteval.scalar_zero_f32"]
         var_1 = self.weights["consteval.scalar_one_i32"]
         var_2 = self.weights["consteval.expert_mapping_u16"]
+        # Signpost: preamble (embedding + rotary + shared attn-mask prep), run
+        # once per model forward.
+        signpost("preamble")
         # Embedding
         ttnn_typecast_29 = ttnn.typecast(
             args_1,
@@ -161,6 +175,9 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_repeat_2, False)
         ttnn.deallocate(sin, False)
         ttnn.deallocate(cos, False)
+        # Signpost: lm_head (final norm + lm_head matmul + output all_gathers),
+        # run once per model forward.
+        signpost("lm_head")
         # Final norm and lm_head
         ttnn_rms_norm_16 = ttnn.rms_norm(
             hidden_states,
@@ -1911,6 +1928,9 @@ class Glm4MoeDecoderLayer(LightweightModule):
             packer_l1_acc=True,
         )
         layer_prefix = f"model.model.layers.{self.layer_idx}"
+        # Signpost: this layer's attention block (input_layernorm + self_attn +
+        # residual add). Same structure across all 92 layers.
+        signpost(f"L{self.layer_idx}_attn")
         # Input layernorm
         normed = ttnn.rms_norm(
             hidden_states,
@@ -1935,6 +1955,9 @@ class Glm4MoeDecoderLayer(LightweightModule):
         )
         ttnn.deallocate(attn_output, False)
         ttnn.deallocate(hidden_states, False)
+        # Signpost: this layer's MLP block (post_attention_layernorm + MLP +
+        # residual add). Dense MLP for layers 0-2, MoE MLP for layers 3-91.
+        signpost(f"L{self.layer_idx}_mlp")
         if self.is_moe:
             # MoE path: reshape before post_attention_layernorm
             reshaped_for_norm = ttnn.reshape(

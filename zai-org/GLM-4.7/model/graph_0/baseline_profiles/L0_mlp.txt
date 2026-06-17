@@ -1,0 +1,73 @@
+Detected CSV format: v2.1 (with device arch and worker core count)
+Using architecture from CSV: wormhole
+Architecture: wormhole, Worker cores: 72
+Sorting CSV by 'HOST START TS' column...
+Using operations after 'L0_mlp'.
+Using operations until 'L1_attn'.
+Detected data from 32 devices. Merging device data...
+
+🚀 Performance Report 🚀
+========================
+
+ID     Total %  Bound  OP Code                                 Device   Device Time  Op-to-Op Gap  Cores  DRAM      DRAM %  FLOPs        FLOPs %  Math Fidelity            
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 7779    0.1 %         LayerNormDeviceOperation                      9       192 μs                    1                                                 BF16, BF16 => BF16
+ 7781   24.0 %   SLOW  MatmulDeviceOperation 32 x 5120 x 1536       24       101 μs     40,743 μs     48   82 GB/s  28.6 %   5.0 TFLOPs    5.1 %  HiFi2 BF16 x BFP8 => BF16
+ 7842   42.5 %         UnaryDeviceOperation                         10         4 μs     72,278 μs     72                                                       BF16 => BF16
+ 7868    1.8 %   SLOW  MatmulDeviceOperation 32 x 5120 x 1536       12       101 μs      2,980 μs     48   82 GB/s  28.6 %   5.0 TFLOPs    5.1 %  HiFi2 BF16 x BFP8 => BF16
+ 7904   29.6 %         BinaryNgDeviceOperation                      19         4 μs     50,328 μs     72                                                 BF16, BF16 => BF16
+ 7938    1.0 %   SLOW  MatmulDeviceOperation 32 x 1536 x 5120       10        48 μs      1,725 μs     54  173 GB/s  60.0 %  10.5 TFLOPs    9.5 %  HiFi2 BF16 x BFP8 => BF16
+ 7956    0.6 %         ReduceScatterDeviceOperation                  0        96 μs        886 μs     20                                                       BF16 => BF16
+ 7988    0.3 %         AllGatherDeviceOperation                      0        73 μs        443 μs     20                                                       BF16 => BF16
+ 8033    0.1 %         BinaryNgDeviceOperation                      11         9 μs        231 μs     72                                                 BF16, BF16 => BF16
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+       100.0 %         9 device ops, 0 host ops, 0 signposts                 626 μs    169,613 μs                                                                          
+
+💡 Advice 💡
+============
+
+High Op-to-Op Gap
+----------------
+ 7781   24.0 %   SLOW  MatmulDeviceOperation 32 x 5120 x 1536       24       101 μs     40,743 μs     48   82 GB/s  28.6 %   5.0 TFLOPs    5.1 %  HiFi2 BF16 x BFP8 => BF16
+ 7842   42.5 %         UnaryDeviceOperation                         10         4 μs     72,278 μs     72                                                       BF16 => BF16
+ 7868    1.8 %   SLOW  MatmulDeviceOperation 32 x 5120 x 1536       12       101 μs      2,980 μs     48   82 GB/s  28.6 %   5.0 TFLOPs    5.1 %  HiFi2 BF16 x BFP8 => BF16
+ 7904   29.6 %         BinaryNgDeviceOperation                      19         4 μs     50,328 μs     72                                                 BF16, BF16 => BF16
+ 7938    1.0 %   SLOW  MatmulDeviceOperation 32 x 1536 x 5120       10        48 μs      1,725 μs     54  173 GB/s  60.0 %  10.5 TFLOPs    9.5 %  HiFi2 BF16 x BFP8 => BF16
+ 7956    0.6 %         ReduceScatterDeviceOperation                  0        96 μs        886 μs     20                                                       BF16 => BF16
+ 7988    0.3 %         AllGatherDeviceOperation                      0        73 μs        443 μs     20                                                       BF16 => BF16
+ 8033    0.1 %         BinaryNgDeviceOperation                      11         9 μs        231 μs     72                                                 BF16, BF16 => BF16
+
+These ops have a >6 μs gap since the previous operation. Running with tracing could save 169565 μs (99.6% of overall time)
+Alternatively ensure device is not waiting for the host and use device.enable_async(True). Experts can try moving runtime args in the kernels to compile-time args.
+
+Matmul Optimization
+-------------------
+ 7781   24.0 %   SLOW  MatmulDeviceOperation 32 x 5120 x 1536       24       101 μs     40,743 μs     48   82 GB/s  28.6 %   5.0 TFLOPs    5.1 %  HiFi2 BF16 x BFP8 => BF16
+- If possible place input 0 in L1 (currently in DEV_0_DRAM_INTERLEAVED)
+- Output subblock 1x1 is small, try out_subblock_h * out_subblock_w >= 2 if possible
+- If your matmuls are not FLOP-bound use HiFi4 with BF16 activations for full accuracy
+
+ 7868    1.8 %   SLOW  MatmulDeviceOperation 32 x 5120 x 1536       12       101 μs      2,980 μs     48   82 GB/s  28.6 %   5.0 TFLOPs    5.1 %  HiFi2 BF16 x BFP8 => BF16
+- If possible place input 0 in L1 (currently in DEV_0_DRAM_INTERLEAVED)
+- Output subblock 1x1 is small, try out_subblock_h * out_subblock_w >= 2 if possible
+- If your matmuls are not FLOP-bound use HiFi4 with BF16 activations for full accuracy
+
+ 7938    1.0 %   SLOW  MatmulDeviceOperation 32 x 1536 x 5120       10        48 μs      1,725 μs     54  173 GB/s  60.0 %  10.5 TFLOPs    9.5 %  HiFi2 BF16 x BFP8 => BF16
+- If possible place input 0 in L1 (currently in DEV_0_DRAM_INTERLEAVED)
+- in0_block_w=2 and output subblock 1x3 look good 🤷
+- If your matmuls are not FLOP-bound use HiFi4 with BF16 activations for full accuracy
+
+Warning: Unclassified operation 'AllGatherDeviceOperation' found. Please add to OPERATION_CATEGORIES for proper classification.
+
+📊 Stacked report 📊
+====================
+
+Total %  Op Code                                              Device Time Sum  Op Count  Op Category  Min FLOPs  Max FLOPs  Mean FLOPs  Std FLOPs  Weighted Mean FLOPs
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+39.82 %  MatmulDeviceOperation (in0:dram_interleaved)               249.39 μs         3      Compute     5.06 %     9.46 %      6.53 %     2.54 %               5.91 %
+30.68 %  LayerNormDeviceOperation (in0:dram_interleaved)            192.16 μs         1      Compute                                                                  
+15.25 %  ReduceScatterDeviceOperation (in0:dram_interleaved)         95.55 μs         1           DM                                                                  
+11.58 %  AllGatherDeviceOperation (in0:dram_interleaved)             72.55 μs         1        Other                                                                  
+ 2.04 %  BinaryNgDeviceOperation (in0:dram_interleaved)              12.81 μs         2      Compute                                                                  
+ 0.62 %  UnaryDeviceOperation (in0:dram_interleaved)                  3.90 μs         1      Compute                                                                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------

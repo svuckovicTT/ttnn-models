@@ -8,8 +8,48 @@ Goal: replace hand-emitted MoE (router+topk+all_to_all_dispatch+moe_expert_token
 +3x sparse_matmul+all_to_all_combine) with fused ttnn.experimental.moe_compute, get good
 PCC, then tune. Perf metric = tracy device time (run -t + tt-perf-report), not TPS.
 
+## Model structure (GLM-4.7, from HF config.json)
+
+num_hidden_layers=92, first_k_dense_replace=3 => 3 dense layers (0-2) + 89 MoE layers
+(3-91). Plus 1 embedding + 1 final-norm/lm_head. The 1 MTP layer (num_nextn_predict_layers)
+is dropped by codegen. Dims: hidden 5120, dense interm 12288, moe interm 1536, 160 experts
+/ 8 per tok / 1 shared expert, 96 q-heads / 8 kv-heads / head_dim 128, vocab 151552.
+
+The 4-layer test model (layers 0-2 dense + layer 3 MoE) holds EXACTLY one of each segment
+type, so full-model device time extrapolates cleanly:
+  full_DT = preamble + lm_head + 92*attn + 3*dense_mlp + 89*moe_mlp
+
+## Signposts (setup, commit)
+
+tracy `signpost()` markers in model_ttnn.py: `preamble` (embedding+rotary+attn-mask, once),
+per-layer `L{i}_attn` / `L{i}_mlp`, `lm_head` (final norm+lm_head+all_gathers, once). Scope
+with `tt-perf-report --start-signpost X --end-signpost Y`. Per-segment summary txts saved to
+baseline_profiles/. Use the FIRST total ("... signposts  N μs ...") = device FW duration;
+percentages in the stacked report are relative to it. (The 2nd huge number is unreliable.)
+
+## BASELINE device perf (2026-06-17, branch glm-4.7-perf-tuning, PCC 0.894531)
+
+Single decode forward, tracy run, ops_perf_results_2026_06_17_12_41_28.csv:
+
+| segment    | DT (us) | full count | full DT (us) | % full |
+|------------|---------|------------|--------------|--------|
+| preamble   |     126 | x1         |          126 |  0.00% |
+| attention  |   8,547 | x92 (avg L0-3) |    786,324 | 11.55% |
+| dense MLP  |     595 | x3  (avg L0-2) |      1,785 |  0.03% |
+| MoE MLP    |  67,381 | x89        |    5,996,909 | 88.10% |
+| lm_head    |  22,084 | x1         |       22,084 |  0.32% |
+| **TOTAL**  |         |            | **6,807,228** | 100%  |
+
+Per-layer measured: L0_attn 8508, L1_attn 8583, L2_attn 8581, L3_attn 8516 (us);
+L0_mlp 626, L1_mlp 581, L2_mlp 579 (dense); L3_mlp 67381 (MoE).
+
+KEY: MoE MLP = 88% of full-model device time => prime target (moe_compute fusion).
+Attention = 11.6%, dominated by PointToPointOp (KV-cache distribute p2p, ~86% of each
+attn block). dense MLP + lm_head + preamble together < 0.4%.
+
 | # | patch | scope | tracy DT delta | PCC delta | decision | why |
 |---|-------|-------|----------------|-----------|----------|-----|
+| 0 | add tracy signposts (preamble/L*_attn/L*_mlp/lm_head) + baseline profile | setup | baseline = 6.807s full est | 0.894531 (hold) | keep | enables per-segment scoping + full-model extrapolation |
 | 1 | FABRIC_1D -> FABRIC_1D_RING (prereq for moe_compute CCL) | full | tbd | hold @0.894? | tbd | ring topology required by moe_compute/dispatch_metadata |
 
 ## PCC investigation (before perf tuning) — 2026-06-16
