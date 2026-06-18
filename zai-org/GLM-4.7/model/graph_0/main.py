@@ -67,10 +67,17 @@ def load_activations_for__main(device):
         ttnn_tensor = ttnn.to_dtype(ttnn_tensor, dtype)
         return ttnn.to_device(ttnn_tensor, device, dram)
 
-    # input_ids and the KV caches are sharded along the mesh "batch" axis (the 4
-    # rows); cache_position and the per-layer cumulative_length are replicated.
+    # input_ids is sharded along the mesh "batch" axis (the 4 rows); the per-layer
+    # cumulative_length and cache_position are replicated.
     def batch_sharded():
         return ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (0, None))
+
+    # KV caches use the ("batch", "model", None, None) layout: batch on the mesh
+    # rows and KV heads on the mesh columns (model axis), so each device owns a
+    # single KV head. paged_update_cache / SDPA then run on the local shard with
+    # no cross-device point-to-point (see tt-xla issue 5096).
+    def kv_head_sharded():
+        return ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (0, 1))
 
     def replicated():
         return ttnn.ReplicateTensorToMesh(device)
@@ -103,7 +110,7 @@ def load_activations_for__main(device):
                 layer.keys.to(torch.bfloat16),
                 ttnn.DataType.BFLOAT16,
                 ttnn.Layout.TILE,
-                batch_sharded(),
+                kv_head_sharded(),
             )
         )
         activations.append(
@@ -111,7 +118,7 @@ def load_activations_for__main(device):
                 layer.values.to(torch.bfloat16),
                 ttnn.DataType.BFLOAT16,
                 ttnn.Layout.TILE,
-                batch_sharded(),
+                kv_head_sharded(),
             )
         )
     return activations
@@ -135,7 +142,7 @@ def main():
     if os.environ.get("GLM_CHECK_PCC") == "1":
         import model_pt
 
-        exact_pcc = 0.85546875
+        exact_pcc = 0.89453125
 
         ttnn_output = [ttnn.from_device(output) for output in outputs]
         golden_output = model_pt.run_pytorch_model()
@@ -148,9 +155,13 @@ def main():
 
         pcc = calculate_pcc(ttnn.to_torch(final_output), golden_output)
         print(f"\nPCC: {pcc:.6f}")
-        # WH-galaxy grid remap (12->6x2 MoE matmul, 16-core KV shard) changes
-        # bf8 accumulation order vs the blackhole-codegenned baseline, so compare
-        # against the expected PCC with tolerance instead of exact equality.
+        # This PCC is gauge-invariant w.r.t. the sharding/grid choices ported from
+        # the tt-xla "good" benchmark: expert (batch,model) layout, head-sharded KV,
+        # and the 8x9 MoE sparse_matmul grid all leave it bit-identical at 0.894531.
+        # The remaining gap to the tt-xla SPMD benchmark's ~0.993 is precision, not
+        # sharding -- the codegen path quantizes experts to bf8 and runs default
+        # (LoFi) math fidelity on those matmuls; the SPMD runtime keeps higher
+        # effective precision. Compare with tolerance instead of exact equality.
         assert pcc >= exact_pcc - 0.01, f"PCC {pcc} below expected {exact_pcc}"
         print(f"PCC check passed (expected ~{exact_pcc}, tol 0.01)")
 
