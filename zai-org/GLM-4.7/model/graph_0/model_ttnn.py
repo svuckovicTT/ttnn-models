@@ -29,8 +29,7 @@ def _make_moe_dispatch_runtime(device):
     import torch
 
     H, K = 5120, 8
-    # cluster_axis=1: dispatch over the 8 cols. num_dispatch=8, tokens_per_device=8.
-    num_dispatch, total_tokens = 8, 64
+    num_dispatch, total_tokens = 4, 64
     mesh_shape = (4, 8)
     drain_core = ttnn.CoreCoord(6, 9)
 
@@ -42,7 +41,7 @@ def _make_moe_dispatch_runtime(device):
     combine_sem = ttnn.create_global_semaphore(device, worker_cores, 0)
 
     dram = ttnn.DRAM_MEMORY_CONFIG
-    shard_dims = (None, 0)  # dispatch dim sharded along cluster_axis=1 (cols)
+    shard_dims = (0, None)  # batch sharded along cluster_axis=0, replicated cols
     sparse = ttnn.from_torch(
         torch.zeros(num_dispatch, total_tokens, H, dtype=torch.bfloat16),
         device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
@@ -1337,24 +1336,13 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         # Fresh per-forward: semaphores + dispatch prealloc created right here so
         # nothing clobbers their L1 state before the MoE (see smoke harness).
         mc_dispatch_sem, mc_combine_sem, mc_prealloc = _make_moe_dispatch_runtime(self.device)
-        # cluster_axis=1 dispatch needs col-token-sharded inputs. The router
-        # outputs are row-token-sharded (16 tok/row-device, replicated cols);
-        # reshard to col (8 tok/col-device, replicated rows) via all_gather over
-        # rows then mesh_partition over cols.
-        def _r2c(t):
-            g = ttnn.all_gather(t, dim=0, cluster_axis=0, subdevice_id=None,
-                                memory_config=dram_mem, num_links=None,
-                                topology=ttnn.Topology.Linear)
-            p = ttnn.mesh_partition(g, dim=0, cluster_axis=1, memory_config=dram_mem)
-            ttnn.deallocate(g, False)
-            return p
-
-        x_row = ttnn.to_layout(
+        # Dispatch inputs, per device B=16 tokens / S=1, ROW_MAJOR.
+        disp_x = ttnn.to_layout(
             ttnn.reshape(post_normed, [16, 1, 1, 5120], memory_config=dram_mem),
             ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
         )
         ttnn.deallocate(post_normed, False)
-        idx_row = ttnn.to_layout(
+        disp_idx = ttnn.to_layout(
             ttnn.typecast(
                 ttnn.reshape(ttnn_typecast_40, [16, 1, 1, 8], memory_config=dram_mem),
                 ttnn.DataType.UINT16, memory_config=dram_mem,
@@ -1362,30 +1350,24 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
         )
         ttnn.deallocate(ttnn_typecast_40, False)
-        scr_row = ttnn.to_layout(
+        disp_scores = ttnn.to_layout(
             ttnn.typecast(
                 ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem),
                 ttnn.DataType.BFLOAT16, memory_config=dram_mem,
             ),
             ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
         )
+        # Scaling weights for the epilogue: [16,1,8] -> [8,1,16,1] (k, 1, tokens, 1).
+        scores_k = ttnn.permute(
+            ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem),
+            (3, 1, 0, 2), memory_config=dram_mem, pad_value=0.0,
+        )
         ttnn.deallocate(ttnn_multiply_3, False)
-
-        disp_x = _r2c(x_row)
-        ttnn.deallocate(x_row, False)
-        disp_idx = _r2c(idx_row)
-        ttnn.deallocate(idx_row, False)
-        disp_scores = _r2c(scr_row)
-        ttnn.deallocate(scr_row, False)
-
-        # Epilogue scaling weights from the col-sharded scores: [8tok,1,1,8k] ->
-        # [8k,1,8tok,1].
-        scores_k = ttnn.permute(disp_scores, (3, 1, 0, 2), memory_config=dram_mem, pad_value=0.0)
         scores_k = ttnn.to_layout(scores_k, ttnn.Layout.TILE, None, memory_config=dram_mem)
 
         sparse_buf, sparse_idx, sparse_scr = ttnn.experimental.all_to_all_dispatch_metadata(
             disp_x, disp_idx, disp_scores, mc_lin,
-            cluster_axis=1, num_links=4,
+            cluster_axis=0, num_links=4,
             worker_mode=ttnn.WorkerMode.DIRECT,
             dispatch_algorithm=ttnn.DispatchAlgorithm.SPARSE_MCAST_SHORTEST_PATH,
             output_tensors=mc_prealloc,
@@ -1402,7 +1384,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             print(">>> SYNC after dispatch_metadata OK", flush=True, file=_sys.stderr)
 
         mc_combine_out = ttnn.moreh_full(
-            shape=[8, 8, 5120], fill_value=0, device=self.device,
+            shape=[8, 16, 5120], fill_value=0, device=self.device,
             layout=ttnn.Layout.ROW_MAJOR, dtype=ttnn.DataType.BFLOAT16,
             memory_config=dram_mem,
         )
@@ -1410,11 +1392,11 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             sparse_buf, sparse_idx, sparse_scr, mc_lin,
             self.weights["moe_compute.w0_w1"], self.weights["moe_compute.w2"],
             layer_id=0, output_height_shard_dim=4, intermediate_size=1536,
-            has_bias=False, cluster_axis=1, mux_core_range_set=self.weights["moe_compute.mux_cores"],
+            has_bias=False, cluster_axis=0, mux_core_range_set=self.weights["moe_compute.mux_cores"],
             optional_output_tensor=mc_combine_out,
             optional_cross_device_semaphore=mc_combine_sem,
         )
-        combine_output = mc_outs[-1]  # [8, 8, 5120] per device (k, tokens_per_dev, H)
+        combine_output = mc_outs[-1]  # [8, 16, 5120] per device
         print(">>> moe_compute enqueued", flush=True, file=_sys.stderr)
         if _os.environ.get("GLM_MOE_PINPOINT") == "1":
             ttnn.synchronize_device(self.device)
@@ -1425,18 +1407,17 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             except Exception:
                 pass
 
-        # Epilogue: scale by per-(token,k) weights, sum over k, then cross-ROW
-        # (cluster_axis=0, 4 devices) all-reduce -- experts are split across rows.
+        # Epilogue: scale by per-(token,k) weights, sum over k, cross-col all-reduce.
         ce = ttnn.to_layout(combine_output, ttnn.Layout.TILE, None, memory_config=dram_mem)
-        ce = ttnn.unsqueeze(ce, dim=1)  # [8, 1, 8, 5120]
+        ce = ttnn.unsqueeze(ce, dim=1)  # [8, 1, 16, 5120]
         scaled = ttnn.multiply(ce, scores_k, dtype=ttnn.DataType.BFLOAT16, memory_config=dram_mem)
         ttnn.deallocate(ce, False)
         ttnn.deallocate(scores_k, False)
         summed = ttnn.sum(scaled, [0], False, memory_config=dram_mem, compute_kernel_config=None)
         ttnn.deallocate(scaled, False)
-        summed = ttnn.reshape(summed, [1, 1, 8, 5120], memory_config=dram_mem)
+        summed = ttnn.reshape(summed, [1, 1, 16, 5120], memory_config=dram_mem)
         mc_rs = ttnn.reduce_scatter(
-            input_tensor=summed, dim=3, cluster_axis=0, subdevice_id=None,
+            input_tensor=summed, dim=3, cluster_axis=1, subdevice_id=None,
             memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear,
             compute_kernel_config=mc_hifi4,
         )
@@ -1445,12 +1426,13 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         if _os.environ.get("GLM_MOE_PINPOINT") == "1":
             ttnn.synchronize_device(self.device)
             print(">>> SYNC after reduce_scatter OK", flush=True, file=_sys.stderr)
-        # reduce_scattered [1,1,8,1280] -> [8,1280], all_gather over rows -> [8,5120]
-        # (reshape to rank-2 first; rank-4 all_gather dim=3 hangs under COL dispatch).
-        mc_rs_reshaped = ttnn.reshape(mc_rs, [8, 1280], memory_config=dram_mem)
+        # Match the dense MLP's working all-gather exactly: reshape the
+        # reduce_scattered [1,1,16,640] -> [16,640], then all_gather on dim=1
+        # (all_gather dim=3 on the rank-4 tensor hangs under COL dispatch).
+        mc_rs_reshaped = ttnn.reshape(mc_rs, [16, 640], memory_config=dram_mem)
         ttnn.deallocate(mc_rs, False)
-        sparse_output_col = ttnn.all_gather(
-            input_tensor=mc_rs_reshaped, dim=1, cluster_axis=0, subdevice_id=None,
+        sparse_output = ttnn.all_gather(
+            input_tensor=mc_rs_reshaped, dim=1, cluster_axis=1, subdevice_id=None,
             memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(mc_rs_reshaped, False)
@@ -1458,13 +1440,6 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         if _os.environ.get("GLM_MOE_PINPOINT") == "1":
             ttnn.synchronize_device(self.device)
             print(">>> SYNC after epilogue all_gather OK", flush=True, file=_sys.stderr)
-        # Reshard col-token-sharded [8,5120] back to row-token-sharded [16,5120]
-        # for the shared-expert add + downstream.
-        _ag_c = ttnn.all_gather(sparse_output_col, dim=0, cluster_axis=1, subdevice_id=None,
-                                memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear)
-        ttnn.deallocate(sparse_output_col, False)
-        sparse_output = ttnn.mesh_partition(_ag_c, dim=0, cluster_axis=0, memory_config=dram_mem)
-        ttnn.deallocate(_ag_c, False)
         # Shared experts
         shared_gate = ttnn.matmul(
             hidden_states,

@@ -6,18 +6,21 @@ import utils
 _MOE_H = 5120          # hidden
 _MOE_N = 1536          # moe intermediate
 _MOE_EXPERTS = 160
-_MOE_CLUSTER_AXIS = 1            # dispatch over the 8-col axis (8-device ring)
+_MOE_CLUSTER_AXIS = 0
 _MOE_NUM_DEV = 32
-_MOE_NUM_REPLICATED = 4          # devices along the replicated axis = rows
+_MOE_NUM_REPLICATED = 8          # devices along cluster_axis=1 (cols)
 _MOE_EXPERTS_PER_DEV = _MOE_EXPERTS // _MOE_NUM_DEV          # 5
-_MOE_EXPERTS_PER_CLUSTER = _MOE_EXPERTS // _MOE_NUM_REPLICATED  # 40
+_MOE_EXPERTS_PER_CLUSTER = _MOE_EXPERTS // _MOE_NUM_REPLICATED  # 20
 
 
 def _moe_linearized_coord(e):
-    """Owning-device linearized coord for expert e. For cluster_axis=1 this is
-    get_linearized_mesh_coord's row-major identity: device = e // experts_per_dev.
-    This matches the good-pcc one-hot expert_mapping (device_of_expert = e//5)."""
-    return e // _MOE_EXPERTS_PER_DEV
+    """Owning-device linearized coord for expert e (cluster_axis=0). Equals the
+    column-major device_of_expert used by the one-hot expert_mapping and the
+    _arrange_experts weight placement (verified identical)."""
+    cluster_id = e // _MOE_EXPERTS_PER_CLUSTER
+    eic = e % _MOE_EXPERTS_PER_CLUSTER
+    dev_in_cluster = eic // _MOE_EXPERTS_PER_DEV
+    return dev_in_cluster * _MOE_NUM_REPLICATED + cluster_id
 
 
 def build_moe_compute_weights(sd, device):

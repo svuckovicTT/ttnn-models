@@ -22,31 +22,25 @@ H = 5120          # hidden
 N = 1536          # moe intermediate
 EXPERTS = 160
 K = 8             # experts per token
-import os
-TOTAL_TOKENS = 64          # fixed batch
-CLUSTER_AXIS = int(os.environ.get("SMOKE_CLUSTER_AXIS", "0"))  # 0=4-dev ring, 1=8-dev ring
-REPLICATE_AXIS = 1 - CLUSTER_AXIS  # epilogue cross-cluster reduce axis
+TOKENS_PER_DEV = 16        # batch 64 / 4 dispatch devices
+CLUSTER_AXIS = 0
 L1 = 1 << 15
 
 NUM_DEV = MESH_SHAPE[0] * MESH_SHAPE[1]            # 32
-NUM_DISPATCH = MESH_SHAPE[CLUSTER_AXIS]            # axis0->4, axis1->8
-NUM_REPLICATED = NUM_DEV // NUM_DISPATCH           # axis0->8, axis1->4
+NUM_DISPATCH = MESH_SHAPE[CLUSTER_AXIS]            # 4
+NUM_REPLICATED = NUM_DEV // NUM_DISPATCH           # 8
 EXPERTS_PER_DEV = EXPERTS // NUM_DEV               # 5
-EXPERTS_PER_CLUSTER = EXPERTS // NUM_REPLICATED    # axis0->20, axis1->40
-TOKENS_PER_DEV = TOTAL_TOKENS // NUM_DISPATCH      # axis0->16, axis1->8
+EXPERTS_PER_CLUSTER = EXPERTS // NUM_REPLICATED    # 20
+TOTAL_TOKENS = TOKENS_PER_DEV * NUM_DISPATCH       # 64
 DRAIN_CORE = ttnn.CoreCoord(6, 9)
 OUTPUT_HEIGHT_SHARD_DIM = 4
 
 
 def linearized_coord(e):
-    # get_linearized_mesh_coord: cluster_axis=0 is column-major within cluster;
-    # cluster_axis=1 is row-major identity (device = e // experts_per_device).
-    if CLUSTER_AXIS == 0:
-        cluster_id = e // EXPERTS_PER_CLUSTER
-        eic = e % EXPERTS_PER_CLUSTER
-        dev_in_cluster = eic // EXPERTS_PER_DEV
-        return dev_in_cluster * NUM_REPLICATED + cluster_id
-    return e // EXPERTS_PER_DEV
+    cluster_id = e // EXPERTS_PER_CLUSTER
+    eic = e % EXPERTS_PER_CLUSTER
+    dev_in_cluster = eic // EXPERTS_PER_DEV
+    return dev_in_cluster * NUM_REPLICATED + cluster_id
 
 
 def build_one_hot_expert_mapping(device):
@@ -103,7 +97,7 @@ def build_weights(device):
 
 
 def build_dispatch_prealloc(device):
-    shard_dims = (0, None) if CLUSTER_AXIS == 0 else (None, 0)
+    shard_dims = (CLUSTER_AXIS, None) if CLUSTER_AXIS == 0 else (None, CLUSTER_AXIS)
     sparse = ttnn.from_torch(torch.zeros(NUM_DISPATCH, TOTAL_TOKENS, H, dtype=torch.bfloat16),
                              device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
                              memory_config=ttnn.DRAM_MEMORY_CONFIG,
@@ -175,12 +169,10 @@ def main():
         scr_t = torch.rand(TOTAL_TOKENS, 1, 1, K, dtype=torch.float32)
         x_t = (torch.randn(TOTAL_TOKENS, 1, 1, H) * 0.05)
 
-        in_shard_dims = (0, None) if CLUSTER_AXIS == 0 else (None, 0)
-
         def to_dev(t, dt):
             return ttnn.from_torch(t, device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=dt,
                                    memory_config=dram,
-                                   mesh_mapper=ttnn.ShardTensor2dMesh(device, MESH_SHAPE, in_shard_dims))
+                                   mesh_mapper=ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (0, None)))
         x = to_dev(x_t, ttnn.bfloat16)
         idx = to_dev(idx_t, ttnn.uint16)
         scr = to_dev(scr_t, ttnn.bfloat16)
@@ -231,11 +223,11 @@ def main():
         hifi4 = ttnn.WormholeComputeKernelConfig(math_fidelity=ttnn.MathFidelity.HiFi4,
                                                  math_approx_mode=False, fp32_dest_acc_en=True,
                                                  packer_l1_acc=False)
-        rs = ttnn.reduce_scatter(input_tensor=summed, dim=3, cluster_axis=REPLICATE_AXIS, subdevice_id=None,
+        rs = ttnn.reduce_scatter(input_tensor=summed, dim=3, cluster_axis=1, subdevice_id=None,
                                  memory_config=dram, num_links=None, topology=ttnn.Topology.Linear,
                                  compute_kernel_config=hifi4)
         print("  ep5 reduce_scatter", tuple(rs.shape), flush=True)
-        ag = ttnn.all_gather(input_tensor=rs, dim=3, cluster_axis=REPLICATE_AXIS, subdevice_id=None,
+        ag = ttnn.all_gather(input_tensor=rs, dim=3, cluster_axis=1, subdevice_id=None,
                              memory_config=dram, num_links=None, topology=ttnn.Topology.Linear)
         print("  ep6 all_gather", tuple(ag.shape), flush=True)
         sparse_output = ttnn.reshape(ag, [TOKENS_PER_DEV, H], memory_config=dram)
