@@ -25,6 +25,7 @@ class ModelTTNN(LightweightModule):
         import consteval
         self.weights = consteval.run_consteval(self.weights, device)
         self.rotary_embedding = Glm4MoeRotaryEmbedding(device, self.weights)
+        self._init_moe_compute_runtime(device)
         self.layers = []
         for i in range(3):
             self.layers.append(
@@ -33,6 +34,61 @@ class ModelTTNN(LightweightModule):
         self.layers.append(
             Glm4MoeDecoderLayer(device, self.weights, layer_idx=3, is_moe=True)
         )
+
+    def _init_moe_compute_runtime(self, device):
+        """Create the once-per-model moe_compute runtime objects (global
+        semaphores, mux cores, preallocated dispatch outputs) and stash them in
+        the weights dict so the MoE layer can use them. See
+        MOE_COMPUTE_INTEGRATION.md."""
+        import torch
+
+        H, K = 5120, 8
+        num_dispatch, total_tokens = 4, 64
+        mesh_shape = (4, 8)
+        drain_core = ttnn.CoreCoord(6, 9)
+
+        grid = device.compute_with_storage_grid_size()
+        worker_cores = ttnn.CoreRangeSet(
+            {ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(grid.x - 1, grid.y - 1))}
+        )
+        self.weights["moe_compute.dispatch_sem"] = ttnn.create_global_semaphore(
+            device, worker_cores, 0
+        )
+        self.weights["moe_compute.combine_sem"] = ttnn.create_global_semaphore(
+            device, worker_cores, 0
+        )
+        self.weights["moe_compute.mux_cores"] = ttnn.CoreRangeSet(
+            [ttnn.CoreRange(ttnn.CoreCoord(3, 0), ttnn.CoreCoord(4, 7))]
+        )
+
+        dram = ttnn.DRAM_MEMORY_CONFIG
+        shard_dims = (0, None)  # batch sharded along cluster_axis=0, replicated cols
+        sparse = ttnn.from_torch(
+            torch.zeros(num_dispatch, total_tokens, H, dtype=torch.bfloat16),
+            device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
+            memory_config=dram,
+            mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
+        )
+        idx_scr_mem = ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.HEIGHT_SHARDED, ttnn.BufferType.L1,
+            ttnn.ShardSpec(
+                ttnn.CoreRangeSet({ttnn.CoreRange(drain_core, drain_core)}),
+                [total_tokens, K], ttnn.ShardOrientation.ROW_MAJOR,
+            ),
+        )
+        idx = ttnn.from_torch(
+            torch.zeros(num_dispatch, total_tokens, K, dtype=torch.int32),
+            device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.uint16,
+            memory_config=idx_scr_mem,
+            mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
+        )
+        scr = ttnn.from_torch(
+            torch.zeros(num_dispatch, total_tokens, K, dtype=torch.float32),
+            device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
+            memory_config=idx_scr_mem,
+            mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
+        )
+        self.weights["moe_compute.dispatch_prealloc"] = (sparse, idx, scr)
 
     def forward(self, activations):
         args_1 = activations[0]
@@ -171,6 +227,8 @@ class ModelTTNN(LightweightModule):
             )
             key_cache_outs.append(key_cache_out)
             value_cache_outs.append(value_cache_out)
+            import sys as _sys
+            print(f">>> layer {layer_idx} done", flush=True, file=_sys.stderr)
         ttnn.deallocate(ttnn_repeat_1, False)
         ttnn.deallocate(ttnn_repeat_2, False)
         ttnn.deallocate(sin, False)
@@ -219,6 +277,8 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_matmul_21, False)
+        import sys as _sys2
+        print(">>> lm_head matmul done", flush=True, file=_sys2.stderr)
         ttnn_all_gather_16 = ttnn.all_gather(
             input_tensor=ttnn_reshape_93,
             dim=0,
@@ -231,6 +291,7 @@ class ModelTTNN(LightweightModule):
             topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(ttnn_reshape_93, False)
+        print(">>> lm_head all_gather_16 (axis0) done", flush=True, file=_sys2.stderr)
         ttnn_all_gather_17 = ttnn.all_gather(
             input_tensor=ttnn_all_gather_16,
             dim=2,
@@ -604,8 +665,12 @@ class Glm4MoeAttention(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 0)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 1), ttnn.CoreCoord(7, 1)),
+                            # COL dispatch (required by moe_compute) reserves grid
+                            # column x=7, leaving a 7x10 worker grid; the original
+                            # 8-wide (0-7,0)+(0-7,1) KV shard collided with it. Use
+                            # a dispatch-free 4x4 region (16 cores, shard->batch
+                            # mapping is by tile-row index, not core position).
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(3, 3)),
                         ]
                     ),
                     [32, 128],
@@ -632,8 +697,12 @@ class Glm4MoeAttention(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 0)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 1), ttnn.CoreCoord(7, 1)),
+                            # COL dispatch (required by moe_compute) reserves grid
+                            # column x=7, leaving a 7x10 worker grid; the original
+                            # 8-wide (0-7,0)+(0-7,1) KV shard collided with it. Use
+                            # a dispatch-free 4x4 region (16 cores, shard->batch
+                            # mapping is by tile-row index, not core position).
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(3, 3)),
                         ]
                     ),
                     [32, 128],
@@ -1239,495 +1308,108 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(ttnn_divide_0, False)
-        ttnn_reshape_76 = ttnn.reshape(
-            ttnn_typecast_40,
-            [16, 8, 1],
-            memory_config=dram_mem,
+        # ===== Fused moe_compute MoE (replaces the hand-emitted dispatch +
+        # moe_expert_token_remap + 3x sparse_matmul + all_to_all_combine + reduce/
+        # gather/scale/sum). Reuses the router outputs:
+        #   ttnn_typecast_40 = top-8 expert indices [16, 8] (int32)
+        #   ttnn_multiply_3  = scaled normalized top-8 weights [16, 1, 8] (f32)
+        mc_hifi4 = ttnn.WormholeComputeKernelConfig(
+            math_fidelity=ttnn.MathFidelity.HiFi4, math_approx_mode=False,
+            fp32_dest_acc_en=True, packer_l1_acc=False,
         )
-        ttnn_eq_0 = ttnn.eq(
-            ttnn_reshape_76,
-            self.weights["consteval.expert_indices"],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_76, False)
-        ttnn_typecast_46 = ttnn.typecast(
-            ttnn_eq_0,
-            ttnn.DataType.FLOAT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_eq_0, False)
-        ttnn_matmul_16 = ttnn.matmul(
-            ttnn_multiply_3,
-            ttnn_typecast_46,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=dram_mem,
-            dtype=ttnn.DataType.FLOAT32,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_multiply_3, False)
-        ttnn_reshape_77 = ttnn.reshape(
-            ttnn_matmul_16,
-            [1, 16, 160],
-            memory_config=dram_mem,
-        )
-        ttnn_concat_27 = ttnn.concat(
-            [ttnn_reshape_77, ttnn_reshape_77, ttnn_reshape_77, ttnn_reshape_77],
-            1,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_77, False)
-        ttnn_all_gather_11 = ttnn.all_gather(
-            input_tensor=ttnn_concat_27,
-            dim=1,
-            cluster_axis=0,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Linear,
-        )
-        ttnn.deallocate(ttnn_concat_27, False)
-        ttnn_reshape_78 = ttnn.reshape(
-            ttnn_all_gather_11,
-            [1, 1, 256, 160],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_all_gather_11, False)
-        ttnn_reshape_79 = ttnn.reshape(
-            post_normed,
-            [16, 1, 1, 5120],
-            memory_config=dram_mem,
+        mc_lin = self.weights["moe_compute.expert_mapping_lin"]
+        mc_prealloc = self.weights["moe_compute.dispatch_prealloc"]
+        # Dispatch inputs, per device B=16 tokens / S=1, ROW_MAJOR.
+        disp_x = ttnn.to_layout(
+            ttnn.reshape(post_normed, [16, 1, 1, 5120], memory_config=dram_mem),
+            ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
         )
         ttnn.deallocate(post_normed, False)
-        ttnn_reshape_80 = ttnn.reshape(
-            ttnn_typecast_40,
-            [16, 1, 1, 8],
-            memory_config=dram_mem,
+        disp_idx = ttnn.to_layout(
+            ttnn.typecast(
+                ttnn.reshape(ttnn_typecast_40, [16, 1, 1, 8], memory_config=dram_mem),
+                ttnn.DataType.UINT16, memory_config=dram_mem,
+            ),
+            ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
         )
         ttnn.deallocate(ttnn_typecast_40, False)
-        ttnn_all_gather_12 = ttnn.all_gather(
-            input_tensor=ttnn_reshape_79,
-            dim=0,
-            cluster_axis=0,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Linear,
-        )
-        ttnn.deallocate(ttnn_reshape_79, False)
-        ttnn_all_gather_13 = ttnn.all_gather(
-            input_tensor=ttnn_reshape_80,
-            dim=0,
-            cluster_axis=0,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Linear,
-        )
-        ttnn.deallocate(ttnn_reshape_80, False)
-        ttnn_to_layout_57 = ttnn.to_layout(
-            ttnn_all_gather_12,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_all_gather_12, False)
-        ttnn_typecast_47 = ttnn.typecast(
-            ttnn_all_gather_13,
-            ttnn.DataType.UINT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_all_gather_13, False)
-        ttnn_from_device_25 = ttnn.from_device(ttnn_typecast_47)
-        ttnn.deallocate(ttnn_typecast_47, False)
-        ttnn_to_layout_58 = ttnn.to_layout(
-            ttnn_from_device_25, ttnn.Layout.ROW_MAJOR, None, memory_config=None
-        )
-        ttnn.deallocate(ttnn_from_device_25, False)
-        ttnn_to_device_74 = ttnn.to_device(
-            ttnn_to_layout_58,
-            device=self.device,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_58, False)
-        v_21, v_22 = ttnn.all_to_all_dispatch(
-            input_tensor=ttnn_to_layout_57,
-            expert_indices_tensor=ttnn_to_device_74,
-            expert_mapping_tensor=var_2,
-            cluster_axis=0,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_device_74, False)
-        ttnn.deallocate(ttnn_to_layout_57, False)
-        ttnn_to_layout_59 = ttnn.to_layout(
-            v_22,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(v_22, False)
-        ttnn_typecast_48 = ttnn.typecast(
-            ttnn_to_layout_59,
-            ttnn.DataType.INT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_59, False)
-        ttnn_to_layout_60 = ttnn.to_layout(
-            v_21,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(v_21, False)
-        ttnn_reshape_81 = ttnn.reshape(
-            ttnn_typecast_48,
-            [1, 1, 256, 8],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_48, False)
-        ttnn_typecast_49 = ttnn.typecast(
-            ttnn_reshape_78,
-            ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_78, False)
-        ttnn_to_layout_61 = ttnn.to_layout(
-            ttnn_typecast_49,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_49, False)
-        ttnn_typecast_50 = ttnn.typecast(
-            ttnn_reshape_81,
-            ttnn.DataType.UINT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_81, False)
-        ttnn_from_device_26 = ttnn.from_device(ttnn_typecast_50)
-        ttnn.deallocate(ttnn_typecast_50, False)
-        ttnn_to_layout_62 = ttnn.to_layout(
-            ttnn_from_device_26, ttnn.Layout.ROW_MAJOR, None, memory_config=None
-        )
-        ttnn.deallocate(ttnn_from_device_26, False)
-        ttnn_to_device_75 = ttnn.to_device(
-            ttnn_to_layout_62,
-            device=self.device,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_62, False)
-        v_23, v_24 = ttnn.moe_expert_token_remap(
-            topk_tensor=ttnn_to_layout_61,
-            expert_mapping_tensor=var_2,
-            expert_metadata_tensor=ttnn_to_device_75,
-            reduction_size=32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(v_23, False)
-        ttnn.deallocate(ttnn_to_layout_61, False)
-        ttnn_to_layout_63 = ttnn.to_layout(
-            v_24,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn_typecast_51 = ttnn.typecast(
-            ttnn_to_layout_63,
-            ttnn.DataType.FLOAT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_63, False)
-        ttnn_reshape_82 = ttnn.reshape(
-            ttnn_to_layout_60,
-            [8, 1, 32, 5120],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_60, False)
-        ttnn_reshape_83 = ttnn.reshape(
-            ttnn_typecast_51,
-            [8, 1, 1, 5],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_51, False)
-        ttnn_typecast_52 = ttnn.typecast(
-            ttnn_reshape_83,
-            ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_83, False)
-        ttnn_to_layout_64 = ttnn.to_layout(
-            ttnn_typecast_52,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_52, False)
-        sparse_matmul_config = ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-            compute_with_storage_grid_size=ttnn.CoreCoord(8, 9),
-            in0_block_w=1,
-            out_subblock_h=1,
-            out_subblock_w=1,
-            out_block_h=1,
-            out_block_w=1,
-            per_core_M=1,
-            per_core_N=6,
-            fuse_batch=False,
-            fused_activation=None,
-            mcast_in0=True,
-            gather_in0=False,
-            hop_cores=ttnn.CoreRangeSet([]),
-            num_global_cb_receivers=0,
-            untilize_out=False,
-        )
-        ttnn_sparse_matmul_0 = ttnn.sparse_matmul(
-            input_tensor_a=ttnn_reshape_82,
-            input_tensor_b=self.weights[f"{layer_prefix}.mlp.experts.gate_proj.reshaped"],
-            sparsity=ttnn_to_layout_64,
-            program_config=sparse_matmul_config,
-            nnz=None,
-            is_input_a_sparse=False,
-            is_input_b_sparse=True,
-            memory_config=dram_mem,
-            dtype=None,
-        )
-        ttnn_reshape_84 = ttnn.reshape(
-            ttnn_sparse_matmul_0,
-            [8, 5, 32, 1536],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_sparse_matmul_0, False)
-        ttnn_silu_0 = ttnn.silu(
-            ttnn_reshape_84,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_84, False)
-        ttnn_sparse_matmul_1 = ttnn.sparse_matmul(
-            input_tensor_a=ttnn_reshape_82,
-            input_tensor_b=self.weights[f"{layer_prefix}.mlp.experts.up_proj.reshaped"],
-            sparsity=ttnn_to_layout_64,
-            program_config=sparse_matmul_config,
-            nnz=None,
-            is_input_a_sparse=False,
-            is_input_b_sparse=True,
-            memory_config=dram_mem,
-            dtype=None,
-        )
-        ttnn.deallocate(ttnn_to_layout_64, False)
-        ttnn.deallocate(ttnn_reshape_82, False)
-        ttnn_reshape_85 = ttnn.reshape(
-            ttnn_sparse_matmul_1,
-            [8, 5, 32, 1536],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_sparse_matmul_1, False)
-        ttnn_multiply_4 = ttnn.multiply(
-            ttnn_silu_0,
-            ttnn_reshape_85,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_85, False)
-        ttnn.deallocate(ttnn_silu_0, False)
-        ttnn_from_device_27 = ttnn.from_device(v_24)
-        ttnn.deallocate(v_24, False)
-        ttnn_typecast_53 = ttnn.typecast(
-            ttnn_from_device_27, ttnn.DataType.BFLOAT16, memory_config=None
-        )
-        ttnn.deallocate(ttnn_from_device_27, False)
-        ttnn_to_device_76 = ttnn.to_device(
-            ttnn_typecast_53,
-            device=self.device,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_53, False)
-        ttnn_sparse_matmul_2 = ttnn.sparse_matmul(
-            input_tensor_a=ttnn_multiply_4,
-            input_tensor_b=self.weights[f"{layer_prefix}.mlp.experts.down_proj.reshaped"],
-            sparsity=ttnn_to_device_76,
-            program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                compute_with_storage_grid_size=ttnn.CoreCoord(8, 9),
-                in0_block_w=1,
-                out_subblock_h=1,
-                out_subblock_w=1,
-                out_block_h=1,
-                out_block_w=1,
-                per_core_M=1,
-                per_core_N=20,
-                fuse_batch=False,
-                fused_activation=None,
-                mcast_in0=True,
-                gather_in0=False,
-                hop_cores=ttnn.CoreRangeSet([]),
-                num_global_cb_receivers=0,
-                untilize_out=False,
+        disp_scores = ttnn.to_layout(
+            ttnn.typecast(
+                ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem),
+                ttnn.DataType.BFLOAT16, memory_config=dram_mem,
             ),
-            nnz=None,
-            is_input_a_sparse=True,
-            is_input_b_sparse=False,
-            memory_config=dram_mem,
-            dtype=None,
+            ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
         )
-        ttnn.deallocate(ttnn_to_device_76, False)
-        ttnn.deallocate(ttnn_multiply_4, False)
-        ttnn_permute_30 = ttnn.permute(
-            ttnn_sparse_matmul_2,
-            [1, 0, 2, 3],
-            memory_config=dram_mem,
-            pad_value=0.0,
+        # Scaling weights for the epilogue: [16,1,8] -> [8,1,16,1] (k, 1, tokens, 1).
+        scores_k = ttnn.permute(
+            ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem),
+            (3, 1, 0, 2), memory_config=dram_mem, pad_value=0.0,
         )
-        ttnn.deallocate(ttnn_sparse_matmul_2, False)
-        ttnn_reshape_86 = ttnn.reshape(
-            ttnn_permute_30,
-            [5, 1, 256, 5120],
-            memory_config=dram_mem,
+        ttnn.deallocate(ttnn_multiply_3, False)
+        scores_k = ttnn.to_layout(scores_k, ttnn.Layout.TILE, None, memory_config=dram_mem)
+
+        sparse_buf, sparse_idx, sparse_scr = ttnn.experimental.all_to_all_dispatch_metadata(
+            disp_x, disp_idx, disp_scores, mc_lin,
+            cluster_axis=0, num_links=4,
+            worker_mode=ttnn.WorkerMode.DIRECT,
+            dispatch_algorithm=ttnn.DispatchAlgorithm.SPARSE_MCAST_SHORTEST_PATH,
+            output_tensors=mc_prealloc,
+            cross_device_semaphore=self.weights["moe_compute.dispatch_sem"],
         )
-        ttnn.deallocate(ttnn_permute_30, False)
-        ttnn_to_layout_65 = ttnn.to_layout(
-            ttnn_reshape_86,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_86, False)
-        ttnn_all_to_all_combine_0 = ttnn.all_to_all_combine(
-            input_tensor=ttnn_to_layout_65,
-            expert_metadata_tensor=ttnn_to_device_75,
-            expert_mapping_tensor=var_2,
-            cluster_axis=0,
-            output_shard_dim=2,
+        ttnn.deallocate(disp_x, False)
+        ttnn.deallocate(disp_idx, False)
+        ttnn.deallocate(disp_scores, False)
+        import sys as _sys
+        print(">>> moe dispatch_metadata done", flush=True, file=_sys.stderr)
+
+        mc_combine_out = ttnn.moreh_full(
+            shape=[8, 16, 5120], fill_value=0, device=self.device,
+            layout=ttnn.Layout.ROW_MAJOR, dtype=ttnn.DataType.BFLOAT16,
             memory_config=dram_mem,
         )
-        ttnn.deallocate(ttnn_to_layout_65, False)
-        ttnn.deallocate(ttnn_to_device_75, False)
-        ttnn_to_layout_66 = ttnn.to_layout(
-            ttnn_all_to_all_combine_0,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=dram_mem,
+        mc_outs = ttnn.experimental.moe_compute(
+            sparse_buf, sparse_idx, sparse_scr, mc_lin,
+            self.weights["moe_compute.w0_w1"], self.weights["moe_compute.w2"],
+            layer_id=0, output_height_shard_dim=4, intermediate_size=1536,
+            has_bias=False, cluster_axis=0, mux_core_range_set=self.weights["moe_compute.mux_cores"],
+            optional_output_tensor=mc_combine_out,
+            optional_cross_device_semaphore=self.weights["moe_compute.combine_sem"],
+            topology=ttnn.Topology.Ring, num_links=4,
         )
-        ttnn.deallocate(ttnn_all_to_all_combine_0, False)
-        ttnn_reduce_scatter_7 = ttnn.reduce_scatter(
-            input_tensor=ttnn_to_layout_66,
-            dim=3,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Linear,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=False,
-            ),
+        combine_output = mc_outs[-1]  # [8, 16, 5120] per device
+        print(">>> moe_compute done", flush=True, file=_sys.stderr)
+        for _i in (0, 1, 2, 4):
+            try:
+                ttnn.deallocate(mc_outs[_i], False)
+            except Exception:
+                pass
+
+        # Epilogue: scale by per-(token,k) weights, sum over k, cross-col all-reduce.
+        ce = ttnn.to_layout(combine_output, ttnn.Layout.TILE, None, memory_config=dram_mem)
+        ce = ttnn.unsqueeze(ce, dim=1)  # [8, 1, 16, 5120]
+        scaled = ttnn.multiply(ce, scores_k, dtype=ttnn.DataType.BFLOAT16, memory_config=dram_mem)
+        ttnn.deallocate(ce, False)
+        ttnn.deallocate(scores_k, False)
+        summed = ttnn.sum(scaled, [0], False, memory_config=dram_mem, compute_kernel_config=None)
+        ttnn.deallocate(scaled, False)
+        summed = ttnn.reshape(summed, [1, 1, 16, 5120], memory_config=dram_mem)
+        mc_rs = ttnn.reduce_scatter(
+            input_tensor=summed, dim=3, cluster_axis=1, subdevice_id=None,
+            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear,
+            compute_kernel_config=mc_hifi4,
         )
-        ttnn.deallocate(ttnn_to_layout_66, False)
-        ttnn_all_gather_14 = ttnn.all_gather(
-            input_tensor=ttnn_reduce_scatter_7,
-            dim=3,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Linear,
+        ttnn.deallocate(summed, False)
+        print(">>> moe reduce_scatter done", flush=True, file=_sys.stderr)
+        # Match the dense MLP's working all-gather exactly: reshape the
+        # reduce_scattered [1,1,16,640] -> [16,640], then all_gather on dim=1
+        # (all_gather dim=3 on the rank-4 tensor hangs under COL dispatch).
+        mc_rs_reshaped = ttnn.reshape(mc_rs, [16, 640], memory_config=dram_mem)
+        ttnn.deallocate(mc_rs, False)
+        sparse_output = ttnn.all_gather(
+            input_tensor=mc_rs_reshaped, dim=1, cluster_axis=1, subdevice_id=None,
+            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear,
         )
-        ttnn.deallocate(ttnn_reduce_scatter_7, False)
-        ttnn_to_layout_67 = ttnn.to_layout(
-            ttnn_all_gather_14,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_all_gather_14, False)
-        ttnn_mesh_partition_1 = ttnn.mesh_partition(
-            input_tensor=ttnn_to_layout_67,
-            dim=2,
-            cluster_axis=0,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_67, False)
-        ttnn_to_layout_68 = ttnn.to_layout(
-            ttnn_mesh_partition_1,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_mesh_partition_1, False)
-        ttnn_typecast_54 = ttnn.typecast(
-            ttnn_to_layout_68,
-            ttnn.DataType.FLOAT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_68, False)
-        ttnn_reshape_87 = ttnn.reshape(
-            ttnn_matmul_16,
-            [16, 160, 1],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_matmul_16, False)
-        ttnn_matmul_17 = ttnn.matmul(
-            ttnn_typecast_46,
-            ttnn_reshape_87,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=dram_mem,
-            dtype=ttnn.DataType.FLOAT32,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_87, False)
-        ttnn.deallocate(ttnn_typecast_46, False)
-        ttnn_reshape_88 = ttnn.reshape(
-            ttnn_matmul_17,
-            [16, 8],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_matmul_17, False)
-        ttnn_permute_31 = ttnn.permute(
-            ttnn_reshape_88,
-            [1, 0],
-            memory_config=dram_mem,
-            pad_value=0.0,
-        )
-        ttnn.deallocate(ttnn_reshape_88, False)
-        ttnn_reshape_89 = ttnn.reshape(
-            ttnn_permute_31,
-            [8, 1, 16, 1],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_permute_31, False)
-        ttnn_multiply_5 = ttnn.multiply(
-            ttnn_typecast_54,
-            ttnn_reshape_89,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_89, False)
-        ttnn.deallocate(ttnn_typecast_54, False)
-        ttnn_sum_2 = ttnn.sum(
-            ttnn_multiply_5,
-            [0],
-            False,
-            memory_config=dram_mem,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_multiply_5, False)
-        ttnn_typecast_55 = ttnn.typecast(
-            ttnn_sum_2,
-            ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_sum_2, False)
-        sparse_output = ttnn.reshape(
-            ttnn_typecast_55,
-            [16, 5120],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_55, False)
+        ttnn.deallocate(mc_rs_reshaped, False)
         # Shared experts
         shared_gate = ttnn.matmul(
             hidden_states,
