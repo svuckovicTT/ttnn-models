@@ -1,0 +1,3 @@
+# Device runtime / debug artifacts (regenerated each run)
+generated/
+__pycache__/
