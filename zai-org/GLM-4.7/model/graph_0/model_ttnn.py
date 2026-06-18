@@ -101,8 +101,13 @@ class ModelTTNN(LightweightModule):
         # then running 3 dense layers + attention before the MoE let their L1
         # state be clobbered -> the combine's barrier semaphore was stale ->
         # moe_compute's fused combine deadlocked. (smoke passes; full model hung.)
+        # Canonical mux cores from the galaxy-tested reference (tt_moe_decode
+        # ComputeConfig default ((1,1),(3,3))). The old ((3,0),(4,7)) was copied
+        # from the (8,4) _tg test; on our transposed (4,8) mesh with KV/weights
+        # resident it collided with persistent L1 -> combine deadlock in the full
+        # model (passed in isolation). (1,1)-(3,3) clears the corner tilize cores.
         self.weights["moe_compute.mux_cores"] = ttnn.CoreRangeSet(
-            [ttnn.CoreRange(ttnn.CoreCoord(3, 0), ttnn.CoreCoord(4, 7))]
+            [ttnn.CoreRange(ttnn.CoreCoord(1, 1), ttnn.CoreCoord(3, 3))]
         )
 
     def forward(self, activations):
@@ -226,7 +231,9 @@ class ModelTTNN(LightweightModule):
         hidden_states = ttnn_embedding_0
         key_cache_outs = []
         value_cache_outs = []
-        for layer_idx in range(4):
+        import os as _os0
+        _layer_iter = [3] if _os0.environ.get("GLM_MOE_ONLY") == "1" else range(4)
+        for layer_idx in _layer_iter:
             key_cache_input, value_cache_input = layer_kv_caches[layer_idx]
             layer = self.layers[layer_idx]
             hidden_states, key_cache_out, value_cache_out = layer(
@@ -341,7 +348,7 @@ class ModelTTNN(LightweightModule):
             2,
             True,
             sub_core_grids=None,
-            use_multicore=True,
+            # latest tt-metal main (#46340) removed use_multicore (multicore is default now)
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
@@ -1365,47 +1372,89 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         ttnn.deallocate(ttnn_multiply_3, False)
         scores_k = ttnn.to_layout(scores_k, ttnn.Layout.TILE, None, memory_config=dram_mem)
 
-        sparse_buf, sparse_idx, sparse_scr = ttnn.experimental.all_to_all_dispatch_metadata(
-            disp_x, disp_idx, disp_scores, mc_lin,
-            cluster_axis=0, num_links=4,
-            worker_mode=ttnn.WorkerMode.DIRECT,
-            dispatch_algorithm=ttnn.DispatchAlgorithm.SPARSE_MCAST_SHORTEST_PATH,
-            output_tensors=mc_prealloc,
-            cross_device_semaphore=mc_dispatch_sem,
-        )
-        ttnn.deallocate(disp_x, False)
-        ttnn.deallocate(disp_idx, False)
-        ttnn.deallocate(disp_scores, False)
         import sys as _sys
         import os as _os
+        if _os.environ.get("GLM_SKIP_DISPATCH") == "1":
+            # Diagnostic: skip all_to_all_dispatch_metadata entirely; feed
+            # moe_compute the zero-init prealloc. If moe_compute then completes,
+            # dispatch_metadata's execution (not moe_compute) leaves the bad
+            # fabric/state that deadlocks the full-model combine.
+            sparse_buf, sparse_idx, sparse_scr = mc_prealloc
+            ttnn.deallocate(disp_x, False)
+            ttnn.deallocate(disp_idx, False)
+            ttnn.deallocate(disp_scores, False)
+            print(">>> SKIPPED dispatch_metadata (fed zero prealloc)", flush=True, file=_sys.stderr)
+        else:
+            sparse_buf, sparse_idx, sparse_scr = ttnn.experimental.all_to_all_dispatch_metadata(
+                disp_x, disp_idx, disp_scores, mc_lin,
+                cluster_axis=0, num_links=None,
+                worker_mode=ttnn.WorkerMode.DIRECT,
+                dispatch_algorithm=ttnn.DispatchAlgorithm.SPARSE_MCAST_SHORTEST_PATH,
+                output_tensors=mc_prealloc,
+                cross_device_semaphore=mc_dispatch_sem,
+            )
+            ttnn.deallocate(disp_x, False)
+            ttnn.deallocate(disp_idx, False)
+            ttnn.deallocate(disp_scores, False)
         print(">>> moe dispatch_metadata enqueued", flush=True, file=_sys.stderr)
         if _os.environ.get("GLM_MOE_PINPOINT") == "1":
             ttnn.synchronize_device(self.device)
             print(">>> SYNC after dispatch_metadata OK", flush=True, file=_sys.stderr)
 
-        mc_combine_out = ttnn.moreh_full(
-            shape=[8, 16, 5120], fill_value=0, device=self.device,
-            layout=ttnn.Layout.ROW_MAJOR, dtype=ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        mc_outs = ttnn.experimental.moe_compute(
-            sparse_buf, sparse_idx, sparse_scr, mc_lin,
-            self.weights["moe_compute.w0_w1"], self.weights["moe_compute.w2"],
-            layer_id=0, output_height_shard_dim=4, intermediate_size=1536,
-            has_bias=False, cluster_axis=0, mux_core_range_set=self.weights["moe_compute.mux_cores"],
-            optional_output_tensor=mc_combine_out,
-            optional_cross_device_semaphore=mc_combine_sem,
-        )
-        combine_output = mc_outs[-1]  # [8, 16, 5120] per device
-        print(">>> moe_compute enqueued", flush=True, file=_sys.stderr)
-        if _os.environ.get("GLM_MOE_PINPOINT") == "1":
-            ttnn.synchronize_device(self.device)
-            print(">>> SYNC after moe_compute OK", flush=True, file=_sys.stderr)
-        for _i in (0, 1, 2, 4):
-            try:
-                ttnn.deallocate(mc_outs[_i], False)
-            except Exception:
-                pass
+        if _os.environ.get("GLM_MOE_COMPUTE_ONLY") == "1":
+            # compute_only path (#46863-era): matmul only, NO fused combine ring
+            # (the deadlock source). cluster_axis/mux/sem/output_tensor must be
+            # omitted. Returns matmul_output in slot 4 (no combine output).
+            mc_outs = ttnn.experimental.moe_compute(
+                sparse_buf, sparse_idx, sparse_scr, mc_lin,
+                self.weights["moe_compute.w0_w1"], self.weights["moe_compute.w2"],
+                layer_id=0, output_height_shard_dim=4, intermediate_size=1536,
+                has_bias=False, compute_only=True,
+            )
+            print(">>> moe_compute (compute_only) enqueued", flush=True, file=_sys.stderr)
+            if _os.environ.get("GLM_MOE_PINPOINT") == "1":
+                ttnn.synchronize_device(self.device)
+                print(">>> SYNC after moe_compute(compute_only) OK", flush=True, file=_sys.stderr)
+            # PERF MODE: the fused combine deadlocks in the full model, so we run
+            # the matmul (compute_only) for device-perf measurement and feed the
+            # epilogue a placeholder so the forward completes + tracy can dump.
+            # (Values are garbage; this run is for device timing only.)
+            for _i in range(len(mc_outs)):
+                try:
+                    ttnn.deallocate(mc_outs[_i], False)
+                except Exception:
+                    pass
+            combine_output = ttnn.moreh_full(
+                shape=[8, 16, 5120], fill_value=0, device=self.device,
+                layout=ttnn.Layout.ROW_MAJOR, dtype=ttnn.DataType.BFLOAT16,
+                memory_config=dram_mem,
+            )
+            mc_outs = [combine_output]
+        else:
+            mc_combine_out = ttnn.moreh_full(
+                shape=[8, 16, 5120], fill_value=0, device=self.device,
+                layout=ttnn.Layout.ROW_MAJOR, dtype=ttnn.DataType.BFLOAT16,
+                memory_config=dram_mem,
+            )
+            mc_outs = ttnn.experimental.moe_compute(
+                sparse_buf, sparse_idx, sparse_scr, mc_lin,
+                self.weights["moe_compute.w0_w1"], self.weights["moe_compute.w2"],
+                layer_id=0, output_height_shard_dim=4, intermediate_size=1536,
+                has_bias=False, cluster_axis=0, mux_core_range_set=self.weights["moe_compute.mux_cores"],
+                optional_output_tensor=mc_combine_out,
+                optional_cross_device_semaphore=mc_combine_sem,
+            )
+            combine_output = mc_outs[-1]  # [8, 16, 5120] per device
+            print(">>> moe_compute enqueued", flush=True, file=_sys.stderr)
+            if _os.environ.get("GLM_MOE_PINPOINT") == "1":
+                ttnn.synchronize_device(self.device)
+                print(">>> SYNC after moe_compute OK", flush=True, file=_sys.stderr)
+        if _os.environ.get("GLM_MOE_COMPUTE_ONLY") != "1":
+            for _i in (0, 1, 2, 4):
+                try:
+                    ttnn.deallocate(mc_outs[_i], False)
+                except Exception:
+                    pass
 
         # Epilogue: scale by per-(token,k) weights, sum over k, cross-col all-reduce.
         ce = ttnn.to_layout(combine_output, ttnn.Layout.TILE, None, memory_config=dram_mem)
@@ -1572,18 +1621,27 @@ class Glm4MoeDecoderLayer(LightweightModule):
             compute_kernel_config=hifi4_config,
         )
         # Attention
-        attn_output, key_cache_out, value_cache_out = self.self_attn(
-            normed, key_cache_input, value_cache_input, cos, sin, repeat_idx, attn_mask
-        )
-        # Residual add after attention
-        residual = ttnn.add(
-            hidden_states,
-            attn_output,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(attn_output, False)
-        ttnn.deallocate(hidden_states, False)
+        import os as _os_attn
+        if _os_attn.environ.get("GLM_SKIP_ATTN") == "1":
+            # Bisect: skip attention (KV update + CCLs); feed MLP the pre-attn
+            # hidden_states. Correctness meaningless. Isolates whether layer-3
+            # attention vs the resident weight set triggers the moe_compute hang.
+            ttnn.deallocate(normed, False)
+            key_cache_out, value_cache_out = key_cache_input, value_cache_input
+            residual = hidden_states
+        else:
+            attn_output, key_cache_out, value_cache_out = self.self_attn(
+                normed, key_cache_input, value_cache_input, cos, sin, repeat_idx, attn_mask
+            )
+            # Residual add after attention
+            residual = ttnn.add(
+                hidden_states,
+                attn_output,
+                dtype=ttnn.DataType.BFLOAT16,
+                memory_config=dram_mem,
+            )
+            ttnn.deallocate(attn_output, False)
+            ttnn.deallocate(hidden_states, False)
         # Signpost: this layer's MLP block (post_attention_layernorm + MLP +
         # residual add). Dense MLP for layers 0-2, MoE MLP for layers 3-91.
         signpost(f"L{self.layer_idx}_mlp")
