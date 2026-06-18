@@ -140,6 +140,25 @@ def main():
         combine_sem = ttnn.create_global_semaphore(device, worker_cores, 0)
         mux_cores = ttnn.CoreRangeSet([ttnn.CoreRange(ttnn.CoreCoord(3, 0), ttnn.CoreCoord(4, 7))])
 
+        # REPRO PROBE: mimic the full model's persistent KV-cache L1 shards on
+        # (0,0)-(3,3), which overlap moe_compute's mux cores (x=3, y=0-3). If
+        # holding this alloc across moe_compute makes the smoke hang, core
+        # contention is the full-model deadlock cause. Gated on SMOKE_KV_HOLD=1.
+        import os as _os
+        _kv_hold = None
+        if _os.environ.get("SMOKE_KV_HOLD") == "1":
+            _kv_mem = ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.HEIGHT_SHARDED, ttnn.BufferType.L1,
+                ttnn.ShardSpec(
+                    ttnn.CoreRangeSet([ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(3, 3))]),
+                    [32, 128], ttnn.ShardOrientation.ROW_MAJOR))
+            _kv_hold = ttnn.from_torch(
+                torch.zeros(16 * 32, 128, dtype=torch.bfloat16),
+                device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
+                memory_config=_kv_mem,
+                mesh_mapper=ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (None, None)))
+            print("SMOKE_KV_HOLD: persistent L1 KV-like tensor on (0,0)-(3,3)", flush=True)
+
         # Router output, batch-sharded along cluster_axis=0 like the real model:
         # global TOTAL_TOKENS=64 tokens, dims=(0,None) -> 16/row, replicated cols.
         # (all_to_all_dispatch_metadata REQUIRES the input sharded along cluster

@@ -18,6 +18,58 @@ class LightweightModule:
         return self.forward(*args, **kwargs)
 
 
+def _make_moe_dispatch_runtime(device):
+    """Create the per-forward moe_compute runtime (global semaphores +
+    preallocated dispatch outputs) immediately before the MoE op, so nothing
+    runs between their allocation and use. The standalone smoke harness (which
+    creates these right before moe_compute) passes; creating them in __init__
+    and then running 3 dense layers + attention before the MoE let their L1
+    state be clobbered -> the combine's barrier semaphore was stale -> the fused
+    combine deadlocked."""
+    import torch
+
+    H, K = 5120, 8
+    num_dispatch, total_tokens = 4, 64
+    mesh_shape = (4, 8)
+    drain_core = ttnn.CoreCoord(6, 9)
+
+    grid = device.compute_with_storage_grid_size()
+    worker_cores = ttnn.CoreRangeSet(
+        {ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(grid.x - 1, grid.y - 1))}
+    )
+    dispatch_sem = ttnn.create_global_semaphore(device, worker_cores, 0)
+    combine_sem = ttnn.create_global_semaphore(device, worker_cores, 0)
+
+    dram = ttnn.DRAM_MEMORY_CONFIG
+    shard_dims = (0, None)  # batch sharded along cluster_axis=0, replicated cols
+    sparse = ttnn.from_torch(
+        torch.zeros(num_dispatch, total_tokens, H, dtype=torch.bfloat16),
+        device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
+        memory_config=dram,
+        mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
+    )
+    idx_scr_mem = ttnn.MemoryConfig(
+        ttnn.TensorMemoryLayout.HEIGHT_SHARDED, ttnn.BufferType.L1,
+        ttnn.ShardSpec(
+            ttnn.CoreRangeSet({ttnn.CoreRange(drain_core, drain_core)}),
+            [total_tokens, K], ttnn.ShardOrientation.ROW_MAJOR,
+        ),
+    )
+    idx = ttnn.from_torch(
+        torch.zeros(num_dispatch, total_tokens, K, dtype=torch.int32),
+        device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.uint16,
+        memory_config=idx_scr_mem,
+        mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
+    )
+    scr = ttnn.from_torch(
+        torch.zeros(num_dispatch, total_tokens, K, dtype=torch.float32),
+        device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
+        memory_config=idx_scr_mem,
+        mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
+    )
+    return dispatch_sem, combine_sem, (sparse, idx, scr)
+
+
 class ModelTTNN(LightweightModule):
     def __init__(self, device):
         self.device = device
@@ -42,53 +94,16 @@ class ModelTTNN(LightweightModule):
         MOE_COMPUTE_INTEGRATION.md."""
         import torch
 
-        H, K = 5120, 8
-        num_dispatch, total_tokens = 4, 64
-        mesh_shape = (4, 8)
-        drain_core = ttnn.CoreCoord(6, 9)
-
-        grid = device.compute_with_storage_grid_size()
-        worker_cores = ttnn.CoreRangeSet(
-            {ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(grid.x - 1, grid.y - 1))}
-        )
-        self.weights["moe_compute.dispatch_sem"] = ttnn.create_global_semaphore(
-            device, worker_cores, 0
-        )
-        self.weights["moe_compute.combine_sem"] = ttnn.create_global_semaphore(
-            device, worker_cores, 0
-        )
+        # Only the static mux CoreRangeSet is created once. The global
+        # semaphores and the dispatch prealloc are created FRESH per-forward in
+        # _make_moe_dispatch_runtime (right before the MoE), matching the
+        # standalone smoke harness, which passes. Creating them in __init__ and
+        # then running 3 dense layers + attention before the MoE let their L1
+        # state be clobbered -> the combine's barrier semaphore was stale ->
+        # moe_compute's fused combine deadlocked. (smoke passes; full model hung.)
         self.weights["moe_compute.mux_cores"] = ttnn.CoreRangeSet(
             [ttnn.CoreRange(ttnn.CoreCoord(3, 0), ttnn.CoreCoord(4, 7))]
         )
-
-        dram = ttnn.DRAM_MEMORY_CONFIG
-        shard_dims = (0, None)  # batch sharded along cluster_axis=0, replicated cols
-        sparse = ttnn.from_torch(
-            torch.zeros(num_dispatch, total_tokens, H, dtype=torch.bfloat16),
-            device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
-            memory_config=dram,
-            mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
-        )
-        idx_scr_mem = ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.HEIGHT_SHARDED, ttnn.BufferType.L1,
-            ttnn.ShardSpec(
-                ttnn.CoreRangeSet({ttnn.CoreRange(drain_core, drain_core)}),
-                [total_tokens, K], ttnn.ShardOrientation.ROW_MAJOR,
-            ),
-        )
-        idx = ttnn.from_torch(
-            torch.zeros(num_dispatch, total_tokens, K, dtype=torch.int32),
-            device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.uint16,
-            memory_config=idx_scr_mem,
-            mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
-        )
-        scr = ttnn.from_torch(
-            torch.zeros(num_dispatch, total_tokens, K, dtype=torch.float32),
-            device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
-            memory_config=idx_scr_mem,
-            mesh_mapper=ttnn.ShardTensor2dMesh(device, mesh_shape, shard_dims),
-        )
-        self.weights["moe_compute.dispatch_prealloc"] = (sparse, idx, scr)
 
     def forward(self, activations):
         args_1 = activations[0]
@@ -1318,7 +1333,9 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             fp32_dest_acc_en=True, packer_l1_acc=False,
         )
         mc_lin = self.weights["moe_compute.expert_mapping_lin"]
-        mc_prealloc = self.weights["moe_compute.dispatch_prealloc"]
+        # Fresh per-forward: semaphores + dispatch prealloc created right here so
+        # nothing clobbers their L1 state before the MoE (see smoke harness).
+        mc_dispatch_sem, mc_combine_sem, mc_prealloc = _make_moe_dispatch_runtime(self.device)
         # Dispatch inputs, per device B=16 tokens / S=1, ROW_MAJOR.
         disp_x = ttnn.to_layout(
             ttnn.reshape(post_normed, [16, 1, 1, 5120], memory_config=dram_mem),
@@ -1354,13 +1371,17 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             worker_mode=ttnn.WorkerMode.DIRECT,
             dispatch_algorithm=ttnn.DispatchAlgorithm.SPARSE_MCAST_SHORTEST_PATH,
             output_tensors=mc_prealloc,
-            cross_device_semaphore=self.weights["moe_compute.dispatch_sem"],
+            cross_device_semaphore=mc_dispatch_sem,
         )
         ttnn.deallocate(disp_x, False)
         ttnn.deallocate(disp_idx, False)
         ttnn.deallocate(disp_scores, False)
         import sys as _sys
-        print(">>> moe dispatch_metadata done", flush=True, file=_sys.stderr)
+        import os as _os
+        print(">>> moe dispatch_metadata enqueued", flush=True, file=_sys.stderr)
+        if _os.environ.get("GLM_MOE_PINPOINT") == "1":
+            ttnn.synchronize_device(self.device)
+            print(">>> SYNC after dispatch_metadata OK", flush=True, file=_sys.stderr)
 
         mc_combine_out = ttnn.moreh_full(
             shape=[8, 16, 5120], fill_value=0, device=self.device,
@@ -1373,11 +1394,13 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             layer_id=0, output_height_shard_dim=4, intermediate_size=1536,
             has_bias=False, cluster_axis=0, mux_core_range_set=self.weights["moe_compute.mux_cores"],
             optional_output_tensor=mc_combine_out,
-            optional_cross_device_semaphore=self.weights["moe_compute.combine_sem"],
-            topology=ttnn.Topology.Ring, num_links=4,
+            optional_cross_device_semaphore=mc_combine_sem,
         )
         combine_output = mc_outs[-1]  # [8, 16, 5120] per device
-        print(">>> moe_compute done", flush=True, file=_sys.stderr)
+        print(">>> moe_compute enqueued", flush=True, file=_sys.stderr)
+        if _os.environ.get("GLM_MOE_PINPOINT") == "1":
+            ttnn.synchronize_device(self.device)
+            print(">>> SYNC after moe_compute OK", flush=True, file=_sys.stderr)
         for _i in (0, 1, 2, 4):
             try:
                 ttnn.deallocate(mc_outs[_i], False)
@@ -1399,7 +1422,10 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             compute_kernel_config=mc_hifi4,
         )
         ttnn.deallocate(summed, False)
-        print(">>> moe reduce_scatter done", flush=True, file=_sys.stderr)
+        print(">>> moe reduce_scatter enqueued", flush=True, file=_sys.stderr)
+        if _os.environ.get("GLM_MOE_PINPOINT") == "1":
+            ttnn.synchronize_device(self.device)
+            print(">>> SYNC after reduce_scatter OK", flush=True, file=_sys.stderr)
         # Match the dense MLP's working all-gather exactly: reshape the
         # reduce_scattered [1,1,16,640] -> [16,640], then all_gather on dim=1
         # (all_gather dim=3 on the rank-4 tensor hangs under COL dispatch).
@@ -1410,6 +1436,10 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(mc_rs_reshaped, False)
+        print(">>> moe epilogue all_gather enqueued", flush=True, file=_sys.stderr)
+        if _os.environ.get("GLM_MOE_PINPOINT") == "1":
+            ttnn.synchronize_device(self.device)
+            print(">>> SYNC after epilogue all_gather OK", flush=True, file=_sys.stderr)
         # Shared experts
         shared_gate = ttnn.matmul(
             hidden_states,
