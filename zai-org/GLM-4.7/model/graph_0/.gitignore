@@ -1,3 +1,5 @@
 generated/
 run.out
 __pycache__/
+tensors/
+*.tensorbin

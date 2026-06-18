@@ -40,7 +40,7 @@ module @SyncTensorsGraph.2012 attributes {mhlo.cross_program_prefetches = [], mh
     %3 = stablehlo.reshape %2 : (tensor<1x16x1x151552xbf16>) -> tensor<16x1x151552xbf16> loc(#loc)
     return %3 : tensor<16x1x151552xbf16> loc(#loc)
   } loc(#loc)
-  func.func private @outlined_composite_tenstorrent.topk_indices.impl(%arg0: tensor<16x1xf32> loc(unknown)) -> tensor<16x1xi64> {
+  func.func private @outlined_composite_tenstorrent.topk_indices.impl_0(%arg0: tensor<16x1xf32> loc(unknown)) -> tensor<16x1xi64> {
     %c = stablehlo.constant dense<0> : tensor<i32> loc(#loc)
     %0 = stablehlo.broadcast_in_dim %c, dims = [] : (tensor<i32>) -> tensor<16x1xi32> loc(#loc)
     %1:2 = "stablehlo.sort"(%arg0, %0) <{dimension = 1 : i64}> ({
@@ -60,7 +60,7 @@ module @SyncTensorsGraph.2012 attributes {mhlo.cross_program_prefetches = [], mh
     %1 = stablehlo.slice %0 [0:16, 0:1, 0:2] : (tensor<16x1x160xf32>) -> tensor<16x1x2xf32> loc(#loc)
     return %1 : tensor<16x1x2xf32> loc(#loc)
   } loc(#loc)
-  func.func private @outlined_composite_tenstorrent.topk_indices.impl_0(%arg0: tensor<16x160xf32> loc(unknown)) -> tensor<16x8xi64> {
+  func.func private @outlined_composite_tenstorrent.topk_indices.impl(%arg0: tensor<16x160xf32> loc(unknown)) -> tensor<16x8xi64> {
     %0 = stablehlo.iota dim = 0 : tensor<160xi32> loc(#loc)
     %1 = stablehlo.broadcast_in_dim %0, dims = [1] : (tensor<160xi32>) -> tensor<16x160xi32> loc(#loc)
     %2:2 = "stablehlo.sort"(%arg0, %1) <{dimension = 1 : i64}> ({
