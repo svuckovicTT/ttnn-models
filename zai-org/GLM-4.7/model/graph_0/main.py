@@ -31,18 +31,9 @@ def open_device():
         # FABRIC_1D_RING is required by the fused moe_compute / dispatch_metadata
         # CCL ops (ring topology); also matches the original run-graph config.
         ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D_RING)
-    # COL dispatch axis: the fused moe_compute op hardwires its tilize cores at
-    # the (5-6, 8-9) grid corner; under the default ROW dispatch the DRAM
-    # matmul-core assignment spans the whole 8x9 grid and overlaps them
-    # ("tilize and matmul bounding boxes cannot overlap"). COL dispatch (matching
-    # the deepseek TG reference) reshapes the usable grid so they don't collide.
-    dispatch_core_config = ttnn.DispatchCoreConfig(
-        ttnn.DispatchCoreType.WORKER, ttnn.DispatchCoreAxis.COL
-    )
     device = ttnn.open_mesh_device(
         mesh_shape=ttnn.MeshShape(MESH_SHAPE),
         l1_small_size=L1_SMALL_SIZE,
-        dispatch_core_config=dispatch_core_config,
     )
     return device
 
@@ -136,16 +127,11 @@ def main():
     off for tracy runs so profiling stays lean (no CPU prefill/decode golden)."""
     import os
 
-    import sys
-
     device = open_device()
     activations = load_activations_for__main(device)
     model = ModelTTNN(device)
-    print(">>> model built; FORWARD START", flush=True, file=sys.stderr)
     outputs = model(activations)
-    print(">>> FORWARD DONE (pre-sync)", flush=True, file=sys.stderr)
     ttnn.synchronize_device(device)
-    print(">>> SYNC DONE", flush=True, file=sys.stderr)
 
     if os.environ.get("GLM_CHECK_PCC") == "1":
         import model_pt
