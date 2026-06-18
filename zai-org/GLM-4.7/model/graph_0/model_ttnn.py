@@ -310,7 +310,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(ttnn_reshape_93, False)
         print(">>> lm_head all_gather_16 (axis0) done", flush=True, file=_sys2.stderr)
@@ -323,7 +323,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(ttnn_all_gather_16, False)
         ttnn_mesh_partition_2 = ttnn.mesh_partition(
@@ -388,7 +388,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn_add_13 = ttnn.add(
             args_0,
@@ -793,7 +793,7 @@ class Glm4MoeAttention(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
                 math_approx_mode=False,
@@ -815,7 +815,7 @@ class Glm4MoeAttention(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(o_reshaped2, False)
         return attn_output, key_cache_out, value_cache_out
@@ -893,7 +893,7 @@ class Glm4MoeMLP(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
                 math_approx_mode=False,
@@ -915,7 +915,7 @@ class Glm4MoeMLP(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(rs_reshaped, False)
         return mlp_output
@@ -1047,7 +1047,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(ttnn_concat_25, False)
         ttnn_reshape_67 = ttnn.reshape(
@@ -1208,7 +1208,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(ttnn_matmul_14, False)
         ttnn_reshape_71 = ttnn.reshape(
@@ -1415,21 +1415,36 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             if _os.environ.get("GLM_MOE_PINPOINT") == "1":
                 ttnn.synchronize_device(self.device)
                 print(">>> SYNC after moe_compute(compute_only) OK", flush=True, file=_sys.stderr)
-            # PERF MODE: the fused combine deadlocks in the full model, so we run
-            # the matmul (compute_only) for device-perf measurement and feed the
-            # epilogue a placeholder so the forward completes + tracy can dump.
-            # (Values are garbage; this run is for device timing only.)
+            # CCL COMBINE (Ring), replacing the deadlocking selective_reduce_combine:
+            # take moe_compute's per-expert matmul_output (slot 4, [70,2,32,5120]
+            # core-sharded), reshape to a [k=8, tokens=16, H] view, then combine
+            # across the 4-device dispatch axis (cluster_axis=0) with a Ring
+            # all_gather + sum. This is device-perf-representative; exact PCC needs
+            # the proper per-expert-token mapping (see MOE_COMPUTE_FINDINGS.md).
+            # Move the L1-sharded matmul_output to DRAM first (its L1 shards on
+            # cores [0-0..6-9] otherwise clash with downstream CB allocations).
+            matmul_output = ttnn.to_memory_config(mc_outs[4], memory_config=dram_mem)
             for _i in range(len(mc_outs)):
                 try:
                     ttnn.deallocate(mc_outs[_i], False)
                 except Exception:
                     pass
-            combine_output = ttnn.moreh_full(
-                shape=[8, 16, 5120], fill_value=0, device=self.device,
-                layout=ttnn.Layout.ROW_MAJOR, dtype=ttnn.DataType.BFLOAT16,
-                memory_config=dram_mem,
+            mo = ttnn.reshape(matmul_output, [4480, 5120], memory_config=dram_mem)
+            ttnn.deallocate(matmul_output, False)
+            mo = ttnn.slice(mo, [0, 0], [128, 5120], [1, 1], memory_config=dram_mem)
+            mo = ttnn.reshape(mo, [8, 16, 5120], memory_config=dram_mem)
+            mo_g = ttnn.all_gather(
+                input_tensor=mo, dim=1, cluster_axis=0, subdevice_id=None,
+                memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Ring,
             )
-            mc_outs = [combine_output]
+            ttnn.deallocate(mo, False)
+            mo_g = ttnn.reshape(mo_g, [8, 4, 16, 5120], memory_config=dram_mem)
+            combine_output = ttnn.sum(mo_g, [1], False, memory_config=dram_mem, compute_kernel_config=None)
+            ttnn.deallocate(mo_g, False)
+            print(">>> CCL combine (all_gather axis0 Ring) enqueued", flush=True, file=_sys.stderr)
+            if _os.environ.get("GLM_MOE_PINPOINT") == "1":
+                ttnn.synchronize_device(self.device)
+                print(">>> SYNC after CCL combine OK", flush=True, file=_sys.stderr)
         else:
             mc_combine_out = ttnn.moreh_full(
                 shape=[8, 16, 5120], fill_value=0, device=self.device,
@@ -1467,7 +1482,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         summed = ttnn.reshape(summed, [1, 1, 16, 5120], memory_config=dram_mem)
         mc_rs = ttnn.reduce_scatter(
             input_tensor=summed, dim=3, cluster_axis=1, subdevice_id=None,
-            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear,
+            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Ring,
             compute_kernel_config=mc_hifi4,
         )
         ttnn.deallocate(summed, False)
@@ -1482,7 +1497,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         ttnn.deallocate(mc_rs, False)
         sparse_output = ttnn.all_gather(
             input_tensor=mc_rs_reshaped, dim=1, cluster_axis=1, subdevice_id=None,
-            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Linear,
+            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(mc_rs_reshaped, False)
         print(">>> moe epilogue all_gather enqueued", flush=True, file=_sys.stderr)
@@ -1546,7 +1561,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
                 math_approx_mode=False,
@@ -1568,7 +1583,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             subdevice_id=None,
             memory_config=dram_mem,
             num_links=None,
-            topology=ttnn.Topology.Linear,
+            topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(shared_rs_reshaped, False)
         # Combine sparse + shared

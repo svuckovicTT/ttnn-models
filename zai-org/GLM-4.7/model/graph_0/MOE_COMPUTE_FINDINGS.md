@@ -81,6 +81,23 @@ this win. Caveats: combine not included (it deadlocks); cross-build comparison (
 the original session). For a rigorous same-build number, profile the hand-emitted good-pcc graph
 on this build and compare.
 
+## WORKING: moe_compute(compute_only) + Ring CCL combine (no deadlock) + FULL-MODEL PERF
+The fused combine deadlocks even with all-Ring topology. The working path replaces it with
+moe_compute(compute_only) matmul + a deadlock-free Ring `all_gather(cluster_axis=0)+sum` CCL
+combine (GLM_MOE_COMPUTE_ONLY=1). Full model runs end-to-end (FORWARD DONE / SYNC DONE, no hang).
+(Gotcha: to_memory_config(matmul_output, DRAM) first — its L1 shards clash with downstream CBs.)
+
+Tracy full-model device perf (32 decode steps, moe_compute + CCL combine):
+- **Total device time: 44.46 ms / decode step.** Dominant: AllGather 12.0 ms, Tilize 9.5 ms,
+  Transpose 8.8 ms, Matmul 2.3 ms, LayerNorm 1.9 ms. moe_compute matmul ~50 us (negligible).
+- Batch 64 tokens/step -> **~1,440 tokens/s device-bound**.
+- vs hand-emitted (sparse_matmul ~58 ms/step) ~102 ms/step ~628 SPS -> **~2.3x full-model speedup**.
+
+CAVEATS: (1) CCL combine is a PERF PROXY (reshape/slice of matmul_output, not the correct
+per-expert-token combine) -> PCC NOT validated; a correct combine needs expert_token_counts +
+the dispatch permutation (see validate_matmul in test_moe_compute_6U.py). (2) DEVICE time, un-traced
+-> wall-clock is host-bound; needs metal trace to realize. (3) hand-emitted comparison is cross-build.
+
 ## Run env
 docker `tt-xla-ird-mvasiljev`; `USE_TORCH_XLA=0 ACCELERATE_USE_XLA=false` required (else
 transformers→accelerate→torch_xla→libTTMLIRRuntime.so ABI crash vs the rebuilt tt-metal).
