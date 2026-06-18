@@ -428,89 +428,6 @@ class Glm4MoeRotaryEmbedding(LightweightModule):
         return ttnn_typecast_31, ttnn_typecast_32
 
 
-def _kv_cache_distribute_p2p(cache_input, num_rows=4, num_cols=8):
-    """Distribute KV cache across mesh using point-to-point communication.
-
-    This replaces ~2000 lines of unrolled P2P calls per cache tensor.
-    The pattern is: reshape to [16, 8, 1, 128, 128], slice into 8 chunks,
-    assign copies for each sender, then chain P2P calls across all rows
-    and columns, concat the 8 chain outputs, and slice+reshape to get
-    the final [16, 1, 128, 128] cache output.
-    """
-    dram_mem = ttnn.MemoryConfig(
-        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-    )
-    reshaped = ttnn.reshape(cache_input, [16, 8, 1, 128, 128], memory_config=dram_mem)
-    ttnn.deallocate(cache_input, False)
-    # Slice into 8 chunks along dim 1
-    slices = []
-    for i in range(num_cols):
-        s = ttnn.slice(
-            reshaped,
-            [0, i, 0, 0, 0],
-            [16, i + 1, 1, 128, 128],
-            [1, 1, 1, 1, 1],
-            memory_config=dram_mem,
-        )
-        slices.append(s)
-    ttnn.deallocate(reshaped, False)
-    # Create initial assign copies for each sender column
-    assigns = []
-    for i in range(num_cols):
-        a = ttnn.assign(
-            slices[i],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        assigns.append(a)
-    # Chain outputs per sender column - tracks the last P2P output for each sender
-    chain_outputs = list(assigns)  # Start with assign copies
-    # Process all rows and sender columns
-    for row in range(num_rows):
-        for sender_col in range(num_cols):
-            # Get receivers: all columns except sender, in ascending order
-            receivers = [d for d in range(num_cols) if d != sender_col]
-            for receiver_col in receivers:
-                prev_output = chain_outputs[sender_col]
-                new_output = ttnn.point_to_point(
-                    slices[receiver_col],
-                    sender_coord=ttnn.MeshCoordinate((row, sender_col)),
-                    receiver_coord=ttnn.MeshCoordinate((row, receiver_col)),
-                    topology=ttnn.Topology.Linear,
-                    output_tensor=prev_output,
-                )
-                ttnn.deallocate(prev_output, False)
-                chain_outputs[sender_col] = new_output
-    # Deallocate slices after all P2P calls complete
-    for i in range(num_cols):
-        ttnn.deallocate(slices[i], False)
-    # Concat the 8 chain outputs along dim 1
-    concat_result = ttnn.concat(
-        chain_outputs,
-        1,
-        memory_config=dram_mem,
-    )
-    # Deallocate chain outputs in reverse order
-    for i in range(num_cols - 1, -1, -1):
-        ttnn.deallocate(chain_outputs[i], False)
-    # Slice and reshape to final cache shape
-    slice_result = ttnn.slice(
-        concat_result,
-        [0, 0, 0, 0, 0],
-        [16, 1, 1, 128, 128],
-        [1, 1, 1, 1, 1],
-        memory_config=dram_mem,
-    )
-    ttnn.deallocate(concat_result, False)
-    cache_out = ttnn.reshape(
-        slice_result,
-        [16, 1, 128, 128],
-        memory_config=dram_mem,
-    )
-    ttnn.deallocate(slice_result, False)
-    return cache_out
-
-
 class Glm4MoeAttention(LightweightModule):
     def __init__(self, device, weights, layer_idx):
         self.device = device
@@ -675,8 +592,9 @@ class Glm4MoeAttention(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(k_combined, False)
-        # Key cache distribution via P2P
-        key_cache_out = _kv_cache_distribute_p2p(key_cache_input)
+        # KV cache is head-sharded across the mesh columns, so each device owns
+        # its KV head's cache directly -- no point-to-point redistribution needed.
+        key_cache_out = key_cache_input
         # Paged update cache (key)
         k_to_mem = ttnn.to_memory_config(
             k_reshaped,
@@ -704,8 +622,7 @@ class Glm4MoeAttention(LightweightModule):
             page_table=None,
         )
         ttnn.deallocate(k_to_mem, False)
-        # Value cache distribution via P2P
-        value_cache_out = _kv_cache_distribute_p2p(value_cache_input)
+        value_cache_out = value_cache_input
         # Paged update cache (value)
         v_to_mem = ttnn.to_memory_config(
             v_reshaped,
@@ -1549,14 +1466,14 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         )
         ttnn.deallocate(ttnn_typecast_52, False)
         sparse_matmul_config = ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-            compute_with_storage_grid_size=ttnn.CoreCoord(6, 2),
+            compute_with_storage_grid_size=ttnn.CoreCoord(8, 9),
             in0_block_w=1,
             out_subblock_h=1,
             out_subblock_w=1,
             out_block_h=1,
             out_block_w=1,
             per_core_M=1,
-            per_core_N=4,
+            per_core_N=6,
             fuse_batch=False,
             fused_activation=None,
             mcast_in0=True,
@@ -1631,14 +1548,14 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             input_tensor_b=self.weights[f"{layer_prefix}.mlp.experts.down_proj.reshaped"],
             sparsity=ttnn_to_device_76,
             program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                compute_with_storage_grid_size=ttnn.CoreCoord(6, 2),
+                compute_with_storage_grid_size=ttnn.CoreCoord(8, 9),
                 in0_block_w=1,
                 out_subblock_h=1,
                 out_subblock_w=1,
                 out_block_h=1,
                 out_block_w=1,
                 per_core_M=1,
-                per_core_N=14,
+                per_core_N=20,
                 fuse_batch=False,
                 fused_activation=None,
                 mcast_in0=True,

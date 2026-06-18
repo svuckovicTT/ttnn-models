@@ -161,24 +161,20 @@ def load_weights_for__main_from_state_dict(device):
         | {f"model.model.layers.{i}.mlp.down_proj.weight" for i in range(3)}
         | {"model.model.layers.3.mlp.shared_experts.down_proj.weight"}
     )
-    # Experts are sharded across the whole mesh (one block of experts per device)
-    # in column-major device order, and stored transposed on their last two dims.
+    # Experts are sharded across the whole mesh (one contiguous block of experts
+    # per device) in row-major device order, and stored transposed on their last
+    # two dims.
     EXPERTS = {
         f"model.model.layers.3.mlp.mlp.experts.{p}"
         for p in ["gate_proj", "up_proj", "down_proj"]
     }
 
     def _arrange_experts(t):
-        # (num_experts, A, B) -> transpose each expert -> reorder expert blocks
-        # into physical (row-major) device order so a 1-D shard over the mesh
-        # reproduces the codegen's column-major expert layout.
-        t = t.transpose(-1, -2).contiguous()
-        per = t.shape[0] // (MESH_ROWS * MESH_COLS)
-        blocks = []
-        for p in range(MESH_ROWS * MESH_COLS):
-            block = (p % MESH_COLS) * MESH_ROWS + (p // MESH_COLS)
-            blocks.append(t[per * block : per * block + per])
-        return torch.cat(blocks, dim=0)
+        # (num_experts, A, B) -> transpose each expert's last two dims. Expert
+        # blocks stay in natural order, so a 1-D ShardTensorToMesh(dim 0) lands
+        # expert block b on device b -- the ("batch", "model") layout the
+        # all_to_all dispatch/combine expects (see expert_mapping below).
+        return t.transpose(-1, -2).contiguous()
 
     weights = {}
     for key in ALL_WEIGHTS:
@@ -189,16 +185,14 @@ def load_weights_for__main_from_state_dict(device):
             # device. Fully determined by the model config and mesh, so we build
             # it at runtime instead of carrying a serialized constant.
             #
-            # The physical expert placement is column-major: _arrange_experts()
-            # reorders blocks so the 1-D ShardTensorToMesh(dim 0) lands expert
-            # block B on device d = MESH_COLS*r + c where c*MESH_ROWS + r == B.
-            # The dispatch/combine must therefore route expert e (block
-            # e // experts_per_device) to that same device. Routing row-major
-            # (device e // experts_per_device), as the old MoE sharding did,
-            # sends tokens to the device holding a DIFFERENT block of experts and
-            # caps decode PCC (~0.86 here). See tt-xla issue 5096: the correct
-            # ("batch","model") layout = contiguous experts per device; we
-            # reproduce it by inverting the column-major placement below.
+            # Expert placement and routing use the ("batch", "model") layout:
+            # expert e lives on device e // experts_per_device (block b on device
+            # b). _arrange_experts() places the weights to match, so the
+            # all_to_all dispatch/combine (cluster_axis=0) deliver each token to
+            # the device that actually holds its expert. The earlier transposed
+            # ("model", "batch") layout sent tokens to the device holding a
+            # DIFFERENT block of experts and capped decode PCC (~0.86-0.89 here).
+            # See tt-xla issue 5096.
             num_experts = model.config.n_routed_experts
             num_devices = MESH_ROWS * MESH_COLS
             assert num_experts % num_devices == 0, (
@@ -206,10 +200,7 @@ def load_weights_for__main_from_state_dict(device):
                 f"across devices ({num_devices})"
             )
             experts_per_device = num_experts // num_devices
-            block = torch.arange(num_experts) // experts_per_device
-            row = block % MESH_ROWS
-            col = block // MESH_ROWS
-            device_of_expert = row * MESH_COLS + col
+            device_of_expert = torch.arange(num_experts) // experts_per_device
             expert_mapping = torch.zeros(
                 1, 1, num_experts, num_devices, dtype=torch.int32
             )
