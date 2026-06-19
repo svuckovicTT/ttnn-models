@@ -146,9 +146,17 @@ def run_consteval(weights, device):
             device,
         )
 
+    import dram_matmul
+
     for i in range(4):
         key = f"model.model.layers.{i}.self_attn.o_proj.weight"
-        weights[f"{key}.t"] = _transpose_weight_bf8b(weights[key], device)
+        wt = _transpose_weight_bf8b(weights[key], device)
+        # DRAM width-shard the o_proj weight (k=1536, n=5120) so the decode matmul
+        # can read it across all 12 DRAM banks in parallel (consteval -> no perf cost).
+        weights[f"{key}.t"] = ttnn.to_memory_config(
+            wt, dram_matmul.weight_dram_sharded_config(device, 1536, 5120)
+        )
+        ttnn.deallocate(wt, False)
 
     for i in range(3):
         for proj in ["gate_proj", "up_proj", "down_proj"]:

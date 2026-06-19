@@ -660,18 +660,30 @@ class Glm4MoeAttention(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(sdpa_output, False)
-        o_proj_output = ttnn.matmul(
+        # DRAM-sharded o_proj matmul: width-shard the [16,1536] activation into L1
+        # across the compute grid, matmul against the DRAM-width-sharded weight, then
+        # bring the [16,5120] output back to DRAM-interleaved for the CCL path below.
+        import dram_matmul
+        o_rows, o_cols, o_cores = dram_matmul.compute_grid(1536, 5120)
+        sdpa_sharded = ttnn.to_memory_config(
             sdpa_reshaped,
+            dram_matmul.in0_l1_width_sharded_config(16, 1536, o_rows, o_cols),
+        )
+        ttnn.deallocate(sdpa_reshaped, False)
+        o_proj_sharded = ttnn.matmul(
+            sdpa_sharded,
             self.weights[f"{layer_prefix}.o_proj.weight.t"],
             transpose_a=False,
             transpose_b=False,
-            memory_config=dram_mem,
+            memory_config=dram_matmul.out_l1_width_sharded_config(16, 5120, o_rows, o_cols),
             dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
+            program_config=dram_matmul.program_config(16, 1536, 5120, o_cores),
             activation=None,
             compute_kernel_config=None,
         )
-        ttnn.deallocate(sdpa_reshaped, False)
+        ttnn.deallocate(sdpa_sharded, False)
+        o_proj_output = ttnn.to_memory_config(o_proj_sharded, dram_mem)
+        ttnn.deallocate(o_proj_sharded, False)
         o_reshaped = ttnn.reshape(
             o_proj_output,
             [1, 1, 16, 5120],
