@@ -1,0 +1,7 @@
+Done. Three changes made:
+
+1. **`main.py`** — Updated import to use `load_weights_for__main_from_state_dict as load_weights_for__main` so all existing callers work unchanged.
+2. **`params.py`** — Removed the old `load_weights_for__main()` function (and its `_main_weights` global), and removed the now-unused `utils` import.
+3. **`verify_weights.py`** — Deleted.
+
+--- Time taken: 43.1s | session: a43c5738-355d-48fc-a55e-ebedd2618476 ---

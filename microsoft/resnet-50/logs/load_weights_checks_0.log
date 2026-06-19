@@ -1,0 +1,397 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
+plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
+collected 1 item
+
+main.py Device: MeshDevice(1x1 grid, 1 devices)
+Input shape: torch.Size([8, 3, 224, 224])
+Input dtype: torch.bfloat16
+Input shape: torch.Size([8, 3, 224, 224])
+Input dtype: torch.bfloat16
+
+PCC: 0.972656
+.
+
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 1 passed, 2 warnings in 21.11s ========================
+2026-06-19 22:07:56.486 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 9206.49it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 10 instances!
+ - leaked instance 0x7fc11044d7c8 of type "ttnn._ttnn.operations.normalization.SoftmaxDefaultProgramConfig"
+ - leaked instance 0x7fc1107377c8 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7fc110736c88 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7fc1107368c8 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7fc110737708 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7fc110736e08 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7fc110737888 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7fc11044d888 of type "ttnn._ttnn.operations.normalization.SoftmaxDefaultProgramConfig"
+ - leaked instance 0x7fc11044d828 of type "ttnn._ttnn.operations.normalization.SoftmaxDefaultProgramConfig"
+ - leaked instance 0x7fc110736d48 of type "ttnn._ttnn.tensor.MemoryConfig"
+nanobind: leaked 478 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - leaked type "ttnn._ttnn.operations.moreh.moreh_bmm_backward_t"
+ - leaked type "ttnn._ttnn.operations.unary.ltz_t"
+ - ... skipped remainder
+nanobind: leaked 1873 functions!
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
+plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
+collected 1 item
+
+verify_weights.py   OK: classifier.1.bias
+  OK: classifier.1.weight
+  OK: resnet.embedder.embedder.convolution.weight
+  OK: resnet.embedder.embedder.normalization.bias
+  OK: resnet.embedder.embedder.normalization.running_mean
+  OK: resnet.embedder.embedder.normalization.running_var
+  OK: resnet.embedder.embedder.normalization.weight
+  OK: resnet.encoder.stages.0.layers.0.layer.0.convolution.weight
+  OK: resnet.encoder.stages.0.layers.0.layer.0.normalization.bias
+  OK: resnet.encoder.stages.0.layers.0.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.0.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.0.layer.0.normalization.weight
+  OK: resnet.encoder.stages.0.layers.0.layer.1.convolution.weight
+  OK: resnet.encoder.stages.0.layers.0.layer.1.normalization.bias
+  OK: resnet.encoder.stages.0.layers.0.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.0.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.0.layer.1.normalization.weight
+  OK: resnet.encoder.stages.0.layers.0.layer.2.convolution.weight
+  OK: resnet.encoder.stages.0.layers.0.layer.2.normalization.bias
+  OK: resnet.encoder.stages.0.layers.0.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.0.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.0.layer.2.normalization.weight
+  OK: resnet.encoder.stages.0.layers.0.shortcut.convolution.weight
+  OK: resnet.encoder.stages.0.layers.0.shortcut.normalization.bias
+  OK: resnet.encoder.stages.0.layers.0.shortcut.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.0.shortcut.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.0.shortcut.normalization.weight
+  OK: resnet.encoder.stages.0.layers.1.layer.0.convolution.weight
+  OK: resnet.encoder.stages.0.layers.1.layer.0.normalization.bias
+  OK: resnet.encoder.stages.0.layers.1.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.1.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.1.layer.0.normalization.weight
+  OK: resnet.encoder.stages.0.layers.1.layer.1.convolution.weight
+  OK: resnet.encoder.stages.0.layers.1.layer.1.normalization.bias
+  OK: resnet.encoder.stages.0.layers.1.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.1.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.1.layer.1.normalization.weight
+  OK: resnet.encoder.stages.0.layers.1.layer.2.convolution.weight
+  OK: resnet.encoder.stages.0.layers.1.layer.2.normalization.bias
+  OK: resnet.encoder.stages.0.layers.1.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.1.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.1.layer.2.normalization.weight
+  OK: resnet.encoder.stages.0.layers.2.layer.0.convolution.weight
+  OK: resnet.encoder.stages.0.layers.2.layer.0.normalization.bias
+  OK: resnet.encoder.stages.0.layers.2.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.2.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.2.layer.0.normalization.weight
+  OK: resnet.encoder.stages.0.layers.2.layer.1.convolution.weight
+  OK: resnet.encoder.stages.0.layers.2.layer.1.normalization.bias
+  OK: resnet.encoder.stages.0.layers.2.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.2.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.2.layer.1.normalization.weight
+  OK: resnet.encoder.stages.0.layers.2.layer.2.convolution.weight
+  OK: resnet.encoder.stages.0.layers.2.layer.2.normalization.bias
+  OK: resnet.encoder.stages.0.layers.2.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.0.layers.2.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.0.layers.2.layer.2.normalization.weight
+  OK: resnet.encoder.stages.1.layers.0.layer.0.convolution.weight
+  OK: resnet.encoder.stages.1.layers.0.layer.0.normalization.bias
+  OK: resnet.encoder.stages.1.layers.0.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.0.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.0.layer.0.normalization.weight
+  OK: resnet.encoder.stages.1.layers.0.layer.1.convolution.weight
+  OK: resnet.encoder.stages.1.layers.0.layer.1.normalization.bias
+  OK: resnet.encoder.stages.1.layers.0.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.0.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.0.layer.1.normalization.weight
+  OK: resnet.encoder.stages.1.layers.0.layer.2.convolution.weight
+  OK: resnet.encoder.stages.1.layers.0.layer.2.normalization.bias
+  OK: resnet.encoder.stages.1.layers.0.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.0.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.0.layer.2.normalization.weight
+  OK: resnet.encoder.stages.1.layers.0.shortcut.convolution.weight
+  OK: resnet.encoder.stages.1.layers.0.shortcut.normalization.bias
+  OK: resnet.encoder.stages.1.layers.0.shortcut.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.0.shortcut.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.0.shortcut.normalization.weight
+  OK: resnet.encoder.stages.1.layers.1.layer.0.convolution.weight
+  OK: resnet.encoder.stages.1.layers.1.layer.0.normalization.bias
+  OK: resnet.encoder.stages.1.layers.1.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.1.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.1.layer.0.normalization.weight
+  OK: resnet.encoder.stages.1.layers.1.layer.1.convolution.weight
+  OK: resnet.encoder.stages.1.layers.1.layer.1.normalization.bias
+  OK: resnet.encoder.stages.1.layers.1.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.1.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.1.layer.1.normalization.weight
+  OK: resnet.encoder.stages.1.layers.1.layer.2.convolution.weight
+  OK: resnet.encoder.stages.1.layers.1.layer.2.normalization.bias
+  OK: resnet.encoder.stages.1.layers.1.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.1.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.1.layer.2.normalization.weight
+  OK: resnet.encoder.stages.1.layers.2.layer.0.convolution.weight
+  OK: resnet.encoder.stages.1.layers.2.layer.0.normalization.bias
+  OK: resnet.encoder.stages.1.layers.2.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.2.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.2.layer.0.normalization.weight
+  OK: resnet.encoder.stages.1.layers.2.layer.1.convolution.weight
+  OK: resnet.encoder.stages.1.layers.2.layer.1.normalization.bias
+  OK: resnet.encoder.stages.1.layers.2.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.2.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.2.layer.1.normalization.weight
+  OK: resnet.encoder.stages.1.layers.2.layer.2.convolution.weight
+  OK: resnet.encoder.stages.1.layers.2.layer.2.normalization.bias
+  OK: resnet.encoder.stages.1.layers.2.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.2.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.2.layer.2.normalization.weight
+  OK: resnet.encoder.stages.1.layers.3.layer.0.convolution.weight
+  OK: resnet.encoder.stages.1.layers.3.layer.0.normalization.bias
+  OK: resnet.encoder.stages.1.layers.3.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.3.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.3.layer.0.normalization.weight
+  OK: resnet.encoder.stages.1.layers.3.layer.1.convolution.weight
+  OK: resnet.encoder.stages.1.layers.3.layer.1.normalization.bias
+  OK: resnet.encoder.stages.1.layers.3.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.3.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.3.layer.1.normalization.weight
+  OK: resnet.encoder.stages.1.layers.3.layer.2.convolution.weight
+  OK: resnet.encoder.stages.1.layers.3.layer.2.normalization.bias
+  OK: resnet.encoder.stages.1.layers.3.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.1.layers.3.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.1.layers.3.layer.2.normalization.weight
+  OK: resnet.encoder.stages.2.layers.0.layer.0.convolution.weight
+  OK: resnet.encoder.stages.2.layers.0.layer.0.normalization.bias
+  OK: resnet.encoder.stages.2.layers.0.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.0.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.0.layer.0.normalization.weight
+  OK: resnet.encoder.stages.2.layers.0.layer.1.convolution.weight
+  OK: resnet.encoder.stages.2.layers.0.layer.1.normalization.bias
+  OK: resnet.encoder.stages.2.layers.0.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.0.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.0.layer.1.normalization.weight
+  OK: resnet.encoder.stages.2.layers.0.layer.2.convolution.weight
+  OK: resnet.encoder.stages.2.layers.0.layer.2.normalization.bias
+  OK: resnet.encoder.stages.2.layers.0.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.0.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.0.layer.2.normalization.weight
+  OK: resnet.encoder.stages.2.layers.0.shortcut.convolution.weight
+  OK: resnet.encoder.stages.2.layers.0.shortcut.normalization.bias
+  OK: resnet.encoder.stages.2.layers.0.shortcut.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.0.shortcut.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.0.shortcut.normalization.weight
+  OK: resnet.encoder.stages.2.layers.1.layer.0.convolution.weight
+  OK: resnet.encoder.stages.2.layers.1.layer.0.normalization.bias
+  OK: resnet.encoder.stages.2.layers.1.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.1.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.1.layer.0.normalization.weight
+  OK: resnet.encoder.stages.2.layers.1.layer.1.convolution.weight
+  OK: resnet.encoder.stages.2.layers.1.layer.1.normalization.bias
+  OK: resnet.encoder.stages.2.layers.1.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.1.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.1.layer.1.normalization.weight
+  OK: resnet.encoder.stages.2.layers.1.layer.2.convolution.weight
+  OK: resnet.encoder.stages.2.layers.1.layer.2.normalization.bias
+  OK: resnet.encoder.stages.2.layers.1.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.1.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.1.layer.2.normalization.weight
+  OK: resnet.encoder.stages.2.layers.2.layer.0.convolution.weight
+  OK: resnet.encoder.stages.2.layers.2.layer.0.normalization.bias
+  OK: resnet.encoder.stages.2.layers.2.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.2.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.2.layer.0.normalization.weight
+  OK: resnet.encoder.stages.2.layers.2.layer.1.convolution.weight
+  OK: resnet.encoder.stages.2.layers.2.layer.1.normalization.bias
+  OK: resnet.encoder.stages.2.layers.2.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.2.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.2.layer.1.normalization.weight
+  OK: resnet.encoder.stages.2.layers.2.layer.2.convolution.weight
+  OK: resnet.encoder.stages.2.layers.2.layer.2.normalization.bias
+  OK: resnet.encoder.stages.2.layers.2.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.2.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.2.layer.2.normalization.weight
+  OK: resnet.encoder.stages.2.layers.3.layer.0.convolution.weight
+  OK: resnet.encoder.stages.2.layers.3.layer.0.normalization.bias
+  OK: resnet.encoder.stages.2.layers.3.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.3.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.3.layer.0.normalization.weight
+  OK: resnet.encoder.stages.2.layers.3.layer.1.convolution.weight
+  OK: resnet.encoder.stages.2.layers.3.layer.1.normalization.bias
+  OK: resnet.encoder.stages.2.layers.3.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.3.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.3.layer.1.normalization.weight
+  OK: resnet.encoder.stages.2.layers.3.layer.2.convolution.weight
+  OK: resnet.encoder.stages.2.layers.3.layer.2.normalization.bias
+  OK: resnet.encoder.stages.2.layers.3.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.3.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.3.layer.2.normalization.weight
+  OK: resnet.encoder.stages.2.layers.4.layer.0.convolution.weight
+  OK: resnet.encoder.stages.2.layers.4.layer.0.normalization.bias
+  OK: resnet.encoder.stages.2.layers.4.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.4.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.4.layer.0.normalization.weight
+  OK: resnet.encoder.stages.2.layers.4.layer.1.convolution.weight
+  OK: resnet.encoder.stages.2.layers.4.layer.1.normalization.bias
+  OK: resnet.encoder.stages.2.layers.4.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.4.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.4.layer.1.normalization.weight
+  OK: resnet.encoder.stages.2.layers.4.layer.2.convolution.weight
+  OK: resnet.encoder.stages.2.layers.4.layer.2.normalization.bias
+  OK: resnet.encoder.stages.2.layers.4.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.4.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.4.layer.2.normalization.weight
+  OK: resnet.encoder.stages.2.layers.5.layer.0.convolution.weight
+  OK: resnet.encoder.stages.2.layers.5.layer.0.normalization.bias
+  OK: resnet.encoder.stages.2.layers.5.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.5.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.5.layer.0.normalization.weight
+  OK: resnet.encoder.stages.2.layers.5.layer.1.convolution.weight
+  OK: resnet.encoder.stages.2.layers.5.layer.1.normalization.bias
+  OK: resnet.encoder.stages.2.layers.5.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.5.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.5.layer.1.normalization.weight
+  OK: resnet.encoder.stages.2.layers.5.layer.2.convolution.weight
+  OK: resnet.encoder.stages.2.layers.5.layer.2.normalization.bias
+  OK: resnet.encoder.stages.2.layers.5.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.2.layers.5.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.2.layers.5.layer.2.normalization.weight
+  OK: resnet.encoder.stages.3.layers.0.layer.0.convolution.weight
+  OK: resnet.encoder.stages.3.layers.0.layer.0.normalization.bias
+  OK: resnet.encoder.stages.3.layers.0.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.0.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.0.layer.0.normalization.weight
+  OK: resnet.encoder.stages.3.layers.0.layer.1.convolution.weight
+  OK: resnet.encoder.stages.3.layers.0.layer.1.normalization.bias
+  OK: resnet.encoder.stages.3.layers.0.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.0.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.0.layer.1.normalization.weight
+  OK: resnet.encoder.stages.3.layers.0.layer.2.convolution.weight
+  OK: resnet.encoder.stages.3.layers.0.layer.2.normalization.bias
+  OK: resnet.encoder.stages.3.layers.0.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.0.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.0.layer.2.normalization.weight
+  OK: resnet.encoder.stages.3.layers.0.shortcut.convolution.weight
+  OK: resnet.encoder.stages.3.layers.0.shortcut.normalization.bias
+  OK: resnet.encoder.stages.3.layers.0.shortcut.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.0.shortcut.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.0.shortcut.normalization.weight
+  OK: resnet.encoder.stages.3.layers.1.layer.0.convolution.weight
+  OK: resnet.encoder.stages.3.layers.1.layer.0.normalization.bias
+  OK: resnet.encoder.stages.3.layers.1.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.1.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.1.layer.0.normalization.weight
+  OK: resnet.encoder.stages.3.layers.1.layer.1.convolution.weight
+  OK: resnet.encoder.stages.3.layers.1.layer.1.normalization.bias
+  OK: resnet.encoder.stages.3.layers.1.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.1.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.1.layer.1.normalization.weight
+  OK: resnet.encoder.stages.3.layers.1.layer.2.convolution.weight
+  OK: resnet.encoder.stages.3.layers.1.layer.2.normalization.bias
+  OK: resnet.encoder.stages.3.layers.1.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.1.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.1.layer.2.normalization.weight
+  OK: resnet.encoder.stages.3.layers.2.layer.0.convolution.weight
+  OK: resnet.encoder.stages.3.layers.2.layer.0.normalization.bias
+  OK: resnet.encoder.stages.3.layers.2.layer.0.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.2.layer.0.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.2.layer.0.normalization.weight
+  OK: resnet.encoder.stages.3.layers.2.layer.1.convolution.weight
+  OK: resnet.encoder.stages.3.layers.2.layer.1.normalization.bias
+  OK: resnet.encoder.stages.3.layers.2.layer.1.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.2.layer.1.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.2.layer.1.normalization.weight
+  OK: resnet.encoder.stages.3.layers.2.layer.2.convolution.weight
+  OK: resnet.encoder.stages.3.layers.2.layer.2.normalization.bias
+  OK: resnet.encoder.stages.3.layers.2.layer.2.normalization.running_mean
+  OK: resnet.encoder.stages.3.layers.2.layer.2.normalization.running_var
+  OK: resnet.encoder.stages.3.layers.2.layer.2.normalization.weight
+All 267 weights match!
+.
+
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 1 passed, 2 warnings in 7.43s =========================
+2026-06-19 22:08:20.365 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 10018.57it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 10 instances!
+ - leaked instance 0x7feb4120e808 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7feb4120f7c8 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7feb40f21788 of type "ttnn._ttnn.operations.normalization.SoftmaxDefaultProgramConfig"
+ - leaked instance 0x7feb40f21728 of type "ttnn._ttnn.operations.normalization.SoftmaxDefaultProgramConfig"
+ - leaked instance 0x7feb4120f708 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7feb4120ec88 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7feb40f216c8 of type "ttnn._ttnn.operations.normalization.SoftmaxDefaultProgramConfig"
+ - leaked instance 0x7feb4120ebc8 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7feb4120f648 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x7feb4120ed48 of type "ttnn._ttnn.tensor.MemoryConfig"
+nanobind: leaked 478 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - leaked type "ttnn._ttnn.operations.moreh.moreh_bmm_backward_t"
+ - leaked type "ttnn._ttnn.operations.unary.ltz_t"
+ - ... skipped remainder
+nanobind: leaked 1873 functions!
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
