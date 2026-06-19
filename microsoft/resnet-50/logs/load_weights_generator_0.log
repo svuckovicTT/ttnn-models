@@ -1,0 +1,9 @@
+All files are in order. Here's a summary of what was done:
+
+1. **Created `params.py`** — Contains `ALL_WEIGHTS` (267 name→file mappings), `load_weights_for__main()` (loads from disk tensorbin files with ROW_MAJOR/BFLOAT16/no device), and `load_weights_for__main_from_state_dict()` (loads from PyTorch model state_dict with safe buffer inclusion, converts via `ttnn.from_torch` → `ttnn.to_layout` → `ttnn.to_dtype`).
+
+2. **Updated `main.py`** — Removed the old `_main_weights` global and 2664-line `load_weights_for__main()` function. Added `from params import load_weights_for__main` import. All callers (`main()` and `test_main()`) continue working unchanged.
+
+3. **Created `verify_weights.py`** — Contains `test_verify_weights()` pytest function that loads weights both ways, asserts key sets match, and compares tensor values element-by-element with `torch.equal`.
+
+--- Time taken: 343.2s | session: a871ba10-2b8a-43ef-b68c-ba13f4b427dc ---

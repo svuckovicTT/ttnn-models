@@ -1,0 +1,3083 @@
+diff --git a/microsoft/resnet-50/logs/implement_pytest_evaluator_0.log b/microsoft/resnet-50/logs/implement_pytest_evaluator_0.log
+new file mode 100644
+index 0000000..a737d7c
+--- /dev/null
++++ b/microsoft/resnet-50/logs/implement_pytest_evaluator_0.log
+@@ -0,0 +1,7 @@
++{
++  "is_approved": true,
++  "failed_criteria": [],
++  "reasoning": "The Generator correctly implemented test_main() in main.py. The exact_pcc value (0.97265625) matches xla.py. The TTNN input conversion mirrors load_activations_for__main() exactly (BFLOAT16, ROW_MAJOR, DRAM INTERLEAVED). The input is wrapped in a list as _main() expects. Weights are loaded with load_weights_for__main(). Output is converted back to torch before calculate_pcc(). The assert uses equality (not >=), print uses 6 decimal places, and model_pt.py was not modified. The test passes per the updated log."
++}
++
++--- Time taken: 72.5s ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/load_weights_generator_0.log b/microsoft/resnet-50/logs/load_weights_generator_0.log
+new file mode 100644
+index 0000000..c1f0398
+--- /dev/null
++++ b/microsoft/resnet-50/logs/load_weights_generator_0.log
+@@ -0,0 +1,9 @@
++All files are in order. Here's a summary of what was done:
++
++1. **Created `params.py`** — Contains `ALL_WEIGHTS` (267 name→file mappings), `load_weights_for__main()` (loads from disk tensorbin files with ROW_MAJOR/BFLOAT16/no device), and `load_weights_for__main_from_state_dict()` (loads from PyTorch model state_dict with safe buffer inclusion, converts via `ttnn.from_torch` → `ttnn.to_layout` → `ttnn.to_dtype`).
++
++2. **Updated `main.py`** — Removed the old `_main_weights` global and 2664-line `load_weights_for__main()` function. Added `from params import load_weights_for__main` import. All callers (`main()` and `test_main()`) continue working unchanged.
++
++3. **Created `verify_weights.py`** — Contains `test_verify_weights()` pytest function that loads weights both ways, asserts key sets match, and compares tensor values element-by-element with `torch.equal`.
++
++--- Time taken: 343.2s | session: a871ba10-2b8a-43ef-b68c-ba13f4b427dc ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 84a9612..8c6ed04 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -4,6 +4,7 @@ import utils
+ import model_pt
+ from consteval import consteval__main
+ from utils import calculate_pcc
++from params import load_weights_for__main
+ 
+ ce_cache__main = {}
+ 
+@@ -3055,2676 +3056,6 @@ def load_activations_for__main():
+     return [utils_load_tensor_0]
+ 
+ 
+-_main_weights = {}
+-
+-
+-def load_weights_for__main():
+-    global _main_weights
+-    utils_load_tensor_1 = utils.load_tensor(
+-        "./tensors/arg0.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["classifier.1.bias"] = utils_load_tensor_1
+-    utils_load_tensor_2 = utils.load_tensor(
+-        "./tensors/arg1.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["classifier.1.weight"] = utils_load_tensor_2
+-    utils_load_tensor_3 = utils.load_tensor(
+-        "./tensors/arg2.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.shortcut.normalization.running_var"
+-    ] = utils_load_tensor_3
+-    utils_load_tensor_4 = utils.load_tensor(
+-        "./tensors/arg3.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.shortcut.normalization.running_mean"
+-    ] = utils_load_tensor_4
+-    utils_load_tensor_5 = utils.load_tensor(
+-        "./tensors/arg4.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.shortcut.normalization.bias"] = (
+-        utils_load_tensor_5
+-    )
+-    utils_load_tensor_6 = utils.load_tensor(
+-        "./tensors/arg5.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.shortcut.normalization.weight"] = (
+-        utils_load_tensor_6
+-    )
+-    utils_load_tensor_7 = utils.load_tensor(
+-        "./tensors/arg6.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.shortcut.convolution.weight"] = (
+-        utils_load_tensor_7
+-    )
+-    utils_load_tensor_8 = utils.load_tensor(
+-        "./tensors/arg7.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.shortcut.normalization.running_var"
+-    ] = utils_load_tensor_8
+-    utils_load_tensor_9 = utils.load_tensor(
+-        "./tensors/arg8.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.shortcut.normalization.running_mean"
+-    ] = utils_load_tensor_9
+-    utils_load_tensor_10 = utils.load_tensor(
+-        "./tensors/arg9.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.shortcut.normalization.bias"] = (
+-        utils_load_tensor_10
+-    )
+-    utils_load_tensor_11 = utils.load_tensor(
+-        "./tensors/arg10.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.shortcut.normalization.weight"] = (
+-        utils_load_tensor_11
+-    )
+-    utils_load_tensor_12 = utils.load_tensor(
+-        "./tensors/arg11.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.shortcut.convolution.weight"] = (
+-        utils_load_tensor_12
+-    )
+-    utils_load_tensor_13 = utils.load_tensor(
+-        "./tensors/arg12.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.shortcut.normalization.running_var"
+-    ] = utils_load_tensor_13
+-    utils_load_tensor_14 = utils.load_tensor(
+-        "./tensors/arg13.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.shortcut.normalization.running_mean"
+-    ] = utils_load_tensor_14
+-    utils_load_tensor_15 = utils.load_tensor(
+-        "./tensors/arg14.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.shortcut.normalization.bias"] = (
+-        utils_load_tensor_15
+-    )
+-    utils_load_tensor_16 = utils.load_tensor(
+-        "./tensors/arg15.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.shortcut.normalization.weight"] = (
+-        utils_load_tensor_16
+-    )
+-    utils_load_tensor_17 = utils.load_tensor(
+-        "./tensors/arg16.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.shortcut.convolution.weight"] = (
+-        utils_load_tensor_17
+-    )
+-    utils_load_tensor_18 = utils.load_tensor(
+-        "./tensors/arg17.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.shortcut.normalization.running_var"
+-    ] = utils_load_tensor_18
+-    utils_load_tensor_19 = utils.load_tensor(
+-        "./tensors/arg18.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.shortcut.normalization.running_mean"
+-    ] = utils_load_tensor_19
+-    utils_load_tensor_20 = utils.load_tensor(
+-        "./tensors/arg19.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.shortcut.normalization.bias"] = (
+-        utils_load_tensor_20
+-    )
+-    utils_load_tensor_21 = utils.load_tensor(
+-        "./tensors/arg20.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.shortcut.normalization.weight"] = (
+-        utils_load_tensor_21
+-    )
+-    utils_load_tensor_22 = utils.load_tensor(
+-        "./tensors/arg21.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.shortcut.convolution.weight"] = (
+-        utils_load_tensor_22
+-    )
+-    utils_load_tensor_23 = utils.load_tensor(
+-        "./tensors/arg22.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.embedder.embedder.normalization.running_var"] = (
+-        utils_load_tensor_23
+-    )
+-    utils_load_tensor_24 = utils.load_tensor(
+-        "./tensors/arg23.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.embedder.embedder.normalization.running_mean"] = (
+-        utils_load_tensor_24
+-    )
+-    utils_load_tensor_25 = utils.load_tensor(
+-        "./tensors/arg24.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.embedder.embedder.normalization.bias"] = utils_load_tensor_25
+-    utils_load_tensor_26 = utils.load_tensor(
+-        "./tensors/arg25.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.embedder.embedder.normalization.weight"] = (
+-        utils_load_tensor_26
+-    )
+-    utils_load_tensor_27 = utils.load_tensor(
+-        "./tensors/arg26.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.embedder.embedder.convolution.weight"] = utils_load_tensor_27
+-    utils_load_tensor_28 = utils.load_tensor(
+-        "./tensors/arg28.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_28
+-    utils_load_tensor_29 = utils.load_tensor(
+-        "./tensors/arg29.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_29
+-    utils_load_tensor_30 = utils.load_tensor(
+-        "./tensors/arg30.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.2.normalization.bias"] = (
+-        utils_load_tensor_30
+-    )
+-    utils_load_tensor_31 = utils.load_tensor(
+-        "./tensors/arg31.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.2.normalization.weight"] = (
+-        utils_load_tensor_31
+-    )
+-    utils_load_tensor_32 = utils.load_tensor(
+-        "./tensors/arg32.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.2.convolution.weight"] = (
+-        utils_load_tensor_32
+-    )
+-    utils_load_tensor_33 = utils.load_tensor(
+-        "./tensors/arg33.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_33
+-    utils_load_tensor_34 = utils.load_tensor(
+-        "./tensors/arg34.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_34
+-    utils_load_tensor_35 = utils.load_tensor(
+-        "./tensors/arg35.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.1.normalization.bias"] = (
+-        utils_load_tensor_35
+-    )
+-    utils_load_tensor_36 = utils.load_tensor(
+-        "./tensors/arg36.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.1.normalization.weight"] = (
+-        utils_load_tensor_36
+-    )
+-    utils_load_tensor_37 = utils.load_tensor(
+-        "./tensors/arg37.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.1.convolution.weight"] = (
+-        utils_load_tensor_37
+-    )
+-    utils_load_tensor_38 = utils.load_tensor(
+-        "./tensors/arg38.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_38
+-    utils_load_tensor_39 = utils.load_tensor(
+-        "./tensors/arg39.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.0.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_39
+-    utils_load_tensor_40 = utils.load_tensor(
+-        "./tensors/arg40.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.0.normalization.bias"] = (
+-        utils_load_tensor_40
+-    )
+-    utils_load_tensor_41 = utils.load_tensor(
+-        "./tensors/arg41.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.0.normalization.weight"] = (
+-        utils_load_tensor_41
+-    )
+-    utils_load_tensor_42 = utils.load_tensor(
+-        "./tensors/arg42.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.0.layer.0.convolution.weight"] = (
+-        utils_load_tensor_42
+-    )
+-    utils_load_tensor_43 = utils.load_tensor(
+-        "./tensors/arg43.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.1.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_43
+-    utils_load_tensor_44 = utils.load_tensor(
+-        "./tensors/arg44.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.1.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_44
+-    utils_load_tensor_45 = utils.load_tensor(
+-        "./tensors/arg45.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.2.normalization.bias"] = (
+-        utils_load_tensor_45
+-    )
+-    utils_load_tensor_46 = utils.load_tensor(
+-        "./tensors/arg46.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.2.normalization.weight"] = (
+-        utils_load_tensor_46
+-    )
+-    utils_load_tensor_47 = utils.load_tensor(
+-        "./tensors/arg47.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.2.convolution.weight"] = (
+-        utils_load_tensor_47
+-    )
+-    utils_load_tensor_48 = utils.load_tensor(
+-        "./tensors/arg48.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.1.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_48
+-    utils_load_tensor_49 = utils.load_tensor(
+-        "./tensors/arg49.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.1.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_49
+-    utils_load_tensor_50 = utils.load_tensor(
+-        "./tensors/arg50.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.1.normalization.bias"] = (
+-        utils_load_tensor_50
+-    )
+-    utils_load_tensor_51 = utils.load_tensor(
+-        "./tensors/arg51.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.1.normalization.weight"] = (
+-        utils_load_tensor_51
+-    )
+-    utils_load_tensor_52 = utils.load_tensor(
+-        "./tensors/arg52.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.1.convolution.weight"] = (
+-        utils_load_tensor_52
+-    )
+-    utils_load_tensor_53 = utils.load_tensor(
+-        "./tensors/arg53.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.1.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_53
+-    utils_load_tensor_54 = utils.load_tensor(
+-        "./tensors/arg54.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.1.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_54
+-    utils_load_tensor_55 = utils.load_tensor(
+-        "./tensors/arg55.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.0.normalization.bias"] = (
+-        utils_load_tensor_55
+-    )
+-    utils_load_tensor_56 = utils.load_tensor(
+-        "./tensors/arg56.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.0.normalization.weight"] = (
+-        utils_load_tensor_56
+-    )
+-    utils_load_tensor_57 = utils.load_tensor(
+-        "./tensors/arg57.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.1.layer.0.convolution.weight"] = (
+-        utils_load_tensor_57
+-    )
+-    utils_load_tensor_58 = utils.load_tensor(
+-        "./tensors/arg58.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.2.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_58
+-    utils_load_tensor_59 = utils.load_tensor(
+-        "./tensors/arg59.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.2.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_59
+-    utils_load_tensor_60 = utils.load_tensor(
+-        "./tensors/arg60.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.2.normalization.bias"] = (
+-        utils_load_tensor_60
+-    )
+-    utils_load_tensor_61 = utils.load_tensor(
+-        "./tensors/arg61.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.2.normalization.weight"] = (
+-        utils_load_tensor_61
+-    )
+-    utils_load_tensor_62 = utils.load_tensor(
+-        "./tensors/arg62.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.2.convolution.weight"] = (
+-        utils_load_tensor_62
+-    )
+-    utils_load_tensor_63 = utils.load_tensor(
+-        "./tensors/arg63.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.2.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_63
+-    utils_load_tensor_64 = utils.load_tensor(
+-        "./tensors/arg64.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.2.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_64
+-    utils_load_tensor_65 = utils.load_tensor(
+-        "./tensors/arg65.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.1.normalization.bias"] = (
+-        utils_load_tensor_65
+-    )
+-    utils_load_tensor_66 = utils.load_tensor(
+-        "./tensors/arg66.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.1.normalization.weight"] = (
+-        utils_load_tensor_66
+-    )
+-    utils_load_tensor_67 = utils.load_tensor(
+-        "./tensors/arg67.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.1.convolution.weight"] = (
+-        utils_load_tensor_67
+-    )
+-    utils_load_tensor_68 = utils.load_tensor(
+-        "./tensors/arg68.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.2.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_68
+-    utils_load_tensor_69 = utils.load_tensor(
+-        "./tensors/arg69.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.0.layers.2.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_69
+-    utils_load_tensor_70 = utils.load_tensor(
+-        "./tensors/arg70.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.0.normalization.bias"] = (
+-        utils_load_tensor_70
+-    )
+-    utils_load_tensor_71 = utils.load_tensor(
+-        "./tensors/arg71.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.0.normalization.weight"] = (
+-        utils_load_tensor_71
+-    )
+-    utils_load_tensor_72 = utils.load_tensor(
+-        "./tensors/arg72.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.0.layers.2.layer.0.convolution.weight"] = (
+-        utils_load_tensor_72
+-    )
+-    utils_load_tensor_73 = utils.load_tensor(
+-        "./tensors/arg73.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_73
+-    utils_load_tensor_74 = utils.load_tensor(
+-        "./tensors/arg74.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_74
+-    utils_load_tensor_75 = utils.load_tensor(
+-        "./tensors/arg75.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.2.normalization.bias"] = (
+-        utils_load_tensor_75
+-    )
+-    utils_load_tensor_76 = utils.load_tensor(
+-        "./tensors/arg76.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.2.normalization.weight"] = (
+-        utils_load_tensor_76
+-    )
+-    utils_load_tensor_77 = utils.load_tensor(
+-        "./tensors/arg77.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.2.convolution.weight"] = (
+-        utils_load_tensor_77
+-    )
+-    utils_load_tensor_78 = utils.load_tensor(
+-        "./tensors/arg78.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_78
+-    utils_load_tensor_79 = utils.load_tensor(
+-        "./tensors/arg79.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_79
+-    utils_load_tensor_80 = utils.load_tensor(
+-        "./tensors/arg80.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.1.normalization.bias"] = (
+-        utils_load_tensor_80
+-    )
+-    utils_load_tensor_81 = utils.load_tensor(
+-        "./tensors/arg81.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.1.normalization.weight"] = (
+-        utils_load_tensor_81
+-    )
+-    utils_load_tensor_82 = utils.load_tensor(
+-        "./tensors/arg82.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.1.convolution.weight"] = (
+-        utils_load_tensor_82
+-    )
+-    utils_load_tensor_83 = utils.load_tensor(
+-        "./tensors/arg83.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_83
+-    utils_load_tensor_84 = utils.load_tensor(
+-        "./tensors/arg84.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.0.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_84
+-    utils_load_tensor_85 = utils.load_tensor(
+-        "./tensors/arg85.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.0.normalization.bias"] = (
+-        utils_load_tensor_85
+-    )
+-    utils_load_tensor_86 = utils.load_tensor(
+-        "./tensors/arg86.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.0.normalization.weight"] = (
+-        utils_load_tensor_86
+-    )
+-    utils_load_tensor_87 = utils.load_tensor(
+-        "./tensors/arg87.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.0.layer.0.convolution.weight"] = (
+-        utils_load_tensor_87
+-    )
+-    utils_load_tensor_88 = utils.load_tensor(
+-        "./tensors/arg88.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.1.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_88
+-    utils_load_tensor_89 = utils.load_tensor(
+-        "./tensors/arg89.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.1.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_89
+-    utils_load_tensor_90 = utils.load_tensor(
+-        "./tensors/arg90.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.2.normalization.bias"] = (
+-        utils_load_tensor_90
+-    )
+-    utils_load_tensor_91 = utils.load_tensor(
+-        "./tensors/arg91.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.2.normalization.weight"] = (
+-        utils_load_tensor_91
+-    )
+-    utils_load_tensor_92 = utils.load_tensor(
+-        "./tensors/arg92.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.2.convolution.weight"] = (
+-        utils_load_tensor_92
+-    )
+-    utils_load_tensor_93 = utils.load_tensor(
+-        "./tensors/arg93.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.1.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_93
+-    utils_load_tensor_94 = utils.load_tensor(
+-        "./tensors/arg94.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.1.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_94
+-    utils_load_tensor_95 = utils.load_tensor(
+-        "./tensors/arg95.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.1.normalization.bias"] = (
+-        utils_load_tensor_95
+-    )
+-    utils_load_tensor_96 = utils.load_tensor(
+-        "./tensors/arg96.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.1.normalization.weight"] = (
+-        utils_load_tensor_96
+-    )
+-    utils_load_tensor_97 = utils.load_tensor(
+-        "./tensors/arg97.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.1.convolution.weight"] = (
+-        utils_load_tensor_97
+-    )
+-    utils_load_tensor_98 = utils.load_tensor(
+-        "./tensors/arg98.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.1.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_98
+-    utils_load_tensor_99 = utils.load_tensor(
+-        "./tensors/arg99.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.1.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_99
+-    utils_load_tensor_100 = utils.load_tensor(
+-        "./tensors/arg100.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.0.normalization.bias"] = (
+-        utils_load_tensor_100
+-    )
+-    utils_load_tensor_101 = utils.load_tensor(
+-        "./tensors/arg101.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.0.normalization.weight"] = (
+-        utils_load_tensor_101
+-    )
+-    utils_load_tensor_102 = utils.load_tensor(
+-        "./tensors/arg102.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.1.layer.0.convolution.weight"] = (
+-        utils_load_tensor_102
+-    )
+-    utils_load_tensor_103 = utils.load_tensor(
+-        "./tensors/arg103.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.2.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_103
+-    utils_load_tensor_104 = utils.load_tensor(
+-        "./tensors/arg104.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.2.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_104
+-    utils_load_tensor_105 = utils.load_tensor(
+-        "./tensors/arg105.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.2.normalization.bias"] = (
+-        utils_load_tensor_105
+-    )
+-    utils_load_tensor_106 = utils.load_tensor(
+-        "./tensors/arg106.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.2.normalization.weight"] = (
+-        utils_load_tensor_106
+-    )
+-    utils_load_tensor_107 = utils.load_tensor(
+-        "./tensors/arg107.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.2.convolution.weight"] = (
+-        utils_load_tensor_107
+-    )
+-    utils_load_tensor_108 = utils.load_tensor(
+-        "./tensors/arg108.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.2.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_108
+-    utils_load_tensor_109 = utils.load_tensor(
+-        "./tensors/arg109.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.2.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_109
+-    utils_load_tensor_110 = utils.load_tensor(
+-        "./tensors/arg110.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.1.normalization.bias"] = (
+-        utils_load_tensor_110
+-    )
+-    utils_load_tensor_111 = utils.load_tensor(
+-        "./tensors/arg111.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.1.normalization.weight"] = (
+-        utils_load_tensor_111
+-    )
+-    utils_load_tensor_112 = utils.load_tensor(
+-        "./tensors/arg112.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.1.convolution.weight"] = (
+-        utils_load_tensor_112
+-    )
+-    utils_load_tensor_113 = utils.load_tensor(
+-        "./tensors/arg113.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.2.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_113
+-    utils_load_tensor_114 = utils.load_tensor(
+-        "./tensors/arg114.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.2.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_114
+-    utils_load_tensor_115 = utils.load_tensor(
+-        "./tensors/arg115.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.0.normalization.bias"] = (
+-        utils_load_tensor_115
+-    )
+-    utils_load_tensor_116 = utils.load_tensor(
+-        "./tensors/arg116.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.0.normalization.weight"] = (
+-        utils_load_tensor_116
+-    )
+-    utils_load_tensor_117 = utils.load_tensor(
+-        "./tensors/arg117.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.2.layer.0.convolution.weight"] = (
+-        utils_load_tensor_117
+-    )
+-    utils_load_tensor_118 = utils.load_tensor(
+-        "./tensors/arg118.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.3.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_118
+-    utils_load_tensor_119 = utils.load_tensor(
+-        "./tensors/arg119.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.3.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_119
+-    utils_load_tensor_120 = utils.load_tensor(
+-        "./tensors/arg120.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.2.normalization.bias"] = (
+-        utils_load_tensor_120
+-    )
+-    utils_load_tensor_121 = utils.load_tensor(
+-        "./tensors/arg121.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.2.normalization.weight"] = (
+-        utils_load_tensor_121
+-    )
+-    utils_load_tensor_122 = utils.load_tensor(
+-        "./tensors/arg122.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.2.convolution.weight"] = (
+-        utils_load_tensor_122
+-    )
+-    utils_load_tensor_123 = utils.load_tensor(
+-        "./tensors/arg123.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.3.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_123
+-    utils_load_tensor_124 = utils.load_tensor(
+-        "./tensors/arg124.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.3.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_124
+-    utils_load_tensor_125 = utils.load_tensor(
+-        "./tensors/arg125.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.1.normalization.bias"] = (
+-        utils_load_tensor_125
+-    )
+-    utils_load_tensor_126 = utils.load_tensor(
+-        "./tensors/arg126.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.1.normalization.weight"] = (
+-        utils_load_tensor_126
+-    )
+-    utils_load_tensor_127 = utils.load_tensor(
+-        "./tensors/arg127.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.1.convolution.weight"] = (
+-        utils_load_tensor_127
+-    )
+-    utils_load_tensor_128 = utils.load_tensor(
+-        "./tensors/arg128.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.3.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_128
+-    utils_load_tensor_129 = utils.load_tensor(
+-        "./tensors/arg129.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.1.layers.3.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_129
+-    utils_load_tensor_130 = utils.load_tensor(
+-        "./tensors/arg130.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.0.normalization.bias"] = (
+-        utils_load_tensor_130
+-    )
+-    utils_load_tensor_131 = utils.load_tensor(
+-        "./tensors/arg131.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.0.normalization.weight"] = (
+-        utils_load_tensor_131
+-    )
+-    utils_load_tensor_132 = utils.load_tensor(
+-        "./tensors/arg132.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.1.layers.3.layer.0.convolution.weight"] = (
+-        utils_load_tensor_132
+-    )
+-    utils_load_tensor_133 = utils.load_tensor(
+-        "./tensors/arg133.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_133
+-    utils_load_tensor_134 = utils.load_tensor(
+-        "./tensors/arg134.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_134
+-    utils_load_tensor_135 = utils.load_tensor(
+-        "./tensors/arg135.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.2.normalization.bias"] = (
+-        utils_load_tensor_135
+-    )
+-    utils_load_tensor_136 = utils.load_tensor(
+-        "./tensors/arg136.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.2.normalization.weight"] = (
+-        utils_load_tensor_136
+-    )
+-    utils_load_tensor_137 = utils.load_tensor(
+-        "./tensors/arg137.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.2.convolution.weight"] = (
+-        utils_load_tensor_137
+-    )
+-    utils_load_tensor_138 = utils.load_tensor(
+-        "./tensors/arg138.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_138
+-    utils_load_tensor_139 = utils.load_tensor(
+-        "./tensors/arg139.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_139
+-    utils_load_tensor_140 = utils.load_tensor(
+-        "./tensors/arg140.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.1.normalization.bias"] = (
+-        utils_load_tensor_140
+-    )
+-    utils_load_tensor_141 = utils.load_tensor(
+-        "./tensors/arg141.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.1.normalization.weight"] = (
+-        utils_load_tensor_141
+-    )
+-    utils_load_tensor_142 = utils.load_tensor(
+-        "./tensors/arg142.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.1.convolution.weight"] = (
+-        utils_load_tensor_142
+-    )
+-    utils_load_tensor_143 = utils.load_tensor(
+-        "./tensors/arg143.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_143
+-    utils_load_tensor_144 = utils.load_tensor(
+-        "./tensors/arg144.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.0.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_144
+-    utils_load_tensor_145 = utils.load_tensor(
+-        "./tensors/arg145.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.0.normalization.bias"] = (
+-        utils_load_tensor_145
+-    )
+-    utils_load_tensor_146 = utils.load_tensor(
+-        "./tensors/arg146.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.0.normalization.weight"] = (
+-        utils_load_tensor_146
+-    )
+-    utils_load_tensor_147 = utils.load_tensor(
+-        "./tensors/arg147.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.0.layer.0.convolution.weight"] = (
+-        utils_load_tensor_147
+-    )
+-    utils_load_tensor_148 = utils.load_tensor(
+-        "./tensors/arg148.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.1.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_148
+-    utils_load_tensor_149 = utils.load_tensor(
+-        "./tensors/arg149.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.1.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_149
+-    utils_load_tensor_150 = utils.load_tensor(
+-        "./tensors/arg150.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.2.normalization.bias"] = (
+-        utils_load_tensor_150
+-    )
+-    utils_load_tensor_151 = utils.load_tensor(
+-        "./tensors/arg151.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.2.normalization.weight"] = (
+-        utils_load_tensor_151
+-    )
+-    utils_load_tensor_152 = utils.load_tensor(
+-        "./tensors/arg152.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.2.convolution.weight"] = (
+-        utils_load_tensor_152
+-    )
+-    utils_load_tensor_153 = utils.load_tensor(
+-        "./tensors/arg153.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.1.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_153
+-    utils_load_tensor_154 = utils.load_tensor(
+-        "./tensors/arg154.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.1.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_154
+-    utils_load_tensor_155 = utils.load_tensor(
+-        "./tensors/arg155.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.1.normalization.bias"] = (
+-        utils_load_tensor_155
+-    )
+-    utils_load_tensor_156 = utils.load_tensor(
+-        "./tensors/arg156.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.1.normalization.weight"] = (
+-        utils_load_tensor_156
+-    )
+-    utils_load_tensor_157 = utils.load_tensor(
+-        "./tensors/arg157.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.1.convolution.weight"] = (
+-        utils_load_tensor_157
+-    )
+-    utils_load_tensor_158 = utils.load_tensor(
+-        "./tensors/arg158.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.1.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_158
+-    utils_load_tensor_159 = utils.load_tensor(
+-        "./tensors/arg159.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.1.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_159
+-    utils_load_tensor_160 = utils.load_tensor(
+-        "./tensors/arg160.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.0.normalization.bias"] = (
+-        utils_load_tensor_160
+-    )
+-    utils_load_tensor_161 = utils.load_tensor(
+-        "./tensors/arg161.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.0.normalization.weight"] = (
+-        utils_load_tensor_161
+-    )
+-    utils_load_tensor_162 = utils.load_tensor(
+-        "./tensors/arg162.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.1.layer.0.convolution.weight"] = (
+-        utils_load_tensor_162
+-    )
+-    utils_load_tensor_163 = utils.load_tensor(
+-        "./tensors/arg163.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.2.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_163
+-    utils_load_tensor_164 = utils.load_tensor(
+-        "./tensors/arg164.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.2.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_164
+-    utils_load_tensor_165 = utils.load_tensor(
+-        "./tensors/arg165.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.2.normalization.bias"] = (
+-        utils_load_tensor_165
+-    )
+-    utils_load_tensor_166 = utils.load_tensor(
+-        "./tensors/arg166.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.2.normalization.weight"] = (
+-        utils_load_tensor_166
+-    )
+-    utils_load_tensor_167 = utils.load_tensor(
+-        "./tensors/arg167.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.2.convolution.weight"] = (
+-        utils_load_tensor_167
+-    )
+-    utils_load_tensor_168 = utils.load_tensor(
+-        "./tensors/arg168.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.2.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_168
+-    utils_load_tensor_169 = utils.load_tensor(
+-        "./tensors/arg169.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.2.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_169
+-    utils_load_tensor_170 = utils.load_tensor(
+-        "./tensors/arg170.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.1.normalization.bias"] = (
+-        utils_load_tensor_170
+-    )
+-    utils_load_tensor_171 = utils.load_tensor(
+-        "./tensors/arg171.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.1.normalization.weight"] = (
+-        utils_load_tensor_171
+-    )
+-    utils_load_tensor_172 = utils.load_tensor(
+-        "./tensors/arg172.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.1.convolution.weight"] = (
+-        utils_load_tensor_172
+-    )
+-    utils_load_tensor_173 = utils.load_tensor(
+-        "./tensors/arg173.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.2.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_173
+-    utils_load_tensor_174 = utils.load_tensor(
+-        "./tensors/arg174.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.2.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_174
+-    utils_load_tensor_175 = utils.load_tensor(
+-        "./tensors/arg175.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.0.normalization.bias"] = (
+-        utils_load_tensor_175
+-    )
+-    utils_load_tensor_176 = utils.load_tensor(
+-        "./tensors/arg176.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.0.normalization.weight"] = (
+-        utils_load_tensor_176
+-    )
+-    utils_load_tensor_177 = utils.load_tensor(
+-        "./tensors/arg177.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.2.layer.0.convolution.weight"] = (
+-        utils_load_tensor_177
+-    )
+-    utils_load_tensor_178 = utils.load_tensor(
+-        "./tensors/arg178.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.3.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_178
+-    utils_load_tensor_179 = utils.load_tensor(
+-        "./tensors/arg179.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.3.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_179
+-    utils_load_tensor_180 = utils.load_tensor(
+-        "./tensors/arg180.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.2.normalization.bias"] = (
+-        utils_load_tensor_180
+-    )
+-    utils_load_tensor_181 = utils.load_tensor(
+-        "./tensors/arg181.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.2.normalization.weight"] = (
+-        utils_load_tensor_181
+-    )
+-    utils_load_tensor_182 = utils.load_tensor(
+-        "./tensors/arg182.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.2.convolution.weight"] = (
+-        utils_load_tensor_182
+-    )
+-    utils_load_tensor_183 = utils.load_tensor(
+-        "./tensors/arg183.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.3.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_183
+-    utils_load_tensor_184 = utils.load_tensor(
+-        "./tensors/arg184.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.3.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_184
+-    utils_load_tensor_185 = utils.load_tensor(
+-        "./tensors/arg185.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.1.normalization.bias"] = (
+-        utils_load_tensor_185
+-    )
+-    utils_load_tensor_186 = utils.load_tensor(
+-        "./tensors/arg186.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.1.normalization.weight"] = (
+-        utils_load_tensor_186
+-    )
+-    utils_load_tensor_187 = utils.load_tensor(
+-        "./tensors/arg187.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.1.convolution.weight"] = (
+-        utils_load_tensor_187
+-    )
+-    utils_load_tensor_188 = utils.load_tensor(
+-        "./tensors/arg188.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.3.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_188
+-    utils_load_tensor_189 = utils.load_tensor(
+-        "./tensors/arg189.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.3.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_189
+-    utils_load_tensor_190 = utils.load_tensor(
+-        "./tensors/arg190.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.0.normalization.bias"] = (
+-        utils_load_tensor_190
+-    )
+-    utils_load_tensor_191 = utils.load_tensor(
+-        "./tensors/arg191.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.0.normalization.weight"] = (
+-        utils_load_tensor_191
+-    )
+-    utils_load_tensor_192 = utils.load_tensor(
+-        "./tensors/arg192.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.3.layer.0.convolution.weight"] = (
+-        utils_load_tensor_192
+-    )
+-    utils_load_tensor_193 = utils.load_tensor(
+-        "./tensors/arg193.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.4.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_193
+-    utils_load_tensor_194 = utils.load_tensor(
+-        "./tensors/arg194.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.4.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_194
+-    utils_load_tensor_195 = utils.load_tensor(
+-        "./tensors/arg195.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.2.normalization.bias"] = (
+-        utils_load_tensor_195
+-    )
+-    utils_load_tensor_196 = utils.load_tensor(
+-        "./tensors/arg196.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.2.normalization.weight"] = (
+-        utils_load_tensor_196
+-    )
+-    utils_load_tensor_197 = utils.load_tensor(
+-        "./tensors/arg197.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.2.convolution.weight"] = (
+-        utils_load_tensor_197
+-    )
+-    utils_load_tensor_198 = utils.load_tensor(
+-        "./tensors/arg198.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.4.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_198
+-    utils_load_tensor_199 = utils.load_tensor(
+-        "./tensors/arg199.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.4.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_199
+-    utils_load_tensor_200 = utils.load_tensor(
+-        "./tensors/arg200.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.1.normalization.bias"] = (
+-        utils_load_tensor_200
+-    )
+-    utils_load_tensor_201 = utils.load_tensor(
+-        "./tensors/arg201.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.1.normalization.weight"] = (
+-        utils_load_tensor_201
+-    )
+-    utils_load_tensor_202 = utils.load_tensor(
+-        "./tensors/arg202.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.1.convolution.weight"] = (
+-        utils_load_tensor_202
+-    )
+-    utils_load_tensor_203 = utils.load_tensor(
+-        "./tensors/arg203.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.4.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_203
+-    utils_load_tensor_204 = utils.load_tensor(
+-        "./tensors/arg204.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.4.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_204
+-    utils_load_tensor_205 = utils.load_tensor(
+-        "./tensors/arg205.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.0.normalization.bias"] = (
+-        utils_load_tensor_205
+-    )
+-    utils_load_tensor_206 = utils.load_tensor(
+-        "./tensors/arg206.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.0.normalization.weight"] = (
+-        utils_load_tensor_206
+-    )
+-    utils_load_tensor_207 = utils.load_tensor(
+-        "./tensors/arg207.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.4.layer.0.convolution.weight"] = (
+-        utils_load_tensor_207
+-    )
+-    utils_load_tensor_208 = utils.load_tensor(
+-        "./tensors/arg208.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.5.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_208
+-    utils_load_tensor_209 = utils.load_tensor(
+-        "./tensors/arg209.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.5.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_209
+-    utils_load_tensor_210 = utils.load_tensor(
+-        "./tensors/arg210.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.2.normalization.bias"] = (
+-        utils_load_tensor_210
+-    )
+-    utils_load_tensor_211 = utils.load_tensor(
+-        "./tensors/arg211.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.2.normalization.weight"] = (
+-        utils_load_tensor_211
+-    )
+-    utils_load_tensor_212 = utils.load_tensor(
+-        "./tensors/arg212.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.2.convolution.weight"] = (
+-        utils_load_tensor_212
+-    )
+-    utils_load_tensor_213 = utils.load_tensor(
+-        "./tensors/arg213.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.5.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_213
+-    utils_load_tensor_214 = utils.load_tensor(
+-        "./tensors/arg214.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.5.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_214
+-    utils_load_tensor_215 = utils.load_tensor(
+-        "./tensors/arg215.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.1.normalization.bias"] = (
+-        utils_load_tensor_215
+-    )
+-    utils_load_tensor_216 = utils.load_tensor(
+-        "./tensors/arg216.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.1.normalization.weight"] = (
+-        utils_load_tensor_216
+-    )
+-    utils_load_tensor_217 = utils.load_tensor(
+-        "./tensors/arg217.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.1.convolution.weight"] = (
+-        utils_load_tensor_217
+-    )
+-    utils_load_tensor_218 = utils.load_tensor(
+-        "./tensors/arg218.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.5.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_218
+-    utils_load_tensor_219 = utils.load_tensor(
+-        "./tensors/arg219.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.2.layers.5.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_219
+-    utils_load_tensor_220 = utils.load_tensor(
+-        "./tensors/arg220.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.0.normalization.bias"] = (
+-        utils_load_tensor_220
+-    )
+-    utils_load_tensor_221 = utils.load_tensor(
+-        "./tensors/arg221.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.0.normalization.weight"] = (
+-        utils_load_tensor_221
+-    )
+-    utils_load_tensor_222 = utils.load_tensor(
+-        "./tensors/arg222.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.2.layers.5.layer.0.convolution.weight"] = (
+-        utils_load_tensor_222
+-    )
+-    utils_load_tensor_223 = utils.load_tensor(
+-        "./tensors/arg223.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_223
+-    utils_load_tensor_224 = utils.load_tensor(
+-        "./tensors/arg224.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_224
+-    utils_load_tensor_225 = utils.load_tensor(
+-        "./tensors/arg225.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.2.normalization.bias"] = (
+-        utils_load_tensor_225
+-    )
+-    utils_load_tensor_226 = utils.load_tensor(
+-        "./tensors/arg226.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.2.normalization.weight"] = (
+-        utils_load_tensor_226
+-    )
+-    utils_load_tensor_227 = utils.load_tensor(
+-        "./tensors/arg227.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.2.convolution.weight"] = (
+-        utils_load_tensor_227
+-    )
+-    utils_load_tensor_228 = utils.load_tensor(
+-        "./tensors/arg228.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_228
+-    utils_load_tensor_229 = utils.load_tensor(
+-        "./tensors/arg229.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_229
+-    utils_load_tensor_230 = utils.load_tensor(
+-        "./tensors/arg230.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.1.normalization.bias"] = (
+-        utils_load_tensor_230
+-    )
+-    utils_load_tensor_231 = utils.load_tensor(
+-        "./tensors/arg231.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.1.normalization.weight"] = (
+-        utils_load_tensor_231
+-    )
+-    utils_load_tensor_232 = utils.load_tensor(
+-        "./tensors/arg232.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.1.convolution.weight"] = (
+-        utils_load_tensor_232
+-    )
+-    utils_load_tensor_233 = utils.load_tensor(
+-        "./tensors/arg233.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_233
+-    utils_load_tensor_234 = utils.load_tensor(
+-        "./tensors/arg234.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.0.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_234
+-    utils_load_tensor_235 = utils.load_tensor(
+-        "./tensors/arg235.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.0.normalization.bias"] = (
+-        utils_load_tensor_235
+-    )
+-    utils_load_tensor_236 = utils.load_tensor(
+-        "./tensors/arg236.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.0.normalization.weight"] = (
+-        utils_load_tensor_236
+-    )
+-    utils_load_tensor_237 = utils.load_tensor(
+-        "./tensors/arg237.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.0.layer.0.convolution.weight"] = (
+-        utils_load_tensor_237
+-    )
+-    utils_load_tensor_238 = utils.load_tensor(
+-        "./tensors/arg238.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.1.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_238
+-    utils_load_tensor_239 = utils.load_tensor(
+-        "./tensors/arg239.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.1.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_239
+-    utils_load_tensor_240 = utils.load_tensor(
+-        "./tensors/arg240.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.2.normalization.bias"] = (
+-        utils_load_tensor_240
+-    )
+-    utils_load_tensor_241 = utils.load_tensor(
+-        "./tensors/arg241.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.2.normalization.weight"] = (
+-        utils_load_tensor_241
+-    )
+-    utils_load_tensor_242 = utils.load_tensor(
+-        "./tensors/arg242.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.2.convolution.weight"] = (
+-        utils_load_tensor_242
+-    )
+-    utils_load_tensor_243 = utils.load_tensor(
+-        "./tensors/arg243.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.1.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_243
+-    utils_load_tensor_244 = utils.load_tensor(
+-        "./tensors/arg244.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.1.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_244
+-    utils_load_tensor_245 = utils.load_tensor(
+-        "./tensors/arg245.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.1.normalization.bias"] = (
+-        utils_load_tensor_245
+-    )
+-    utils_load_tensor_246 = utils.load_tensor(
+-        "./tensors/arg246.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.1.normalization.weight"] = (
+-        utils_load_tensor_246
+-    )
+-    utils_load_tensor_247 = utils.load_tensor(
+-        "./tensors/arg247.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.1.convolution.weight"] = (
+-        utils_load_tensor_247
+-    )
+-    utils_load_tensor_248 = utils.load_tensor(
+-        "./tensors/arg248.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.1.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_248
+-    utils_load_tensor_249 = utils.load_tensor(
+-        "./tensors/arg249.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.1.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_249
+-    utils_load_tensor_250 = utils.load_tensor(
+-        "./tensors/arg250.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.0.normalization.bias"] = (
+-        utils_load_tensor_250
+-    )
+-    utils_load_tensor_251 = utils.load_tensor(
+-        "./tensors/arg251.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.0.normalization.weight"] = (
+-        utils_load_tensor_251
+-    )
+-    utils_load_tensor_252 = utils.load_tensor(
+-        "./tensors/arg252.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.1.layer.0.convolution.weight"] = (
+-        utils_load_tensor_252
+-    )
+-    utils_load_tensor_253 = utils.load_tensor(
+-        "./tensors/arg253.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.2.layer.2.normalization.running_var"
+-    ] = utils_load_tensor_253
+-    utils_load_tensor_254 = utils.load_tensor(
+-        "./tensors/arg254.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.2.layer.2.normalization.running_mean"
+-    ] = utils_load_tensor_254
+-    utils_load_tensor_255 = utils.load_tensor(
+-        "./tensors/arg255.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.2.normalization.bias"] = (
+-        utils_load_tensor_255
+-    )
+-    utils_load_tensor_256 = utils.load_tensor(
+-        "./tensors/arg256.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.2.normalization.weight"] = (
+-        utils_load_tensor_256
+-    )
+-    utils_load_tensor_257 = utils.load_tensor(
+-        "./tensors/arg257.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.2.convolution.weight"] = (
+-        utils_load_tensor_257
+-    )
+-    utils_load_tensor_258 = utils.load_tensor(
+-        "./tensors/arg258.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.2.layer.1.normalization.running_var"
+-    ] = utils_load_tensor_258
+-    utils_load_tensor_259 = utils.load_tensor(
+-        "./tensors/arg259.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.2.layer.1.normalization.running_mean"
+-    ] = utils_load_tensor_259
+-    utils_load_tensor_260 = utils.load_tensor(
+-        "./tensors/arg260.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.1.normalization.bias"] = (
+-        utils_load_tensor_260
+-    )
+-    utils_load_tensor_261 = utils.load_tensor(
+-        "./tensors/arg261.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.1.normalization.weight"] = (
+-        utils_load_tensor_261
+-    )
+-    utils_load_tensor_262 = utils.load_tensor(
+-        "./tensors/arg262.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.1.convolution.weight"] = (
+-        utils_load_tensor_262
+-    )
+-    utils_load_tensor_263 = utils.load_tensor(
+-        "./tensors/arg263.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.2.layer.0.normalization.running_var"
+-    ] = utils_load_tensor_263
+-    utils_load_tensor_264 = utils.load_tensor(
+-        "./tensors/arg264.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights[
+-        "resnet.encoder.stages.3.layers.2.layer.0.normalization.running_mean"
+-    ] = utils_load_tensor_264
+-    utils_load_tensor_265 = utils.load_tensor(
+-        "./tensors/arg265.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.0.normalization.bias"] = (
+-        utils_load_tensor_265
+-    )
+-    utils_load_tensor_266 = utils.load_tensor(
+-        "./tensors/arg266.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.0.normalization.weight"] = (
+-        utils_load_tensor_266
+-    )
+-    utils_load_tensor_267 = utils.load_tensor(
+-        "./tensors/arg267.tensorbin",
+-        ttnn.Layout.ROW_MAJOR,
+-        ttnn.DataType.BFLOAT16,
+-        None,
+-        None,
+-    )
+-    _main_weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"] = (
+-        utils_load_tensor_267
+-    )
+-    return _main_weights
+-
+-
+ def main():
+     load_activations_for__main_0 = load_activations_for__main()
+     load_weights_for__main_0 = load_weights_for__main()
+diff --git a/microsoft/resnet-50/model/graph_0/params.py b/microsoft/resnet-50/model/graph_0/params.py
+new file mode 100644
+index 0000000..fded53c
+--- /dev/null
++++ b/microsoft/resnet-50/model/graph_0/params.py
+@@ -0,0 +1,311 @@
++import ttnn
++import torch
++import utils
++import model_pt
++
++
++ALL_WEIGHTS = [
++    ("classifier.1.bias", "./tensors/arg0.tensorbin"),
++    ("classifier.1.weight", "./tensors/arg1.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.shortcut.normalization.running_var", "./tensors/arg2.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.shortcut.normalization.running_mean", "./tensors/arg3.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.shortcut.normalization.bias", "./tensors/arg4.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.shortcut.normalization.weight", "./tensors/arg5.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.shortcut.convolution.weight", "./tensors/arg6.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.shortcut.normalization.running_var", "./tensors/arg7.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.shortcut.normalization.running_mean", "./tensors/arg8.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.shortcut.normalization.bias", "./tensors/arg9.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.shortcut.normalization.weight", "./tensors/arg10.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.shortcut.convolution.weight", "./tensors/arg11.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.shortcut.normalization.running_var", "./tensors/arg12.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.shortcut.normalization.running_mean", "./tensors/arg13.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.shortcut.normalization.bias", "./tensors/arg14.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.shortcut.normalization.weight", "./tensors/arg15.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.shortcut.convolution.weight", "./tensors/arg16.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.shortcut.normalization.running_var", "./tensors/arg17.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.shortcut.normalization.running_mean", "./tensors/arg18.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.shortcut.normalization.bias", "./tensors/arg19.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.shortcut.normalization.weight", "./tensors/arg20.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.shortcut.convolution.weight", "./tensors/arg21.tensorbin"),
++    ("resnet.embedder.embedder.normalization.running_var", "./tensors/arg22.tensorbin"),
++    ("resnet.embedder.embedder.normalization.running_mean", "./tensors/arg23.tensorbin"),
++    ("resnet.embedder.embedder.normalization.bias", "./tensors/arg24.tensorbin"),
++    ("resnet.embedder.embedder.normalization.weight", "./tensors/arg25.tensorbin"),
++    ("resnet.embedder.embedder.convolution.weight", "./tensors/arg26.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.2.normalization.running_var", "./tensors/arg28.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.2.normalization.running_mean", "./tensors/arg29.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.2.normalization.bias", "./tensors/arg30.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.2.normalization.weight", "./tensors/arg31.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.2.convolution.weight", "./tensors/arg32.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.1.normalization.running_var", "./tensors/arg33.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.1.normalization.running_mean", "./tensors/arg34.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.1.normalization.bias", "./tensors/arg35.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.1.normalization.weight", "./tensors/arg36.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.1.convolution.weight", "./tensors/arg37.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.0.normalization.running_var", "./tensors/arg38.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.0.normalization.running_mean", "./tensors/arg39.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.0.normalization.bias", "./tensors/arg40.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.0.normalization.weight", "./tensors/arg41.tensorbin"),
++    ("resnet.encoder.stages.0.layers.0.layer.0.convolution.weight", "./tensors/arg42.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.2.normalization.running_var", "./tensors/arg43.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.2.normalization.running_mean", "./tensors/arg44.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.2.normalization.bias", "./tensors/arg45.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.2.normalization.weight", "./tensors/arg46.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.2.convolution.weight", "./tensors/arg47.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.1.normalization.running_var", "./tensors/arg48.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.1.normalization.running_mean", "./tensors/arg49.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.1.normalization.bias", "./tensors/arg50.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.1.normalization.weight", "./tensors/arg51.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.1.convolution.weight", "./tensors/arg52.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.0.normalization.running_var", "./tensors/arg53.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.0.normalization.running_mean", "./tensors/arg54.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.0.normalization.bias", "./tensors/arg55.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.0.normalization.weight", "./tensors/arg56.tensorbin"),
++    ("resnet.encoder.stages.0.layers.1.layer.0.convolution.weight", "./tensors/arg57.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.2.normalization.running_var", "./tensors/arg58.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.2.normalization.running_mean", "./tensors/arg59.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.2.normalization.bias", "./tensors/arg60.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.2.normalization.weight", "./tensors/arg61.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.2.convolution.weight", "./tensors/arg62.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.1.normalization.running_var", "./tensors/arg63.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.1.normalization.running_mean", "./tensors/arg64.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.1.normalization.bias", "./tensors/arg65.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.1.normalization.weight", "./tensors/arg66.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.1.convolution.weight", "./tensors/arg67.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.0.normalization.running_var", "./tensors/arg68.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.0.normalization.running_mean", "./tensors/arg69.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.0.normalization.bias", "./tensors/arg70.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.0.normalization.weight", "./tensors/arg71.tensorbin"),
++    ("resnet.encoder.stages.0.layers.2.layer.0.convolution.weight", "./tensors/arg72.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.2.normalization.running_var", "./tensors/arg73.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.2.normalization.running_mean", "./tensors/arg74.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.2.normalization.bias", "./tensors/arg75.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.2.normalization.weight", "./tensors/arg76.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.2.convolution.weight", "./tensors/arg77.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.1.normalization.running_var", "./tensors/arg78.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.1.normalization.running_mean", "./tensors/arg79.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.1.normalization.bias", "./tensors/arg80.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.1.normalization.weight", "./tensors/arg81.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.1.convolution.weight", "./tensors/arg82.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.0.normalization.running_var", "./tensors/arg83.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.0.normalization.running_mean", "./tensors/arg84.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.0.normalization.bias", "./tensors/arg85.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.0.normalization.weight", "./tensors/arg86.tensorbin"),
++    ("resnet.encoder.stages.1.layers.0.layer.0.convolution.weight", "./tensors/arg87.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.2.normalization.running_var", "./tensors/arg88.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.2.normalization.running_mean", "./tensors/arg89.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.2.normalization.bias", "./tensors/arg90.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.2.normalization.weight", "./tensors/arg91.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.2.convolution.weight", "./tensors/arg92.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.1.normalization.running_var", "./tensors/arg93.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.1.normalization.running_mean", "./tensors/arg94.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.1.normalization.bias", "./tensors/arg95.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.1.normalization.weight", "./tensors/arg96.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.1.convolution.weight", "./tensors/arg97.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.0.normalization.running_var", "./tensors/arg98.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.0.normalization.running_mean", "./tensors/arg99.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.0.normalization.bias", "./tensors/arg100.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.0.normalization.weight", "./tensors/arg101.tensorbin"),
++    ("resnet.encoder.stages.1.layers.1.layer.0.convolution.weight", "./tensors/arg102.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.2.normalization.running_var", "./tensors/arg103.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.2.normalization.running_mean", "./tensors/arg104.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.2.normalization.bias", "./tensors/arg105.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.2.normalization.weight", "./tensors/arg106.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.2.convolution.weight", "./tensors/arg107.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.1.normalization.running_var", "./tensors/arg108.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.1.normalization.running_mean", "./tensors/arg109.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.1.normalization.bias", "./tensors/arg110.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.1.normalization.weight", "./tensors/arg111.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.1.convolution.weight", "./tensors/arg112.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.0.normalization.running_var", "./tensors/arg113.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.0.normalization.running_mean", "./tensors/arg114.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.0.normalization.bias", "./tensors/arg115.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.0.normalization.weight", "./tensors/arg116.tensorbin"),
++    ("resnet.encoder.stages.1.layers.2.layer.0.convolution.weight", "./tensors/arg117.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.2.normalization.running_var", "./tensors/arg118.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.2.normalization.running_mean", "./tensors/arg119.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.2.normalization.bias", "./tensors/arg120.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.2.normalization.weight", "./tensors/arg121.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.2.convolution.weight", "./tensors/arg122.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.1.normalization.running_var", "./tensors/arg123.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.1.normalization.running_mean", "./tensors/arg124.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.1.normalization.bias", "./tensors/arg125.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.1.normalization.weight", "./tensors/arg126.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.1.convolution.weight", "./tensors/arg127.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.0.normalization.running_var", "./tensors/arg128.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.0.normalization.running_mean", "./tensors/arg129.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.0.normalization.bias", "./tensors/arg130.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.0.normalization.weight", "./tensors/arg131.tensorbin"),
++    ("resnet.encoder.stages.1.layers.3.layer.0.convolution.weight", "./tensors/arg132.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.2.normalization.running_var", "./tensors/arg133.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.2.normalization.running_mean", "./tensors/arg134.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.2.normalization.bias", "./tensors/arg135.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.2.normalization.weight", "./tensors/arg136.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.2.convolution.weight", "./tensors/arg137.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.1.normalization.running_var", "./tensors/arg138.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.1.normalization.running_mean", "./tensors/arg139.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.1.normalization.bias", "./tensors/arg140.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.1.normalization.weight", "./tensors/arg141.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.1.convolution.weight", "./tensors/arg142.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.0.normalization.running_var", "./tensors/arg143.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.0.normalization.running_mean", "./tensors/arg144.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.0.normalization.bias", "./tensors/arg145.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.0.normalization.weight", "./tensors/arg146.tensorbin"),
++    ("resnet.encoder.stages.2.layers.0.layer.0.convolution.weight", "./tensors/arg147.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.2.normalization.running_var", "./tensors/arg148.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.2.normalization.running_mean", "./tensors/arg149.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.2.normalization.bias", "./tensors/arg150.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.2.normalization.weight", "./tensors/arg151.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.2.convolution.weight", "./tensors/arg152.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.1.normalization.running_var", "./tensors/arg153.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.1.normalization.running_mean", "./tensors/arg154.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.1.normalization.bias", "./tensors/arg155.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.1.normalization.weight", "./tensors/arg156.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.1.convolution.weight", "./tensors/arg157.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.0.normalization.running_var", "./tensors/arg158.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.0.normalization.running_mean", "./tensors/arg159.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.0.normalization.bias", "./tensors/arg160.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.0.normalization.weight", "./tensors/arg161.tensorbin"),
++    ("resnet.encoder.stages.2.layers.1.layer.0.convolution.weight", "./tensors/arg162.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.2.normalization.running_var", "./tensors/arg163.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.2.normalization.running_mean", "./tensors/arg164.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.2.normalization.bias", "./tensors/arg165.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.2.normalization.weight", "./tensors/arg166.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.2.convolution.weight", "./tensors/arg167.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.1.normalization.running_var", "./tensors/arg168.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.1.normalization.running_mean", "./tensors/arg169.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.1.normalization.bias", "./tensors/arg170.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.1.normalization.weight", "./tensors/arg171.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.1.convolution.weight", "./tensors/arg172.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.0.normalization.running_var", "./tensors/arg173.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.0.normalization.running_mean", "./tensors/arg174.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.0.normalization.bias", "./tensors/arg175.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.0.normalization.weight", "./tensors/arg176.tensorbin"),
++    ("resnet.encoder.stages.2.layers.2.layer.0.convolution.weight", "./tensors/arg177.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.2.normalization.running_var", "./tensors/arg178.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.2.normalization.running_mean", "./tensors/arg179.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.2.normalization.bias", "./tensors/arg180.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.2.normalization.weight", "./tensors/arg181.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.2.convolution.weight", "./tensors/arg182.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.1.normalization.running_var", "./tensors/arg183.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.1.normalization.running_mean", "./tensors/arg184.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.1.normalization.bias", "./tensors/arg185.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.1.normalization.weight", "./tensors/arg186.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.1.convolution.weight", "./tensors/arg187.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.0.normalization.running_var", "./tensors/arg188.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.0.normalization.running_mean", "./tensors/arg189.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.0.normalization.bias", "./tensors/arg190.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.0.normalization.weight", "./tensors/arg191.tensorbin"),
++    ("resnet.encoder.stages.2.layers.3.layer.0.convolution.weight", "./tensors/arg192.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.2.normalization.running_var", "./tensors/arg193.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.2.normalization.running_mean", "./tensors/arg194.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.2.normalization.bias", "./tensors/arg195.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.2.normalization.weight", "./tensors/arg196.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.2.convolution.weight", "./tensors/arg197.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.1.normalization.running_var", "./tensors/arg198.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.1.normalization.running_mean", "./tensors/arg199.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.1.normalization.bias", "./tensors/arg200.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.1.normalization.weight", "./tensors/arg201.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.1.convolution.weight", "./tensors/arg202.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.0.normalization.running_var", "./tensors/arg203.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.0.normalization.running_mean", "./tensors/arg204.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.0.normalization.bias", "./tensors/arg205.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.0.normalization.weight", "./tensors/arg206.tensorbin"),
++    ("resnet.encoder.stages.2.layers.4.layer.0.convolution.weight", "./tensors/arg207.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.2.normalization.running_var", "./tensors/arg208.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.2.normalization.running_mean", "./tensors/arg209.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.2.normalization.bias", "./tensors/arg210.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.2.normalization.weight", "./tensors/arg211.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.2.convolution.weight", "./tensors/arg212.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.1.normalization.running_var", "./tensors/arg213.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.1.normalization.running_mean", "./tensors/arg214.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.1.normalization.bias", "./tensors/arg215.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.1.normalization.weight", "./tensors/arg216.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.1.convolution.weight", "./tensors/arg217.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.0.normalization.running_var", "./tensors/arg218.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.0.normalization.running_mean", "./tensors/arg219.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.0.normalization.bias", "./tensors/arg220.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.0.normalization.weight", "./tensors/arg221.tensorbin"),
++    ("resnet.encoder.stages.2.layers.5.layer.0.convolution.weight", "./tensors/arg222.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.2.normalization.running_var", "./tensors/arg223.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.2.normalization.running_mean", "./tensors/arg224.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.2.normalization.bias", "./tensors/arg225.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.2.normalization.weight", "./tensors/arg226.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.2.convolution.weight", "./tensors/arg227.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.1.normalization.running_var", "./tensors/arg228.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.1.normalization.running_mean", "./tensors/arg229.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.1.normalization.bias", "./tensors/arg230.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.1.normalization.weight", "./tensors/arg231.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.1.convolution.weight", "./tensors/arg232.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.0.normalization.running_var", "./tensors/arg233.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.0.normalization.running_mean", "./tensors/arg234.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.0.normalization.bias", "./tensors/arg235.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.0.normalization.weight", "./tensors/arg236.tensorbin"),
++    ("resnet.encoder.stages.3.layers.0.layer.0.convolution.weight", "./tensors/arg237.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.2.normalization.running_var", "./tensors/arg238.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.2.normalization.running_mean", "./tensors/arg239.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.2.normalization.bias", "./tensors/arg240.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.2.normalization.weight", "./tensors/arg241.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.2.convolution.weight", "./tensors/arg242.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.1.normalization.running_var", "./tensors/arg243.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.1.normalization.running_mean", "./tensors/arg244.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.1.normalization.bias", "./tensors/arg245.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.1.normalization.weight", "./tensors/arg246.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.1.convolution.weight", "./tensors/arg247.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.0.normalization.running_var", "./tensors/arg248.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.0.normalization.running_mean", "./tensors/arg249.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.0.normalization.bias", "./tensors/arg250.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.0.normalization.weight", "./tensors/arg251.tensorbin"),
++    ("resnet.encoder.stages.3.layers.1.layer.0.convolution.weight", "./tensors/arg252.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.2.normalization.running_var", "./tensors/arg253.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.2.normalization.running_mean", "./tensors/arg254.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.2.normalization.bias", "./tensors/arg255.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.2.normalization.weight", "./tensors/arg256.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.2.convolution.weight", "./tensors/arg257.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.1.normalization.running_var", "./tensors/arg258.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.1.normalization.running_mean", "./tensors/arg259.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.1.normalization.bias", "./tensors/arg260.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.1.normalization.weight", "./tensors/arg261.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.1.convolution.weight", "./tensors/arg262.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.0.normalization.running_var", "./tensors/arg263.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.0.normalization.running_mean", "./tensors/arg264.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.0.normalization.bias", "./tensors/arg265.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.0.normalization.weight", "./tensors/arg266.tensorbin"),
++    ("resnet.encoder.stages.3.layers.2.layer.0.convolution.weight", "./tensors/arg267.tensorbin"),
++]
++
++ALL_WEIGHT_NAMES = [name for name, _ in ALL_WEIGHTS]
++
++
++_main_weights = {}
++
++
++def load_weights_for__main():
++    global _main_weights
++    for name, file_path in ALL_WEIGHTS:
++        _main_weights[name] = utils.load_tensor(
++            file_path,
++            ttnn.Layout.ROW_MAJOR,
++            ttnn.DataType.BFLOAT16,
++            None,
++            None,
++        )
++    return _main_weights
++
++
++def load_weights_for__main_from_state_dict():
++    model = model_pt.load_pytorch_model()
++    sd = dict(model.state_dict())
++    for name, buf in model.named_buffers():
++        if name not in sd:
++            sd[name] = buf
++
++    weights = {}
++    for key in ALL_WEIGHT_NAMES:
++        pt_tensor = sd[key]
++        ttnn_tensor = ttnn.from_torch(pt_tensor)
++        ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.ROW_MAJOR)
++        ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
++        weights[key] = ttnn_tensor
++
++    return weights
+diff --git a/microsoft/resnet-50/model/graph_0/verify_weights.py b/microsoft/resnet-50/model/graph_0/verify_weights.py
+new file mode 100644
+index 0000000..a801fe8
+--- /dev/null
++++ b/microsoft/resnet-50/model/graph_0/verify_weights.py
+@@ -0,0 +1,41 @@
++import ttnn
++import torch
++from params import load_weights_for__main, load_weights_for__main_from_state_dict
++
++
++def test_verify_weights():
++    disk_weights = load_weights_for__main()
++    sd_weights = load_weights_for__main_from_state_dict()
++
++    disk_keys = set(disk_weights.keys())
++    sd_keys = set(sd_weights.keys())
++    assert disk_keys == sd_keys, (
++        f"Key mismatch. In disk but not state_dict: {disk_keys - sd_keys}. "
++        f"In state_dict but not disk: {sd_keys - disk_keys}."
++    )
++
++    mismatches = []
++    for key in sorted(disk_weights.keys()):
++        t1 = disk_weights[key]
++        t2 = sd_weights[key]
++
++        if t1.device() is not None:
++            t1 = ttnn.from_device(t1)
++        if t2.device() is not None:
++            t2 = ttnn.from_device(t2)
++
++        pt1 = ttnn.to_torch(t1).flatten()
++        pt2 = ttnn.to_torch(t2).flatten()
++
++        if not torch.equal(pt1, pt2):
++            max_diff = (pt1 - pt2).abs().max().item()
++            mismatches.append((key, max_diff))
++            print(f"  MISMATCH: {key} (max diff: {max_diff})")
++        else:
++            print(f"  OK: {key}")
++
++    assert not mismatches, (
++        f"{len(mismatches)} / {len(disk_weights)} weights mismatch: "
++        + ", ".join(f"{k}={d}" for k, d in mismatches)
++    )
++    print(f"All {len(disk_weights)} weights match!")
