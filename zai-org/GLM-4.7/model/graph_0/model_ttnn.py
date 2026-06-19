@@ -714,7 +714,7 @@ class Glm4MoeAttention(LightweightModule):
             cluster_axis=1,
             subdevice_id=None,
             memory_config=dram_mem,
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Linear,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
