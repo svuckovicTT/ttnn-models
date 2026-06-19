@@ -1,0 +1,3 @@
+Done. The `_main` function (3030+ lines of TTNN ops) along with its `ce_cache__main` global and `consteval` import has been moved to `model_ttnn.py`. In `main.py`, it's now imported via `from model_ttnn import _main`, and all call sites (`main()` and `test_main()`) work unchanged.
+
+--- Time taken: 57.8s | session: 34e06d1e-48c2-4c35-b4e7-2f347b179763 ---
