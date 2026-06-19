@@ -493,14 +493,8 @@ class Glm4MoeAttention(LightweightModule):
             compute_kernel_config=None,
         )
         ttnn.deallocate(q_slice_first, False)
-        q_rotary_sliced = ttnn.slice(
-            q_rotary,
-            [0, 0, 0, 0],
-            [16, 12, 1, 64],
-            [1, 1, 1, 1],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(q_rotary, False)
+        # rotary_embedding output is already [16, 12, 1, 64]; the prior re-slice
+        # [0:64] was a no-op. Use q_rotary directly in the concat.
         q_second_half = ttnn.slice(
             q_normed,
             [0, 0, 0, 64],
@@ -510,12 +504,12 @@ class Glm4MoeAttention(LightweightModule):
         )
         ttnn.deallocate(q_normed, False)
         q_combined = ttnn.concat(
-            [q_rotary_sliced, q_second_half],
+            [q_rotary, q_second_half],
             3,
             memory_config=dram_mem,
         )
         ttnn.deallocate(q_second_half, False)
-        ttnn.deallocate(q_rotary_sliced, False)
+        ttnn.deallocate(q_rotary, False)
         # K norm
         k_normed = ttnn.rms_norm(
             v_k,
@@ -545,14 +539,8 @@ class Glm4MoeAttention(LightweightModule):
             compute_kernel_config=None,
         )
         ttnn.deallocate(k_slice_first, False)
-        k_rotary_sliced = ttnn.slice(
-            k_rotary,
-            [0, 0, 0, 0],
-            [16, 1, 1, 64],
-            [1, 1, 1, 1],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(k_rotary, False)
+        # rotary_embedding output is already [16, 1, 1, 64]; the prior re-slice
+        # [0:64] was a no-op. Use k_rotary directly in the concat.
         k_second_half = ttnn.slice(
             k_normed,
             [0, 0, 0, 64],
@@ -562,12 +550,12 @@ class Glm4MoeAttention(LightweightModule):
         )
         ttnn.deallocate(k_normed, False)
         k_combined = ttnn.concat(
-            [k_rotary_sliced, k_second_half],
+            [k_rotary, k_second_half],
             3,
             memory_config=dram_mem,
         )
         ttnn.deallocate(k_second_half, False)
-        ttnn.deallocate(k_rotary_sliced, False)
+        ttnn.deallocate(k_rotary, False)
         # Reshape K result
         k_reshaped = ttnn.reshape(
             k_combined,
