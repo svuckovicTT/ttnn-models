@@ -4,7 +4,7 @@ import utils
 import model_pt
 from consteval import consteval__main
 from utils import calculate_pcc
-from params import load_weights_for__main
+from params import load_weights_for__main_from_state_dict as load_weights_for__main
 
 ce_cache__main = {}
 

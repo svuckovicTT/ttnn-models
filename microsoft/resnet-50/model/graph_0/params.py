@@ -1,6 +1,5 @@
 import ttnn
 import torch
-import utils
 import model_pt
 
 
@@ -275,22 +274,6 @@ ALL_WEIGHTS = [
 ]
 
 ALL_WEIGHT_NAMES = [name for name, _ in ALL_WEIGHTS]
-
-
-_main_weights = {}
-
-
-def load_weights_for__main():
-    global _main_weights
-    for name, file_path in ALL_WEIGHTS:
-        _main_weights[name] = utils.load_tensor(
-            file_path,
-            ttnn.Layout.ROW_MAJOR,
-            ttnn.DataType.BFLOAT16,
-            None,
-            None,
-        )
-    return _main_weights
 
 
 def load_weights_for__main_from_state_dict():
