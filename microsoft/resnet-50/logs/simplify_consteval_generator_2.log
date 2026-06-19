@@ -1,0 +1,17 @@
+Both files are valid Python. Here's a summary of the changes:
+
+**`consteval.py`** (8209 lines → 254 lines):
+- Replaced the massive `cpu_hoisted_const_eval_3d7508d3` (265-arg function with unrolled BN-folding for all 53 conv layers) with a clean `fold_bn_into_conv()` helper that does BN folding for a single layer
+- Replaced `main_const_eval_0` (6000+ lines of unrolled typecasts and prepare_conv calls) with `prepare_conv_tensors()` that prepares one weight/bias pair using a config tuple
+- Replaced `cpu_hoisted_const_eval_382fc5dd` / `main_const_eval_1` with `prepare_classifier_bias()`
+- Replaced `cpu_hoisted_const_eval_27d66922` / `main_const_eval_2` with `prepare_classifier_weight()`
+- Replaced `consteval__main` (ce_cache-based) with `run_consteval(weights, device)` that loops over `CONV_LAYER_PREFIXES` and stores results as individual keys (e.g., `prefix.folded_conv_weight`, `prefix.folded_conv_bias`) instead of one list under `ce_cache["main_const_eval_0"]`
+- All 53 per-conv configurations are stored in the `CONV_CONFIGS` data table
+
+**`model_ttnn.py`**:
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` instead of lazily calling `consteval__main` with `ce_cache`
+- `forward` no longer calls consteval — all weights are pre-computed
+- All `var_0[N]` references replaced with descriptive keys like `self.weights["resnet.encoder.stages.0.layers.0.layer.0.folded_conv_weight"]`
+- Classifier references updated to `self.weights["classifier.1.prepared_weight"]` / `self.weights["classifier.1.prepared_bias"]`
+
+--- Time taken: 453.0s | session: 5cf1fbb9-41c6-41cc-866e-81ad58a92364 ---
