@@ -31,6 +31,25 @@ Per-iteration: sum of the 4 attention-window device times (tracy, scoped per
 signpost) + full-slice device time. Full-model impact extrapolated linearly
 (attention block is identical across all real-model layers).
 
+## Summary of significant changes (kept)
+
+| Change | Op effect | Attention/layer |
+|--------|-----------|-----------------|
+| #5 DRAM-sharded qkv matmul | qkv matmul 107 -> 47 μs (31% -> 67.6% DRAM BW) | -53 μs |
+| #7 o_proj all_gather num_links=3 | all_gather 80 -> ~55 μs | -22 μs |
+| #4 DRAM-sharded o_proj matmul | o_proj matmul 47 -> 40 μs (60.7% -> 67.7% BW) | -8 μs |
+| **Total (kept)** | | **~620 -> ~538 μs/layer (-13%)** |
+
+PCC 0.894531 -> **0.902344** (improved; the DRAM-sharded matmuls auto-select LoFi but
+accumulate more accurately on this path). Stopped after 8 iterations: remaining device
+time (reduce_scatter 78 μs transport-bound; rotary 66 μs / TM ~100 μs from partial-RoPE,
+both load-bearing per METAL_BLOCKERS) is at HW limits or below the ~±20 μs/layer noise
+floor. The generalizable win (DRAM-shard skinny decode matmuls) is in TT_MLIR_RECOMMENDATIONS.
+
+Full-model extrapolation: the attention block is identical across all real-model layers,
+so the -82 μs/layer scales linearly with layer count (e.g. ~-7.5 ms across 92 layers),
+independent of the MoE layers that dominate this 4-layer slice's 156 ms device time.
+
 ## Candidate optimizations (pre-analysis of Glm4MoeAttention.forward)
 
 1. **Redundant post-rotary re-slice** — after `rotary_embedding` on the 64-wide
@@ -82,6 +101,8 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 
 | 6 | o_proj reduce_scatter + all_gather num_links=3 | attn | mixed (all_gather 80->~60, reduce_scatter flat/noisy) | PCC 0.902344, no hang | superseded by #7 | links help the pure-DM all_gather but not the HiFi4-reduction reduce_scatter. |
 | 7 | keep all_gather num_links=3, reduce_scatter back to auto | attn | -22 μs/layer on clean layers (L2/L3 560->538) | PCC 0.902344 | **keep** | isolates the all_gather win (80->~55 μs, 15 cores); reduce_scatter back to ~78 μs (5 cores). L1 is a systematic ~35 μs noisy outlier across runs -> use L2/L3 as clean signal. |
+
+| 8 | o_proj reduce_scatter compute HiFi4 -> LoFi | attn | none (reduce_scatter 78->78-100, within noise) | PCC 0.902344 (unchanged) | revert | confirms reduce_scatter is transport-bound, not compute-bound: lowering reduction fidelity does not speed it (and num_links didn't either, #6). It is at its floor on this HW. |
 
 ### Running total: attention ~620 -> ~538 μs/layer on clean layers (-13%), PCC 0.894531 -> 0.902344 (improved).
 
