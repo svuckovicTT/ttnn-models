@@ -1,6 +1,6 @@
 import ttnn
 import params
-import consteval
+from consteval import consteval__main
 
 
 class LightweightModule:
@@ -12,10 +12,12 @@ class ModelTTNN(LightweightModule):
     def __init__(self, device):
         self.device = device
         self.weights = params.load_weights_for__main_from_state_dict()
-        self.weights = consteval.run_consteval(self.weights, device)
+        self.ce_cache = {}
 
     def forward(self, activations):
+        self.ce_cache = consteval__main(self.ce_cache, self.weights, self.device)
         args_0 = activations[0]
+        var_0 = self.ce_cache["main_const_eval_0"]
         utils_DeviceGetter_get_device_0 = self.device
         ttnn_to_layout_0 = ttnn.to_layout(
             args_0, ttnn.Layout.TILE, None, memory_config=None
@@ -40,7 +42,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_permute_0, False)
         ttnn_conv2d_0 = ttnn.conv2d(
             input_tensor=ttnn_reshape_0,
-            weight_tensor=self.weights["resnet.embedder.embedder.convolution.weight"],
+            weight_tensor=var_0[0],
             device=utils_DeviceGetter_get_device_0,
             in_channels=3,
             out_channels=64,
@@ -53,7 +55,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.embedder.embedder.convolution.bias"],
+            bias_tensor=var_0[1],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -112,7 +114,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_conv2d_0, False)
         ttnn_conv2d_1 = ttnn.conv2d(
             input_tensor=ttnn_max_pool2d_0,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.0.convolution.weight"],
+            weight_tensor=var_0[2],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=64,
@@ -125,7 +127,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.0.convolution.bias"],
+            bias_tensor=var_0[3],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -154,7 +156,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_2 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_1,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.1.convolution.weight"],
+            weight_tensor=var_0[4],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=64,
@@ -167,7 +169,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.1.convolution.bias"],
+            bias_tensor=var_0[5],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -196,7 +198,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_3 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_2,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.2.convolution.weight"],
+            weight_tensor=var_0[6],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=256,
@@ -209,7 +211,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.2.convolution.bias"],
+            bias_tensor=var_0[7],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -255,7 +257,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_max_pool2d_0, False)
         ttnn_conv2d_4 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_0,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.shortcut.convolution.weight"],
+            weight_tensor=var_0[8],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=256,
@@ -268,7 +270,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.shortcut.convolution.bias"],
+            bias_tensor=var_0[9],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -335,7 +337,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_0, False)
         ttnn_conv2d_5 = ttnn.conv2d(
             input_tensor=ttnn_relu_0,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.0.convolution.weight"],
+            weight_tensor=var_0[10],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=64,
@@ -348,7 +350,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.0.convolution.bias"],
+            bias_tensor=var_0[11],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -377,7 +379,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_6 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_5,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.1.convolution.weight"],
+            weight_tensor=var_0[12],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=64,
@@ -390,7 +392,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.1.convolution.bias"],
+            bias_tensor=var_0[13],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -419,7 +421,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_7 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_6,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.2.convolution.weight"],
+            weight_tensor=var_0[14],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=256,
@@ -432,7 +434,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.2.convolution.bias"],
+            bias_tensor=var_0[15],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -499,7 +501,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_1, False)
         ttnn_conv2d_8 = ttnn.conv2d(
             input_tensor=ttnn_relu_1,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.0.convolution.weight"],
+            weight_tensor=var_0[16],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=64,
@@ -512,7 +514,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.0.convolution.bias"],
+            bias_tensor=var_0[17],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -541,7 +543,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_9 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_8,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.1.convolution.weight"],
+            weight_tensor=var_0[18],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=64,
@@ -554,7 +556,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.1.convolution.bias"],
+            bias_tensor=var_0[19],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -583,7 +585,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_10 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_9,
-            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.2.convolution.weight"],
+            weight_tensor=var_0[20],
             device=utils_DeviceGetter_get_device_0,
             in_channels=64,
             out_channels=256,
@@ -596,7 +598,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.2.convolution.bias"],
+            bias_tensor=var_0[21],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -663,7 +665,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_2, False)
         ttnn_conv2d_11 = ttnn.conv2d(
             input_tensor=ttnn_relu_2,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.0.convolution.weight"],
+            weight_tensor=var_0[22],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=128,
@@ -676,7 +678,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.0.convolution.bias"],
+            bias_tensor=var_0[23],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -705,7 +707,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_12 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_11,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.1.convolution.weight"],
+            weight_tensor=var_0[24],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=128,
@@ -718,7 +720,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.1.convolution.bias"],
+            bias_tensor=var_0[25],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -747,7 +749,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_13 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_12,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.2.convolution.weight"],
+            weight_tensor=var_0[26],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=512,
@@ -760,7 +762,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.2.convolution.bias"],
+            bias_tensor=var_0[27],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -788,7 +790,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_14 = ttnn.conv2d(
             input_tensor=ttnn_relu_2,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.shortcut.convolution.weight"],
+            weight_tensor=var_0[28],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=512,
@@ -801,7 +803,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.shortcut.convolution.bias"],
+            bias_tensor=var_0[29],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=False,
@@ -869,7 +871,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_3, False)
         ttnn_conv2d_15 = ttnn.conv2d(
             input_tensor=ttnn_relu_3,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.0.convolution.weight"],
+            weight_tensor=var_0[30],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=128,
@@ -882,7 +884,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.0.convolution.bias"],
+            bias_tensor=var_0[31],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -911,7 +913,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_16 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_15,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.1.convolution.weight"],
+            weight_tensor=var_0[32],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=128,
@@ -924,7 +926,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.1.convolution.bias"],
+            bias_tensor=var_0[33],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -953,7 +955,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_17 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_16,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.2.convolution.weight"],
+            weight_tensor=var_0[34],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=512,
@@ -966,7 +968,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.2.convolution.bias"],
+            bias_tensor=var_0[35],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -1033,7 +1035,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_4, False)
         ttnn_conv2d_18 = ttnn.conv2d(
             input_tensor=ttnn_relu_4,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.0.convolution.weight"],
+            weight_tensor=var_0[36],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=128,
@@ -1046,7 +1048,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.0.convolution.bias"],
+            bias_tensor=var_0[37],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1075,7 +1077,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_19 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_18,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.1.convolution.weight"],
+            weight_tensor=var_0[38],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=128,
@@ -1088,7 +1090,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.1.convolution.bias"],
+            bias_tensor=var_0[39],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1117,7 +1119,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_20 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_19,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.2.convolution.weight"],
+            weight_tensor=var_0[40],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=512,
@@ -1130,7 +1132,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.2.convolution.bias"],
+            bias_tensor=var_0[41],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -1197,7 +1199,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_5, False)
         ttnn_conv2d_21 = ttnn.conv2d(
             input_tensor=ttnn_relu_5,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.0.convolution.weight"],
+            weight_tensor=var_0[42],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=128,
@@ -1210,7 +1212,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.0.convolution.bias"],
+            bias_tensor=var_0[43],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1239,7 +1241,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_22 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_21,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.1.convolution.weight"],
+            weight_tensor=var_0[44],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=128,
@@ -1252,7 +1254,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.1.convolution.bias"],
+            bias_tensor=var_0[45],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1281,7 +1283,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_23 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_22,
-            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.2.convolution.weight"],
+            weight_tensor=var_0[46],
             device=utils_DeviceGetter_get_device_0,
             in_channels=128,
             out_channels=512,
@@ -1294,7 +1296,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.2.convolution.bias"],
+            bias_tensor=var_0[47],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -1361,7 +1363,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_6, False)
         ttnn_conv2d_24 = ttnn.conv2d(
             input_tensor=ttnn_relu_6,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.0.convolution.weight"],
+            weight_tensor=var_0[48],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=256,
@@ -1374,7 +1376,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.0.convolution.bias"],
+            bias_tensor=var_0[49],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1403,7 +1405,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_25 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_24,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.1.convolution.weight"],
+            weight_tensor=var_0[50],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=256,
@@ -1416,7 +1418,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.1.convolution.bias"],
+            bias_tensor=var_0[51],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1460,7 +1462,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_conv2d_25, False)
         ttnn_conv2d_26 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_1,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.2.convolution.weight"],
+            weight_tensor=var_0[52],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=1024,
@@ -1473,7 +1475,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.2.convolution.bias"],
+            bias_tensor=var_0[53],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -1513,7 +1515,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_relu_6, False)
         ttnn_conv2d_27 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_2,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.shortcut.convolution.weight"],
+            weight_tensor=var_0[54],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=1024,
@@ -1526,7 +1528,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.shortcut.convolution.bias"],
+            bias_tensor=var_0[55],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -1598,7 +1600,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_28 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_3,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.0.convolution.weight"],
+            weight_tensor=var_0[56],
             device=utils_DeviceGetter_get_device_0,
             in_channels=1024,
             out_channels=256,
@@ -1611,7 +1613,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.0.convolution.bias"],
+            bias_tensor=var_0[57],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1637,7 +1639,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_29 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_28,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.1.convolution.weight"],
+            weight_tensor=var_0[58],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=256,
@@ -1650,7 +1652,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.1.convolution.bias"],
+            bias_tensor=var_0[59],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1676,7 +1678,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_30 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_29,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.2.convolution.weight"],
+            weight_tensor=var_0[60],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=1024,
@@ -1689,7 +1691,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.2.convolution.bias"],
+            bias_tensor=var_0[61],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -1761,7 +1763,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_31 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_4,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.0.convolution.weight"],
+            weight_tensor=var_0[62],
             device=utils_DeviceGetter_get_device_0,
             in_channels=1024,
             out_channels=256,
@@ -1774,7 +1776,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.0.convolution.bias"],
+            bias_tensor=var_0[63],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1800,7 +1802,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_32 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_31,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.1.convolution.weight"],
+            weight_tensor=var_0[64],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=256,
@@ -1813,7 +1815,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.1.convolution.bias"],
+            bias_tensor=var_0[65],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1839,7 +1841,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_33 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_32,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.2.convolution.weight"],
+            weight_tensor=var_0[66],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=1024,
@@ -1852,7 +1854,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.2.convolution.bias"],
+            bias_tensor=var_0[67],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -1924,7 +1926,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_34 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_5,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.0.convolution.weight"],
+            weight_tensor=var_0[68],
             device=utils_DeviceGetter_get_device_0,
             in_channels=1024,
             out_channels=256,
@@ -1937,7 +1939,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.0.convolution.bias"],
+            bias_tensor=var_0[69],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -1963,7 +1965,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_35 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_34,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.1.convolution.weight"],
+            weight_tensor=var_0[70],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=256,
@@ -1976,7 +1978,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.1.convolution.bias"],
+            bias_tensor=var_0[71],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2002,7 +2004,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_36 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_35,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.2.convolution.weight"],
+            weight_tensor=var_0[72],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=1024,
@@ -2015,7 +2017,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.2.convolution.bias"],
+            bias_tensor=var_0[73],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -2087,7 +2089,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_37 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_6,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.0.convolution.weight"],
+            weight_tensor=var_0[74],
             device=utils_DeviceGetter_get_device_0,
             in_channels=1024,
             out_channels=256,
@@ -2100,7 +2102,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.0.convolution.bias"],
+            bias_tensor=var_0[75],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2126,7 +2128,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_38 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_37,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.1.convolution.weight"],
+            weight_tensor=var_0[76],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=256,
@@ -2139,7 +2141,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.1.convolution.bias"],
+            bias_tensor=var_0[77],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2165,7 +2167,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_39 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_38,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.2.convolution.weight"],
+            weight_tensor=var_0[78],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=1024,
@@ -2178,7 +2180,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.2.convolution.bias"],
+            bias_tensor=var_0[79],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -2250,7 +2252,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_40 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_7,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.0.convolution.weight"],
+            weight_tensor=var_0[80],
             device=utils_DeviceGetter_get_device_0,
             in_channels=1024,
             out_channels=256,
@@ -2263,7 +2265,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.0.convolution.bias"],
+            bias_tensor=var_0[81],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2289,7 +2291,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_41 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_40,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.1.convolution.weight"],
+            weight_tensor=var_0[82],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=256,
@@ -2302,7 +2304,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.1.convolution.bias"],
+            bias_tensor=var_0[83],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2328,7 +2330,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_42 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_41,
-            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.2.convolution.weight"],
+            weight_tensor=var_0[84],
             device=utils_DeviceGetter_get_device_0,
             in_channels=256,
             out_channels=1024,
@@ -2341,7 +2343,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.2.convolution.bias"],
+            bias_tensor=var_0[85],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -2413,7 +2415,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_43 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_8,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.0.convolution.weight"],
+            weight_tensor=var_0[86],
             device=utils_DeviceGetter_get_device_0,
             in_channels=1024,
             out_channels=512,
@@ -2426,7 +2428,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.0.convolution.bias"],
+            bias_tensor=var_0[87],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2452,7 +2454,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_44 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_43,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.1.convolution.weight"],
+            weight_tensor=var_0[88],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=512,
@@ -2465,7 +2467,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.1.convolution.bias"],
+            bias_tensor=var_0[89],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2491,7 +2493,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_45 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_44,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.2.convolution.weight"],
+            weight_tensor=var_0[90],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=2048,
@@ -2504,7 +2506,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.2.convolution.bias"],
+            bias_tensor=var_0[91],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -2529,7 +2531,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_46 = ttnn.conv2d(
             input_tensor=ttnn_relu_12,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.shortcut.convolution.weight"],
+            weight_tensor=var_0[92],
             device=utils_DeviceGetter_get_device_0,
             in_channels=1024,
             out_channels=2048,
@@ -2542,7 +2544,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.shortcut.convolution.bias"],
+            bias_tensor=var_0[93],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=False,
@@ -2615,7 +2617,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_47 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_9,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.0.convolution.weight"],
+            weight_tensor=var_0[94],
             device=utils_DeviceGetter_get_device_0,
             in_channels=2048,
             out_channels=512,
@@ -2628,7 +2630,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.0.convolution.bias"],
+            bias_tensor=var_0[95],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2654,7 +2656,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_48 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_47,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.1.convolution.weight"],
+            weight_tensor=var_0[96],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=512,
@@ -2667,7 +2669,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.1.convolution.bias"],
+            bias_tensor=var_0[97],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2693,7 +2695,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_49 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_48,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.2.convolution.weight"],
+            weight_tensor=var_0[98],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=2048,
@@ -2706,7 +2708,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.2.convolution.bias"],
+            bias_tensor=var_0[99],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -2778,7 +2780,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_50 = ttnn.conv2d(
             input_tensor=ttnn_to_memory_config_10,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"],
+            weight_tensor=var_0[100],
             device=utils_DeviceGetter_get_device_0,
             in_channels=2048,
             out_channels=512,
@@ -2791,7 +2793,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.bias"],
+            bias_tensor=var_0[101],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2817,7 +2819,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_51 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_50,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.1.convolution.weight"],
+            weight_tensor=var_0[102],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=512,
@@ -2830,7 +2832,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.1.convolution.bias"],
+            bias_tensor=var_0[103],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -2856,7 +2858,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_conv2d_52 = ttnn.conv2d(
             input_tensor=ttnn_conv2d_51,
-            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.2.convolution.weight"],
+            weight_tensor=var_0[104],
             device=utils_DeviceGetter_get_device_0,
             in_channels=512,
             out_channels=2048,
@@ -2869,7 +2871,7 @@ class ModelTTNN(LightweightModule):
             dilation=[1, 1],
             groups=1,
             dtype=ttnn.DataType.BFLOAT16,
-            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.2.convolution.bias"],
+            bias_tensor=var_0[105],
             conv_config=ttnn.Conv2dConfig(
                 weights_dtype=ttnn.DataType.BFLOAT16,
                 deallocate_activation=True,
@@ -2977,8 +2979,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_mean_0, False)
         ttnn_linear_0 = ttnn.linear(
             ttnn_reshape_2,
-            self.weights["classifier.1.weight"],
-            bias=self.weights["classifier.1.bias"],
+            self.ce_cache["main_const_eval_2"],
+            bias=self.ce_cache["main_const_eval_1"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
