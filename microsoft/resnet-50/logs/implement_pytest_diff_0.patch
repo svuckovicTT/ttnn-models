@@ -1,0 +1,107 @@
+diff --git a/microsoft/resnet-50/logs/implement_golden_checks_0.log b/microsoft/resnet-50/logs/implement_golden_checks_0.log
+new file mode 100644
+index 0000000..a3249fb
+--- /dev/null
++++ b/microsoft/resnet-50/logs/implement_golden_checks_0.log
+@@ -0,0 +1,23 @@
++=== check: pytest main.py ===
++PASSED
++============================= test session starts ==============================
++platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
++rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
++plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
++collected 1 item
++
++main.py .
++
++=============================== warnings summary ===============================
++main.py::test_main
++  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but main.py::test_main returned <class 'int'>.
++  Did you mean to use `assert` instead of `return`?
++  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
++    warnings.warn(
++
++-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
++========================= 1 passed, 1 warning in 2.70s =========================
++
++=== check: verify_weights.py ===
++PASSED
++verify_weights.py does not exist for step implement_golden, as expected
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/implement_golden_evaluator_0.log b/microsoft/resnet-50/logs/implement_golden_evaluator_0.log
+new file mode 100644
+index 0000000..01ea503
+--- /dev/null
++++ b/microsoft/resnet-50/logs/implement_golden_evaluator_0.log
+@@ -0,0 +1,7 @@
++{
++  "is_approved": true,
++  "failed_criteria": [],
++  "reasoning": "All three criteria are fully satisfied. (1) TASK COMPLETION: `model_pt.py` was created with the three required functions (`load_input`, `load_pytorch_model`, `run_pytorch_model`) that are verbatim copies of the equivalent functions in `xla.py` with no tt-xla logic included. `calculate_pcc` was added to `utils.py` exactly as specified. `from utils import calculate_pcc` was added to `main.py`. (2) SCOPE CONTAINMENT: Only `model_pt.py`, `utils.py`, and `main.py` were modified. The sole change to `utils.py` beyond the new function is adding `import torch`, which is a required dependency for `calculate_pcc`. No unrelated code was touched. (3) SEMANTIC EQUIVALENCE: All existing TTNN code is unchanged. The additions are purely additive and introduce no behavioral changes to any existing functionality."
++}
++
++--- Time taken: 26.9s ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/implement_pytest_generator_0.log b/microsoft/resnet-50/logs/implement_pytest_generator_0.log
+new file mode 100644
+index 0000000..edf39d6
+--- /dev/null
++++ b/microsoft/resnet-50/logs/implement_pytest_generator_0.log
+@@ -0,0 +1,10 @@
++Done. The `test_main()` function now:
++
++1. Sets `exact_pcc = 0.97265625` (matching `xla.py`)
++2. Loads input via `model_pt.load_input()` and converts it to a TTNN tensor with the same layout/dtype/device/memory_config as `load_activations_for__main()`
++3. Loads weights and runs `_main()` 
++4. Converts the TTNN output back to torch via `ttnn.from_device()` + `ttnn.to_torch()`
++5. Gets golden output from `model_pt.run_pytorch_model()`
++6. Computes PCC using `calculate_pcc()` and asserts exact equality with the expected value
++
++--- Time taken: 36.4s | session: f644106f-dacf-4f8b-b08e-cdc8492fb97f ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 6ee6e4f..48a0431 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -1,5 +1,7 @@
+ import ttnn
++import torch
+ import utils
++import model_pt
+ from consteval import consteval__main
+ from utils import calculate_pcc
+ 
+@@ -5731,7 +5733,32 @@ def main():
+ 
+ 
+ def test_main():
+-    return 0
++    exact_pcc = 0.97265625
++
++    pt_input = model_pt.load_input()
++    device = utils.DeviceGetter.get_device((1, 1))
++    ttnn_input = ttnn.from_torch(
++        pt_input,
++        layout=ttnn.Layout.ROW_MAJOR,
++        dtype=ttnn.DataType.BFLOAT16,
++        device=device,
++        memory_config=ttnn.MemoryConfig(
++            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
++        ),
++    )
++    activations = [ttnn_input]
++
++    weights = load_weights_for__main()
++    outputs = _main(activations, weights)
++
++    ttnn_output = ttnn.from_device(outputs[0])
++    ttnn_output = ttnn.to_torch(ttnn_output)
++
++    golden_output = model_pt.run_pytorch_model()
++
++    pcc = calculate_pcc(ttnn_output.to(golden_output.dtype), golden_output)
++    print(f"\nPCC: {pcc:.6f}")
++    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+ 
+ 
+ if __name__ == "__main__":
