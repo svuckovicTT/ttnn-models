@@ -80,7 +80,16 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 
 | 5 | DRAM-sharded qkv matmul (+L1-sharded in0, reshard out, separate bias add) | attn | -53 μs/layer (L1 613->560; -61 vs baseline) | PCC 0.902344 (better) | **keep** | qkv matmul **107->47 μs**, DRAM-bound 67.6% BW (was 31%), auto-LoFi. +bias add (BinaryNg 4 μs) + 2 reshards (~4 μs). Biggest single win. Both attn matmuls now DRAM-bound ~68%. |
 
-### Running total: attention 621 -> 560 μs/layer (-9.8%), PCC 0.894531 -> 0.902344.
+| 6 | o_proj reduce_scatter + all_gather num_links=3 | attn | mixed (all_gather 80->~60, reduce_scatter flat/noisy) | PCC 0.902344, no hang | superseded by #7 | links help the pure-DM all_gather but not the HiFi4-reduction reduce_scatter. |
+| 7 | keep all_gather num_links=3, reduce_scatter back to auto | attn | -22 μs/layer on clean layers (L2/L3 560->538) | PCC 0.902344 | **keep** | isolates the all_gather win (80->~55 μs, 15 cores); reduce_scatter back to ~78 μs (5 cores). L1 is a systematic ~35 μs noisy outlier across runs -> use L2/L3 as clean signal. |
+
+### Running total: attention ~620 -> ~538 μs/layer on clean layers (-13%), PCC 0.894531 -> 0.902344 (improved).
+
+Kept changes: (#4) DRAM-sharded o_proj matmul, (#5) DRAM-sharded qkv matmul + bias add,
+(#7) o_proj all_gather num_links=3. Dominant win is #5 (qkv 107->47 μs). Measurement noise
+floor is ~±20 μs/layer (CCL run-to-run variance), so sub-20 μs tweaks below are not reliably
+attributable; the reduce_scatter (78 μs), rotary (66 μs) and the partial-RoPE TM reshapes/
+slices (~100 μs) are the remaining device time but sit near HW limits / the noise floor.
 
 ### Interim finding (after iters 1-3)
 
