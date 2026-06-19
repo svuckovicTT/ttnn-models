@@ -1,0 +1,251 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
+plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
+collected 1 item
+
+main.py F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        exact_pcc = 0.97265625
+    
+>       pt_input = model_pt.load_input()
+                   ^^^^^^^^^^^^^^^^^^^^^
+
+main.py:5738: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+model_pt.py:7: in load_input
+    dataset = load_dataset("imagenet-1k", split="validation", streaming=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../../../tt-xla/venv/lib/python3.12/site-packages/datasets/load.py:1488: in load_dataset
+    builder_instance = load_dataset_builder(
+../../../../../tt-xla/venv/lib/python3.12/site-packages/datasets/load.py:1133: in load_dataset_builder
+    dataset_module = dataset_module_factory(
+../../../../../tt-xla/venv/lib/python3.12/site-packages/datasets/load.py:1026: in dataset_module_factory
+    raise e1 from None
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = 'imagenet-1k', revision = None
+download_config = DownloadConfig(cache_dir=None, force_download=False, resume_download=False, local_files_only=False, proxies=None, user...e, use_etag=True, num_proc=None, max_retries=1, token=None, storage_options={}, download_desc=None, disable_tqdm=False)
+download_mode = <DownloadMode.REUSE_DATASET_IF_EXISTS: 'reuse_dataset_if_exists'>
+data_dir = None, data_files = None, cache_dir = None, download_kwargs = {}
+filename = 'imagenet-1k.py', combined_path = 'imagenet-1k/imagenet-1k.py'
+api = <huggingface_hub.hf_api.HfApi object at 0x7f1817f88350>
+dataset_readme_path = '/localdev/svuckovic/_workspace/huggingface/hub/datasets--imagenet-1k/snapshots/49e2ee26f3810fb5a7536bbf732a7b07389a47b5/README.md'
+commit_hash = '49e2ee26f3810fb5a7536bbf732a7b07389a47b5'
+message = "Dataset 'imagenet-1k' is a gated dataset on the Hub. You must be authenticated to access it."
+
+    def dataset_module_factory(
+        path: str,
+        revision: Optional[Union[str, Version]] = None,
+        download_config: Optional[DownloadConfig] = None,
+        download_mode: Optional[Union[DownloadMode, str]] = None,
+        data_dir: Optional[str] = None,
+        data_files: Optional[Union[dict, list, str, DataFilesDict]] = None,
+        cache_dir: Optional[str] = None,
+        **download_kwargs,
+    ) -> DatasetModule:
+        """
+        Download/extract/cache a dataset module.
+    
+        Dataset codes are cached inside the dynamic modules cache to allow easy import (avoid ugly sys.path tweaks).
+    
+        Args:
+    
+            path (str): Path or name of the dataset.
+                Depending on ``path``, the dataset builder that is used comes from one of the generic dataset builders (JSON, CSV, Parquet, text etc.).
+    
+                For local datasets:
+    
+                - if ``path`` is a local directory (containing data files only)
+                  -> load a generic dataset builder (csv, json, text etc.) based on the content of the directory
+                  e.g. ``'./path/to/directory/with/my/csv/data'``.
+    
+                For datasets on the Hugging Face Hub (list all available datasets with ``huggingface_hub.list_datasets()``)
+    
+                - if ``path`` is a dataset repository on the HF hub (containing data files only)
+                  -> load a generic dataset builder (csv, text etc.) based on the content of the repository
+                  e.g. ``'username/dataset_name'``, a dataset repository on the HF hub containing your data files.
+    
+            revision (:class:`~utils.Version` or :obj:`str`, optional): Version of the dataset to load.
+                As datasets have their own git repository on the Datasets Hub, the default version "main" corresponds to their "main" branch.
+                You can specify a different version than the default "main" by using a commit SHA or a git tag of the dataset repository.
+            download_config (:class:`DownloadConfig`, optional): Specific download configuration parameters.
+            download_mode (:class:`DownloadMode` or :obj:`str`, default ``REUSE_DATASET_IF_EXISTS``): Download/generate mode.
+            data_dir (:obj:`str`, optional): Directory with the data files. Used only if `data_files` is not specified,
+                in which case it's equal to pass `os.path.join(data_dir, "**")` as `data_files`.
+            data_files (:obj:`Union[Dict, List, str]`, optional): Defining the data_files of the dataset configuration.
+            cache_dir (`str`, *optional*):
+                Directory to read/write data. Defaults to `"~/.cache/huggingface/datasets"`.
+    
+                <Added version="2.16.0"/>
+    
+            **download_kwargs (additional keyword arguments): optional attributes for DownloadConfig() which will override
+                the attributes in download_config if supplied.
+    
+        Returns:
+            DatasetModule
+        """
+        if download_config is None:
+            download_config = DownloadConfig(**download_kwargs)
+        download_mode = DownloadMode(download_mode or DownloadMode.REUSE_DATASET_IF_EXISTS)
+        download_config.extract_compressed_file = True
+        download_config.force_extract = True
+        download_config.force_download = download_mode == DownloadMode.FORCE_REDOWNLOAD
+    
+        filename = list(filter(lambda x: x, path.replace(os.sep, "/").split("/")))[-1]
+        if not filename.endswith(".py"):
+            filename = filename + ".py"
+        combined_path = os.path.join(path, filename)
+    
+        # We have several ways to get a dataset builder:
+        #
+        # - if path is the name of a packaged dataset module
+        #   -> use the packaged module (json, csv, etc.)
+        #
+        # - if os.path.join(path, name) is a local python file
+        #   -> use the module from the python file
+        # - if path is a local directory (but no python file)
+        #   -> use a packaged module (csv, text etc.) based on content of the directory
+        #
+        # - if path has one "/" and is dataset repository on the HF hub with a python file
+        #   -> the module from the python file in the dataset repository
+        # - if path has one "/" and is dataset repository on the HF hub without a python file
+        #   -> use a packaged module (csv, text etc.) based on content of the repository
+    
+        # Try packaged
+        if path in _PACKAGED_DATASETS_MODULES:
+            return PackagedDatasetModuleFactory(
+                path,
+                data_dir=data_dir,
+                data_files=data_files,
+                download_config=download_config,
+                download_mode=download_mode,
+            ).get_module()
+        # Try locally
+        elif path.endswith(filename):
+            raise RuntimeError(f"Dataset scripts are no longer supported, but found {filename}")
+        elif os.path.isfile(combined_path):
+            raise RuntimeError(f"Dataset scripts are no longer supported, but found {filename}")
+        elif os.path.isdir(path):
+            return LocalDatasetModuleFactory(
+                path, data_dir=data_dir, data_files=data_files, download_mode=download_mode
+            ).get_module()
+        # Try remotely
+        elif is_relative_path(path) and path.count("/") <= 1:
+            try:
+                # Get the Dataset Card + get the revision + check authentication all at in one call
+                # We fix the commit_hash in case there are new commits in the meantime
+                api = HfApi(
+                    endpoint=config.HF_ENDPOINT,
+                    token=download_config.token,
+                    library_name="datasets",
+                    library_version=__version__,
+                    user_agent=get_datasets_user_agent(download_config.user_agent),
+                )
+                try:
+                    _raise_if_offline_mode_is_enabled()
+                    dataset_readme_path = api.hf_hub_download(
+                        repo_id=path,
+                        filename=config.REPOCARD_FILENAME,
+                        repo_type="dataset",
+                        revision=revision,
+                        proxies=download_config.proxies,
+                    )
+                    commit_hash = os.path.basename(os.path.dirname(dataset_readme_path))
+                except LocalEntryNotFoundError as e:
+                    if isinstance(
+                        e.__cause__,
+                        (
+                            OfflineModeIsEnabled,
+                            requests.exceptions.Timeout,
+                            requests.exceptions.ConnectionError,
+                            httpx.ConnectError,
+                            httpx.TimeoutException,
+                        ),
+                    ):
+                        raise ConnectionError(f"Couldn't reach '{path}' on the Hub ({e.__class__.__name__})") from e
+                    else:
+                        raise
+                except EntryNotFoundError:
+                    commit_hash = api.dataset_info(
+                        path,
+                        revision=revision,
+                        timeout=100.0,
+                    ).sha
+                except (
+                    OfflineModeIsEnabled,
+                    requests.exceptions.Timeout,
+                    requests.exceptions.ConnectionError,
+                    httpx.ConnectError,
+                    httpx.TimeoutException,
+                ) as e:
+                    raise ConnectionError(f"Couldn't reach '{path}' on the Hub ({e.__class__.__name__})") from e
+                except GatedRepoError as e:
+                    message = f"Dataset '{path}' is a gated dataset on the Hub."
+                    if e.response.status_code == 401:
+                        message += " You must be authenticated to access it."
+                    elif e.response.status_code == 403:
+                        message += f" Visit the dataset page at https://huggingface.co/datasets/{path} to ask for access."
+                    raise DatasetNotFoundError(message) from e
+                except RepositoryNotFoundError as e:
+                    raise DatasetNotFoundError(f"Dataset '{path}' doesn't exist on the Hub or cannot be accessed.") from e
+                try:
+                    api.hf_hub_download(
+                        repo_id=path,
+                        filename=filename,
+                        repo_type="dataset",
+                        revision=commit_hash,
+                        proxies=download_config.proxies,
+                    )
+                    raise RuntimeError(f"Dataset scripts are no longer supported, but found {filename}")
+                except EntryNotFoundError:
+                    # Use the infos from the parquet export except in some cases:
+                    if data_dir or data_files or (revision and revision != "main"):
+                        use_exported_dataset_infos = False
+                    else:
+                        use_exported_dataset_infos = True
+                    return HubDatasetModuleFactory(
+                        path,
+                        commit_hash=commit_hash,
+                        data_dir=data_dir,
+                        data_files=data_files,
+                        download_config=download_config,
+                        download_mode=download_mode,
+                        use_exported_dataset_infos=use_exported_dataset_infos,
+                    ).get_module()
+                except GatedRepoError as e:
+                    message = f"Dataset '{path}' is a gated dataset on the Hub."
+                    if e.response.status_code == 401:
+                        message += " You must be authenticated to access it."
+                    elif e.response.status_code == 403:
+                        message += f" Visit the dataset page at https://huggingface.co/datasets/{path} to ask for access."
+>                   raise DatasetNotFoundError(message) from e
+E                   datasets.exceptions.DatasetNotFoundError: Dataset 'imagenet-1k' is a gated dataset on the Hub. You must be authenticated to access it.
+
+../../../../../tt-xla/venv/lib/python3.12/site-packages/datasets/load.py:1014: DatasetNotFoundError
+------------------------------ Captured log call -------------------------------
+WARNING  huggingface_hub.utils._http:_http.py:904 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - datasets.exceptions.DatasetNotFoundError: Dataset...
+======================== 1 failed, 2 warnings in 7.29s =========================
+2026-06-19 21:51:52.605 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step implement_pytest, as expected

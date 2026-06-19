@@ -1,0 +1,10 @@
+Done. The `test_main()` function now:
+
+1. Sets `exact_pcc = 0.97265625` (matching `xla.py`)
+2. Loads the PyTorch input via `model_pt.load_input()`
+3. Converts it to a TTNN tensor with `ttnn.from_torch()` using BFLOAT16/ROW_MAJOR, then sends to device with INTERLEAVED DRAM memory config — matching the same transformations as `load_activations_for__main()`
+4. Loads weights and runs `_main()` to get TTNN outputs
+5. Converts the TTNN output back to torch, runs the PyTorch golden model via `model_pt.run_pytorch_model()`
+6. Computes and asserts PCC equality using `calculate_pcc()`
+
+--- Time taken: 48.9s | session: 93f9851d-eadf-406b-bd78-f72d88badc73 ---
