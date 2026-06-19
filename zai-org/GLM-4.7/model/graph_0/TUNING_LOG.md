@@ -76,6 +76,12 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 | 2 | o_proj reduce_scatter+all_gather -> all_reduce | attn | +24 μs/layer (L1 621->645) WORSE | PCC 0.894531 (bit-identical) | revert | ttnn.all_reduce decomposes to reduce_scatter_minimal_async (102 μs) + all_gather (80 μs); the minimal_async RS is slower than the explicit reduce_scatter (78 μs). Op count unchanged (25). Explicit rs+ag is better here. |
 | 3 | drop qkv reshape [16,1792]->[16,1,1792] before split_heads | attn | — | run FAILED | revert | hypothesis wrong: qkv linear outputs 2D [16,1792]; split_query_key_value_and_split_heads requires rank 3 (TT_FATAL input_shape.rank()==3). Reshape adds the seq dim (real re-tile) -> load-bearing. Reverted (uncommitted). |
 
+| 4 | DRAM-sharded o_proj matmul (+L1-sharded in0, reshard out) | attn | -8 μs/layer (L1 621->613) | PCC 0.894531->0.902344 (better) | **keep** | o_proj matmul 47->40 μs, now DRAM-bound 67.7% BW (was 60.7%), auto-LoFi. +2 reshard ops (~4 μs). Net positive; PCC improved. Weight width-sharded across 12 DRAM banks in consteval. |
+
+| 5 | DRAM-sharded qkv matmul (+L1-sharded in0, reshard out, separate bias add) | attn | -53 μs/layer (L1 613->560; -61 vs baseline) | PCC 0.902344 (better) | **keep** | qkv matmul **107->47 μs**, DRAM-bound 67.6% BW (was 31%), auto-LoFi. +bias add (BinaryNg 4 μs) + 2 reshards (~4 μs). Biggest single win. Both attn matmuls now DRAM-bound ~68%. |
+
+### Running total: attention 621 -> 560 μs/layer (-9.8%), PCC 0.894531 -> 0.902344.
+
 ### Interim finding (after iters 1-3)
 
 The attention block is already tightly generated: the three "obviously redundant" TM ops
