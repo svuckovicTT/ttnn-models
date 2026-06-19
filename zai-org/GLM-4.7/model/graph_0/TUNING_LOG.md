@@ -72,3 +72,18 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 | # | patch | scope | tracy DT delta | PCC delta | decision | why |
 |---|-------|-------|----------------|-----------|----------|-----|
 | 0 | baseline (signposts only) | — | — | PCC 0.894531 | keep | establishes baseline; matches golden tol 0.01 |
+| 1 | drop post-rotary re-slice (q/k) | attn | — | run FAILED | revert | hypothesis wrong: rotary_embedding output != [.,.,.,64], concat shapes_match TT_FATAL. Re-slice is load-bearing (strips rotary output seq-pad 1->32). Committed broken + reverted. |
+| 2 | o_proj reduce_scatter+all_gather -> all_reduce | attn | +24 μs/layer (L1 621->645) WORSE | PCC 0.894531 (bit-identical) | revert | ttnn.all_reduce decomposes to reduce_scatter_minimal_async (102 μs) + all_gather (80 μs); the minimal_async RS is slower than the explicit reduce_scatter (78 μs). Op count unchanged (25). Explicit rs+ag is better here. |
+| 3 | drop qkv reshape [16,1792]->[16,1,1792] before split_heads | attn | — | run FAILED | revert | hypothesis wrong: qkv linear outputs 2D [16,1792]; split_query_key_value_and_split_heads requires rank 3 (TT_FATAL input_shape.rank()==3). Reshape adds the seq dim (real re-tile) -> load-bearing. Reverted (uncommitted). |
+
+### Interim finding (after iters 1-3)
+
+The attention block is already tightly generated: the three "obviously redundant" TM ops
+(post-rotary re-slice, qkv-rank reshape) are all load-bearing, and the one CCL fusion
+(all_reduce) is slower than the explicit reduce_scatter+all_gather it would replace.
+Remaining device time is dominated by **DRAM-bandwidth-bound matmuls** (qkv 107 μs at a
+90 GB/s / 31%-util wall; o_proj 47 μs) and **near-optimal CCL** (158 μs). The textbook fix
+for the matmul wall is **DRAM-sharded weights + L1-width-sharded activation dataflow**
+(cf. models/demos/llama3_70b_galaxy, same HW), which the skill sequences last because it is
+a whole-block restructure (reshard in/out around each matmul, or keep the block sharded
+end-to-end). That is the next lever.
