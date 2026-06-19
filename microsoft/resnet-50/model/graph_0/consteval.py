@@ -1,5 +1,4 @@
 import ttnn
-import utils
 import ttir_cpu
 import torch
 
@@ -1456,8 +1455,8 @@ def cpu_hoisted_const_eval_3d7508d3(
     )
 
 
-def main_const_eval_0(arg):
-    utils_DeviceGetter_get_device_2 = utils.DeviceGetter.get_device((1, 1))
+def main_const_eval_0(arg, device):
+    utils_DeviceGetter_get_device_2 = device
     ttnn_typecast_2 = ttnn.typecast(arg[20], ttnn.DataType.FLOAT32, memory_config=None)
     ttnn_typecast_3 = ttnn.typecast(arg[23], ttnn.DataType.FLOAT32, memory_config=None)
     ttnn_typecast_4 = ttnn.typecast(arg[24], ttnn.DataType.FLOAT32, memory_config=None)
@@ -7460,8 +7459,8 @@ def cpu_hoisted_const_eval_382fc5dd(arg):
     return ttnn_from_torch_106
 
 
-def main_const_eval_1(arg):
-    utils_DeviceGetter_get_device_3 = utils.DeviceGetter.get_device((1, 1))
+def main_const_eval_1(arg, device):
+    utils_DeviceGetter_get_device_3 = device
     ttnn_typecast_373 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
     cpu_hoisted_const_eval_382fc5dd_0 = cpu_hoisted_const_eval_382fc5dd(
         ttnn_typecast_373
@@ -7489,8 +7488,8 @@ def cpu_hoisted_const_eval_27d66922(arg):
     return ttnn_from_torch_107
 
 
-def main_const_eval_2(arg):
-    utils_DeviceGetter_get_device_4 = utils.DeviceGetter.get_device((1, 1))
+def main_const_eval_2(arg, device):
+    utils_DeviceGetter_get_device_4 = device
     ttnn_typecast_374 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
     cpu_hoisted_const_eval_27d66922_0 = cpu_hoisted_const_eval_27d66922(
         ttnn_typecast_374
@@ -7511,7 +7510,7 @@ def main_const_eval_2(arg):
     return [ttnn_to_device_1]
 
 
-def consteval__main(ce_cache, weights):
+def consteval__main(ce_cache, weights, device):
     if not ce_cache:
         main_const_eval_0_0 = main_const_eval_0(
             [
@@ -8092,7 +8091,8 @@ def consteval__main(ce_cache, weights):
                     "resnet.encoder.stages.3.layers.2.layer.0.normalization.weight"
                 ],
                 weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"],
-            ]
+            ],
+            device,
         )
         ce_cache["main_const_eval_0"] = [
             main_const_eval_0_0[0],
@@ -8202,8 +8202,8 @@ def consteval__main(ce_cache, weights):
             main_const_eval_0_0[104],
             main_const_eval_0_0[105],
         ]
-        main_const_eval_1_0 = main_const_eval_1([weights["classifier.1.bias"]])
+        main_const_eval_1_0 = main_const_eval_1([weights["classifier.1.bias"]], device)
         ce_cache["main_const_eval_1"] = main_const_eval_1_0[0]
-        main_const_eval_2_0 = main_const_eval_2([weights["classifier.1.weight"]])
+        main_const_eval_2_0 = main_const_eval_2([weights["classifier.1.weight"]], device)
         ce_cache["main_const_eval_2"] = main_const_eval_2_0[0]
     return ce_cache
