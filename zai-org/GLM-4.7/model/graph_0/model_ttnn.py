@@ -429,19 +429,37 @@ class Glm4MoeAttention(LightweightModule):
         )
         layer_prefix = f"model.model.layers.{self.layer_idx}.self_attn"
         # QKV projection
-        ttnn_linear = ttnn.linear(
+        # DRAM-sharded qkv matmul: the qkv weight (k=5120, n=1792) is width-sharded
+        # across the 12 DRAM banks (consteval). Width-shard the [16,5120] activation
+        # into L1, matmul, reshard the [16,1792] output back to DRAM-interleaved, then
+        # add the qkv bias separately (the DRAM-sharded matmul path runs unbiased).
+        import dram_matmul
+        qkv_rows, qkv_cols, qkv_cores = dram_matmul.compute_grid(5120, 1792)
+        hs_sharded = ttnn.to_memory_config(
             hidden_states,
+            dram_matmul.in0_l1_width_sharded_config(16, 5120, qkv_rows, qkv_cols),
+        )
+        ttnn.deallocate(hidden_states, False)
+        qkv_sharded = ttnn.matmul(
+            hs_sharded,
             self.weights[f"{layer_prefix}.qkv_proj.weight"],
-            bias=self.weights[f"{layer_prefix}.qkv_proj.bias"],
             transpose_a=False,
             transpose_b=False,
-            memory_config=dram_mem,
+            memory_config=dram_matmul.out_l1_width_sharded_config(16, 1792, qkv_rows, qkv_cols),
             dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
+            program_config=dram_matmul.program_config(16, 5120, 1792, qkv_cores),
             activation=None,
             compute_kernel_config=None,
         )
-        ttnn.deallocate(hidden_states, False)
+        ttnn.deallocate(hs_sharded, False)
+        qkv_interleaved = ttnn.to_memory_config(qkv_sharded, dram_mem)
+        ttnn.deallocate(qkv_sharded, False)
+        ttnn_linear = ttnn.add(
+            qkv_interleaved,
+            self.weights[f"{layer_prefix}.qkv_proj.bias"],
+            memory_config=dram_mem,
+        )
+        ttnn.deallocate(qkv_interleaved, False)
         ttnn_reshape_qkv = ttnn.reshape(
             ttnn_linear,
             [16, 1, 1792],

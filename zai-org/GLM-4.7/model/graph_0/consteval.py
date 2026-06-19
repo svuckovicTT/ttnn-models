@@ -131,14 +131,22 @@ def run_consteval(weights, device):
         memory_config=DRAM_CONFIG,
     )
 
+    import dram_matmul
+
     for i in range(4):
         pfx = f"model.model.layers.{i}.self_attn"
-        weights[f"{pfx}.qkv_proj.weight"] = _concat_qkv_weights(
+        qkv_w = _concat_qkv_weights(
             weights[f"{pfx}.k_proj.weight"],
             weights[f"{pfx}.v_proj.weight"],
             weights[f"{pfx}.q_proj.weight"],
             device,
         )
+        # DRAM width-shard the qkv weight (k=5120, n=1792) across the 12 DRAM banks
+        # so the decode matmul reads it in parallel (consteval -> no perf cost).
+        weights[f"{pfx}.qkv_proj.weight"] = ttnn.to_memory_config(
+            qkv_w, dram_matmul.weight_dram_sharded_config(device, 5120, 1792)
+        )
+        ttnn.deallocate(qkv_w, False)
         weights[f"{pfx}.qkv_proj.bias"] = _concat_qkv_biases(
             weights[f"{pfx}.k_proj.bias"],
             weights[f"{pfx}.v_proj.bias"],
