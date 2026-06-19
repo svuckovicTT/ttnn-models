@@ -1,0 +1,9 @@
+Done. Here's what changed:
+
+1. **`utils.py`** — Removed `DeviceGetter` class and `math` import. Added `open_device()` and `close_device()` functions that mirror the same open parameters (mesh_shape `(1,1)`, l1_small_size `1 << 15`).
+
+2. **`main.py`** — `_main()` now takes `device` as first arg; `load_activations_for__main()` takes `device`; `consteval__main()` call passes `device`. Both `main()` and `test_main()` open device via `utils.open_device()` and pipe it through. `main()` also calls `utils.close_device()`.
+
+3. **`consteval.py`** — `main_const_eval_0/1/2()` and `consteval__main()` all accept `device` parameter. Removed unused `import utils`.
+
+--- Time taken: 168.5s | session: 309e4469-05ce-4755-b50d-359ba375329d ---

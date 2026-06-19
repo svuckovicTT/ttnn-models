@@ -1,0 +1,280 @@
+diff --git a/microsoft/resnet-50/logs/pipe_device_generator_0.log b/microsoft/resnet-50/logs/pipe_device_generator_0.log
+new file mode 100644
+index 0000000..3275265
+--- /dev/null
++++ b/microsoft/resnet-50/logs/pipe_device_generator_0.log
+@@ -0,0 +1,9 @@
++Done. Here's what changed:
++
++1. **`utils.py`** — Removed `DeviceGetter` class and `math` import. Added `open_device()` and `close_device()` functions that mirror the same open parameters (mesh_shape `(1,1)`, l1_small_size `1 << 15`).
++
++2. **`main.py`** — `_main()` now takes `device` as first arg; `load_activations_for__main()` takes `device`; `consteval__main()` call passes `device`. Both `main()` and `test_main()` open device via `utils.open_device()` and pipe it through. `main()` also calls `utils.close_device()`.
++
++3. **`consteval.py`** — `main_const_eval_0/1/2()` and `consteval__main()` all accept `device` parameter. Removed unused `import utils`.
++
++--- Time taken: 168.5s | session: 309e4469-05ce-4755-b50d-359ba375329d ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/post_load_weights_checks_0.log b/microsoft/resnet-50/logs/post_load_weights_checks_0.log
+new file mode 100644
+index 0000000..522049a
+--- /dev/null
++++ b/microsoft/resnet-50/logs/post_load_weights_checks_0.log
+@@ -0,0 +1,38 @@
++=== check: pytest main.py ===
++PASSED
++============================= test session starts ==============================
++platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
++rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
++plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
++collected 1 item
++
++main.py Device: MeshDevice(1x1 grid, 1 devices)
++Input shape: torch.Size([8, 3, 224, 224])
++Input dtype: torch.bfloat16
++Input shape: torch.Size([8, 3, 224, 224])
++Input dtype: torch.bfloat16
++
++PCC: 0.972656
++.
++
++=============================== warnings summary ===============================
++<frozen importlib._bootstrap>:488
++  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
++
++<frozen importlib._bootstrap>:488
++  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
++
++-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
++======================== 1 passed, 2 warnings in 22.56s ========================
++2026-06-19 22:12:17.614 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
++
++Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
++Loading weights: 100%|██████████| 320/320 [00:00<00:00, 9882.18it/s]
++
++Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
++Loading weights: 100%|██████████| 320/320 [00:00<00:00, 10181.28it/s]
++sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
++
++=== check: verify_weights.py ===
++PASSED
++verify_weights.py does not exist for step post_load_weights, as expected
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/post_load_weights_evaluator_0.log b/microsoft/resnet-50/logs/post_load_weights_evaluator_0.log
+new file mode 100644
+index 0000000..b18e2ed
+--- /dev/null
++++ b/microsoft/resnet-50/logs/post_load_weights_evaluator_0.log
+@@ -0,0 +1,7 @@
++{
++  "is_approved": true,
++  "failed_criteria": [],
++  "reasoning": "The Generator correctly completed all three requested tasks: (1) deleted the original `load_weights_for__main` function and its associated module-level global `_main_weights` from `params.py`, along with the now-unused `import utils`; (2) updated `main.py` to import the state_dict variant aliased as the original name, preserving all call sites; and (3) deleted `verify_weights.py`. The changes are minimal, tightly scoped, and semantically equivalent."
++}
++
++--- Time taken: 29.1s ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/model/graph_0/consteval.py b/microsoft/resnet-50/model/graph_0/consteval.py
+index 1effff0..5c36022 100644
+--- a/microsoft/resnet-50/model/graph_0/consteval.py
++++ b/microsoft/resnet-50/model/graph_0/consteval.py
+@@ -1,5 +1,4 @@
+ import ttnn
+-import utils
+ import ttir_cpu
+ import torch
+ 
+@@ -1456,8 +1455,8 @@ def cpu_hoisted_const_eval_3d7508d3(
+     )
+ 
+ 
+-def main_const_eval_0(arg):
+-    utils_DeviceGetter_get_device_2 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_0(arg, device):
++    utils_DeviceGetter_get_device_2 = device
+     ttnn_typecast_2 = ttnn.typecast(arg[20], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_3 = ttnn.typecast(arg[23], ttnn.DataType.FLOAT32, memory_config=None)
+     ttnn_typecast_4 = ttnn.typecast(arg[24], ttnn.DataType.FLOAT32, memory_config=None)
+@@ -7460,8 +7459,8 @@ def cpu_hoisted_const_eval_382fc5dd(arg):
+     return ttnn_from_torch_106
+ 
+ 
+-def main_const_eval_1(arg):
+-    utils_DeviceGetter_get_device_3 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_1(arg, device):
++    utils_DeviceGetter_get_device_3 = device
+     ttnn_typecast_373 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+     cpu_hoisted_const_eval_382fc5dd_0 = cpu_hoisted_const_eval_382fc5dd(
+         ttnn_typecast_373
+@@ -7489,8 +7488,8 @@ def cpu_hoisted_const_eval_27d66922(arg):
+     return ttnn_from_torch_107
+ 
+ 
+-def main_const_eval_2(arg):
+-    utils_DeviceGetter_get_device_4 = utils.DeviceGetter.get_device((1, 1))
++def main_const_eval_2(arg, device):
++    utils_DeviceGetter_get_device_4 = device
+     ttnn_typecast_374 = ttnn.typecast(arg[0], ttnn.DataType.FLOAT32, memory_config=None)
+     cpu_hoisted_const_eval_27d66922_0 = cpu_hoisted_const_eval_27d66922(
+         ttnn_typecast_374
+@@ -7511,7 +7510,7 @@ def main_const_eval_2(arg):
+     return [ttnn_to_device_1]
+ 
+ 
+-def consteval__main(ce_cache, weights):
++def consteval__main(ce_cache, weights, device):
+     if not ce_cache:
+         main_const_eval_0_0 = main_const_eval_0(
+             [
+@@ -8092,7 +8091,8 @@ def consteval__main(ce_cache, weights):
+                     "resnet.encoder.stages.3.layers.2.layer.0.normalization.weight"
+                 ],
+                 weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"],
+-            ]
++            ],
++            device,
+         )
+         ce_cache["main_const_eval_0"] = [
+             main_const_eval_0_0[0],
+@@ -8202,8 +8202,8 @@ def consteval__main(ce_cache, weights):
+             main_const_eval_0_0[104],
+             main_const_eval_0_0[105],
+         ]
+-        main_const_eval_1_0 = main_const_eval_1([weights["classifier.1.bias"]])
++        main_const_eval_1_0 = main_const_eval_1([weights["classifier.1.bias"]], device)
+         ce_cache["main_const_eval_1"] = main_const_eval_1_0[0]
+-        main_const_eval_2_0 = main_const_eval_2([weights["classifier.1.weight"]])
++        main_const_eval_2_0 = main_const_eval_2([weights["classifier.1.weight"]], device)
+         ce_cache["main_const_eval_2"] = main_const_eval_2_0[0]
+     return ce_cache
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index c1c0db2..0ea5bca 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -9,12 +9,12 @@ from params import load_weights_for__main_from_state_dict as load_weights_for__m
+ ce_cache__main = {}
+ 
+ 
+-def _main(activations, weights):
++def _main(device, activations, weights):
+     global ce_cache__main
+-    ce_cache__main = consteval__main(ce_cache__main, weights)
++    ce_cache__main = consteval__main(ce_cache__main, weights, device)
+     args_0 = activations[0]
+     var_0 = ce_cache__main["main_const_eval_0"]
+-    utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device((1, 1))
++    utils_DeviceGetter_get_device_0 = device
+     ttnn_to_layout_0 = ttnn.to_layout(
+         args_0, ttnn.Layout.TILE, None, memory_config=None
+     )
+@@ -3042,13 +3042,12 @@ def _main(activations, weights):
+     return [ttnn_to_memory_config_11]
+ 
+ 
+-def load_activations_for__main():
+-    utils_DeviceGetter_get_device_1 = utils.DeviceGetter.get_device((1, 1))
++def load_activations_for__main(device):
+     utils_load_tensor_0 = utils.load_tensor(
+         "./tensors/arg27.tensorbin",
+         ttnn.Layout.ROW_MAJOR,
+         ttnn.DataType.BFLOAT16,
+-        utils_DeviceGetter_get_device_1,
++        device,
+         ttnn.MemoryConfig(
+             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+         ),
+@@ -3057,22 +3056,24 @@ def load_activations_for__main():
+ 
+ 
+ def main():
+-    load_activations_for__main_0 = load_activations_for__main()
++    device = utils.open_device()
++    load_activations_for__main_0 = load_activations_for__main(device)
+     load_weights_for__main_0 = load_weights_for__main()
+-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
++    _main_0 = _main(device, load_activations_for__main_0, load_weights_for__main_0)
++    utils.close_device(device)
+     return 0
+ 
+ 
+ def test_main():
+     exact_pcc = 0.97265625
+ 
+-    device = utils.DeviceGetter.get_device((1, 1))
++    device = utils.open_device()
+     input_tensor = model_pt.load_input()
+     ttnn_input = ttnn.from_torch(input_tensor, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.ROW_MAJOR, device=device, memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None))
+     activations = [ttnn_input]
+ 
+     weights = load_weights_for__main()
+-    outputs = _main(activations, weights)
++    outputs = _main(device, activations, weights)
+ 
+     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[0]))
+     golden_output = model_pt.run_pytorch_model()
+diff --git a/microsoft/resnet-50/model/graph_0/utils.py b/microsoft/resnet-50/model/graph_0/utils.py
+index 3728970..3e705fe 100644
+--- a/microsoft/resnet-50/model/graph_0/utils.py
++++ b/microsoft/resnet-50/model/graph_0/utils.py
+@@ -3,50 +3,18 @@
+ # SPDX-License-Identifier: Apache-2.0
+ import ttnn
+ import torch
+-import math
+-
+-
+-class DeviceGetter:
+-    _instance = None
+-    _mesh_shape = None
+-    l1_small_size = 1 << 15
+-
+-    def __init__(self):
+-        raise RuntimeError("This is Singleton, invoke get_device() instead.")
+-
+-    def __del__(self):
+-        if self._instance is not None:
+-            ttnn.close_mesh_device(self._instance)
+-            ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
+-
+-    @classmethod
+-    def get_device(cls, mesh_shape):
+-        if cls._instance == None:
+-            if (
+-                not isinstance(mesh_shape, (list, tuple))
+-                or len(mesh_shape) == 0
+-                or not all(isinstance(x, int) and x > 0 for x in mesh_shape)
+-            ):
+-                raise ValueError(
+-                    f"mesh_shape must be a non-empty list or tuple of positive integers, got {mesh_shape}"
+-                )
+-            cls._mesh_shape = mesh_shape
+-
+-            if math.prod(mesh_shape) >= 2:
+-                ttnn.set_fabric_config(ttnn.FabricConfig.FABRIC_1D)
+-            cls._instance = ttnn.open_mesh_device(
+-                mesh_shape=ttnn.MeshShape(mesh_shape),
+-                l1_small_size=cls.l1_small_size,
+-            )
+-            print(f"Device: {cls._instance}")
+-
+-        # Compare requested mesh_shape with _mesh_shape used to initialize the device
+-        if tuple(cls._mesh_shape) != tuple(mesh_shape):
+-            raise ValueError(
+-                f"Device already initialized with mesh_shape={cls._mesh_shape}, but got mesh_shape={mesh_shape}"
+-            )
+-
+-        return cls._instance
++
++
++def open_device(mesh_shape=(1, 1), l1_small_size=1 << 15):
++    device = ttnn.open_mesh_device(
++        mesh_shape=ttnn.MeshShape(mesh_shape),
++        l1_small_size=l1_small_size,
++    )
++    return device
++
++
++def close_device(device):
++    ttnn.close_mesh_device(device)
+ 
+ 
+ def get_scalar_from_tensor(tensor: ttnn.Tensor) -> int:
