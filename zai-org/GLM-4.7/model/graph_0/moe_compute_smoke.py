@@ -23,24 +23,116 @@ N = 1536          # moe intermediate
 EXPERTS = 160
 K = 8             # experts per token
 TOKENS_PER_DEV = 16        # batch 64 / 4 dispatch devices
-CLUSTER_AXIS = 0
+import os as _os_top
+CLUSTER_AXIS = int(_os_top.environ.get("SMOKE_CLUSTER_AXIS", "0"))  # 0=4-device ring, 1=8-device ring
 L1 = 1 << 15
 
 NUM_DEV = MESH_SHAPE[0] * MESH_SHAPE[1]            # 32
-NUM_DISPATCH = MESH_SHAPE[CLUSTER_AXIS]            # 4
-NUM_REPLICATED = NUM_DEV // NUM_DISPATCH           # 8
+NUM_DISPATCH = MESH_SHAPE[CLUSTER_AXIS]            # axis0->4, axis1->8 (the dispatch RING size)
+NUM_REPLICATED = NUM_DEV // NUM_DISPATCH           # axis0->8, axis1->4
 EXPERTS_PER_DEV = EXPERTS // NUM_DEV               # 5
-EXPERTS_PER_CLUSTER = EXPERTS // NUM_REPLICATED    # 20
-TOTAL_TOKENS = TOKENS_PER_DEV * NUM_DISPATCH       # 64
+EXPERTS_PER_CLUSTER = EXPERTS // NUM_REPLICATED    # axis0->20, axis1->40
+TOTAL_TOKENS = TOKENS_PER_DEV * NUM_DISPATCH       # axis0->64, axis1->128
+# Tokens/dispatch-tensors shard dim0 over the dispatch mesh axis: axis0->rows (0,None); axis1->cols (None,0).
+SHARD_DIMS = (0, None) if CLUSTER_AXIS == 0 else (None, 0)
 DRAIN_CORE = ttnn.CoreCoord(6, 9)
 OUTPUT_HEIGHT_SHARD_DIM = 4
+
+# --- Full-model device footprint (the smoke<->full-model distinguisher) ---------
+# The standalone smoke passes; the full model hangs in moe_compute's fused combine.
+# Everything config/version-level is ruled out, so the remaining difference is the
+# RESIDENT NON-MoE WEIGHT FOOTPRINT (smoke only allocates the bf4 experts). This
+# block allocates dummy tensors matching the full model's dominant device tensors
+# (real GLM-4.7 dims + the exact mesh placement from params.py/consteval.py/main.py)
+# and holds them resident across moe_compute, to test the memory-pressure hypothesis.
+#   SMOKE_FULL_FOOTPRINT=1            -> allocate ALL of: embed, lmhead, kv, attn, dense
+#   SMOKE_FP=embed,kv                 -> allocate only the named subset (for bisection)
+# Dominant per-device consumer: embed_tokens REPLICATED [151552,5120] bf16 ~1.55 GB/dev.
+VOCAB = 151552
+NUM_ATTN_HEADS = 96
+NUM_KV_HEADS = 8
+HEAD_DIM = 128
+KV_BATCH = 64
+KV_SEQ = 128            # INPUT_SEQUENCE_LENGTH (StaticCache max_cache_len)
+NUM_LAYERS = 4          # 4-layer test model (L0-2 dense, L3 MoE)
+DENSE_INTERMEDIATE = 12288
+
+
+def _fp_parts():
+    import os
+    sel = os.environ.get("SMOKE_FP", "")
+    if sel:
+        return set(p.strip() for p in sel.split(",") if p.strip())
+    if os.environ.get("SMOKE_FULL_FOOTPRINT") == "1":
+        return {"embed", "lmhead", "kv", "attn", "dense"}
+    return set()
+
+
+def build_full_footprint(device):
+    """Allocate dummy versions of the full model's dominant resident device tensors,
+    matching params.py/consteval.py/main.py placement. Returns a hold-list (kept alive
+    so the allocations stay resident across moe_compute)."""
+    parts = _fp_parts()
+    if not parts:
+        return []
+    hold = []
+    repl = ttnn.ReplicateTensorToMesh(device)
+    # SHARD_DIM0 in params.py = ShardTensor2dMesh (None, 0): tensor dim0 over the 8 cols.
+    shard0 = ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (None, 0))
+    dram = ttnn.DRAM_MEMORY_CONFIG
+
+    def alloc(name, t, dtype, layout, mapper):
+        x = ttnn.from_torch(t, device=device, layout=layout, dtype=dtype,
+                            memory_config=dram, mesh_mapper=mapper)
+        hold.append(x)
+        print(f"  footprint+ {name} {tuple(t.shape)} {dtype}", flush=True)
+
+    if "embed" in parts:
+        # consteval: embed_tokens.weight.device, REPLICATED, DRAM. The 1.55 GB/dev one.
+        alloc("embed_tokens(repl)", torch.zeros(VOCAB, H, dtype=torch.bfloat16),
+              ttnn.bfloat16, ttnn.ROW_MAJOR_LAYOUT, repl)
+    if "lmhead" in parts:
+        # lm_head.weight SHARD_DIM0 (vocab over 8 cols) then consteval bf8b-transposed.
+        alloc("lm_head(bf8b,shard0)", torch.zeros(VOCAB, H, dtype=torch.bfloat16),
+              ttnn.bfloat8_b, ttnn.TILE_LAYOUT, shard0)
+    if "kv" in parts:
+        # main.py KV caches: per layer keys+values, head-sharded (0,1), TILE bf16, DRAM.
+        kv_map = ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (0, 1))
+        for L in range(NUM_LAYERS):
+            for nm in ("keys", "values"):
+                alloc(f"L{L}.{nm}",
+                      torch.zeros(KV_BATCH, NUM_KV_HEADS, KV_SEQ, HEAD_DIM, dtype=torch.bfloat16),
+                      ttnn.bfloat16, ttnn.TILE_LAYOUT, kv_map)
+    if "attn" in parts:
+        # q/k/v/o per layer, SHARD_DIM0 (q/k/v) and SHARD_DIM1 (o). bf16 DRAM.
+        shard1 = ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (None, 1))
+        q_out = NUM_ATTN_HEADS * HEAD_DIM
+        kv_out = NUM_KV_HEADS * HEAD_DIM
+        for L in range(NUM_LAYERS):
+            alloc(f"L{L}.q_proj", torch.zeros(q_out, H, dtype=torch.bfloat16), ttnn.bfloat16, ttnn.TILE_LAYOUT, shard0)
+            alloc(f"L{L}.k_proj", torch.zeros(kv_out, H, dtype=torch.bfloat16), ttnn.bfloat16, ttnn.TILE_LAYOUT, shard0)
+            alloc(f"L{L}.v_proj", torch.zeros(kv_out, H, dtype=torch.bfloat16), ttnn.bfloat16, ttnn.TILE_LAYOUT, shard0)
+            alloc(f"L{L}.o_proj", torch.zeros(H, q_out, dtype=torch.bfloat16), ttnn.bfloat16, ttnn.TILE_LAYOUT, shard1)
+    if "dense" in parts:
+        # dense MLP gate/up (SHARD_DIM0) + down (SHARD_DIM1) for layers 0-2. bf16 DRAM.
+        shard1 = ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (None, 1))
+        for L in range(3):
+            alloc(f"L{L}.gate", torch.zeros(DENSE_INTERMEDIATE, H, dtype=torch.bfloat16), ttnn.bfloat16, ttnn.TILE_LAYOUT, shard0)
+            alloc(f"L{L}.up", torch.zeros(DENSE_INTERMEDIATE, H, dtype=torch.bfloat16), ttnn.bfloat16, ttnn.TILE_LAYOUT, shard0)
+            alloc(f"L{L}.down", torch.zeros(H, DENSE_INTERMEDIATE, dtype=torch.bfloat16), ttnn.bfloat16, ttnn.TILE_LAYOUT, shard1)
+    print(f"FULL FOOTPRINT allocated: parts={sorted(parts)}, {len(hold)} tensors held", flush=True)
+    return hold
 
 
 def linearized_coord(e):
     cluster_id = e // EXPERTS_PER_CLUSTER
     eic = e % EXPERTS_PER_CLUSTER
     dev_in_cluster = eic // EXPERTS_PER_DEV
-    return dev_in_cluster * NUM_REPLICATED + cluster_id
+    # Physical device index row*8+col. axis0: dev_in_cluster=row, cluster_id=col.
+    # axis1: cluster_id=row, dev_in_cluster=col.
+    if CLUSTER_AXIS == 0:
+        return dev_in_cluster * MESH_SHAPE[1] + cluster_id
+    return cluster_id * MESH_SHAPE[1] + dev_in_cluster
 
 
 def build_one_hot_expert_mapping(device):
@@ -97,7 +189,7 @@ def build_weights(device):
 
 
 def build_dispatch_prealloc(device):
-    shard_dims = (CLUSTER_AXIS, None) if CLUSTER_AXIS == 0 else (None, CLUSTER_AXIS)
+    shard_dims = SHARD_DIMS
     sparse = ttnn.from_torch(torch.zeros(NUM_DISPATCH, TOTAL_TOKENS, H, dtype=torch.bfloat16),
                              device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
                              memory_config=ttnn.DRAM_MEMORY_CONFIG,
@@ -159,6 +251,21 @@ def main():
                 mesh_mapper=ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (None, None)))
             print("SMOKE_KV_HOLD: persistent L1 KV-like tensor on (0,0)-(3,3)", flush=True)
 
+        # Full-model device footprint probe (resident across moe_compute). If this
+        # flips the smoke from PASS to HANG, the resident footprint is the
+        # smoke<->full-model trigger; SMOKE_FP=<subset> then bisects which tensor.
+        _footprint_hold = build_full_footprint(device)
+        # Decisive control: allocate the footprint, then FREE it before moe_compute.
+        # If freeing makes the smoke PASS again, it's the RESIDENT device occupancy
+        # (memory map) that breaks the post-moe_compute CCL -- not a transient
+        # upload/host perturbation. SMOKE_FP_FREE=1.
+        if _footprint_hold and _os.environ.get("SMOKE_FP_FREE") == "1":
+            for _t in _footprint_hold:
+                ttnn.deallocate(_t, False)
+            _footprint_hold = []
+            ttnn.synchronize_device(device)
+            print("SMOKE_FP_FREE: footprint deallocated before moe_compute", flush=True)
+
         # Router output, batch-sharded along cluster_axis=0 like the real model:
         # global TOTAL_TOKENS=64 tokens, dims=(0,None) -> 16/row, replicated cols.
         # (all_to_all_dispatch_metadata REQUIRES the input sharded along cluster
@@ -172,7 +279,7 @@ def main():
         def to_dev(t, dt):
             return ttnn.from_torch(t, device=device, layout=ttnn.ROW_MAJOR_LAYOUT, dtype=dt,
                                    memory_config=dram,
-                                   mesh_mapper=ttnn.ShardTensor2dMesh(device, MESH_SHAPE, (0, None)))
+                                   mesh_mapper=ttnn.ShardTensor2dMesh(device, MESH_SHAPE, SHARD_DIMS))
         x = to_dev(x_t, ttnn.bfloat16)
         idx = to_dev(idx_t, ttnn.uint16)
         scr = to_dev(scr_t, ttnn.bfloat16)
@@ -187,16 +294,104 @@ def main():
             output_tensors=prealloc, cross_device_semaphore=dispatch_sem)
         print("dispatch ok: sparse", tuple(sparse.shape), "idx", tuple(disp_idx.shape), "scr", tuple(disp_scr.shape))
 
+        # Confirmation test: moe_compute MATMUL path only (compute_only=True, NO fused
+        # combine ring). If this + sync PASSES, the device + dispatch_metadata +
+        # moe_compute's matmul all work on this build, isolating the hang to the fused
+        # selective_reduce_combine (not "everything hangs"). SMOKE_COMPUTE_ONLY=1.
+        if _os.environ.get("SMOKE_COMPUTE_ONLY") == "1":
+            co = ttnn.experimental.moe_compute(
+                sparse, disp_idx, disp_scr, lin_map, tt_w0w1, tt_w2,
+                layer_id=0, output_height_shard_dim=OUTPUT_HEIGHT_SHARD_DIM,
+                intermediate_size=N, has_bias=False, compute_only=True)
+            print(">>> moe_compute(compute_only) enqueued, matmul_output", tuple(co[4].shape), flush=True)
+            mm = ttnn.to_memory_config(co[4], memory_config=dram)
+            ttnn.synchronize_device(device)
+            print(">>> SMOKE SYNC after moe_compute(compute_only) OK", tuple(mm.shape), flush=True)
+            # NaN diagnosis: is the matmul_output (slot 4) NaN/uninitialized?
+            import math as _m
+            sh = ttnn.to_torch(ttnn.get_device_tensors(mm)[0])
+            nan_frac = float(sh.isnan().float().mean())
+            inf_frac = float(sh.isinf().float().mean())
+            print(f">>> matmul_output[dev0] shape {tuple(sh.shape)} nan_frac={nan_frac:.4f} inf_frac={inf_frac:.4f} "
+                  f"min={float(sh.nan_to_num().min()):.3f} max={float(sh.nan_to_num().max()):.3f}", flush=True)
+            # also slot 3 (tilize_output, the real combine input)
+            s3 = ttnn.to_torch(ttnn.get_device_tensors(ttnn.to_memory_config(co[3], memory_config=dram))[0])
+            print(f">>> tilize_output(slot3)[dev0] nan_frac={float(s3.isnan().float().mean()):.4f}", flush=True)
+            print("SMOKE PASSED (compute_only)")
+            return
+
+        # THE WORKAROUND under test: moe_compute(compute_only) -> STANDALONE
+        # selective_reduce_combine on its ACTUAL outputs (NOT the fused combine, NOT
+        # synthetic tensors). compute_only emits the combine inputs in slots
+        # 0=token_counts, 1=activations, 2=token_maps, 4=matmul_output. We hand them to
+        # the standalone op with the exact combine worker cores moe_compute would use
+        # (get_moe_combine_cores). SMOKE_CO_COMBINE=1; SMOKE_COMBINE_TOPO=linear|ring.
+        if _os.environ.get("SMOKE_CO_COMBINE") == "1":
+            co = ttnn.experimental.moe_compute(
+                sparse, disp_idx, disp_scr, lin_map, tt_w0w1, tt_w2,
+                layer_id=0, output_height_shard_dim=OUTPUT_HEIGHT_SHARD_DIM,
+                intermediate_size=N, has_bias=False, compute_only=True)
+            # dense_input = slot 3 (tilize_output, "output of MM, for input to combine",
+            # HEIGHT_SHARDED on the combine shard_cores) -- NOT slot 4 (matmul_output, a
+            # different layout). dense_activations=1, dense_token_maps=2, dense_token_counts=0.
+            print(">>> compute_only outs: counts", tuple(co[0].shape), "act", tuple(co[1].shape),
+                  "maps", tuple(co[2].shape), "tilize_out(slot3)", tuple(co[3].shape),
+                  "matmul(slot4)", tuple(co[4].shape), flush=True)
+            dense_input = co[3]
+            tpcd, dpcd = OUTPUT_HEIGHT_SHARD_DIM, 4  # token/data parallel core dims
+            # Use the EXACT cores the fused op pairs with slot-3 for the combine.
+            combine_cores = ttnn.experimental.get_moe_combine_cores(device, tpcd, dpcd, H, mux_cores)
+            print(">>> get_moe_combine_cores ->", len(combine_cores), "cores; slot3 grid:",
+                  str(dense_input.memory_config().shard_spec.grid) if dense_input.is_sharded() else "interleaved", flush=True)
+            _topo = {"linear": ttnn.Topology.Linear, "line": ttnn.Topology.Linear,
+                     "ring": ttnn.Topology.Ring}.get(_os.environ.get("SMOKE_COMBINE_TOPO", "linear").lower(),
+                                                      ttnn.Topology.Linear)
+            out_pre = ttnn.moreh_full(shape=[K, TOKENS_PER_DEV, H], fill_value=0, device=device,
+                                      layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
+                                      memory_config=ttnn.DRAM_MEMORY_CONFIG)
+            print(f">>> calling standalone selective_reduce_combine topology={_topo}", flush=True)
+            out = ttnn.experimental.selective_reduce_combine(
+                dense_input, co[1], co[2], co[0],
+                H, TOTAL_TOKENS, 1, K, CLUSTER_AXIS,  # batch_size = GLOBAL tokens (op divides by num_devices_cluster)
+                topology=_topo, num_links=1,
+                token_parallel_core_dim=tpcd, data_parallel_core_dim=dpcd,
+                worker_cores=combine_cores, mux_core_range_set=mux_cores,
+                output_tensor=out_pre, optional_cross_device_semaphore=combine_sem)
+            print(">>> standalone combine enqueued, out", tuple(out.shape), flush=True)
+            ttnn.synchronize_device(device)
+            print(">>> SMOKE SYNC after compute_only + standalone combine OK", flush=True)
+            print("SMOKE PASSED (compute_only + standalone combine)")
+            return
+
         combine_prealloc = ttnn.moreh_full(shape=[K, TOKENS_PER_DEV, H], fill_value=0, device=device,
                                            layout=ttnn.ROW_MAJOR_LAYOUT, dtype=ttnn.bfloat16,
                                            memory_config=ttnn.DRAM_MEMORY_CONFIG)
+        # The fused combine is selective_reduce_combine internally. The smoke never
+        # passed `topology`, so it resolved to Ring (FABRIC_1D_RING default) -- which
+        # deadlocks. deepseek uses Topology.Linear for the combine on 4-row ("4U")
+        # galaxy (our (4,8) cluster_axis=0 = 4 dispatch devices). SMOKE_COMBINE_TOPO=
+        # linear|ring forces it explicitly (default: unset = library default = Ring).
+        _topo = {"linear": ttnn.Topology.Linear, "line": ttnn.Topology.Linear,
+                 "ring": ttnn.Topology.Ring}.get(_os.environ.get("SMOKE_COMBINE_TOPO", "").lower())
+        _topo_kw = {} if _topo is None else dict(topology=_topo, num_links=1)
+        if _topo is not None:
+            print(f"SMOKE_COMBINE_TOPO: fused moe_compute topology={_topo}", flush=True)
         outs = ttnn.experimental.moe_compute(
             sparse, disp_idx, disp_scr, lin_map, tt_w0w1, tt_w2,
             layer_id=0, output_height_shard_dim=OUTPUT_HEIGHT_SHARD_DIM, intermediate_size=N,
             has_bias=False, cluster_axis=CLUSTER_AXIS, mux_core_range_set=mux_cores,
-            optional_output_tensor=combine_prealloc, optional_cross_device_semaphore=combine_sem)
+            optional_output_tensor=combine_prealloc, optional_cross_device_semaphore=combine_sem,
+            **_topo_kw)
         combine_output = outs[-1]
         print("moe_compute ok: returned", len(outs), "combine", tuple(combine_output.shape), flush=True)
+        # Pinpoint: does the fused combine itself DRAIN, or only enqueue? A sync here
+        # that hangs => the combine never completes (full-model failure mode). A sync
+        # that passes but ep5 reduce_scatter then hangs => combine completes but
+        # poisons the subsequent cross-col CCL (smoke failure mode). SMOKE_PINPOINT=1.
+        import os as _os2
+        if _os2.environ.get("SMOKE_PINPOINT") == "1":
+            ttnn.synchronize_device(device)
+            print(">>> SMOKE SYNC after moe_compute combine OK", flush=True)
         # Free moe_compute's L1 metadata/matmul outputs before the cross-col CCL
         # (compute uses almost all of L1; reduce_scatter needs workspace).
         for i in (0, 1, 2, 4):
@@ -223,11 +418,11 @@ def main():
         hifi4 = ttnn.WormholeComputeKernelConfig(math_fidelity=ttnn.MathFidelity.HiFi4,
                                                  math_approx_mode=False, fp32_dest_acc_en=True,
                                                  packer_l1_acc=False)
-        rs = ttnn.reduce_scatter(input_tensor=summed, dim=3, cluster_axis=1, subdevice_id=None,
+        rs = ttnn.reduce_scatter(input_tensor=summed, dim=3, cluster_axis=1 - CLUSTER_AXIS, subdevice_id=None,
                                  memory_config=dram, num_links=None, topology=ttnn.Topology.Linear,
                                  compute_kernel_config=hifi4)
         print("  ep5 reduce_scatter", tuple(rs.shape), flush=True)
-        ag = ttnn.all_gather(input_tensor=rs, dim=3, cluster_axis=1, subdevice_id=None,
+        ag = ttnn.all_gather(input_tensor=rs, dim=3, cluster_axis=1 - CLUSTER_AXIS, subdevice_id=None,
                              memory_config=dram, num_links=None, topology=ttnn.Topology.Linear)
         print("  ep6 all_gather", tuple(ag.shape), flush=True)
         sparse_output = ttnn.reshape(ag, [TOKENS_PER_DEV, H], memory_config=dram)

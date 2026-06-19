@@ -1340,6 +1340,33 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             fp32_dest_acc_en=True, packer_l1_acc=False,
         )
         mc_lin = self.weights["moe_compute.expert_mapping_lin"]
+        # Free the dead hand-emitted bf8 routed sparse experts (replaced by moe_compute's
+        # bf4 weights; unused post-swap). ~100+ MB/device of resident DRAM that starves the
+        # fused selective_reduce_combine and deadlocks it. Freeing them fixes the hang
+        # (matches deepseek_codegen MOE_COMPUTE_JOURNAL: dead-weight free resolved the
+        # combine hang; the deadlock is DRAM-pressure-sensitive, not a barrier bug).
+        # Aggressively free ALL weights that are dead by the time the layer-3 MoE runs, to
+        # relieve the DRAM pressure that deadlocks the fused selective_reduce_combine (see
+        # deepseek_codegen MOE_COMPUTE_JOURNAL: dead-weight free fixed the same hang). By
+        # here, layers 0-2 (fully executed) + layer-3 attention (already done) are dead, and
+        # embed_tokens (~1.55 GB/dev, replicated) is dead after the preamble embedding and is
+        # NOT tied to lm_head. force=True to release even if a consteval cache still refs them.
+        import sys as _sysf
+        _dead = ["model.model.embed_tokens.weight.device"]
+        _dead += [k for k in list(self.weights.keys())
+                  if k.startswith(("model.model.layers.0.", "model.model.layers.1.",
+                                   "model.model.layers.2.", "model.model.layers.3.self_attn"))]
+        _dead += [k for k in list(self.weights.keys()) if "layers.3.mlp.mlp.experts" in k]
+        _freed = 0
+        for _dk in _dead:
+            _dw = self.weights.pop(_dk, None)
+            if _dw is not None:
+                try:
+                    ttnn.deallocate(_dw, True)
+                    _freed += 1
+                except Exception:
+                    pass
+        print(f">>> freed {_freed}/{len(_dead)} dead-weight tensors before MoE", flush=True, file=_sysf.stderr)
         # Fresh per-forward: semaphores + dispatch prealloc created right here so
         # nothing clobbers their L1 state before the MoE (see smoke harness).
         mc_dispatch_sem, mc_combine_sem, mc_prealloc = _make_moe_dispatch_runtime(self.device)
@@ -1401,7 +1428,9 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             ttnn.synchronize_device(self.device)
             print(">>> SYNC after dispatch_metadata OK", flush=True, file=_sys.stderr)
 
-        if _os.environ.get("GLM_MOE_COMPUTE_ONLY") == "1":
+        # DEFAULT = runnable: compute_only matmul + deadlock-free Ring CCL combine.
+        # Opt into the (deadlocking) fused selective_reduce_combine via GLM_MOE_FUSED_COMBINE=1.
+        if _os.environ.get("GLM_MOE_FUSED_COMBINE") != "1":
             # compute_only path (#46863-era): matmul only, NO fused combine ring
             # (the deadlock source). cluster_axis/mux/sem/output_tensor must be
             # omitted. Returns matmul_output in slot 4 (no combine output).
@@ -1446,6 +1475,8 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
                 ttnn.synchronize_device(self.device)
                 print(">>> SYNC after CCL combine OK", flush=True, file=_sys.stderr)
         else:
+            # GLM_MOE_FUSED_COMBINE=1: fused selective_reduce_combine -- HANGS on (4,8)
+            # cluster_axis=0 (issue #47523). Opt-in only; the default path above is runnable.
             mc_combine_out = ttnn.moreh_full(
                 shape=[8, 16, 5120], fill_value=0, device=self.device,
                 layout=ttnn.Layout.ROW_MAJOR, dtype=ttnn.DataType.BFLOAT16,
@@ -1464,7 +1495,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             if _os.environ.get("GLM_MOE_PINPOINT") == "1":
                 ttnn.synchronize_device(self.device)
                 print(">>> SYNC after moe_compute OK", flush=True, file=_sys.stderr)
-        if _os.environ.get("GLM_MOE_COMPUTE_ONLY") != "1":
+        if _os.environ.get("GLM_MOE_FUSED_COMBINE") == "1":
             for _i in (0, 1, 2, 4):
                 try:
                     ttnn.deallocate(mc_outs[_i], False)
