@@ -717,9 +717,9 @@ class Glm4MoeAttention(LightweightModule):
             num_links=None,
             topology=ttnn.Topology.Linear,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
+                math_fidelity=ttnn.MathFidelity.LoFi,
                 math_approx_mode=False,
-                fp32_dest_acc_en=True,
+                fp32_dest_acc_en=False,
                 packer_l1_acc=False,
             ),
         )
