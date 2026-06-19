@@ -1840,9 +1840,11 @@ class Glm4MoeDecoderLayer(LightweightModule):
             compute_kernel_config=hifi4_config,
         )
         # Attention
+        ttnn.tracy_message(f"`TT_SIGNPOST: attn_L{self.layer_idx}_start`")
         attn_output, key_cache_out, value_cache_out = self.self_attn(
             normed, key_cache_input, value_cache_input, cos, sin, repeat_idx, attn_mask
         )
+        ttnn.tracy_message(f"`TT_SIGNPOST: attn_L{self.layer_idx}_end`")
         # Residual add after attention
         residual = ttnn.add(
             hidden_states,
