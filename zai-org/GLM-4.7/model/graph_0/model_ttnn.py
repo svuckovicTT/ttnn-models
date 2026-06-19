@@ -672,44 +672,18 @@ class Glm4MoeAttention(LightweightModule):
             compute_kernel_config=None,
         )
         ttnn.deallocate(sdpa_reshaped, False)
-        o_reshaped = ttnn.reshape(
+        # o_proj produces a per-(model-axis)-device partial sum of the full [16, 5120]
+        # output; the original reduce_scatter(dim3,axis1) + all_gather(dim1,axis1) pair
+        # is exactly an all-reduce over the model axis. Fuse into one all_reduce and
+        # drop the two intermediate reshapes.
+        attn_output = ttnn.all_reduce(
             o_proj_output,
-            [1, 1, 16, 5120],
+            cluster_axis=1,
             memory_config=dram_mem,
+            num_links=None,
+            topology=ttnn.Topology.Linear,
         )
         ttnn.deallocate(o_proj_output, False)
-        o_reduce_scatter = ttnn.reduce_scatter(
-            input_tensor=o_reshaped,
-            dim=3,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Linear,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=False,
-            ),
-        )
-        ttnn.deallocate(o_reshaped, False)
-        o_reshaped2 = ttnn.reshape(
-            o_reduce_scatter,
-            [16, 640],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(o_reduce_scatter, False)
-        attn_output = ttnn.all_gather(
-            input_tensor=o_reshaped2,
-            dim=1,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Linear,
-        )
-        ttnn.deallocate(o_reshaped2, False)
         return attn_output, key_cache_out, value_cache_out
 
 
