@@ -1,0 +1,9 @@
+Implemented `test_main()` in `main.py`. It:
+
+1. Loads input via `model_pt.load_input()` and converts it to a TTNN tensor with the same layout/dtype/device/memory_config as `load_activations_for__main()` uses
+2. Loads weights and runs `_main()` 
+3. Converts the TTNN output back to a PyTorch tensor
+4. Runs the golden PyTorch model via `model_pt.run_pytorch_model()`
+5. Computes PCC using `calculate_pcc()` and asserts it equals `0.97265625` (matching `xla.py`)
+
+--- Time taken: 40.7s | session: 7c586923-c4d7-4de9-99df-157f6ad213f4 ---
