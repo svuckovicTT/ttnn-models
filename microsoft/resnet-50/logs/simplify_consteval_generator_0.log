@@ -1,0 +1,15 @@
+Both files are clean and syntactically valid. Here's a summary:
+
+**`consteval.py`** (515 lines, down from 8209):
+- `fold_bn_into_conv()` — replaces the 1456-line `cpu_hoisted_const_eval_3d7508d3` with a clear 15-line function that folds BatchNorm parameters into conv weights/biases
+- `prepare_conv_weight_and_bias()` — shared helper that calls `ttnn.prepare_conv_weights` and `ttnn.prepare_conv_bias` with per-layer params
+- `prepare_classifier_bias()` / `prepare_classifier_weight()` — replaces `main_const_eval_1`/`main_const_eval_2` and the trivial `cpu_hoisted_const_eval_382fc5dd`/`cpu_hoisted_const_eval_27d66922`
+- `CONV_LAYER_PARAMS` — data-driven table of all 53 conv layer configurations
+- `run_consteval(weights, device)` — single entry point that loops over all conv layers, folds BN, prepares weights, and stores results as individual keys in the weights dict
+
+**`model_ttnn.py`**:
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` — no more `ce_cache`
+- `forward` accesses weights by descriptive key names like `self.weights["resnet.embedder.embedder.convolution.weight"]` instead of opaque `var_0[0]`
+- Removed `consteval__main` import and `ce_cache` state
+
+--- Time taken: 872.7s | session: f347a501-bef8-4cd1-ad34-d54bfd0b5fbe ---
