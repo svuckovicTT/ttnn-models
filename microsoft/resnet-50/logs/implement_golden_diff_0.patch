@@ -1,0 +1,145 @@
+diff --git a/microsoft/resnet-50/logs/create_empty_pytest_checks_0.log b/microsoft/resnet-50/logs/create_empty_pytest_checks_0.log
+new file mode 100644
+index 0000000..5998296
+--- /dev/null
++++ b/microsoft/resnet-50/logs/create_empty_pytest_checks_0.log
+@@ -0,0 +1,23 @@
++=== check: pytest main.py ===
++PASSED
++============================= test session starts ==============================
++platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
++rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
++plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
++collected 1 item
++
++main.py .
++
++=============================== warnings summary ===============================
++main.py::test_main
++  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but main.py::test_main returned <class 'int'>.
++  Did you mean to use `assert` instead of `return`?
++  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
++    warnings.warn(
++
++-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
++========================= 1 passed, 1 warning in 2.70s =========================
++
++=== check: verify_weights.py ===
++PASSED
++verify_weights.py does not exist for step create_empty_pytest, as expected
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/create_empty_pytest_evaluator_0.log b/microsoft/resnet-50/logs/create_empty_pytest_evaluator_0.log
+new file mode 100644
+index 0000000..e0586dc
+--- /dev/null
++++ b/microsoft/resnet-50/logs/create_empty_pytest_evaluator_0.log
+@@ -0,0 +1,7 @@
++{
++  "is_approved": true,
++  "failed_criteria": [],
++  "reasoning": "The Generator made exactly the requested change: added a `def test_main(): return 0` function with proper blank lines, placed directly above the `if __name__ == \"__main__\":` block in `microsoft/resnet-50/model/graph_0/main.py`. No other files were touched, no other code was modified, and the change is semantically equivalent (the `test_main` function is a new addition, not a replacement). The diff matches the required template precisely."
++}
++
++--- Time taken: 11.0s ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/logs/implement_golden_generator_0.log b/microsoft/resnet-50/logs/implement_golden_generator_0.log
+new file mode 100644
+index 0000000..21c147e
+--- /dev/null
++++ b/microsoft/resnet-50/logs/implement_golden_generator_0.log
+@@ -0,0 +1,7 @@
++Done. Three changes made:
++
++1. **`model_pt.py`** — Created with `load_input()`, `load_pytorch_model()`, and `run_pytorch_model()` mirroring the logic from `xla.py` (loads ResNet-50 from HuggingFace, processes 8 ImageNet validation images, runs inference in bfloat16).
++2. **`utils.py`** — Added `import torch` and the `calculate_pcc()` function at the end.
++3. **`main.py`** — Added `from utils import calculate_pcc` import.
++
++--- Time taken: 37.9s | session: 4e98fed5-7ff5-4a53-bd14-3db5b086aac6 ---
+\ No newline at end of file
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 6106f68..6ee6e4f 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -1,6 +1,7 @@
+ import ttnn
+ import utils
+ from consteval import consteval__main
++from utils import calculate_pcc
+ 
+ ce_cache__main = {}
+ 
+diff --git a/microsoft/resnet-50/model/graph_0/model_pt.py b/microsoft/resnet-50/model/graph_0/model_pt.py
+new file mode 100644
+index 0000000..b1afc4d
+--- /dev/null
++++ b/microsoft/resnet-50/model/graph_0/model_pt.py
+@@ -0,0 +1,33 @@
++import torch
++from datasets import load_dataset
++from transformers import AutoImageProcessor, ResNetForImageClassification
++
++
++def load_input():
++    dataset = load_dataset("imagenet-1k", split="validation", streaming=True)
++    images = [sample["image"] for sample in dataset.take(8)]
++    processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
++    x = processor(images, return_tensors="pt")["pixel_values"].to(torch.bfloat16)
++
++    print(f"Input shape: {x.shape}")
++    print(f"Input dtype: {x.dtype}")
++
++    return x
++
++
++def load_pytorch_model():
++    model = ResNetForImageClassification.from_pretrained(
++        "microsoft/resnet-50", torch_dtype=torch.bfloat16
++    )
++    model.eval()
++    return model
++
++
++def run_pytorch_model():
++    model = load_pytorch_model()
++    x = load_input()
++
++    with torch.no_grad():
++        output = model(x)
++
++    return output.logits
+diff --git a/microsoft/resnet-50/model/graph_0/utils.py b/microsoft/resnet-50/model/graph_0/utils.py
+index a33bf59..3728970 100644
+--- a/microsoft/resnet-50/model/graph_0/utils.py
++++ b/microsoft/resnet-50/model/graph_0/utils.py
+@@ -2,6 +2,7 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ import ttnn
++import torch
+ import math
+ 
+ 
+@@ -80,3 +81,23 @@ def create_global_semaphore(input_tensor):
+     mesh_device = input_tensor.device()
+     shard_spec = input_tensor.memory_config().shard_spec
+     return ttnn.create_global_semaphore(mesh_device, shard_spec.grid, 0)
++
++
++def calculate_pcc(x, y):
++    # This function calculates the PCC between two torch tensors
++
++    # Assert both are torch tensors
++    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
++    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
++
++    if x.shape != y.shape:
++        raise ValueError(
++            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
++        )
++
++    # Calculate PCC
++    x_flat, y_flat = x.flatten(), y.flatten()
++    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
++    denom = vx.norm() * vy.norm()
++
++    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()

@@ -1,0 +1,7 @@
+{
+  "is_approved": true,
+  "failed_criteria": [],
+  "reasoning": "The Generator made exactly the requested change: added a `def test_main(): return 0` function with proper blank lines, placed directly above the `if __name__ == \"__main__\":` block in `microsoft/resnet-50/model/graph_0/main.py`. No other files were touched, no other code was modified, and the change is semantically equivalent (the `test_main` function is a new addition, not a replacement). The diff matches the required template precisely."
+}
+
+--- Time taken: 11.0s ---
