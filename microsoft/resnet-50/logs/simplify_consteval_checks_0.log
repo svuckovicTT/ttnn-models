@@ -1,0 +1,63 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
+plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
+collected 1 item
+
+main.py Input shape: torch.Size([8, 3, 224, 224])
+Input dtype: torch.bfloat16
+Input shape: torch.Size([8, 3, 224, 224])
+Input dtype: torch.bfloat16
+
+PCC: 0.976562
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        exact_pcc = 0.97265625
+    
+        device = utils.open_device()
+        model = ModelTTNN(device)
+        input_tensor = model_pt.load_input()
+        ttnn_input = ttnn.from_torch(input_tensor, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.ROW_MAJOR, device=device, memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None))
+        activations = [ttnn_input]
+    
+        outputs = model(activations)
+    
+        ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[0]))
+        golden_output = model_pt.run_pytorch_model()
+    
+        pcc = calculate_pcc(ttnn_output.to(golden_output.dtype), golden_output)
+        print(f"\nPCC: {pcc:.6f}")
+>       assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+E       AssertionError: PCC 0.9765625 does not match expected 0.97265625
+E       assert 0.9765625 == 0.97265625
+
+main.py:47: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - AssertionError: PCC 0.9765625 does not match expe...
+======================== 1 failed, 2 warnings in 32.20s ========================
+2026-06-19 22:39:18.006 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 11474.74it/s]
+
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 9047.43it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step simplify_consteval, as expected

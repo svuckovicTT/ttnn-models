@@ -1,0 +1,15 @@
+Both files are syntactically valid. Here's the summary:
+
+**`consteval.py`** (8210 → ~5025 lines):
+- Replaced the massive 265-argument `cpu_hoisted_const_eval_3d7508d3` with a clean `fold_bn_into_conv_weights()` helper (6 params → 2 returns)
+- Eliminated `main_const_eval_0/1/2` and `consteval__main` — replaced with single `run_consteval(weights, device)` entry point
+- All 53 `ttnn.prepare_conv_weights/bias` calls preserved with exact per-layer parameters
+- Results stored as individual dict keys (`{layer}.folded_conv_weight`, `{layer}.folded_conv_bias`)
+- Classifier handled inline (`classifier.1.folded_weight/bias`)
+
+**`model_ttnn.py`**:
+- Consteval runs once in `__init__`, no more `ce_cache`
+- All `var_0[i]` references replaced with descriptive `self.weights["layer.folded_conv_weight/bias"]` keys
+- `self.ce_cache["main_const_eval_1/2"]` replaced with `self.weights["classifier.1.folded_bias/weight"]`
+
+--- Time taken: 963.1s | session: a8fbdaa4-d2c7-49ca-bf9b-f893e8e723e6 ---
