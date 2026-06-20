@@ -1,0 +1,68 @@
+diff --git a/microsoft/resnet-50/model/graph_0/main.py b/microsoft/resnet-50/model/graph_0/main.py
+index 83e2be3..68b21e4 100644
+--- a/microsoft/resnet-50/model/graph_0/main.py
++++ b/microsoft/resnet-50/model/graph_0/main.py
+@@ -48,17 +48,47 @@ def test_main():
+     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+ 
+     batch_size = input_tensor.shape[0]
++    dram_mem_config = ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None)
++    host_tensor = ttnn.from_torch(input_tensor, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.ROW_MAJOR)
++    input_dram_tensor = ttnn.allocate_tensor_on_device(host_tensor.shape, host_tensor.dtype, host_tensor.layout, device, dram_mem_config)
++
+     print(f"\nPerformance (batch_size={batch_size}):")
++
++    # Run 1: compile run (fills program cache)
++    ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
++    start = time.perf_counter()
++    output_tensor = model([input_dram_tensor])
++    ttnn.synchronize_device(device)
++    end = time.perf_counter()
++    elapsed = end - start
++    fps = batch_size / elapsed
++    print(f"  Run 1 (compile): {elapsed:.4f}s, FPS: {fps:.2f}")
++
++    # Run 2: trace capture
++    ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
++    tid = ttnn.begin_trace_capture(device, cq_id=0)
++    start = time.perf_counter()
++    output_tensor = model([input_dram_tensor])
++    ttnn.end_trace_capture(device, tid, cq_id=0)
++    ttnn.synchronize_device(device)
++    end = time.perf_counter()
++    elapsed = end - start
++    fps = batch_size / elapsed
++    print(f"  Run 2 (capture): {elapsed:.4f}s, FPS: {fps:.2f}")
++
++    # Runs 3-5: trace execution
+     for i in range(3):
+-        ttnn_input = ttnn.from_torch(input_tensor, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.ROW_MAJOR, device=device, memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None))
+-        activations = [ttnn_input]
++        ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
+         start = time.perf_counter()
+-        outputs = model(activations)
++        ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
++        host_output_tensor = output_tensor.cpu(blocking=False)
+         ttnn.synchronize_device(device)
+         end = time.perf_counter()
+         elapsed = end - start
+         fps = batch_size / elapsed
+-        print(f"  Run {i + 1}: {elapsed:.4f}s, FPS: {fps:.2f}")
++        print(f"  Run {i + 3} (trace): {elapsed:.4f}s, FPS: {fps:.2f}")
++
++    ttnn.release_trace(device, tid)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/microsoft/resnet-50/model/graph_0/model_ttnn.py b/microsoft/resnet-50/model/graph_0/model_ttnn.py
+index 2c155b9..01e628a 100644
+--- a/microsoft/resnet-50/model/graph_0/model_ttnn.py
++++ b/microsoft/resnet-50/model/graph_0/model_ttnn.py
+@@ -65,7 +65,6 @@ class ResNetEmbeddings(LightweightModule):
+         ttnn_to_layout_0 = ttnn.to_layout(
+             x, ttnn.Layout.TILE, None, memory_config=None
+         )
+-        ttnn.deallocate(x, False)
+         ttnn_permute_0 = ttnn.permute(
+             ttnn_to_layout_0,
+             [0, 2, 3, 1],

@@ -1,0 +1,14 @@
+Both changes are correct. Here's what was done:
+
+**`model_ttnn.py`**: Removed `ttnn.deallocate(x, False)` from `ResNetEmbeddings.forward()` (line 68 in the original) to prevent deallocating the persistent DRAM input tensor used by metal trace.
+
+**`main.py`**: Replaced the simple 3-run perf loop with a metal trace approach:
+1. Allocate a persistent DRAM tensor via `ttnn.allocate_tensor_on_device`
+2. **Run 1 (compile)**: Copy input to device, run model to fill program cache, sync and time
+3. **Run 2 (capture)**: Copy input, capture trace with `begin_trace_capture`/`end_trace_capture`, sync and time
+4. **Runs 3-5 (trace)**: Copy input, execute trace with `ttnn.execute_trace(blocking=False)`, read output with `output_tensor.cpu(blocking=False)`, sync and time
+5. Release the trace with `ttnn.release_trace`
+
+All 5 runs are timed with `time.perf_counter()` and log elapsed time (4 decimal places) and FPS (2 decimal places).
+
+--- Time taken: 66.0s | session: b8583bca-c43b-4230-b2d0-f48d2376f9ff ---
