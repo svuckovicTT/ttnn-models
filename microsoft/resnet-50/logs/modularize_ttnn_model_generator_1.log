@@ -1,0 +1,10 @@
+Done. The flat `model_ttnn.py` has been modularized into 20 classes matching the PyTorch ResNet-50 hierarchy:
+
+- **`ModelTTNN`** — Top-level model, instantiates all submodules in `__init__`, chains them sequentially in `forward`
+- **`ResNetEmbeddings`** — Initial conv (7x7) + BN/ReLU + MaxPool
+- **`ResNetBottleNeckLayer_S{0-3}_L{0-N}`** — 16 bottleneck blocks across 4 stages, each with 3 conv ops, residual add, and relu. Blocks with shortcuts (S0_L0, S1_L0, S2_L0, S3_L0) include the skip connection conv
+- **`ResNetClassifier`** — Global average pooling + linear classifier + typecast + output
+
+Each class extends `LightweightModule`, has `__init__(device, weights)` and `forward(x)`, and all share a reference to the same weights dictionary.
+
+--- Time taken: 361.2s | session: 3edd4ca6-9251-49f2-8bab-f22f8fd1e073 ---
