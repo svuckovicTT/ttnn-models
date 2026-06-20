@@ -65,7 +65,6 @@ class ResNetEmbeddings(LightweightModule):
         ttnn_to_layout_0 = ttnn.to_layout(
             x, ttnn.Layout.TILE, None, memory_config=None
         )
-        ttnn.deallocate(x, False)
         ttnn_permute_0 = ttnn.permute(
             ttnn_to_layout_0,
             [0, 2, 3, 1],
