@@ -1,3 +1,4 @@
+import time
 import ttnn
 import torch
 import utils
@@ -45,6 +46,19 @@ def test_main():
     pcc = calculate_pcc(ttnn_output.to(golden_output.dtype), golden_output)
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+
+    batch_size = input_tensor.shape[0]
+    print(f"\nPerformance (batch_size={batch_size}):")
+    for i in range(3):
+        ttnn_input = ttnn.from_torch(input_tensor, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.ROW_MAJOR, device=device, memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None))
+        activations = [ttnn_input]
+        start = time.perf_counter()
+        outputs = model(activations)
+        ttnn.synchronize_device(device)
+        end = time.perf_counter()
+        elapsed = end - start
+        fps = batch_size / elapsed
+        print(f"  Run {i + 1}: {elapsed:.4f}s, FPS: {fps:.2f}")
 
 
 if __name__ == "__main__":
