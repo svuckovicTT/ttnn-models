@@ -1,0 +1,44 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
+plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
+collected 1 item
+
+main.py Input shape: torch.Size([8, 3, 224, 224])
+Input dtype: torch.bfloat16
+Input shape: torch.Size([8, 3, 224, 224])
+Input dtype: torch.bfloat16
+
+PCC: 0.972656
+
+Performance with metal trace (batch_size=8):
+  Run 1 (compile): 0.0147s, FPS: 545.45
+  Run 2 (capture): 0.0178s, FPS: 450.37
+  Run 3 (trace): 0.0027s, FPS: 2960.06
+  Run 4 (trace): 0.0027s, FPS: 2957.15
+  Run 5 (trace): 0.0027s, FPS: 2949.72
+.
+
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 1 passed, 2 warnings in 20.62s ========================
+2026-06-20 10:34:09.639 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 10333.26it/s]
+
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 9453.15it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step add_metal_trace, as expected
