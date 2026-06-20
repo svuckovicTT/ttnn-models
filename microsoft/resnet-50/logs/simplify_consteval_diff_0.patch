@@ -1,88 +1,8 @@
-diff --git a/microsoft/resnet-50/logs/classify_ttnn_model_checks_0.log b/microsoft/resnet-50/logs/classify_ttnn_model_checks_0.log
-new file mode 100644
-index 0000000..ea3cd5e
---- /dev/null
-+++ b/microsoft/resnet-50/logs/classify_ttnn_model_checks_0.log
-@@ -0,0 +1,37 @@
-+=== check: pytest main.py ===
-+PASSED
-+============================= test session starts ==============================
-+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
-+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/microsoft/resnet-50/model/graph_0
-+plugins: forked-1.6.0, metadata-3.1.1, jaxtyping-0.3.9, split-0.11.0, json-report-1.5.0, anyio-4.13.0
-+collected 1 item
-+
-+main.py Input shape: torch.Size([8, 3, 224, 224])
-+Input dtype: torch.bfloat16
-+Input shape: torch.Size([8, 3, 224, 224])
-+Input dtype: torch.bfloat16
-+
-+PCC: 0.972656
-+.
-+
-+=============================== warnings summary ===============================
-+<frozen importlib._bootstrap>:488
-+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
-+
-+<frozen importlib._bootstrap>:488
-+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
-+
-+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-+======================== 1 passed, 2 warnings in 21.18s ========================
-+2026-06-19 22:22:41.060 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
-+
-+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
-+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 10184.83it/s]
-+
-+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]
-+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 9681.72it/s]
-+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
-+
-+=== check: verify_weights.py ===
-+PASSED
-+verify_weights.py does not exist for step classify_ttnn_model, as expected
-\ No newline at end of file
-diff --git a/microsoft/resnet-50/logs/classify_ttnn_model_evaluator_0.log b/microsoft/resnet-50/logs/classify_ttnn_model_evaluator_0.log
-new file mode 100644
-index 0000000..a1b4015
---- /dev/null
-+++ b/microsoft/resnet-50/logs/classify_ttnn_model_evaluator_0.log
-@@ -0,0 +1,7 @@
-+{
-+  "is_approved": true,
-+  "failed_criteria": [],
-+  "reasoning": "The Generator correctly implemented all three requirements. (1) Task completion: LightweightModule base class and ModelTTNN subclass are created with __init__ loading device/weights/ce_cache and forward containing all TTNN ops; main.py callsites in both main() and test_main() are updated to instantiate ModelTTNN(device) and invoke via the call operator. (2) Scope containment: only main.py and model_ttnn.py were modified. (3) Semantic equivalence: every TTNN op, memory config, core grid, tensor shape, dtype, and device placement is unchanged. The ce_cache was previously a module-level global initialized to {}; it is now self.ce_cache = {} per instance, which is equivalent for the single-instance-single-call patterns used in main() and test_main(). The Generator correctly adapted the schematic params.load_weights(device) example from the prompt to the actual function params.load_weights_for__main_from_state_dict() (no-arg), preserving the original call semantics."
-+}
-+
-+--- Time taken: 100.2s ---
-\ No newline at end of file
-diff --git a/microsoft/resnet-50/logs/simplify_consteval_generator_0.log b/microsoft/resnet-50/logs/simplify_consteval_generator_0.log
-new file mode 100644
-index 0000000..d4728fe
---- /dev/null
-+++ b/microsoft/resnet-50/logs/simplify_consteval_generator_0.log
-@@ -0,0 +1,15 @@
-+Both files are clean and syntactically valid. Here's a summary:
-+
-+**`consteval.py`** (515 lines, down from 8209):
-+- `fold_bn_into_conv()` — replaces the 1456-line `cpu_hoisted_const_eval_3d7508d3` with a clear 15-line function that folds BatchNorm parameters into conv weights/biases
-+- `prepare_conv_weight_and_bias()` — shared helper that calls `ttnn.prepare_conv_weights` and `ttnn.prepare_conv_bias` with per-layer params
-+- `prepare_classifier_bias()` / `prepare_classifier_weight()` — replaces `main_const_eval_1`/`main_const_eval_2` and the trivial `cpu_hoisted_const_eval_382fc5dd`/`cpu_hoisted_const_eval_27d66922`
-+- `CONV_LAYER_PARAMS` — data-driven table of all 53 conv layer configurations
-+- `run_consteval(weights, device)` — single entry point that loops over all conv layers, folds BN, prepares weights, and stores results as individual keys in the weights dict
-+
-+**`model_ttnn.py`**:
-+- `__init__` now calls `consteval.run_consteval(self.weights, device)` — no more `ce_cache`
-+- `forward` accesses weights by descriptive key names like `self.weights["resnet.embedder.embedder.convolution.weight"]` instead of opaque `var_0[0]`
-+- Removed `consteval__main` import and `ce_cache` state
-+
-+--- Time taken: 872.7s | session: f347a501-bef8-4cd1-ad34-d54bfd0b5fbe ---
-\ No newline at end of file
 diff --git a/microsoft/resnet-50/model/graph_0/consteval.py b/microsoft/resnet-50/model/graph_0/consteval.py
-index 5c36022..8f1b790 100644
+index 5c36022..6f5171b 100644
 --- a/microsoft/resnet-50/model/graph_0/consteval.py
 +++ b/microsoft/resnet-50/model/graph_0/consteval.py
-@@ -3,8207 +3,513 @@ import ttir_cpu
+@@ -3,8207 +3,522 @@ import ttir_cpu
  import torch
  
  
@@ -7272,7 +7192,55 @@ index 5c36022..8f1b790 100644
 -            ),
 -        ),
 -        input_layout=ttnn.Layout.TILE,
--        weights_format="OIHW",
++_BN_EPS = 1.0013580322265625e-05
++
++
++def fold_bn_into_conv(running_var, bn_weight, conv_weight, running_mean, bn_bias, out_channels):
++    running_var = ttnn.to_torch(running_var)
++    bn_weight = ttnn.to_torch(bn_weight)
++    conv_weight = ttnn.to_torch(conv_weight)
++    running_mean = ttnn.to_torch(running_mean)
++    bn_bias = ttnn.to_torch(bn_bias)
++
++    eps = ttir_cpu.full(shape=[1], fill_value=_BN_EPS, dtype=torch.float32)
++    scale = ttir_cpu.div(bn_weight, ttir_cpu.sqrt(ttir_cpu.add(running_var, eps)))
++
++    folded_weight = ttir_cpu.multiply(conv_weight, ttir_cpu.reshape(scale, [out_channels, 1, 1, 1]))
++
++    scale_1d = ttir_cpu.permute(ttir_cpu.reshape(scale, [1, out_channels, 1, 1]), [0, 2, 3, 1])
++    mean_1d = ttir_cpu.permute(ttir_cpu.reshape(running_mean, [1, out_channels, 1, 1]), [0, 2, 3, 1])
++    bias_1d = ttir_cpu.permute(ttir_cpu.reshape(bn_bias, [1, out_channels, 1, 1]), [0, 2, 3, 1])
++    folded_bias = ttir_cpu.subtract(bias_1d, ttir_cpu.multiply(mean_1d, scale_1d))
++
++    return ttnn.from_torch(folded_weight), ttnn.from_torch(folded_bias)
++
++
++def prepare_conv_weight_and_bias(
++    folded_weight,
++    folded_bias,
++    device,
++    in_channels,
++    out_channels,
++    batch_size,
++    input_height,
++    input_width,
++    kernel_size,
++    stride,
++    padding,
++    dilation,
++    groups,
++    input_layout,
++    input_memory_config,
++    conv_config,
++    slice_config,
++):
++    w = ttnn.typecast(folded_weight, ttnn.DataType.BFLOAT16, memory_config=None)
++    ttnn.deallocate(folded_weight, False)
++    prepared_weight = ttnn.prepare_conv_weights(
++        weight_tensor=w,
++        input_memory_config=input_memory_config,
++        input_layout=input_layout,
+         weights_format="OIHW",
 -        in_channels=512,
 -        out_channels=512,
 -        batch_size=8,
@@ -7282,7 +7250,16 @@ index 5c36022..8f1b790 100644
 -        stride=[1, 1],
 -        padding=[1, 1, 1, 1],
 -        dilation=[1, 1],
--        has_bias=True,
++        in_channels=in_channels,
++        out_channels=out_channels,
++        batch_size=batch_size,
++        input_height=input_height,
++        input_width=input_width,
++        kernel_size=kernel_size,
++        stride=stride,
++        padding=padding,
++        dilation=dilation,
+         has_bias=True,
 -        groups=1,
 -        device=utils_DeviceGetter_get_device_2,
 -        input_dtype=ttnn.DataType.BFLOAT16,
@@ -7327,8 +7304,10 @@ index 5c36022..8f1b790 100644
 -        dilation=[1, 1],
 -        groups=1,
 -        device=utils_DeviceGetter_get_device_2,
--        input_dtype=ttnn.DataType.BFLOAT16,
--        output_dtype=ttnn.DataType.BFLOAT16,
++        groups=groups,
++        device=device,
+         input_dtype=ttnn.DataType.BFLOAT16,
+         output_dtype=ttnn.DataType.BFLOAT16,
 -        conv_config=ttnn.Conv2dConfig(
 -            weights_dtype=ttnn.DataType.BFLOAT16,
 -            activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -7338,50 +7317,17 @@ index 5c36022..8f1b790 100644
 -            shard_layout=ttnn.TensorMemoryLayout.BLOCK_SHARDED,
 -            enable_kernel_stride_folding=False,
 -        ),
--        compute_config=None,
++        conv_config=conv_config,
+         compute_config=None,
 -        slice_config=ttnn.Conv2dSliceConfig(slice_type=ttnn.Conv2dL1Full, num_slices=0),
-+BN_EPS = 1.0013580322265625e-05
-+
-+
-+def fold_bn_into_conv(running_var, bn_weight, conv_weight, running_mean, bn_bias):
-+    running_var = ttnn.to_torch(running_var).float()
-+    bn_weight = ttnn.to_torch(bn_weight).float()
-+    conv_weight = ttnn.to_torch(conv_weight).float()
-+    running_mean = ttnn.to_torch(running_mean).float()
-+    bn_bias = ttnn.to_torch(bn_bias).float()
-+
-+    scale = bn_weight / torch.sqrt(running_var + BN_EPS)
-+    folded_weight = conv_weight * scale.reshape(-1, 1, 1, 1)
-+
-+    scale_bias = scale.reshape(1, -1, 1, 1).permute(0, 2, 3, 1)
-+    mean_bias = running_mean.reshape(1, -1, 1, 1).permute(0, 2, 3, 1)
-+    folded_bias = bn_bias.reshape(1, -1, 1, 1).permute(0, 2, 3, 1) - mean_bias * scale_bias
-+
-+    return ttnn.from_torch(folded_weight), ttnn.from_torch(folded_bias)
-+
-+
-+def prepare_conv_weight_and_bias(folded_weight, folded_bias, conv_params, device):
-+    weight_bf16 = ttnn.typecast(folded_weight, ttnn.DataType.BFLOAT16, memory_config=None)
-+
-+    activation = conv_params.get("activation")
-+    conv_config = ttnn.Conv2dConfig(
-+        weights_dtype=ttnn.DataType.BFLOAT16,
-+        **({"activation": ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU)} if activation == "relu" else {}),
-+        deallocate_activation=conv_params["deallocate_activation"],
-+        config_tensors_in_dram=True,
-+        act_block_h_override=conv_params.get("act_block_h_override", 0),
-+        shard_layout=conv_params["shard_layout"],
-+        enable_kernel_stride_folding=False,
++        slice_config=slice_config,
      )
 -    ttnn.deallocate(ttnn_typecast_370, False)
 -    ttnn_typecast_371 = ttnn.typecast(v_104, ttnn.DataType.BFLOAT16, memory_config=None)
 -    ttnn.deallocate(v_104, False)
 -    ttnn_prepare_conv_weights_52 = ttnn.prepare_conv_weights(
 -        weight_tensor=ttnn_typecast_371,
-+
-+    prepared_weight = ttnn.prepare_conv_weights(
-+        weight_tensor=weight_bf16,
-         input_memory_config=ttnn.MemoryConfig(
+-        input_memory_config=ttnn.MemoryConfig(
 -            ttnn.TensorMemoryLayout.BLOCK_SHARDED,
 -            ttnn.BufferType.L1,
 -            ttnn.ShardSpec(
@@ -7391,33 +7337,23 @@ index 5c36022..8f1b790 100644
 -                [64, 64],
 -                ttnn.ShardOrientation.ROW_MAJOR,
 -            ),
-+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
-         ),
+-        ),
 -        input_layout=ttnn.Layout.TILE,
-+        input_layout=conv_params.get("input_layout", ttnn.Layout.TILE),
-         weights_format="OIHW",
+-        weights_format="OIHW",
 -        in_channels=512,
 -        out_channels=2048,
-+        in_channels=conv_params["in_channels"],
-+        out_channels=conv_params["out_channels"],
-         batch_size=8,
+-        batch_size=8,
 -        input_height=7,
 -        input_width=7,
 -        kernel_size=[1, 1],
 -        stride=[1, 1],
 -        padding=[0, 0, 0, 0],
-+        input_height=conv_params["input_height"],
-+        input_width=conv_params["input_width"],
-+        kernel_size=conv_params["kernel_size"],
-+        stride=conv_params["stride"],
-+        padding=conv_params["padding"],
-         dilation=[1, 1],
-         has_bias=True,
-         groups=1,
+-        dilation=[1, 1],
+-        has_bias=True,
+-        groups=1,
 -        device=utils_DeviceGetter_get_device_2,
-+        device=device,
-         input_dtype=ttnn.DataType.BFLOAT16,
-         output_dtype=ttnn.DataType.BFLOAT16,
+-        input_dtype=ttnn.DataType.BFLOAT16,
+-        output_dtype=ttnn.DataType.BFLOAT16,
 -        conv_config=ttnn.Conv2dConfig(
 -            weights_dtype=ttnn.DataType.BFLOAT16,
 -            deallocate_activation=True,
@@ -7425,22 +7361,54 @@ index 5c36022..8f1b790 100644
 -            act_block_h_override=0,
 -            shard_layout=ttnn.TensorMemoryLayout.BLOCK_SHARDED,
 -            enable_kernel_stride_folding=False,
--        ),
++    ttnn.deallocate(w, False)
++
++    b = ttnn.typecast(folded_bias, ttnn.DataType.BFLOAT16, memory_config=None)
++    ttnn.deallocate(folded_bias, False)
++    prepared_bias = ttnn.prepare_conv_bias(
++        bias_tensor=b,
++        input_memory_config=input_memory_config,
++        input_layout=input_layout,
++        in_channels=in_channels,
++        out_channels=out_channels,
++        batch_size=batch_size,
++        input_height=input_height,
++        input_width=input_width,
++        kernel_size=kernel_size,
++        stride=stride,
++        padding=padding,
++        dilation=dilation,
++        groups=groups,
++        device=device,
++        input_dtype=ttnn.DataType.BFLOAT16,
++        output_dtype=ttnn.DataType.BFLOAT16,
 +        conv_config=conv_config,
-         compute_config=None,
-         slice_config=ttnn.Conv2dSliceConfig(slice_type=ttnn.Conv2dL1Full, num_slices=0),
++        compute_config=None,
++        slice_config=slice_config,
++    )
++    ttnn.deallocate(b, False)
++
++    return prepared_weight, prepared_bias
++
++
++def _height_sharded_mem_cfg(core_ranges, shard_shape):
++    return ttnn.MemoryConfig(
++        ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
++        ttnn.BufferType.L1,
++        ttnn.ShardSpec(
++            ttnn.CoreRangeSet(core_ranges),
++            shard_shape,
++            ttnn.ShardOrientation.ROW_MAJOR,
+         ),
+-        compute_config=None,
+-        slice_config=ttnn.Conv2dSliceConfig(slice_type=ttnn.Conv2dL1Full, num_slices=0),
      )
 -    ttnn.deallocate(ttnn_typecast_371, False)
 -    ttnn_typecast_372 = ttnn.typecast(v_105, ttnn.DataType.BFLOAT16, memory_config=None)
 -    ttnn.deallocate(v_105, False)
 -    ttnn_prepare_conv_bias_52 = ttnn.prepare_conv_bias(
 -        bias_tensor=ttnn_typecast_372,
-+
-+    bias_bf16 = ttnn.typecast(folded_bias, ttnn.DataType.BFLOAT16, memory_config=None)
-+
-+    prepared_bias = ttnn.prepare_conv_bias(
-+        bias_tensor=bias_bf16,
-         input_memory_config=ttnn.MemoryConfig(
+-        input_memory_config=ttnn.MemoryConfig(
 -            ttnn.TensorMemoryLayout.BLOCK_SHARDED,
 -            ttnn.BufferType.L1,
 -            ttnn.ShardSpec(
@@ -7450,31 +7418,21 @@ index 5c36022..8f1b790 100644
 -                [64, 64],
 -                ttnn.ShardOrientation.ROW_MAJOR,
 -            ),
-+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
-         ),
+-        ),
 -        input_layout=ttnn.Layout.TILE,
 -        in_channels=512,
 -        out_channels=2048,
-+        input_layout=conv_params.get("input_layout", ttnn.Layout.TILE),
-+        in_channels=conv_params["in_channels"],
-+        out_channels=conv_params["out_channels"],
-         batch_size=8,
+-        batch_size=8,
 -        input_height=7,
 -        input_width=7,
 -        kernel_size=[1, 1],
 -        stride=[1, 1],
 -        padding=[0, 0, 0, 0],
-+        input_height=conv_params["input_height"],
-+        input_width=conv_params["input_width"],
-+        kernel_size=conv_params["kernel_size"],
-+        stride=conv_params["stride"],
-+        padding=conv_params["padding"],
-         dilation=[1, 1],
-         groups=1,
+-        dilation=[1, 1],
+-        groups=1,
 -        device=utils_DeviceGetter_get_device_2,
-+        device=device,
-         input_dtype=ttnn.DataType.BFLOAT16,
-         output_dtype=ttnn.DataType.BFLOAT16,
+-        input_dtype=ttnn.DataType.BFLOAT16,
+-        output_dtype=ttnn.DataType.BFLOAT16,
 -        conv_config=ttnn.Conv2dConfig(
 -            weights_dtype=ttnn.DataType.BFLOAT16,
 -            deallocate_activation=True,
@@ -7482,10 +7440,19 @@ index 5c36022..8f1b790 100644
 -            act_block_h_override=0,
 -            shard_layout=ttnn.TensorMemoryLayout.BLOCK_SHARDED,
 -            enable_kernel_stride_folding=False,
--        ),
-+        conv_config=conv_config,
-         compute_config=None,
-         slice_config=ttnn.Conv2dSliceConfig(slice_type=ttnn.Conv2dL1Full, num_slices=0),
++
++
++def _block_sharded_mem_cfg(core_ranges, shard_shape):
++    return ttnn.MemoryConfig(
++        ttnn.TensorMemoryLayout.BLOCK_SHARDED,
++        ttnn.BufferType.L1,
++        ttnn.ShardSpec(
++            ttnn.CoreRangeSet(core_ranges),
++            shard_shape,
++            ttnn.ShardOrientation.ROW_MAJOR,
+         ),
+-        compute_config=None,
+-        slice_config=ttnn.Conv2dSliceConfig(slice_type=ttnn.Conv2dL1Full, num_slices=0),
      )
 -    ttnn.deallocate(ttnn_typecast_372, False)
 -    return [
@@ -7597,22 +7564,18 @@ index 5c36022..8f1b790 100644
 -        ttnn_prepare_conv_bias_52,
 -    ]
  
-+    return prepared_weight, prepared_bias
  
 -def cpu_hoisted_const_eval_382fc5dd(arg):
 -    ttnn_to_torch_265 = ttnn.to_torch(arg)
 -    ttnn_from_torch_106 = ttnn.from_torch(ttnn_to_torch_265)
 -    return ttnn_from_torch_106
++_INTERLEAVED_L1 = ttnn.MemoryConfig(
++    ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
++)
  
-+def prepare_classifier_bias(weights, device):
-+    t = ttnn.typecast(weights["classifier.1.bias"], ttnn.DataType.FLOAT32, memory_config=None)
-+    t = ttnn.to_torch(t)
-+    t = ttnn.from_torch(t)
-+    t = ttnn.to_layout(t, ttnn.Layout.TILE, None, memory_config=None)
-+    t = ttnn.to_device(t, device=device, memory_config=ttnn.MemoryConfig(
-+        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-+    ))
-+    return t
++_DRAM_INTERLEAVED = ttnn.MemoryConfig(
++    ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
++)
  
 -def main_const_eval_1(arg, device):
 -    utils_DeviceGetter_get_device_3 = device
@@ -7634,17 +7597,31 @@ index 5c36022..8f1b790 100644
 -    )
 -    ttnn.deallocate(ttnn_to_layout_1, False)
 -    return [ttnn_to_device_0]
++_CONV2D_SLICE_CFG = ttnn.Conv2dSliceConfig(slice_type=ttnn.Conv2dL1Full, num_slices=0)
  
-+def prepare_classifier_weight(weights, device):
-+    t = ttnn.typecast(weights["classifier.1.weight"], ttnn.DataType.FLOAT32, memory_config=None)
-+    t = ttnn.to_torch(t)
-+    t = ttir_cpu.permute(t, [1, 0])
-+    t = ttnn.from_torch(t)
-+    t = ttnn.to_layout(t, ttnn.Layout.TILE, None, memory_config=None)
-+    t = ttnn.to_device(t, device=device, memory_config=ttnn.MemoryConfig(
-+        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-+    ))
-+    return t
++_CORE_RANGE_102 = [
++    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 8)),
++    ttnn.CoreRange(ttnn.CoreCoord(0, 9), ttnn.CoreCoord(2, 9)),
++]
++_CORE_RANGE_98 = [
++    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 7)),
++    ttnn.CoreRange(ttnn.CoreCoord(0, 8), ttnn.CoreCoord(9, 8)),
++]
++_CORE_RANGE_48 = [
++    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 5)),
++]
++_CORE_RANGE_64 = [
++    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
++]
++_CORE_RANGE_80 = [
++    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 9)),
++]
++_CORE_RANGE_56 = [
++    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 6)),
++]
++_CORE_RANGE_110 = [
++    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 9)),
++]
  
 -def cpu_hoisted_const_eval_27d66922(arg):
 -    ttnn_to_torch_266 = ttnn.to_torch(arg)
@@ -7652,381 +7629,18 @@ index 5c36022..8f1b790 100644
 -    ttnn_from_torch_107 = ttnn.from_torch(ttir_cpu_permute_159)
 -    return ttnn_from_torch_107
  
-+CONV_LAYER_PARAMS = [
-+    {
-+        "prefix": "resnet.embedder.embedder",
-+        "in_channels": 3, "out_channels": 64, "input_height": 224, "input_width": 224,
-+        "kernel_size": [7, 7], "stride": [2, 2], "padding": [3, 3, 3, 3],
-+        "activation": "relu", "deallocate_activation": True,
-+        "act_block_h_override": 64, "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.0.layer.0",
-+        "in_channels": 64, "out_channels": 64, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+        "input_layout": ttnn.Layout.ROW_MAJOR,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.0.layer.1",
-+        "in_channels": 64, "out_channels": 64, "input_height": 56, "input_width": 56,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.0.layer.2",
-+        "in_channels": 64, "out_channels": 256, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.0.shortcut",
-+        "in_channels": 64, "out_channels": 256, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+        "input_layout": ttnn.Layout.ROW_MAJOR,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.1.layer.0",
-+        "in_channels": 256, "out_channels": 64, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.1.layer.1",
-+        "in_channels": 64, "out_channels": 64, "input_height": 56, "input_width": 56,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.1.layer.2",
-+        "in_channels": 64, "out_channels": 256, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.2.layer.0",
-+        "in_channels": 256, "out_channels": 64, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.2.layer.1",
-+        "in_channels": 64, "out_channels": 64, "input_height": 56, "input_width": 56,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.0.layers.2.layer.2",
-+        "in_channels": 64, "out_channels": 256, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.0.layer.0",
-+        "in_channels": 256, "out_channels": 128, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.0.layer.1",
-+        "in_channels": 128, "out_channels": 128, "input_height": 56, "input_width": 56,
-+        "kernel_size": [3, 3], "stride": [2, 2], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.0.layer.2",
-+        "in_channels": 128, "out_channels": 512, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.0.shortcut",
-+        "in_channels": 256, "out_channels": 512, "input_height": 56, "input_width": 56,
-+        "kernel_size": [1, 1], "stride": [2, 2], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.1.layer.0",
-+        "in_channels": 512, "out_channels": 128, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.1.layer.1",
-+        "in_channels": 128, "out_channels": 128, "input_height": 28, "input_width": 28,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.1.layer.2",
-+        "in_channels": 128, "out_channels": 512, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.2.layer.0",
-+        "in_channels": 512, "out_channels": 128, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.2.layer.1",
-+        "in_channels": 128, "out_channels": 128, "input_height": 28, "input_width": 28,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.2.layer.2",
-+        "in_channels": 128, "out_channels": 512, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.3.layer.0",
-+        "in_channels": 512, "out_channels": 128, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.3.layer.1",
-+        "in_channels": 128, "out_channels": 128, "input_height": 28, "input_width": 28,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.1.layers.3.layer.2",
-+        "in_channels": 128, "out_channels": 512, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.0.layer.0",
-+        "in_channels": 512, "out_channels": 256, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.0.layer.1",
-+        "in_channels": 256, "out_channels": 256, "input_height": 28, "input_width": 28,
-+        "kernel_size": [3, 3], "stride": [2, 2], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.HEIGHT_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.0.layer.2",
-+        "in_channels": 256, "out_channels": 1024, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.0.shortcut",
-+        "in_channels": 512, "out_channels": 1024, "input_height": 28, "input_width": 28,
-+        "kernel_size": [1, 1], "stride": [2, 2], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.1.layer.0",
-+        "in_channels": 1024, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.1.layer.1",
-+        "in_channels": 256, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.1.layer.2",
-+        "in_channels": 256, "out_channels": 1024, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.2.layer.0",
-+        "in_channels": 1024, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.2.layer.1",
-+        "in_channels": 256, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.2.layer.2",
-+        "in_channels": 256, "out_channels": 1024, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.3.layer.0",
-+        "in_channels": 1024, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.3.layer.1",
-+        "in_channels": 256, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.3.layer.2",
-+        "in_channels": 256, "out_channels": 1024, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.4.layer.0",
-+        "in_channels": 1024, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.4.layer.1",
-+        "in_channels": 256, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.4.layer.2",
-+        "in_channels": 256, "out_channels": 1024, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.5.layer.0",
-+        "in_channels": 1024, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.5.layer.1",
-+        "in_channels": 256, "out_channels": 256, "input_height": 14, "input_width": 14,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.2.layers.5.layer.2",
-+        "in_channels": 256, "out_channels": 1024, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.0.layer.0",
-+        "in_channels": 1024, "out_channels": 512, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.0.layer.1",
-+        "in_channels": 512, "out_channels": 512, "input_height": 14, "input_width": 14,
-+        "kernel_size": [3, 3], "stride": [2, 2], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.0.layer.2",
-+        "in_channels": 512, "out_channels": 2048, "input_height": 7, "input_width": 7,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.0.shortcut",
-+        "in_channels": 1024, "out_channels": 2048, "input_height": 14, "input_width": 14,
-+        "kernel_size": [1, 1], "stride": [2, 2], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": False,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.1.layer.0",
-+        "in_channels": 2048, "out_channels": 512, "input_height": 7, "input_width": 7,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.1.layer.1",
-+        "in_channels": 512, "out_channels": 512, "input_height": 7, "input_width": 7,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.1.layer.2",
-+        "in_channels": 512, "out_channels": 2048, "input_height": 7, "input_width": 7,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.2.layer.0",
-+        "in_channels": 2048, "out_channels": 512, "input_height": 7, "input_width": 7,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.2.layer.1",
-+        "in_channels": 512, "out_channels": 512, "input_height": 7, "input_width": 7,
-+        "kernel_size": [3, 3], "stride": [1, 1], "padding": [1, 1, 1, 1],
-+        "activation": "relu", "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+    {
-+        "prefix": "resnet.encoder.stages.3.layers.2.layer.2",
-+        "in_channels": 512, "out_channels": 2048, "input_height": 7, "input_width": 7,
-+        "kernel_size": [1, 1], "stride": [1, 1], "padding": [0, 0, 0, 0],
-+        "deallocate_activation": True,
-+        "shard_layout": ttnn.TensorMemoryLayout.BLOCK_SHARDED,
-+    },
-+]
++def _make_conv_config(activation=None, deallocate_activation=True, act_block_h_override=0, shard_layout=ttnn.TensorMemoryLayout.HEIGHT_SHARDED):
++    kwargs = dict(
++        weights_dtype=ttnn.DataType.BFLOAT16,
++        deallocate_activation=deallocate_activation,
++        config_tensors_in_dram=True,
++        act_block_h_override=act_block_h_override,
++        shard_layout=shard_layout,
++        enable_kernel_stride_folding=False,
++    )
++    if activation is not None:
++        kwargs["activation"] = activation
++    return ttnn.Conv2dConfig(**kwargs)
  
 -def main_const_eval_2(arg, device):
 -    utils_DeviceGetter_get_device_4 = device
@@ -8049,25 +7663,7 @@ index 5c36022..8f1b790 100644
 -    ttnn.deallocate(ttnn_to_layout_2, False)
 -    return [ttnn_to_device_1]
  
-+def run_consteval(weights, device):
-+    for conv_params in CONV_LAYER_PARAMS:
-+        prefix = conv_params["prefix"]
-+
-+        running_var = ttnn.typecast(weights[f"{prefix}.normalization.running_var"], ttnn.DataType.FLOAT32, memory_config=None)
-+        bn_weight = ttnn.typecast(weights[f"{prefix}.normalization.weight"], ttnn.DataType.FLOAT32, memory_config=None)
-+        conv_weight = ttnn.typecast(weights[f"{prefix}.convolution.weight"], ttnn.DataType.FLOAT32, memory_config=None)
-+        running_mean = ttnn.typecast(weights[f"{prefix}.normalization.running_mean"], ttnn.DataType.FLOAT32, memory_config=None)
-+        bn_bias = ttnn.typecast(weights[f"{prefix}.normalization.bias"], ttnn.DataType.FLOAT32, memory_config=None)
-+
-+        folded_weight, folded_bias = fold_bn_into_conv(running_var, bn_weight, conv_weight, running_mean, bn_bias)
-+
-+        prepared_weight, prepared_bias = prepare_conv_weight_and_bias(folded_weight, folded_bias, conv_params, device)
-+
-+        weights[f"{prefix}.convolution.weight"] = prepared_weight
-+        weights[f"{prefix}.convolution.bias"] = prepared_bias
-+
-+    weights["classifier.1.bias"] = prepare_classifier_bias(weights, device)
-+    weights["classifier.1.weight"] = prepare_classifier_weight(weights, device)
++_RELU = ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU)
  
 -def consteval__main(ce_cache, weights, device):
 -    if not ce_cache:
@@ -8652,7 +8248,325 @@ index 5c36022..8f1b790 100644
 -                weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"],
 -            ],
 -            device,
--        )
++
++# Each entry: (layer_prefix, out_channels, in_channels, input_height, input_width,
++#               kernel_size, stride, padding, input_layout, input_memory_config,
++#               activation, deallocate_activation, act_block_h_override, shard_layout)
++CONV_CONSTEVAL_PARAMS = [
++    # Conv 0: resnet.embedder.embedder (7x7 initial conv)
++    ("resnet.embedder.embedder", 64, 3, 224, 224,
++     [7, 7], [2, 2], [3, 3, 3, 3], ttnn.Layout.TILE,
++     _INTERLEAVED_L1,
++     _RELU, True, 64, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 1: resnet.encoder.stages.0.layers.0.layer.0 (1x1 bottleneck reduce)
++    ("resnet.encoder.stages.0.layers.0.layer.0", 64, 64, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.ROW_MAJOR,
++     _height_sharded_mem_cfg(_CORE_RANGE_102, [246, 64]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 2: resnet.encoder.stages.0.layers.0.layer.1 (3x3 bottleneck)
++    ("resnet.encoder.stages.0.layers.0.layer.1", 64, 64, 56, 56,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 64]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 3: resnet.encoder.stages.0.layers.0.layer.2 (1x1 bottleneck expand, no activation)
++    ("resnet.encoder.stages.0.layers.0.layer.2", 256, 64, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 4: resnet.encoder.stages.0.layers.0.shortcut (1x1 skip, no activation)
++    ("resnet.encoder.stages.0.layers.0.shortcut", 256, 64, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.ROW_MAJOR,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 5: resnet.encoder.stages.0.layers.1.layer.0
++    ("resnet.encoder.stages.0.layers.1.layer.0", 64, 256, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 256]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 6: resnet.encoder.stages.0.layers.1.layer.1
++    ("resnet.encoder.stages.0.layers.1.layer.1", 64, 64, 56, 56,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 64]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 7: resnet.encoder.stages.0.layers.1.layer.2
++    ("resnet.encoder.stages.0.layers.1.layer.2", 256, 64, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 8: resnet.encoder.stages.0.layers.2.layer.0
++    ("resnet.encoder.stages.0.layers.2.layer.0", 64, 256, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 256]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 9: resnet.encoder.stages.0.layers.2.layer.1
++    ("resnet.encoder.stages.0.layers.2.layer.1", 64, 64, 56, 56,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 64]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 10: resnet.encoder.stages.0.layers.2.layer.2
++    ("resnet.encoder.stages.0.layers.2.layer.2", 256, 64, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 11: resnet.encoder.stages.1.layers.0.layer.0
++    ("resnet.encoder.stages.1.layers.0.layer.0", 128, 256, 56, 56,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 256]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 12: resnet.encoder.stages.1.layers.0.layer.1
++    ("resnet.encoder.stages.1.layers.0.layer.1", 128, 128, 56, 56,
++     [3, 3], [2, 2], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 13: resnet.encoder.stages.1.layers.0.layer.2
++    ("resnet.encoder.stages.1.layers.0.layer.2", 512, 128, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 128]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 14: resnet.encoder.stages.1.layers.0.shortcut
++    ("resnet.encoder.stages.1.layers.0.shortcut", 512, 256, 56, 56,
++     [1, 1], [2, 2], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [256, 256]),
++     None, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 15: resnet.encoder.stages.1.layers.1.layer.0
++    ("resnet.encoder.stages.1.layers.1.layer.0", 128, 512, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 512]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 16: resnet.encoder.stages.1.layers.1.layer.1
++    ("resnet.encoder.stages.1.layers.1.layer.1", 128, 128, 28, 28,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 17: resnet.encoder.stages.1.layers.1.layer.2
++    ("resnet.encoder.stages.1.layers.1.layer.2", 512, 128, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 128]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 18: resnet.encoder.stages.1.layers.2.layer.0
++    ("resnet.encoder.stages.1.layers.2.layer.0", 128, 512, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 512]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 19: resnet.encoder.stages.1.layers.2.layer.1
++    ("resnet.encoder.stages.1.layers.2.layer.1", 128, 128, 28, 28,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 20: resnet.encoder.stages.1.layers.2.layer.2
++    ("resnet.encoder.stages.1.layers.2.layer.2", 512, 128, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 128]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 21: resnet.encoder.stages.1.layers.3.layer.0
++    ("resnet.encoder.stages.1.layers.3.layer.0", 128, 512, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 512]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 22: resnet.encoder.stages.1.layers.3.layer.1
++    ("resnet.encoder.stages.1.layers.3.layer.1", 128, 128, 28, 28,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 23: resnet.encoder.stages.1.layers.3.layer.2
++    ("resnet.encoder.stages.1.layers.3.layer.2", 512, 128, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 128]),
++     None, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 24: resnet.encoder.stages.2.layers.0.layer.0
++    ("resnet.encoder.stages.2.layers.0.layer.0", 256, 512, 28, 28,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 512]),
++     _RELU, False, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 25: resnet.encoder.stages.2.layers.0.layer.1
++    ("resnet.encoder.stages.2.layers.0.layer.1", 256, 256, 28, 28,
++     [3, 3], [2, 2], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _height_sharded_mem_cfg(_CORE_RANGE_98, [64, 256]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.HEIGHT_SHARDED),
++    # Conv 26: resnet.encoder.stages.2.layers.0.layer.2
++    ("resnet.encoder.stages.2.layers.0.layer.2", 1024, 256, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_48, [288, 32]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 27: resnet.encoder.stages.2.layers.0.shortcut
++    ("resnet.encoder.stages.2.layers.0.shortcut", 1024, 512, 28, 28,
++     [1, 1], [2, 2], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_64, [800, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 28: resnet.encoder.stages.2.layers.1.layer.0
++    ("resnet.encoder.stages.2.layers.1.layer.0", 256, 1024, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 29: resnet.encoder.stages.2.layers.1.layer.1
++    ("resnet.encoder.stages.2.layers.1.layer.1", 256, 256, 14, 14,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 30: resnet.encoder.stages.2.layers.1.layer.2
++    ("resnet.encoder.stages.2.layers.1.layer.2", 1024, 256, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 31: resnet.encoder.stages.2.layers.2.layer.0
++    ("resnet.encoder.stages.2.layers.2.layer.0", 256, 1024, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 32: resnet.encoder.stages.2.layers.2.layer.1
++    ("resnet.encoder.stages.2.layers.2.layer.1", 256, 256, 14, 14,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 33: resnet.encoder.stages.2.layers.2.layer.2
++    ("resnet.encoder.stages.2.layers.2.layer.2", 1024, 256, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 34: resnet.encoder.stages.2.layers.3.layer.0
++    ("resnet.encoder.stages.2.layers.3.layer.0", 256, 1024, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 35: resnet.encoder.stages.2.layers.3.layer.1
++    ("resnet.encoder.stages.2.layers.3.layer.1", 256, 256, 14, 14,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 36: resnet.encoder.stages.2.layers.3.layer.2
++    ("resnet.encoder.stages.2.layers.3.layer.2", 1024, 256, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 37: resnet.encoder.stages.2.layers.4.layer.0
++    ("resnet.encoder.stages.2.layers.4.layer.0", 256, 1024, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 38: resnet.encoder.stages.2.layers.4.layer.1
++    ("resnet.encoder.stages.2.layers.4.layer.1", 256, 256, 14, 14,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 39: resnet.encoder.stages.2.layers.4.layer.2
++    ("resnet.encoder.stages.2.layers.4.layer.2", 1024, 256, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 40: resnet.encoder.stages.2.layers.5.layer.0
++    ("resnet.encoder.stages.2.layers.5.layer.0", 256, 1024, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 41: resnet.encoder.stages.2.layers.5.layer.1
++    ("resnet.encoder.stages.2.layers.5.layer.1", 256, 256, 14, 14,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 42: resnet.encoder.stages.2.layers.5.layer.2
++    ("resnet.encoder.stages.2.layers.5.layer.2", 1024, 256, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 32]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 43: resnet.encoder.stages.3.layers.0.layer.0
++    ("resnet.encoder.stages.3.layers.0.layer.0", 512, 1024, 14, 14,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 128]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 44: resnet.encoder.stages.3.layers.0.layer.1
++    ("resnet.encoder.stages.3.layers.0.layer.1", 512, 512, 14, 14,
++     [3, 3], [2, 2], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_80, [160, 64]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 45: resnet.encoder.stages.3.layers.0.layer.2
++    ("resnet.encoder.stages.3.layers.0.layer.2", 2048, 512, 7, 7,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_56, [64, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 46: resnet.encoder.stages.3.layers.0.shortcut
++    ("resnet.encoder.stages.3.layers.0.shortcut", 2048, 1024, 14, 14,
++     [1, 1], [2, 2], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_110, [160, 96]),
++     None, False, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 47: resnet.encoder.stages.3.layers.1.layer.0
++    ("resnet.encoder.stages.3.layers.1.layer.0", 512, 2048, 7, 7,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_56, [64, 256]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 48: resnet.encoder.stages.3.layers.1.layer.1
++    ("resnet.encoder.stages.3.layers.1.layer.1", 512, 512, 7, 7,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_56, [64, 64]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 49: resnet.encoder.stages.3.layers.1.layer.2
++    ("resnet.encoder.stages.3.layers.1.layer.2", 2048, 512, 7, 7,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_56, [64, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 50: resnet.encoder.stages.3.layers.2.layer.0
++    ("resnet.encoder.stages.3.layers.2.layer.0", 512, 2048, 7, 7,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_56, [64, 256]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 51: resnet.encoder.stages.3.layers.2.layer.1
++    ("resnet.encoder.stages.3.layers.2.layer.1", 512, 512, 7, 7,
++     [3, 3], [1, 1], [1, 1, 1, 1], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_56, [64, 64]),
++     _RELU, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++    # Conv 52: resnet.encoder.stages.3.layers.2.layer.2
++    ("resnet.encoder.stages.3.layers.2.layer.2", 2048, 512, 7, 7,
++     [1, 1], [1, 1], [0, 0, 0, 0], ttnn.Layout.TILE,
++     _block_sharded_mem_cfg(_CORE_RANGE_56, [64, 64]),
++     None, True, 0, ttnn.TensorMemoryLayout.BLOCK_SHARDED),
++]
++
++
++def run_consteval(weights, device):
++    for (prefix, out_ch, in_ch, h, w,
++         kernel_size, stride, padding, input_layout, input_memory_config,
++         activation, dealloc_act, act_block_h, shard_layout) in CONV_CONSTEVAL_PARAMS:
++
++        rv_key = prefix + ".normalization.running_var"
++        rm_key = prefix + ".normalization.running_mean"
++        bb_key = prefix + ".normalization.bias"
++        bw_key = prefix + ".normalization.weight"
++        cw_key = prefix + ".convolution.weight"
++
++        running_var = ttnn.typecast(weights[rv_key], ttnn.DataType.FLOAT32, memory_config=None)
++        bn_weight = ttnn.typecast(weights[bw_key], ttnn.DataType.FLOAT32, memory_config=None)
++        conv_weight = ttnn.typecast(weights[cw_key], ttnn.DataType.FLOAT32, memory_config=None)
++        running_mean = ttnn.typecast(weights[rm_key], ttnn.DataType.FLOAT32, memory_config=None)
++        bn_bias = ttnn.typecast(weights[bb_key], ttnn.DataType.FLOAT32, memory_config=None)
++
++        folded_weight, folded_bias = fold_bn_into_conv(
++            running_var, bn_weight, conv_weight, running_mean, bn_bias, out_ch,
++        )
++
++        ttnn.deallocate(running_var, False)
++        ttnn.deallocate(bn_weight, False)
++        ttnn.deallocate(conv_weight, False)
++        ttnn.deallocate(running_mean, False)
++        ttnn.deallocate(bn_bias, False)
++
++        conv_config = _make_conv_config(
++            activation=activation,
++            deallocate_activation=dealloc_act,
++            act_block_h_override=act_block_h,
++            shard_layout=shard_layout,
++        )
++
++        prepared_weight, prepared_bias = prepare_conv_weight_and_bias(
++            folded_weight, folded_bias, device,
++            in_channels=in_ch, out_channels=out_ch,
++            batch_size=8,
++            input_height=h, input_width=w,
++            kernel_size=kernel_size, stride=stride,
++            padding=padding, dilation=[1, 1], groups=1,
++            input_layout=input_layout,
++            input_memory_config=input_memory_config,
++            conv_config=conv_config,
++            slice_config=_CONV2D_SLICE_CFG,
+         )
 -        ce_cache["main_const_eval_0"] = [
 -            main_const_eval_0_0[0],
 -            main_const_eval_0_0[1],
@@ -8766,9 +8680,36 @@ index 5c36022..8f1b790 100644
 -        main_const_eval_2_0 = main_const_eval_2([weights["classifier.1.weight"]], device)
 -        ce_cache["main_const_eval_2"] = main_const_eval_2_0[0]
 -    return ce_cache
++
++        weights[prefix + ".folded_conv_weight"] = prepared_weight
++        weights[prefix + ".folded_conv_bias"] = prepared_bias
++
++        del weights[rv_key]
++        del weights[rm_key]
++        del weights[bb_key]
++        del weights[bw_key]
++        del weights[cw_key]
++
++    # Classifier bias: typecast -> to_layout(TILE) -> to_device
++    bias_f32 = ttnn.typecast(weights["classifier.1.bias"], ttnn.DataType.FLOAT32, memory_config=None)
++    bias_tiled = ttnn.to_layout(bias_f32, ttnn.Layout.TILE, None, memory_config=None)
++    ttnn.deallocate(bias_f32, False)
++    weights["classifier.1.bias"] = ttnn.to_device(bias_tiled, device=device, memory_config=_DRAM_INTERLEAVED)
++    ttnn.deallocate(bias_tiled, False)
++
++    # Classifier weight: typecast -> permute([1,0]) -> to_layout(TILE) -> to_device
++    weight_f32 = ttnn.typecast(weights["classifier.1.weight"], ttnn.DataType.FLOAT32, memory_config=None)
++    weight_torch = ttnn.to_torch(weight_f32)
++    ttnn.deallocate(weight_f32, False)
++    weight_permuted = ttnn.from_torch(ttir_cpu.permute(weight_torch, [1, 0]))
++    weight_tiled = ttnn.to_layout(weight_permuted, ttnn.Layout.TILE, None, memory_config=None)
++    ttnn.deallocate(weight_permuted, False)
++    weights["classifier.1.weight"] = ttnn.to_device(weight_tiled, device=device, memory_config=_DRAM_INTERLEAVED)
++    ttnn.deallocate(weight_tiled, False)
++
 +    return weights
 diff --git a/microsoft/resnet-50/model/graph_0/model_ttnn.py b/microsoft/resnet-50/model/graph_0/model_ttnn.py
-index 4f0da7c..6594eb0 100644
+index 4f0da7c..f8d731a 100644
 --- a/microsoft/resnet-50/model/graph_0/model_ttnn.py
 +++ b/microsoft/resnet-50/model/graph_0/model_ttnn.py
 @@ -1,6 +1,6 @@
@@ -8798,7 +8739,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_0 = ttnn.conv2d(
              input_tensor=ttnn_reshape_0,
 -            weight_tensor=var_0[0],
-+            weight_tensor=self.weights["resnet.embedder.embedder.convolution.weight"],
++            weight_tensor=self.weights["resnet.embedder.embedder.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=3,
              out_channels=64,
@@ -8807,7 +8748,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[1],
-+            bias_tensor=self.weights["resnet.embedder.embedder.convolution.bias"],
++            bias_tensor=self.weights["resnet.embedder.embedder.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -8816,7 +8757,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_1 = ttnn.conv2d(
              input_tensor=ttnn_max_pool2d_0,
 -            weight_tensor=var_0[2],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=64,
@@ -8825,7 +8766,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[3],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -8834,7 +8775,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_2 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_1,
 -            weight_tensor=var_0[4],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=64,
@@ -8843,7 +8784,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[5],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -8852,7 +8793,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_3 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_2,
 -            weight_tensor=var_0[6],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=256,
@@ -8861,7 +8802,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[7],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -8870,7 +8811,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_4 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_0,
 -            weight_tensor=var_0[8],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.shortcut.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.0.shortcut.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=256,
@@ -8879,7 +8820,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[9],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.shortcut.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.0.shortcut.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -8888,7 +8829,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_5 = ttnn.conv2d(
              input_tensor=ttnn_relu_0,
 -            weight_tensor=var_0[10],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=64,
@@ -8897,7 +8838,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[11],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -8906,7 +8847,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_6 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_5,
 -            weight_tensor=var_0[12],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=64,
@@ -8915,7 +8856,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[13],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -8924,7 +8865,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_7 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_6,
 -            weight_tensor=var_0[14],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=256,
@@ -8933,7 +8874,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[15],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.1.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -8942,7 +8883,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_8 = ttnn.conv2d(
              input_tensor=ttnn_relu_1,
 -            weight_tensor=var_0[16],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=64,
@@ -8951,7 +8892,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[17],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -8960,7 +8901,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_9 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_8,
 -            weight_tensor=var_0[18],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=64,
@@ -8969,7 +8910,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[19],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -8978,7 +8919,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_10 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_9,
 -            weight_tensor=var_0[20],
-+            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=64,
              out_channels=256,
@@ -8987,7 +8928,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[21],
-+            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.0.layers.2.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -8996,7 +8937,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_11 = ttnn.conv2d(
              input_tensor=ttnn_relu_2,
 -            weight_tensor=var_0[22],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=128,
@@ -9005,7 +8946,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[23],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9014,7 +8955,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_12 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_11,
 -            weight_tensor=var_0[24],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=128,
@@ -9023,7 +8964,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[25],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9032,7 +8973,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_13 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_12,
 -            weight_tensor=var_0[26],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=512,
@@ -9041,7 +8982,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[27],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9050,7 +8991,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_14 = ttnn.conv2d(
              input_tensor=ttnn_relu_2,
 -            weight_tensor=var_0[28],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.shortcut.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.0.shortcut.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=512,
@@ -9059,7 +9000,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[29],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.shortcut.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.0.shortcut.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=False,
@@ -9068,7 +9009,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_15 = ttnn.conv2d(
              input_tensor=ttnn_relu_3,
 -            weight_tensor=var_0[30],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=128,
@@ -9077,7 +9018,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[31],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9086,7 +9027,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_16 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_15,
 -            weight_tensor=var_0[32],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=128,
@@ -9095,7 +9036,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[33],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9104,7 +9045,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_17 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_16,
 -            weight_tensor=var_0[34],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=512,
@@ -9113,7 +9054,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[35],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.1.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9122,7 +9063,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_18 = ttnn.conv2d(
              input_tensor=ttnn_relu_4,
 -            weight_tensor=var_0[36],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=128,
@@ -9131,7 +9072,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[37],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9140,7 +9081,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_19 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_18,
 -            weight_tensor=var_0[38],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=128,
@@ -9149,7 +9090,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[39],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9158,7 +9099,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_20 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_19,
 -            weight_tensor=var_0[40],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=512,
@@ -9167,7 +9108,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[41],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.2.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9176,7 +9117,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_21 = ttnn.conv2d(
              input_tensor=ttnn_relu_5,
 -            weight_tensor=var_0[42],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=128,
@@ -9185,7 +9126,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[43],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9194,7 +9135,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_22 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_21,
 -            weight_tensor=var_0[44],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=128,
@@ -9203,7 +9144,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[45],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9212,7 +9153,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_23 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_22,
 -            weight_tensor=var_0[46],
-+            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=128,
              out_channels=512,
@@ -9221,7 +9162,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[47],
-+            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.1.layers.3.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9230,7 +9171,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_24 = ttnn.conv2d(
              input_tensor=ttnn_relu_6,
 -            weight_tensor=var_0[48],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=256,
@@ -9239,7 +9180,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[49],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9248,7 +9189,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_25 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_24,
 -            weight_tensor=var_0[50],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=256,
@@ -9257,7 +9198,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[51],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9266,7 +9207,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_26 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_1,
 -            weight_tensor=var_0[52],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=1024,
@@ -9275,7 +9216,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[53],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9284,7 +9225,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_27 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_2,
 -            weight_tensor=var_0[54],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.shortcut.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.0.shortcut.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=1024,
@@ -9293,7 +9234,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[55],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.shortcut.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.0.shortcut.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9302,7 +9243,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_28 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_3,
 -            weight_tensor=var_0[56],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=1024,
              out_channels=256,
@@ -9311,7 +9252,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[57],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9320,7 +9261,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_29 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_28,
 -            weight_tensor=var_0[58],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=256,
@@ -9329,7 +9270,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[59],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9338,7 +9279,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_30 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_29,
 -            weight_tensor=var_0[60],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=1024,
@@ -9347,7 +9288,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[61],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.1.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9356,7 +9297,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_31 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_4,
 -            weight_tensor=var_0[62],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=1024,
              out_channels=256,
@@ -9365,7 +9306,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[63],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9374,7 +9315,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_32 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_31,
 -            weight_tensor=var_0[64],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=256,
@@ -9383,7 +9324,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[65],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9392,7 +9333,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_33 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_32,
 -            weight_tensor=var_0[66],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=1024,
@@ -9401,7 +9342,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[67],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.2.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9410,7 +9351,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_34 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_5,
 -            weight_tensor=var_0[68],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=1024,
              out_channels=256,
@@ -9419,7 +9360,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[69],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9428,7 +9369,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_35 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_34,
 -            weight_tensor=var_0[70],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=256,
@@ -9437,7 +9378,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[71],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9446,7 +9387,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_36 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_35,
 -            weight_tensor=var_0[72],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=1024,
@@ -9455,7 +9396,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[73],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.3.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9464,7 +9405,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_37 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_6,
 -            weight_tensor=var_0[74],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=1024,
              out_channels=256,
@@ -9473,7 +9414,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[75],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9482,7 +9423,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_38 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_37,
 -            weight_tensor=var_0[76],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=256,
@@ -9491,7 +9432,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[77],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9500,7 +9441,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_39 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_38,
 -            weight_tensor=var_0[78],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=1024,
@@ -9509,7 +9450,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[79],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.4.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9518,7 +9459,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_40 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_7,
 -            weight_tensor=var_0[80],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=1024,
              out_channels=256,
@@ -9527,7 +9468,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[81],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9536,7 +9477,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_41 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_40,
 -            weight_tensor=var_0[82],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=256,
@@ -9545,7 +9486,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[83],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9554,7 +9495,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_42 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_41,
 -            weight_tensor=var_0[84],
-+            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=256,
              out_channels=1024,
@@ -9563,7 +9504,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[85],
-+            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.2.layers.5.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9572,7 +9513,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_43 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_8,
 -            weight_tensor=var_0[86],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=1024,
              out_channels=512,
@@ -9581,7 +9522,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[87],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9590,7 +9531,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_44 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_43,
 -            weight_tensor=var_0[88],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=512,
@@ -9599,7 +9540,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[89],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9608,7 +9549,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_45 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_44,
 -            weight_tensor=var_0[90],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=2048,
@@ -9617,7 +9558,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[91],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9626,7 +9567,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_46 = ttnn.conv2d(
              input_tensor=ttnn_relu_12,
 -            weight_tensor=var_0[92],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.shortcut.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.0.shortcut.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=1024,
              out_channels=2048,
@@ -9635,7 +9576,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[93],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.shortcut.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.0.shortcut.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=False,
@@ -9644,7 +9585,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_47 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_9,
 -            weight_tensor=var_0[94],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=2048,
              out_channels=512,
@@ -9653,7 +9594,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[95],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9662,7 +9603,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_48 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_47,
 -            weight_tensor=var_0[96],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=512,
@@ -9671,7 +9612,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[97],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9680,7 +9621,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_49 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_48,
 -            weight_tensor=var_0[98],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=2048,
@@ -9689,7 +9630,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[99],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.1.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,
@@ -9698,7 +9639,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_50 = ttnn.conv2d(
              input_tensor=ttnn_to_memory_config_10,
 -            weight_tensor=var_0[100],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.0.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=2048,
              out_channels=512,
@@ -9707,7 +9648,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[101],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.0.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.0.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9716,7 +9657,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_51 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_50,
 -            weight_tensor=var_0[102],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.1.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.1.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=512,
@@ -9725,7 +9666,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[103],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.1.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.1.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.RELU),
@@ -9734,7 +9675,7 @@ index 4f0da7c..6594eb0 100644
          ttnn_conv2d_52 = ttnn.conv2d(
              input_tensor=ttnn_conv2d_51,
 -            weight_tensor=var_0[104],
-+            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.2.convolution.weight"],
++            weight_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.2.folded_conv_weight"],
              device=utils_DeviceGetter_get_device_0,
              in_channels=512,
              out_channels=2048,
@@ -9743,7 +9684,7 @@ index 4f0da7c..6594eb0 100644
              groups=1,
              dtype=ttnn.DataType.BFLOAT16,
 -            bias_tensor=var_0[105],
-+            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.2.convolution.bias"],
++            bias_tensor=self.weights["resnet.encoder.stages.3.layers.2.layer.2.folded_conv_bias"],
              conv_config=ttnn.Conv2dConfig(
                  weights_dtype=ttnn.DataType.BFLOAT16,
                  deallocate_activation=True,

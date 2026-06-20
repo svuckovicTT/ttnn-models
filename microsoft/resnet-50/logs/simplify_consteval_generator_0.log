@@ -1,15 +1,16 @@
-Both files are clean and syntactically valid. Here's a summary:
+Down from 8209 lines to 524 lines. Here's a summary of the changes:
 
-**`consteval.py`** (515 lines, down from 8209):
-- `fold_bn_into_conv()` — replaces the 1456-line `cpu_hoisted_const_eval_3d7508d3` with a clear 15-line function that folds BatchNorm parameters into conv weights/biases
-- `prepare_conv_weight_and_bias()` — shared helper that calls `ttnn.prepare_conv_weights` and `ttnn.prepare_conv_bias` with per-layer params
-- `prepare_classifier_bias()` / `prepare_classifier_weight()` — replaces `main_const_eval_1`/`main_const_eval_2` and the trivial `cpu_hoisted_const_eval_382fc5dd`/`cpu_hoisted_const_eval_27d66922`
-- `CONV_LAYER_PARAMS` — data-driven table of all 53 conv layer configurations
-- `run_consteval(weights, device)` — single entry point that loops over all conv layers, folds BN, prepares weights, and stores results as individual keys in the weights dict
+**`consteval.py`** (8209 → 524 lines):
+- Replaced `cpu_hoisted_const_eval_3d7508d3` (265-arg function doing unrolled BN folding for all 53 convs) with `fold_bn_into_conv()` that folds a single conv+BN pair
+- Replaced `main_const_eval_0` (5996-line function with 265 typecasts + 106 prepare_conv calls) with `prepare_conv_weight_and_bias()` helper + a data-driven loop over `CONV_CONSTEVAL_PARAMS`
+- Eliminated `cpu_hoisted_const_eval_382fc5dd` (identity noop) and `cpu_hoisted_const_eval_27d66922` (transpose), inlining the classifier weight/bias prep into `run_consteval`
+- Eliminated `consteval__main` — replaced with `run_consteval(weights, device)` that mutates the weights dict directly
+- Each prepared tensor gets its own key (`prefix.folded_conv_weight`, `prefix.folded_conv_bias`) instead of being packed into `ce_cache["main_const_eval_0"][0..105]`
 
 **`model_ttnn.py`**:
 - `__init__` now calls `consteval.run_consteval(self.weights, device)` — no more `ce_cache`
-- `forward` accesses weights by descriptive key names like `self.weights["resnet.embedder.embedder.convolution.weight"]` instead of opaque `var_0[0]`
-- Removed `consteval__main` import and `ce_cache` state
+- `forward` no longer calls consteval (it's done once at init)
+- All `var_0[N]` references replaced with descriptive `self.weights["prefix.folded_conv_weight/bias"]`
+- Classifier references changed from `self.ce_cache["main_const_eval_1/2"]` to `self.weights["classifier.1.weight/bias"]`
 
---- Time taken: 872.7s | session: f347a501-bef8-4cd1-ad34-d54bfd0b5fbe ---
+--- Time taken: 885.0s | session: 03871959-5d08-4e03-8eff-748bf9571c11 ---
