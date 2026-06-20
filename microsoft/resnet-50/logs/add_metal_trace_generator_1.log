@@ -1,0 +1,14 @@
+Good — the `ttnn.deallocate(x, False)` line has been removed from `ResNetEmbeddings.forward`, while the deallocate of `ttnn_to_layout_0` (an intermediate, not the input) is preserved.
+
+Done. Two changes made:
+
+1. **`model_ttnn.py`**: Removed `ttnn.deallocate(x, False)` from `ResNetEmbeddings.forward` (line 68) so the persistent DRAM input tensor isn't freed during trace execution.
+
+2. **`main.py`**: Replaced the 3-run perf loop with a 5-run metal trace approach:
+   - **Run 1 (compile)**: Copies input to persistent DRAM tensor, runs model to fill program cache
+   - **Run 2 (capture)**: Captures the metal trace via `begin_trace_capture`/`end_trace_capture`
+   - **Runs 3-5 (trace)**: Executes the captured trace with `ttnn.execute_trace`, reads output with `.cpu(blocking=False)`
+   - All runs are timed with `time.perf_counter()` and log elapsed time (4dp) + FPS (2dp)
+   - Trace is released at the end with `ttnn.release_trace`
+
+--- Time taken: 71.6s | session: e43338bf-2a67-4628-abbe-e4ba39f044b4 ---
