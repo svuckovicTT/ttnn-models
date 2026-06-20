@@ -1,0 +1,15 @@
+The no-shortcut block correctly uses `x` as the residual in `ttnn_add_1 = ttnn.add(ttnn_conv2d_7, x, ...)`, then deallocates both. Everything looks correct.
+
+The modularization is complete:
+
+- **26 module classes** matching the HuggingFace ResNet-50 hierarchy
+- `ResNetEmbeddings` — stem conv (7×7 with fused ReLU) + max_pool2d
+- 16 `ResNetBottleNeckLayer_S{s}_L{l}` classes — each encapsulating a complete bottleneck (3 convs + optional shortcut + residual add + relu)
+- `ResNetStage{0-3}` — composing bottleneck layers per stage
+- `ResNetEncoder` — composing all 4 stages
+- `ResNetPooler` — global average pooling (typecast → reshape → mean → reshape)
+- `ResNetClassifier` — linear head (linear → typecast → to_memory_config)
+- `ModelTTNN` — top-level model with clean 4-line forward: `embeddings → encoder → pooler → classifier`
+- All 53 conv2d, 16 add, 16 relu, 64 deallocate, and every other op preserved exactly as-is
+
+--- Time taken: 675.2s | session: 218ab46e-0a3d-42f4-8e21-cd58ea132f1b ---
