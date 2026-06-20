@@ -1,0 +1,7 @@
+Done. The changes to `test_main`:
+
+- Added `import time` at the top
+- After the PCC assertion, added a perf loop that runs the model 3 additional times
+- Each run creates a fresh input tensor, measures time with `time.perf_counter()`, calls `ttnn.synchronize_device(device)` before capturing the end time, and logs elapsed time (4 decimal places) and FPS (2 decimal places) since this is an image model (ResNet-50, batch_size=8)
+
+--- Time taken: 36.4s | session: 71cf662f-0545-4708-8ef0-2735b9860f9e ---
