@@ -80,6 +80,16 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_to_layout_49, False)
         # Rotary embedding (computed once, shared across all layers)
         cos, sin = self.rotary_embedding(args_0)
+        # The attention RoPE now runs on the [1, batch, heads, head_dim] layout, where
+        # rotary_embedding treats dim2 (heads) as the sequence and requires
+        # cos_seq_len >= heads. All heads are at the same decode position, so replicate
+        # the single-position cos/sin [1,1,1,64] across 32 seq slots (covers 12 Q heads,
+        # tile-padded). Done once per forward, outside the per-layer loop.
+        _rope_dram = ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        )
+        cos = ttnn.repeat(cos, ttnn.Shape([1, 1, 32, 1]), memory_config=_rope_dram)
+        sin = ttnn.repeat(sin, ttnn.Shape([1, 1, 32, 1]), memory_config=_rope_dram)
         # Shared attention utilities
         ttnn_repeat_1 = ttnn.repeat(
             args_11,
@@ -494,11 +504,16 @@ class Glm4MoeAttention(LightweightModule):
             compute_kernel_config=hifi4_config,
         )
         ttnn.deallocate(v_q, False)
-        # Q rotary embedding
+        # Q rotary embedding on the [1, batch, heads, head_dim] layout. Reshape to the
+        # SDPA layout *before* RoPE (this is the reshape formerly done as q_for_sdpa) so
+        # rotary_embedding tile-pads the heads dim (12->32) once instead of the seq dim
+        # (1->32) per head -- ~12x less rotary work. q_combined ends up = q_for_sdpa.
+        q_heads = ttnn.reshape(q_normed, [1, 16, 12, 128], memory_config=dram_mem)
+        ttnn.deallocate(q_normed, False)
         q_slice_first = ttnn.slice(
-            q_normed,
+            q_heads,
             [0, 0, 0, 0],
-            [16, 12, 1, 64],
+            [1, 16, 12, 64],
             [1, 1, 1, 1],
             memory_config=dram_mem,
         )
@@ -514,19 +529,19 @@ class Glm4MoeAttention(LightweightModule):
         q_rotary_sliced = ttnn.slice(
             q_rotary,
             [0, 0, 0, 0],
-            [16, 12, 1, 64],
+            [1, 16, 12, 64],
             [1, 1, 1, 1],
             memory_config=dram_mem,
         )
         ttnn.deallocate(q_rotary, False)
         q_second_half = ttnn.slice(
-            q_normed,
+            q_heads,
             [0, 0, 0, 64],
-            [16, 12, 1, 128],
+            [1, 16, 12, 128],
             [1, 1, 1, 1],
             memory_config=dram_mem,
         )
-        ttnn.deallocate(q_normed, False)
+        ttnn.deallocate(q_heads, False)
         q_combined = ttnn.concat(
             [q_rotary_sliced, q_second_half],
             3,
@@ -546,11 +561,15 @@ class Glm4MoeAttention(LightweightModule):
             compute_kernel_config=hifi4_config,
         )
         ttnn.deallocate(v_k, False)
-        # K rotary embedding
+        # K rotary embedding on the [1, batch, kv_heads, head_dim] layout (same reorder
+        # as Q). k_combined ends up = k_reshaped (the cache-update layout), so the
+        # separate K reshape below is folded in here.
+        k_heads = ttnn.reshape(k_normed, [1, 16, 1, 128], memory_config=dram_mem)
+        ttnn.deallocate(k_normed, False)
         k_slice_first = ttnn.slice(
-            k_normed,
+            k_heads,
             [0, 0, 0, 0],
-            [16, 1, 1, 64],
+            [1, 16, 1, 64],
             [1, 1, 1, 1],
             memory_config=dram_mem,
         )
@@ -566,33 +585,26 @@ class Glm4MoeAttention(LightweightModule):
         k_rotary_sliced = ttnn.slice(
             k_rotary,
             [0, 0, 0, 0],
-            [16, 1, 1, 64],
+            [1, 16, 1, 64],
             [1, 1, 1, 1],
             memory_config=dram_mem,
         )
         ttnn.deallocate(k_rotary, False)
         k_second_half = ttnn.slice(
-            k_normed,
+            k_heads,
             [0, 0, 0, 64],
-            [16, 1, 1, 128],
+            [1, 16, 1, 128],
             [1, 1, 1, 1],
             memory_config=dram_mem,
         )
-        ttnn.deallocate(k_normed, False)
-        k_combined = ttnn.concat(
+        ttnn.deallocate(k_heads, False)
+        k_reshaped = ttnn.concat(
             [k_rotary_sliced, k_second_half],
             3,
             memory_config=dram_mem,
         )
         ttnn.deallocate(k_second_half, False)
         ttnn.deallocate(k_rotary_sliced, False)
-        # Reshape K result
-        k_reshaped = ttnn.reshape(
-            k_combined,
-            [1, 16, 1, 128],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(k_combined, False)
         # KV cache is head-sharded across the mesh columns, so each device owns
         # its KV head's cache directly -- no point-to-point redistribution needed.
         key_cache_out = key_cache_input
@@ -649,13 +661,9 @@ class Glm4MoeAttention(LightweightModule):
         )
         ttnn.deallocate(k_to_mem, False)
         ttnn.deallocate(v_to_mem, False)
-        # SDPA
-        q_for_sdpa = ttnn.reshape(
-            q_combined,
-            [1, 16, 12, 128],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(q_combined, False)
+        # SDPA. q_combined is already [1, 16, 12, 128] (built on the SDPA layout above),
+        # so no reshape is needed here.
+        q_for_sdpa = q_combined
         sdpa_output = ttnn.transformer.scaled_dot_product_attention_decode(
             q_for_sdpa,
             key_cache_out,
