@@ -104,7 +104,20 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 
 | 8 | o_proj reduce_scatter compute HiFi4 -> LoFi | attn | none (reduce_scatter 78->78-100, within noise) | PCC 0.902344 (unchanged) | revert | confirms reduce_scatter is transport-bound, not compute-bound: lowering reduction fidelity does not speed it (and num_links didn't either, #6). It is at its floor on this HW. |
 
-### Running total: attention ~620 -> ~538 μs/layer on clean layers (-13%), PCC 0.894531 -> 0.902344 (improved).
+| 9 | fuse K+V paged_update_cache -> paged_fused_update_cache (V resharded to rows 2-3) | attn | -4 μs/layer (10->6 μs, within noise) | PCC 0.902344 | **keep** | fused op requires K/V on non-overlapping cores. Small win; validates the fused-op path for the head-prep restructure. |
+
+### Running total: attention ~620 -> ~536 μs/layer on clean layers (-13.5%), PCC 0.894531 -> 0.902344 (improved).
+
+### Larger restructure (in progress): fused-op / efficient-layout head-prep
+
+Head-prep (create_heads + q/k-norm + partial-RoPE slices/concats + reshapes) is ~50% of
+the block (~270 μs). The rotary alone is 66 μs because GLM applies it to a
+[batch=16, heads=12, seq=1, 64] tensor: `rotary_embedding` tile-pads the seq dim 1->32, so
+it does 16*12*32 work. The gemma4 decode template (same HW, also partial-RoPE + qk-norm)
+applies RoPE on the [1, batch, heads, head_dim] layout, where the padded dim is heads
+(12->32) with batch in dim1 -> ~12x less rotary work. Plan: reorder the partial-RoPE onto
+[1,batch,heads,head_dim] (iter10); then adopt nlp_create_qkv_heads_decode for a sharded
+head layout end-to-end; then matmul_reduce_scatter for o_proj.
 
 Kept changes: (#4) DRAM-sharded o_proj matmul, (#5) DRAM-sharded qkv matmul + bias add,
 (#7) o_proj all_gather num_links=3. Dominant win is #5 (qkv 107->47 μs). Measurement noise
