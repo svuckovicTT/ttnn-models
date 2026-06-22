@@ -62,6 +62,34 @@ Full-model extrapolation: attention is identical across all real-model layers, s
 **-203 μs/layer** scales ~linearly (e.g. ~-19 ms across 92 layers), independent of the MoE
 layers that dominate this 4-layer slice's ~156 ms device time.
 
+## Whole-block signposts + full-model extrapolation
+
+Contiguous boundary signposts (`blk_embed | [blk_attn_L{i}, blk_{mlp|moe}_L{i}] x4 | blk_lmhead
+| blk_end`) tile the whole forward so per-block windows sum to the slice. Per-block device time
+(4-layer slice = 3 dense + 1 MoE):
+
+| Block | Device time |
+|-------|-------------|
+| embed | 143 μs |
+| attn (avg L0-L3, whole block incl input_norm+residual) | 565 μs |
+| dense MLP (avg L0-L2) | 630 μs |
+| **MoE (L3)** | **79,328 μs** |
+| lm_head | 55,542 μs |
+| sum of blocks | 139,164 μs  (whole_slice 156,275 μs; ~17 ms is tt-perf-report boundary/op-to-op accounting) |
+
+Full GLM-4.7 = 92 layers (first_k_dense_replace=3 -> 3 dense + 89 MoE) =
+`embed + 92*attn + 3*mlp + 89*moe + lmhead`:
+- attention: 92 x 565 = 51,980 μs
+- dense MLP: 3 x 630 = 1,890 μs
+- **MoE: 89 x 79,328 = 7,060,192 μs**
+- embed 143 + lm_head 55,542
+- **Full-model decode ~= 7.17 s/token device time, ~98.5% MoE.**
+
+Implication: the attention block (optimized -44% here, ~620->~347 μs/layer) is only ~0.7% of
+full-model device time. The dominant full-model lever is the **MoE block** (89 layers x 79 ms);
+lm_head is a 55 ms one-time cost. Attention tuning saves ~25 ms/token full-model; MoE is where
+the seconds are.
+
 ## Candidate optimizations (pre-analysis of Glm4MoeAttention.forward)
 
 1. **Redundant post-rotary re-slice** — after `rotary_embedding` on the 64-wide
