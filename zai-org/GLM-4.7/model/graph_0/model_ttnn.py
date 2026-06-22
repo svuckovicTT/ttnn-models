@@ -470,37 +470,35 @@ class Glm4MoeAttention(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(qkv_interleaved, False)
-        ttnn_reshape_qkv = ttnn.reshape(
-            ttnn_linear,
-            [16, 1, 1792],
-            memory_config=dram_mem,
-        )
+        # Split the fused QKV into per-head Q/K/V directly on the [1, batch, heads,
+        # head_dim] decode layout with nlp_create_qkv_heads_decode. This replaces
+        # split_query_key_value_and_split_heads + the [batch,heads,1,d]->[1,batch,heads,d]
+        # head-layout reshapes (the 34 us repack) in a single op. The op wants a
+        # [1, 1, B, fused] L1 input (DRAM input hits a WH reader-alignment path), so
+        # reshape+move to L1; outputs are L1 height-sharded, resharded back to DRAM for
+        # the (interleaved) norms / RoPE / cache path below.
+        qkv_4d = ttnn.reshape(ttnn_linear, [1, 1, 16, 1792], memory_config=dram_mem)
         ttnn.deallocate(ttnn_linear, False)
-        v_q, v_k, v_v = ttnn.transformer.split_query_key_value_and_split_heads(
-            ttnn_reshape_qkv,
-            None,
+        qkv_l1 = ttnn.to_memory_config(qkv_4d, ttnn.L1_MEMORY_CONFIG)
+        ttnn.deallocate(qkv_4d, False)
+        q_dec, k_dec, v_dec = ttnn.experimental.nlp_create_qkv_heads_decode(
+            qkv_l1,
             num_heads=12,
             num_kv_heads=1,
-            transpose_key=False,
-            memory_config=dram_mem,
+            memory_config=ttnn.L1_HEIGHT_SHARDED_MEMORY_CONFIG,
         )
-        ttnn.deallocate(ttnn_reshape_qkv, False)
-        # Value head reshape
-        v_reshaped = ttnn.reshape(
-            v_v,
-            [1, 16, 1, 128],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(v_v, False)
-        # Reshape Q to the [1, batch, heads, head_dim] SDPA layout BEFORE q_norm and RoPE
-        # (the reshape formerly done as q_for_sdpa). Both rms_norm and rotary_embedding
-        # tile-pad dim2; with heads(12) in dim2 instead of seq(1) the 32x seq-pad waste is
-        # gone for both ops. q_combined ends up = q_for_sdpa.
-        q_heads_pre = ttnn.reshape(v_q, [1, 16, 12, 128], memory_config=dram_mem)
-        ttnn.deallocate(v_q, False)
+        ttnn.deallocate(qkv_l1, False)
+        v_q = ttnn.to_memory_config(q_dec, dram_mem)
+        ttnn.deallocate(q_dec, False)
+        v_k = ttnn.to_memory_config(k_dec, dram_mem)
+        ttnn.deallocate(k_dec, False)
+        v_reshaped = ttnn.to_memory_config(v_dec, dram_mem)
+        ttnn.deallocate(v_dec, False)
+        # v_q is already [1, batch, heads, head_dim] from nlp_create_qkv_heads_decode, the
+        # efficient SDPA/RoPE layout (rms_norm + rotary_embedding tile-pad heads, not seq).
         # Q norm (on the efficient layout)
         q_normed = ttnn.rms_norm(
-            q_heads_pre,
+            v_q,
             epsilon=9.9999997473787516e-06,
             weight=self.weights[f"{layer_prefix}.q_norm.weight"],
             bias=None,
@@ -509,7 +507,7 @@ class Glm4MoeAttention(LightweightModule):
             program_config=None,
             compute_kernel_config=hifi4_config,
         )
-        ttnn.deallocate(q_heads_pre, False)
+        ttnn.deallocate(v_q, False)
         q_heads = q_normed
         q_slice_first = ttnn.slice(
             q_heads,
@@ -562,11 +560,9 @@ class Glm4MoeAttention(LightweightModule):
             compute_kernel_config=hifi4_config,
         )
         ttnn.deallocate(v_k, False)
-        # K rotary embedding on the [1, batch, kv_heads, head_dim] layout (same reorder
-        # as Q). k_combined ends up = k_reshaped (the cache-update layout), so the
-        # separate K reshape below is folded in here.
-        k_heads = ttnn.reshape(k_normed, [1, 16, 1, 128], memory_config=dram_mem)
-        ttnn.deallocate(k_normed, False)
+        # v_k is already [1, batch, kv_heads, head_dim] from create_qkv_heads_decode, so
+        # k_normed is the cache-update layout directly (no separate K reshape needed).
+        k_heads = k_normed
         k_slice_first = ttnn.slice(
             k_heads,
             [0, 0, 0, 0],
