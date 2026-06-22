@@ -36,12 +36,13 @@ signpost) + full-slice device time. Full-model impact extrapolated linearly
 | Change | Op effect | Attention/layer |
 |--------|-----------|-----------------|
 | #10 partial-RoPE on [1,batch,heads,head_dim] layout | Q rotary 58->9 μs; slices 41->11; concats 20->5 | **-91 μs** |
+| #12 nlp_create_qkv_heads_decode | create-heads 39->6 μs; removes 34 μs repack + 13 μs v-reshape | **-68 μs** |
 | #5 DRAM-sharded qkv matmul | qkv matmul 107 -> 47 μs (31% -> 67.6% DRAM BW) | -53 μs |
 | #11 q_norm on [1,batch,heads,head_dim] layout | q_norm 36 -> 9 μs | -30 μs |
 | #7 o_proj all_gather num_links=3 | all_gather 80 -> ~55 μs | -22 μs |
 | #4 DRAM-sharded o_proj matmul | o_proj matmul 47 -> 40 μs (60.7% -> 67.7% BW) | -8 μs |
 | #9 fused K+V paged_update_cache | 2 ops (10 μs) -> 1 op (6 μs) | -4 μs |
-| **Total (kept)** | | **~620 -> ~417 μs/layer (-33%)** |
+| **Total (kept)** | | **~620 -> ~347 μs/layer (-44%)** |
 
 PCC 0.894531 -> **0.902344** (improved). Two winning themes: (a) **DRAM-shard the skinny
 decode matmuls** to break their DRAM-bandwidth wall, and (b) **run the per-head decode ops
@@ -121,7 +122,17 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 
 | 11 | run q_norm on the [1,batch,heads,head_dim] layout | attn | -30 μs/layer (L2/L3 447->417); q_norm 36->9 μs | PCC 0.902344 | **keep** | moved the Q reshape ahead of q_norm so rms_norm also pads heads not seq. Same trick as #10. |
 
-### Running total: attention ~620 -> ~417 μs/layer on clean layers (**-33%**), PCC 0.894531 -> 0.902344 (improved).
+| 12 | nlp_create_qkv_heads_decode for the head split (replaces split_qkv + the [.,.,1,d]->[1,.,.,d] repack) | attn | **-68 μs/layer** (L2/L3 417->~347); create-heads **39->6 μs**, removed 34 μs repack + 13 μs v-reshape | PCC 0.902344 | **keep** | NLPCreateQKVHeadsDecode emits the [1,B,H,D] decode layout directly in 6 μs. Outputs L1 height-sharded -> 4 reshards to DRAM (~17 μs) for the interleaved norms/RoPE. Net big win. (Profiling needed a galaxy reset after a kill wedged an NFS profile-copy; see HANGS.) |
+
+### Running total: attention ~620 -> ~347 μs/layer on clean layers (**-44%**), PCC 0.894531 -> 0.902344 (improved).
+
+### Breakdown after iter 12 (~347 μs/layer)
+**CCL now dominates:** ReduceScatter 77 + AllGather 60 = **137 μs (39%)** | Matmul 87 (25%, DRAM-sharded) |
+SdpaDecode 22 | LayerNorm 18 | RoPE 17 | Reshape 15 (1 left) | Slice 11 | reshards ~18 |
+NLPCreateQKVHeadsDecode 6 | concat 5 | bias-add 4 | PagedFused 6.
+The head-prep is now lean; the remaining frontier is the CCL (matmul_reduce_scatter fusion /
+async, hang-risky) and the DRAM-sharded matmuls (near BW limit). reduce_scatter is
+transport-bound (METAL_BLOCKERS).
 
 ### Breakdown after iter 11 (~417 μs/layer)
 Matmul 87 (qkv 47 + o_proj 40, DRAM-sharded, ~68% BW) | ReduceScatter 78 (transport-bound) |
