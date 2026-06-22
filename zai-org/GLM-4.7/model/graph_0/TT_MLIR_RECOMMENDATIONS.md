@@ -33,6 +33,25 @@ width-sharded into L1. The grid/config math is a closed form of (k, n, num_cores
 Even better: keep the whole attention block in L1-sharded layouts end-to-end so the
 reshards disappear (the llama3_70b_galaxy path keeps activations sharded between ops).
 
+## 1b. Decode RoPE / per-head RMSNorm: use the [1, batch, heads, head_dim] layout (HIGH impact)
+
+**Commits:** `attn-perf #10` (RoPE), `#11` (q_norm). The codegen emitted the decode per-head
+ops on a `[batch, heads, seq=1, head_dim]` layout. `rotary_embedding` (and `rms_norm`)
+tile-pad dim2; with seq=1 in dim2 it pads 1->32, so the op does `batch*heads*32` work --
+a 32x waste for a single decode token. Reordering to `[1, batch, heads, head_dim]` (heads in
+dim2, padded 12->32 once, batch in dim1) cut:
+- **Q rotary 58 -> 9 μs** (#10), **q_norm 36 -> 9 μs** (#11),
+- and as a side effect the partial-RoPE **slices 41 -> 11 μs** and **concats 20 -> 5 μs**.
+
+Total ~-120 μs/layer (the single largest structural win, ahead of the matmul DRAM-sharding).
+Caveats handled: (a) the op requires `cos_seq_len >= heads`, so the position-specific cos/sin
+`[1,1,1,head_dim]` must be replicated to `[1,1,32,head_dim]` (all heads share the decode
+position); (b) build Q/K on this layout *before* norm+RoPE so the `q_for_sdpa`/`k_cache`
+reshapes fold in for free. **Recommendation:** the codegen should emit decode-time per-head
+RoPE and norms on the `[1, batch, heads, head_dim]` layout, matching the production decode
+demos (gemma4, llama3_70b_galaxy), rather than the `[batch, heads, 1, head_dim]` layout that
+forces a 32x seq-pad on every per-head op.
+
 ## 2. Bias on a DRAM-sharded matmul
 
 **Commit:** `attn-perf #5`. The qkv linear has a bias; the DRAM-sharded path here runs

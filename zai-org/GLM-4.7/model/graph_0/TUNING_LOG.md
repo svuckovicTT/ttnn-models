@@ -35,20 +35,31 @@ signpost) + full-slice device time. Full-model impact extrapolated linearly
 
 | Change | Op effect | Attention/layer |
 |--------|-----------|-----------------|
+| #10 partial-RoPE on [1,batch,heads,head_dim] layout | Q rotary 58->9 μs; slices 41->11; concats 20->5 | **-91 μs** |
 | #5 DRAM-sharded qkv matmul | qkv matmul 107 -> 47 μs (31% -> 67.6% DRAM BW) | -53 μs |
+| #11 q_norm on [1,batch,heads,head_dim] layout | q_norm 36 -> 9 μs | -30 μs |
 | #7 o_proj all_gather num_links=3 | all_gather 80 -> ~55 μs | -22 μs |
 | #4 DRAM-sharded o_proj matmul | o_proj matmul 47 -> 40 μs (60.7% -> 67.7% BW) | -8 μs |
-| **Total (kept)** | | **~620 -> ~538 μs/layer (-13%)** |
+| #9 fused K+V paged_update_cache | 2 ops (10 μs) -> 1 op (6 μs) | -4 μs |
+| **Total (kept)** | | **~620 -> ~417 μs/layer (-33%)** |
 
-PCC 0.894531 -> **0.902344** (improved; the DRAM-sharded matmuls auto-select LoFi but
-accumulate more accurately on this path). Stopped after 8 iterations: remaining device
-time (reduce_scatter 78 μs transport-bound; rotary 66 μs / TM ~100 μs from partial-RoPE,
-both load-bearing per METAL_BLOCKERS) is at HW limits or below the ~±20 μs/layer noise
-floor. The generalizable win (DRAM-shard skinny decode matmuls) is in TT_MLIR_RECOMMENDATIONS.
+PCC 0.894531 -> **0.902344** (improved). Two winning themes: (a) **DRAM-shard the skinny
+decode matmuls** to break their DRAM-bandwidth wall, and (b) **run the per-head decode ops
+(RoPE, RMSNorm) on the `[1, batch, heads, head_dim]` layout** so they tile-pad heads(12->32)
+once instead of seq(1->32) per head -- the single biggest win (-120 μs across RoPE/norm/
+slices/concats). Both generalized in TT_MLIR_RECOMMENDATIONS.
 
-Full-model extrapolation: the attention block is identical across all real-model layers,
-so the -82 μs/layer scales linearly with layer count (e.g. ~-7.5 ms across 92 layers),
-independent of the MoE layers that dominate this 4-layer slice's 156 ms device time.
+Remaining frontier (high-complexity, documented for a dedicated follow-up):
+- **nlp_create_qkv_heads_decode**: produces the [1,B,H,D] layout directly (removes the 34 μs
+  head-repack reshape + speeds NlpCreateHeads 39 μs), but needs sharded input (B=32) and
+  sharded downstream threading -- best done as part of an end-to-end L1-sharded head-prep.
+- **matmul_reduce_scatter_async** for o_proj: fuse/overlap the o_proj matmul (40) with the
+  reduce_scatter (78); experimental, needs manual GlobalSemaphores (hang risk).
+- reduce_scatter (78 μs) is transport-bound (links + fidelity both no-op, see METAL_BLOCKERS).
+
+Full-model extrapolation: attention is identical across all real-model layers, so the
+**-203 μs/layer** scales ~linearly (e.g. ~-19 ms across 92 layers), independent of the MoE
+layers that dominate this 4-layer slice's ~156 ms device time.
 
 ## Candidate optimizations (pre-analysis of Glm4MoeAttention.forward)
 
