@@ -1907,7 +1907,9 @@ class Glm4MoeDecoderLayer(LightweightModule):
             ttnn.deallocate(reshaped_for_norm, False)
             # Pass post_normed [16, 1, 5120] to MoE - it creates both
             # [16, 5120] for router/shared experts and [16, 1, 1, 5120] for all_gather
+            ttnn.tracy_message(f"`TT_SIGNPOST: moe_L{self.layer_idx}_start`")
             moe_output = self.mlp(post_normed, var_0, var_2)
+            ttnn.tracy_message(f"`TT_SIGNPOST: moe_L{self.layer_idx}_end`")
             # Residual add after MoE MLP
             output = ttnn.add(
                 residual,
@@ -1929,7 +1931,9 @@ class Glm4MoeDecoderLayer(LightweightModule):
                 program_config=None,
                 compute_kernel_config=hifi4_config,
             )
+            ttnn.tracy_message(f"`TT_SIGNPOST: mlp_L{self.layer_idx}_start`")
             mlp_output = self.mlp(post_normed)
+            ttnn.tracy_message(f"`TT_SIGNPOST: mlp_L{self.layer_idx}_end`")
             # Residual add after MLP
             output = ttnn.add(
                 residual,
