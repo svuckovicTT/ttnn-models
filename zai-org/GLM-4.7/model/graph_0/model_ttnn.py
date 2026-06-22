@@ -615,16 +615,10 @@ class Glm4MoeAttention(LightweightModule):
             ),
         )
         ttnn.deallocate(k_reshaped, False)
-        ttnn.experimental.paged_update_cache(
-            key_cache_out,
-            k_to_mem,
-            update_idxs_tensor=repeat_idx,
-            share_cache=False,
-            page_table=None,
-        )
-        ttnn.deallocate(k_to_mem, False)
         value_cache_out = value_cache_input
         # Paged update cache (value)
+        # paged_fused_update_cache requires the K and V inputs on non-overlapping
+        # core grids (parallel update); put V on rows 2-3 (K is on rows 0-1).
         v_to_mem = ttnn.to_memory_config(
             v_reshaped,
             ttnn.MemoryConfig(
@@ -633,8 +627,8 @@ class Glm4MoeAttention(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 0)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 1), ttnn.CoreCoord(7, 1)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(7, 2)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 3), ttnn.CoreCoord(7, 3)),
                         ]
                     ),
                     [32, 128],
@@ -643,13 +637,17 @@ class Glm4MoeAttention(LightweightModule):
             ),
         )
         ttnn.deallocate(v_reshaped, False)
-        ttnn.experimental.paged_update_cache(
+        # Fused K+V paged cache update (one dispatch instead of two).
+        ttnn.experimental.paged_fused_update_cache(
+            key_cache_out,
+            k_to_mem,
             value_cache_out,
             v_to_mem,
             update_idxs_tensor=repeat_idx,
             share_cache=False,
             page_table=None,
         )
+        ttnn.deallocate(k_to_mem, False)
         ttnn.deallocate(v_to_mem, False)
         # SDPA
         q_for_sdpa = ttnn.reshape(
