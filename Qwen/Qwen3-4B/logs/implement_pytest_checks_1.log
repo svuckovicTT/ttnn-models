@@ -1,0 +1,122 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/Qwen/Qwen3-4B/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 1 item
+
+main.py Device: MeshDevice(1x1 grid, 1 devices)
+Input shape: torch.Size([1, 16])
+Input dtype: torch.int64
+Input shape: torch.Size([1, 16])
+Input dtype: torch.int64
+
+PCC: 0.976562
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        exact_pcc = 0.9765207171440125
+    
+        device = utils.DeviceGetter.get_device((1, 1))
+    
+        input = model_pt.load_input()
+        input = ttnn.from_torch(input)
+        input = ttnn.to_layout(input, ttnn.Layout.ROW_MAJOR)
+        input = ttnn.to_dtype(input, ttnn.DataType.INT32)
+        input = ttnn.to_device(
+            input,
+            device,
+            ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+    
+        weights = load_weights_for__main()
+        outputs = _main([input], weights)
+    
+        ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+        golden_output = model_pt.run_pytorch_model()
+    
+        pcc = calculate_pcc(ttnn_output, golden_output)
+        print(f"\nPCC: {pcc:.6f}")
+>       assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+E       AssertionError: PCC 0.9765625 does not match expected 0.9765207171440125
+E       assert 0.9765625 == 0.9765207171440125
+
+main.py:29733: AssertionError
+=============================== warnings summary ===============================
+../../../../../tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: 14 warnings
+  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - AssertionError: PCC 0.9765625 does not match expe...
+======================= 1 failed, 16 warnings in 11.63s ========================
+2026-05-24 19:58:40.065 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 398/398 [00:00<00:00, 31445.82it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0xbdc8860 of type "ttnn._ttnn.operations.unary.nez_t"
+ - leaked instance 0xc621370 of type "ttnn._ttnn.operations.data_movement.fill_rm_t"
+ - leaked instance 0xc630c50 of type "ttnn._ttnn.operations.data_movement.scatter_t"
+ - leaked instance 0xc39d630 of type "ttnn._ttnn.operations.unary.softplus_t"
+ - leaked instance 0xc571180 of type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked instance 0xc5cd220 of type "ttnn._ttnn.operations.ternary_backward.addcdiv_bw_t"
+ - leaked instance 0xc3fe3e0 of type "ttnn._ttnn.operations.unary.hardshrink_t"
+ - leaked instance 0xc224650 of type "ttnn._ttnn.operations.binary.eq_t"
+ - leaked instance 0xc589220 of type "ttnn._ttnn.operations.unary_backward.clamp_bw_t"
+ - leaked instance 0xc4240b0 of type "ttnn._ttnn.operations.unary.softshrink_t"
+ - leaked instance 0xbe4ac60 of type "ttnn._ttnn.operations.unary.log10_t"
+ - leaked instance 0xc622990 of type "ttnn._ttnn.operations.data_movement.fill_ones_rm_t"
+ - leaked instance 0xc73e980 of type "ttnn._ttnn.operations.uniform.uniform_t"
+ - leaked instance 0x99e88e0 of type "ttnn._ttnn.operations.unary.hardswish_t"
+ - leaked instance 0xc537d80 of type "ttnn._ttnn.operations.unary_backward.digamma_bw_t"
+ - leaked instance 0xc6382b0 of type "ttnn._ttnn.operations.data_movement.expand_t"
+ - leaked instance 0xc213a10 of type "ttnn._ttnn.operations.unary.var_hw_t"
+ - leaked instance 0xc73d660 of type "ttnn._ttnn.operations.full_like.moreh_full_like_t"
+ - leaked instance 0xc593670 of type "ttnn._ttnn.operations.unary_backward.exp_bw_t"
+ - leaked instance 0xc5d3720 of type "ttnn._ttnn.operations.complex_unary_backward.polar_bw_t"
+ - ... skipped remainder
+nanobind: leaked 532 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2335 functions!
+ - leaked function "__call__"
+ - leaked function "__ne__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "load_sub_device_manager"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step implement_pytest, as expected

@@ -1,0 +1,11 @@
+All four tasks are complete. Summary:
+
+- **params.py** (new, 195 lines): Contains `load_weights_for__main()` (table-driven over `_ARG_TO_KEY` and dispatched by three property-group sets) and `load_weights_for__main_from_state_dict()` (loads via `model_pt.load_pytorch_model().state_dict()`, applies `ttnn.from_torch` then per-group `to_layout`→`to_dtype`→`to_device`, using `ttnn.DRAM_MEMORY_CONFIG`). Three key sets — `ROW_MAJOR_BFLOAT16_KEYS` (109: embed + q/k/v_proj), `ROW_MAJOR_FLOAT32_KEYS` (1: rotary inv_freq), `TILE_BFLOAT16_DRAM_KEYS` (290: norms, o_proj, mlp gate/up/down, lm_head, model_norm) — total 400.
+
+- **main.py** (modified): Added `from params import load_weights_for__main`. The original `_main_weights = {}` global and the 4557-line `load_weights_for__main` function are fully removed (file shrank from 29737 → 25179 lines). Existing call sites in `main()` and `test_main()` now bind to the imported function.
+
+- **verify_weights.py** (new): `test_verify_weights` asserts equal length, equal key sets, and `torch.equal` per-key value match between both loaders.
+
+- One leftover empty stub file `_extract_helper.py` remains in `graph_0/` — sandbox blocked `rm`, so I truncated it to zero bytes. Remove with `rm` when convenient.
+
+--- Time taken: 1528.9s ---

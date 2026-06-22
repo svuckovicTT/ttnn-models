@@ -1,0 +1,16 @@
+I've refactored `model_ttnn.py` from a 25,129-line flat list of ops into a 970-line modularized structure that mirrors the Qwen3 PyTorch architecture.
+
+**Module hierarchy** (mirroring `transformers.models.qwen3`):
+- `ModelTTNN` (top of file) — handles embedding, layer loop, final norm + lm_head
+- `Qwen3DecoderLayer` — input_layernorm → self_attn → attention residual → post_attention_layernorm → mlp → MLP residual; holds `self.self_attn` and `self.mlp`
+- `Qwen3Attention` — qkv_proj, slice into V/Q/K, k_norm, q_norm, rotary embeddings, SDPA, concatenate_heads, o_proj
+- `Qwen3MLP` — gate_proj (with fused SiLU), up_proj, multiply, down_proj
+
+**Key design choices**:
+- All 36 layers use one parameterized `Qwen3DecoderLayer` (verified by `diff` that layers 1..35 are structurally identical in op sequence)
+- Layer 0's special embedding-as-residual path is handled in `ModelTTNN.forward` (passing `embed_residual` separately from `embed_norm_input`); layers 1..35 use a uniform bridge (`to_memory_config` → `reshape` → `to_memory_config`) before each call
+- Weight lookups use `f"L__self___model_layers_{self.layer_idx}_..."`
+
+**Verification** — op counts match the original exactly across all 14 ttnn op types when expanded for 36 layers: 1523 deallocates, 508 to_memory_config, 219 reshape, 181 matmul, 180 slice, 145 rms_norm, 108 permute, 72 rotary_embedding, 72 add, 36 each of SDPA/concat_heads/multiply, 1 typecast, 1 embedding.
+
+--- Time taken: 1320.9s ---

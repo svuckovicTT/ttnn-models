@@ -1,0 +1,7 @@
+{
+  "reasoning": "The Generator implemented `test_main()` as requested:\n- Added `import model_pt`\n- Set `exact_pcc = 0.9765207171440125` (presumably matching xla.py)\n- Loaded input via `model_pt.load_input()`\n- Converted to TTNN using `ttnn.from_torch()` with layout/dtype/device transformations\n- Loaded weights and ran `_main([input], weights)`\n- Got golden output from `model_pt.run_pytorch_model()`\n- Used `calculate_pcc()`\n- Printed PCC to 6 decimal places\n- Asserted PCC >= threshold (matches the note about asserting greater than threshold)\n\nThe only file modified within the codegen dir is `main.py` as required. The patch file in `logs/` is a logging artifact, not a code change.\n\nThere's a minor deviation from the example: the Generator uses `outputs[-1]` (only the last output) wrapped in `ttnn.to_torch(ttnn.from_device(...))` rather than the example's list comprehension `[ttnn.from_device(output) for output in outputs]`. However, this is reasonable given that `calculate_pcc` typically expects torch tensors, and the example is described as illustrative (\"what the code should look like\"). The core task \u2014 implementing PCC comparison between TTNN and PyTorch \u2014 is completed.\n\nNo TTNN operations were replaced with PyTorch, no memory configs were altered, and the test stub was successfully implemented.",
+  "failed_criteria": [],
+  "is_approved": true
+}
+
+--- Time taken: 32.0s ---

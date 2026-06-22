@@ -1,0 +1,6 @@
+All three subtasks are done:
+- `params.py` shrunk from 5028 → 469 lines: removed the original `load_weights_for__main` function and its `_main_weights` global.
+- `main.py` now imports and calls `load_weights_for__main_from_state_dict` in both `main()` and `test_main()`.
+- `verify_weights.py` deleted.
+
+--- Time taken: 149.4s ---

@@ -1,0 +1,12 @@
+The refactor is complete:
+
+**`model_ttnn.py`:**
+- Added `LightweightModule` base class with `__call__` → `forward` dispatch.
+- Added `ModelTTNN(LightweightModule)` with `__init__(self, device)` (saves `self.device`, loads `self.weights` via `params.load_weights_for__main_from_state_dict(device)`) and `forward(self, activations)` containing all the original `_main` body.
+- Body reindented +4 spaces; all `weights` → `self.weights`, `device` → `self.device` (only 2 device refs needed swap: function arg and consteval call).
+
+**`main.py`:**
+- Dropped `_main` and `load_weights_for__main_from_state_dict` imports; imported `ModelTTNN` instead.
+- `main()` and `test_main()` now instantiate `model = ModelTTNN(device)` and invoke via call operator (`model(activations)`), which dispatches through `LightweightModule.__call__` → `forward`.
+
+--- Time taken: 162.3s ---

@@ -1,0 +1,9 @@
+The task is already complete on this branch. Looking at the current state:
+
+- `model_ttnn.py` exists at `Qwen/Qwen3-4B/model/graph_0/model_ttnn.py` and contains the `_main` forward function (25,123 lines)
+- `main.py` no longer defines `_main` — it imports it via `from model_ttnn import _main` (main.py:4) and uses it at main.py:31 and main.py:60
+- Working tree is clean; the most recent commit on this branch is `feb647b [prettify] move_ttnn_model - step 6 (attempt 0)`, which is exactly this step
+
+No changes needed.
+
+--- Time taken: 59.2s ---
