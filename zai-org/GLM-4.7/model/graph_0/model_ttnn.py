@@ -492,9 +492,15 @@ class Glm4MoeAttention(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(v_v, False)
-        # Q norm
+        # Reshape Q to the [1, batch, heads, head_dim] SDPA layout BEFORE q_norm and RoPE
+        # (the reshape formerly done as q_for_sdpa). Both rms_norm and rotary_embedding
+        # tile-pad dim2; with heads(12) in dim2 instead of seq(1) the 32x seq-pad waste is
+        # gone for both ops. q_combined ends up = q_for_sdpa.
+        q_heads_pre = ttnn.reshape(v_q, [1, 16, 12, 128], memory_config=dram_mem)
+        ttnn.deallocate(v_q, False)
+        # Q norm (on the efficient layout)
         q_normed = ttnn.rms_norm(
-            v_q,
+            q_heads_pre,
             epsilon=9.9999997473787516e-06,
             weight=self.weights[f"{layer_prefix}.q_norm.weight"],
             bias=None,
@@ -503,13 +509,8 @@ class Glm4MoeAttention(LightweightModule):
             program_config=None,
             compute_kernel_config=hifi4_config,
         )
-        ttnn.deallocate(v_q, False)
-        # Q rotary embedding on the [1, batch, heads, head_dim] layout. Reshape to the
-        # SDPA layout *before* RoPE (this is the reshape formerly done as q_for_sdpa) so
-        # rotary_embedding tile-pads the heads dim (12->32) once instead of the seq dim
-        # (1->32) per head -- ~12x less rotary work. q_combined ends up = q_for_sdpa.
-        q_heads = ttnn.reshape(q_normed, [1, 16, 12, 128], memory_config=dram_mem)
-        ttnn.deallocate(q_normed, False)
+        ttnn.deallocate(q_heads_pre, False)
+        q_heads = q_normed
         q_slice_first = ttnn.slice(
             q_heads,
             [0, 0, 0, 0],
