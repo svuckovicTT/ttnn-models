@@ -108,7 +108,17 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 
 | 10 | partial-RoPE on [1,batch,heads,head_dim] layout (+ cos/sin replicated to [1,1,32,64]) | attn | **-91 μs/layer** (L2/L3 538->447); Q rotary **58->9 μs** | PCC 0.902344 (correct + unchanged) | **keep** | rotary_embedding tile-pads dim2; with heads(12) in dim2 instead of seq(1) the 32x seq-pad waste is gone. Folded the q_for_sdpa / k_reshaped reshapes into the head-prep. Biggest win after qkv DRAM-shard. |
 
-### Running total: attention ~620 -> ~447 μs/layer on clean layers (**-28%**), PCC 0.894531 -> 0.902344 (improved).
+| 11 | run q_norm on the [1,batch,heads,head_dim] layout | attn | -30 μs/layer (L2/L3 447->417); q_norm 36->9 μs | PCC 0.902344 | **keep** | moved the Q reshape ahead of q_norm so rms_norm also pads heads not seq. Same trick as #10. |
+
+### Running total: attention ~620 -> ~417 μs/layer on clean layers (**-33%**), PCC 0.894531 -> 0.902344 (improved).
+
+### Breakdown after iter 11 (~417 μs/layer)
+Matmul 87 (qkv 47 + o_proj 40, DRAM-sharded, ~68% BW) | ReduceScatter 78 (transport-bound) |
+ReshapeView ~62 (3; biggest is the 34 μs [16,12,1,128]->[1,16,12,128] head-layout repack) |
+AllGather 58 | NlpCreateHeads 39 (split_qkv) | SdpaDecode 22 | RoPE 17 | LayerNorm 18 |
+Slice 11 | reshards 12 | PagedFused 6 | Concat 5 | bias-add 4.
+Next levers: nlp_create_qkv_heads_decode (produces [1,B,H,D] sharded directly -> removes the
+34 μs repack + speeds create_heads); matmul_reduce_scatter fusion for o_proj (overlap matmul+RS).
 
 ### Larger restructure (in progress): fused-op / efficient-layout head-prep
 
