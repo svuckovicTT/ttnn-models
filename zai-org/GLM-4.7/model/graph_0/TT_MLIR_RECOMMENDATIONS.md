@@ -52,6 +52,21 @@ RoPE and norms on the `[1, batch, heads, head_dim]` layout, matching the product
 demos (gemma4, llama3_70b_galaxy), rather than the `[batch, heads, 1, head_dim]` layout that
 forces a 32x seq-pad on every per-head op.
 
+## 1c. Use nlp_create_qkv_heads_decode for the decode head split (HIGH impact)
+
+**Commit:** `attn-perf #12`. The codegen emitted `split_query_key_value_and_split_heads`
+(NlpCreateHeadsDeviceOperation, **39 μs**) producing `[batch, heads, 1, head_dim]`, which then
+needs the `[.,.,1,d]->[1,batch,heads,d]` repack reshape (34 μs) for the efficient decode
+layout (see 1b). Replacing both with a single `ttnn.experimental.nlp_create_qkv_heads_decode`
+(num_heads, num_kv_heads, `memory_config=L1_HEIGHT_SHARDED`) emits the `[1, batch, heads,
+head_dim]` layout **directly in 6 μs** and also subsumes the V reshape -> **-68 μs/layer**.
+Notes: the op wants a `[1, 1, B, fused]` **L1** input (DRAM input hits a WH reader-alignment
+path -- move to L1 first); it assumes Q,K,V fused order; outputs are L1 height-sharded (here
+resharded to DRAM for the still-interleaved norms/RoPE -- 4 reshards ~17 μs, which an
+end-to-end L1-sharded head-prep would remove). **Recommendation:** emit the decode head split
+as `nlp_create_qkv_heads_decode` rather than `split_query_key_value_and_split_heads` +
+layout reshape.
+
 ## 2. Bias on a DRAM-sharded matmul
 
 **Commit:** `attn-perf #5`. The qkv linear has a bias; the DRAM-sharded path here runs
