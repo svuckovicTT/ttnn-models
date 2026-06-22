@@ -106,7 +106,9 @@ Top levers: CCL fusion (all_reduce / matmul_reduce_scatter), qkv matmul knobs, T
 
 | 9 | fuse K+V paged_update_cache -> paged_fused_update_cache (V resharded to rows 2-3) | attn | -4 μs/layer (10->6 μs, within noise) | PCC 0.902344 | **keep** | fused op requires K/V on non-overlapping cores. Small win; validates the fused-op path for the head-prep restructure. |
 
-### Running total: attention ~620 -> ~536 μs/layer on clean layers (-13.5%), PCC 0.894531 -> 0.902344 (improved).
+| 10 | partial-RoPE on [1,batch,heads,head_dim] layout (+ cos/sin replicated to [1,1,32,64]) | attn | **-91 μs/layer** (L2/L3 538->447); Q rotary **58->9 μs** | PCC 0.902344 (correct + unchanged) | **keep** | rotary_embedding tile-pads dim2; with heads(12) in dim2 instead of seq(1) the 32x seq-pad waste is gone. Folded the q_for_sdpa / k_reshaped reshapes into the head-prep. Biggest win after qkv DRAM-shard. |
+
+### Running total: attention ~620 -> ~447 μs/layer on clean layers (**-28%**), PCC 0.894531 -> 0.902344 (improved).
 
 ### Larger restructure (in progress): fused-op / efficient-layout head-prep
 
