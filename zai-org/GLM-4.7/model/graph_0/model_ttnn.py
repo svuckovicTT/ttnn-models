@@ -41,6 +41,10 @@ class ModelTTNN(LightweightModule):
         var_0 = self.weights["consteval.scalar_zero_f32"]
         var_1 = self.weights["consteval.scalar_one_i32"]
         var_2 = self.weights["consteval.expert_mapping_u16"]
+        # Block boundary markers tile the whole forward so full-model device time is the
+        # sum of block windows: embed | (attn_Li + mlp/moe_Li) x layers | lmhead.
+        # The "embed" block = embedding + rotary + shared attention prep (up to layer 0).
+        ttnn.tracy_message("`TT_SIGNPOST: blk_embed`")
         # Embedding
         ttnn_typecast_29 = ttnn.typecast(
             args_1,
@@ -171,6 +175,9 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_repeat_2, False)
         ttnn.deallocate(sin, False)
         ttnn.deallocate(cos, False)
+        # Block boundary: the "lmhead" block = final norm + lm_head matmul + argmax + the
+        # trailing all_gathers (everything after the last layer). Ends at blk_end.
+        ttnn.tracy_message("`TT_SIGNPOST: blk_lmhead`")
         # Final norm and lm_head
         ttnn_rms_norm_16 = ttnn.rms_norm(
             hidden_states,
@@ -309,6 +316,8 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(args_0, False)
+        # End-of-model boundary (closes the lmhead block).
+        ttnn.tracy_message("`TT_SIGNPOST: blk_end`")
         return [
             key_cache_outs[0],
             value_cache_outs[0],
@@ -1861,6 +1870,11 @@ class Glm4MoeDecoderLayer(LightweightModule):
             packer_l1_acc=True,
         )
         layer_prefix = f"model.model.layers.{self.layer_idx}"
+        # Block boundary marker: the attention block spans input_layernorm + self_attn +
+        # the post-attention residual add (it ends at the ffn marker below). Boundary
+        # markers are contiguous so the per-block windows tile the whole model with no gaps
+        # (full model device time == sum of block windows).
+        ttnn.tracy_message(f"`TT_SIGNPOST: blk_attn_L{self.layer_idx}`")
         # Input layernorm
         normed = ttnn.rms_norm(
             hidden_states,
@@ -1873,11 +1887,9 @@ class Glm4MoeDecoderLayer(LightweightModule):
             compute_kernel_config=hifi4_config,
         )
         # Attention
-        ttnn.tracy_message(f"`TT_SIGNPOST: attn_L{self.layer_idx}_start`")
         attn_output, key_cache_out, value_cache_out = self.self_attn(
             normed, key_cache_input, value_cache_input, cos, sin, repeat_idx, attn_mask
         )
-        ttnn.tracy_message(f"`TT_SIGNPOST: attn_L{self.layer_idx}_end`")
         # Residual add after attention
         residual = ttnn.add(
             hidden_states,
@@ -1887,6 +1899,12 @@ class Glm4MoeDecoderLayer(LightweightModule):
         )
         ttnn.deallocate(attn_output, False)
         ttnn.deallocate(hidden_states, False)
+        # Block boundary marker: the MoE/MLP block spans post_attention_layernorm + the
+        # MoE/MLP + the post-ffn residual add. It ends at the next layer's blk_attn marker
+        # (or blk_lmhead for the last layer). Use a distinct label for MoE vs dense MLP.
+        ttnn.tracy_message(
+            f"`TT_SIGNPOST: blk_{'moe' if self.is_moe else 'mlp'}_L{self.layer_idx}`"
+        )
         if self.is_moe:
             # MoE path: reshape before post_attention_layernorm
             reshaped_for_norm = ttnn.reshape(
@@ -1907,9 +1925,7 @@ class Glm4MoeDecoderLayer(LightweightModule):
             ttnn.deallocate(reshaped_for_norm, False)
             # Pass post_normed [16, 1, 5120] to MoE - it creates both
             # [16, 5120] for router/shared experts and [16, 1, 1, 5120] for all_gather
-            ttnn.tracy_message(f"`TT_SIGNPOST: moe_L{self.layer_idx}_start`")
             moe_output = self.mlp(post_normed, var_0, var_2)
-            ttnn.tracy_message(f"`TT_SIGNPOST: moe_L{self.layer_idx}_end`")
             # Residual add after MoE MLP
             output = ttnn.add(
                 residual,
@@ -1931,9 +1947,7 @@ class Glm4MoeDecoderLayer(LightweightModule):
                 program_config=None,
                 compute_kernel_config=hifi4_config,
             )
-            ttnn.tracy_message(f"`TT_SIGNPOST: mlp_L{self.layer_idx}_start`")
             mlp_output = self.mlp(post_normed)
-            ttnn.tracy_message(f"`TT_SIGNPOST: mlp_L{self.layer_idx}_end`")
             # Residual add after MLP
             output = ttnn.add(
                 residual,
