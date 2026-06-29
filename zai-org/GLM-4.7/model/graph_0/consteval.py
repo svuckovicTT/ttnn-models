@@ -250,35 +250,31 @@ def run_consteval(weights, device):
     weights["consteval.mesh_zeros"] = _allgather_reshape_row_major(ttnn.zeros, device)
     weights["consteval.mesh_ones"] = _allgather_reshape_row_major(ttnn.ones, device)
 
-    t_arange = ttnn.arange(
-        0,
-        16,
-        1,
-        dtype=ttnn.DataType.INT32,
-        device=device,
-        layout=ttnn.Layout.TILE,
-        memory_config=DRAM_CONFIG,
-    )
-    weights["consteval.batch_indices_i32"] = ttnn.reshape(
-        t_arange, [16, 1, 1], memory_config=DRAM_CONFIG
-    )
-    ttnn.deallocate(t_arange, False)
+    # GLOBAL row-sharded token index (0..63), row r holds 16r..16r+15. A
+    # replicated local arange(0,16) becomes [0-15]x4 after the all_gather over
+    # rows -> group-mask scatter marks only mesh-row 0 -> routing dropped for
+    # rows 1-3 (sharded-iota-loses-offset bug; TT_MLIR_RECOMMENDATIONS.md #5a).
+    import torch
 
-    t_arange = ttnn.arange(
-        0,
-        16,
-        1,
-        dtype=ttnn.DataType.UINT32,
-        device=device,
+    _row_mapper = ttnn.ShardTensor2dMesh(device, (4, 8), (0, None))
+    _bi = torch.arange(0, 64, dtype=torch.int32).reshape(64, 1, 1)
+    weights["consteval.batch_indices_i32"] = ttnn.from_torch(
+        _bi,
+        dtype=ttnn.DataType.INT32,
         layout=ttnn.Layout.TILE,
+        device=device,
         memory_config=DRAM_CONFIG,
+        mesh_mapper=_row_mapper,
     )
-    t_reshape = ttnn.reshape(t_arange, [16, 1, 1], memory_config=DRAM_CONFIG)
-    ttnn.deallocate(t_arange, False)
-    weights["consteval.moe_batch_indices"] = ttnn.repeat(
-        t_reshape, ttnn.Shape([1, 8, 1]), memory_config=DRAM_CONFIG
+    _mi = torch.arange(0, 64, dtype=torch.int32).reshape(64, 1, 1).repeat(1, 8, 1)
+    weights["consteval.moe_batch_indices"] = ttnn.from_torch(
+        _mi,
+        dtype=ttnn.DataType.UINT32,
+        layout=ttnn.Layout.TILE,
+        device=device,
+        memory_config=DRAM_CONFIG,
+        mesh_mapper=ttnn.ShardTensor2dMesh(device, (4, 8), (0, None)),
     )
-    ttnn.deallocate(t_reshape, False)
 
     weights["consteval.topk_scaling"] = ttnn.full(
         shape=ttnn.Shape([1, 1, 1]),

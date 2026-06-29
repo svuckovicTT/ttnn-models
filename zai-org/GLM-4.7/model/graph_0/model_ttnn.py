@@ -1210,7 +1210,8 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             num_links=None,
             topology=ttnn.Topology.Ring,
         )
-        ttnn.deallocate(ttnn_matmul_14, False)
+        # ttnn_matmul_14 (raw local router scores [16,160]) kept alive for the
+        # routing-weight gather below; deallocated right after the gather.
         ttnn_reshape_71 = ttnn.reshape(
             ttnn_all_gather_10,
             [10240, 1],
@@ -1283,6 +1284,29 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(ttnn_embedding_1, False)
+        # Routing weights via native axis gather instead of the flat-index
+        # ttnn.embedding above (flat index token*160+expert at fp16 precision
+        # rounds the expert bits for mesh-rows 1-3 -> wrong weights;
+        # TT_MLIR_RECOMMENDATIONS.md #5b). gather keeps the expert index exact.
+        ttnn.deallocate(ttnn_typecast_45, False)
+        _gather_idx = ttnn.reshape(
+            ttnn.typecast(
+                ttnn_typecast_40, ttnn.DataType.UINT32, memory_config=dram_mem
+            ),
+            [16, 8],
+            memory_config=dram_mem,
+        )
+        _gather_scores = ttnn.reshape(
+            ttnn_matmul_14, [16, 160], memory_config=dram_mem
+        )
+        _gathered = ttnn.gather(_gather_scores, 1, _gather_idx)
+        ttnn.deallocate(_gather_idx, False)
+        ttnn.deallocate(_gather_scores, False)
+        ttnn.deallocate(ttnn_matmul_14, False)
+        ttnn_typecast_45 = ttnn.typecast(
+            _gathered, ttnn.DataType.FLOAT32, memory_config=dram_mem
+        )
+        ttnn.deallocate(_gathered, False)
         ttnn_reshape_73 = ttnn.reshape(
             ttnn_typecast_45,
             [16, 8],
@@ -1371,9 +1395,13 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         # nothing clobbers their L1 state before the MoE (see smoke harness).
         mc_dispatch_sem, mc_combine_sem, mc_prealloc = _make_moe_dispatch_runtime(self.device)
         # Dispatch inputs, per device B=16 tokens / S=1, ROW_MAJOR.
+        # all_to_all_dispatch inputs placed in L1 (tested-working axis=0 config is
+        # L1-in/DRAM-out; cf #45435 dispatch metadata returns zeros for non-rank-0
+        # with DRAM-in).
+        _disp_mc = ttnn.L1_MEMORY_CONFIG
         disp_x = ttnn.to_layout(
             ttnn.reshape(post_normed, [16, 1, 1, 5120], memory_config=dram_mem),
-            ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
+            ttnn.Layout.ROW_MAJOR, None, memory_config=_disp_mc,
         )
         ttnn.deallocate(post_normed, False)
         disp_idx = ttnn.to_layout(
@@ -1381,7 +1409,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
                 ttnn.reshape(ttnn_typecast_40, [16, 1, 1, 8], memory_config=dram_mem),
                 ttnn.DataType.UINT16, memory_config=dram_mem,
             ),
-            ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
+            ttnn.Layout.ROW_MAJOR, None, memory_config=_disp_mc,
         )
         ttnn.deallocate(ttnn_typecast_40, False)
         disp_scores = ttnn.to_layout(
@@ -1389,7 +1417,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
                 ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem),
                 ttnn.DataType.BFLOAT16, memory_config=dram_mem,
             ),
-            ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
+            ttnn.Layout.ROW_MAJOR, None, memory_config=_disp_mc,
         )
         # Scaling weights for the epilogue: [16,1,8] -> [8,1,16,1] (k, 1, tokens, 1).
         scores_k = ttnn.permute(
