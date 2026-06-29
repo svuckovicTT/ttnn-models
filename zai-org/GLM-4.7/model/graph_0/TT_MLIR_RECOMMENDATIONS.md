@@ -90,3 +90,51 @@ See METAL_BLOCKERS.md #1. `ttnn.all_reduce` decomposes into
 `reduce_scatter_minimal_async` (102 μs) + `all_gather` (80 μs), which is *slower* than
 the explicit `reduce_scatter` (78 μs) + `all_gather`. The codegen's explicit pair is the
 better choice on this HW/shape; an all_reduce-fusion pass would regress here.
+
+## 5. MoE router: two sharded-indexing bugs drop mesh-rows 1-3 (CORRECTNESS, HIGH)
+
+GLM-4.7 (4,8) galaxy decode had good PCC (0.99) only on the **first 16/64 users** (mesh-row
+0). The batch is DP-sharded over the 4 mesh-rows; the routed-MoE term was wrong for rows
+1-3 (~0.86), giving full-batch PCC ~0.89. Two independent bugs, both from torch indexing
+ops whose StableHLO lowerings index a *global* tensor with an index that Shardy/codegen
+then mis-handles. tt-xla model code is correct; the bugs are in the lowering. (tt-xla #5409.)
+
+### 5a. Sharded `stablehlo.iota` loses its per-shard offset (0.88 -> 0.95)
+The group-mask `scatter_` (and the router token addressing) use a global token iota
+`arange(0,64)`. After Shardy partitions the batch axis, the iota is sharded `64 -> 16` but
+keeps `start=0` (TTIR `ttir.arange end=16`) — the per-shard offset `row*16` is dropped. So
+every row's iota is `0..15`; after the all_gather the index reads `[0-15]x4` instead of
+`0-63`, and the group-mask scatter marks only mesh-row 0's tokens -> rows 1-3 routing
+scores zeroed. **Fix (tt-mlir):** when partitioning iota along a sharded value axis, add
+`offset = mesh_coord * local_size` (or keep it replicated). Same class as tt-mlir #8623.
+
+### 5b. `torch.gather` -> `ttir.embedding` with an fp16-precision flat index (0.95 -> 0.99)
+The routing-weight gather `scores.gather(dim=1, topk_idx)` is lowered to `ttir.embedding`
+over the all-gathered `[tokens*E]=[10240,1]` score table with a **flat index
+`token*E + expert`**. That index is built at **fp16-class (~10-bit-mantissa) precision**,
+not int/f32 (confirmed: forcing HiFi4+fp32 on the index matmul changes nothing). fp16 holds
+integers exactly only up to 2048, then the step is 2 (2048-4096), 4, 8...:
+- **Why every other index is wrong:** `E=160` is even, so `token*E` is even and the flat
+  index's parity == the expert's parity. With step-2 quantization only even values are
+  representable, so **odd-expert indices round UP by 1** (e.g. `16*160+49 = 2609 -> 2610`),
+  gathering the *neighbouring* expert's score. Even experts are untouched -> exactly the
+  alternating "+1 on every other element" pattern.
+- **Why only rows 1-3:** row 0's indices are `0..2559` (mostly < 2048 -> exact); the global
+  token offset `16*row` pushes rows 1/2/3 into the 2560-10239 range -> step 2/4/8 -> their
+  routing weights are read for the wrong experts. Routed norm recovery row0 ~1.0, rows
+  1/2/3 ~0.58/0.54/0.54 of golden -> the residual 0.95->0.99 cap.
+**Fixes (tt-mlir):** route the `tenstorrent.gather` composite to native `ttir::GatherOp ->
+ttnn::GatherOp` (both exist; `ttnn.gather` is in the API) instead of the embedding lowering
+— the *"There is no TTNN Gather support"* comment in `StableHLOToTTIRPatterns.cpp` is stale.
+The composite is currently flattened before legalization because it's not in
+`kCompositesWithCustomSharding` and ReoutlineComposite fails to re-form it after Shardy
+slices it. Minimum: build the embedding flat index in int32, not a low-precision matmul.
+
+### Model-level workaround (applied here -> all 4 mesh-rows 0.993)
+Both avoided in `tt_torch/sparse_mlp.py route_tokens_to_experts` by using the `one_hot`
+pattern already used for XLA compat (`_topk_to_sparse_scores`): group mask via
+`one_hot+any` (no `scatter_`), weights via `einsum("be,bke->bk", scores, one_hot)` (no
+`gather`). The `arange` is then over experts/groups (model dim, not the sharded batch axis)
+and the einsum keeps the expert index small + exact. In the emitted ttnn model the
+equivalent is: row-sharded global `arange(0,64)` consteval batch index, and `ttnn.gather`
+in place of the flat-index `ttnn.embedding`. Full-batch decode PCC 0.88 -> 0.9937.

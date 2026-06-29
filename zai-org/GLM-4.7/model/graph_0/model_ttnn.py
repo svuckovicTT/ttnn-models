@@ -1144,7 +1144,8 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             num_links=None,
             topology=ttnn.Topology.Linear,
         )
-        ttnn.deallocate(ttnn_matmul_14, False)
+        # ttnn_matmul_14 (raw local router scores [16,160]) is kept alive for the
+        # routing-weight gather below; deallocated right after the gather.
         ttnn_reshape_71 = ttnn.reshape(
             ttnn_all_gather_10,
             [10240, 1],
@@ -1217,6 +1218,33 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(ttnn_embedding_1, False)
+        # Routing weights via a native axis gather instead of the flat-index
+        # ttnn.embedding above. The embedding gathers from the all-gathered
+        # [tokens*160] score table with a flat index token*160+expert built at
+        # fp16-class precision, which rounds off the expert bits for mesh-rows
+        # 1-3 (large global token offset) -> wrong weights. gather(scores[16,160],
+        # dim=1, top8[16,8]) keeps the expert index small (0..159) and exact.
+        # (See TT_MLIR_RECOMMENDATIONS.md #5b.) The embedding chain above is now
+        # superseded and could be pruned for perf (drops all_gather_10).
+        ttnn.deallocate(ttnn_typecast_45, False)
+        _gather_idx = ttnn.reshape(
+            ttnn.typecast(
+                ttnn_typecast_40, ttnn.DataType.UINT32, memory_config=dram_mem
+            ),
+            [16, 8],
+            memory_config=dram_mem,
+        )
+        _gather_scores = ttnn.reshape(
+            ttnn_matmul_14, [16, 160], memory_config=dram_mem
+        )
+        _gathered = ttnn.gather(_gather_scores, 1, _gather_idx)
+        ttnn.deallocate(_gather_idx, False)
+        ttnn.deallocate(_gather_scores, False)
+        ttnn.deallocate(ttnn_matmul_14, False)
+        ttnn_typecast_45 = ttnn.typecast(
+            _gathered, ttnn.DataType.FLOAT32, memory_config=dram_mem
+        )
+        ttnn.deallocate(_gathered, False)
         ttnn_reshape_73 = ttnn.reshape(
             ttnn_typecast_45,
             [16, 8],
