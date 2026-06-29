@@ -1456,9 +1456,11 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             ttnn.synchronize_device(self.device)
             print(">>> SYNC after dispatch_metadata OK", flush=True, file=_sys.stderr)
 
-        # DEFAULT = runnable: compute_only matmul + deadlock-free Ring CCL combine.
-        # Opt into the (deadlocking) fused selective_reduce_combine via GLM_MOE_FUSED_COMBINE=1.
-        if _os.environ.get("GLM_MOE_FUSED_COMBINE") != "1":
+        # DEFAULT = fused selective_reduce_combine (correct PCC 0.992, all users).
+        # No longer deadlocks: build carries combine fix #45764. Opt into the
+        # perf-placeholder compute_only matmul+Ring-CCL path via GLM_MOE_COMPUTE_ONLY=1
+        # (NOT exact PCC; for perf experiments only).
+        if _os.environ.get("GLM_MOE_COMPUTE_ONLY") == "1":
             # compute_only path (#46863-era): matmul only, NO fused combine ring
             # (the deadlock source). cluster_axis/mux/sem/output_tensor must be
             # omitted. Returns matmul_output in slot 4 (no combine output).
