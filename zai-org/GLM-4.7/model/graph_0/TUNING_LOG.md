@@ -76,3 +76,32 @@ benchmark, not this bf8 codegen. Reaching 0.99 in-place would need graph
 regeneration from the corrected tt-xla sharding spec or higher precision throughout.
 Next: moe_compute fused-op integration (perf goal; replaces dispatch+matmul+combine
 with a structurally-correct fused op).
+
+## 2026-06-29 — fused moe_compute + good-PCC routing: full-model perf estimate ~0.33 s/token
+
+Branch `mvasiljevic/glm-moe-compute-l1-goodpcc` (fused moe_compute default, routing
+fix = global iota + native gather, all_to_all_dispatch inputs in L1). PCC 0.992 (all
+64 users), no deadlock (build carries combine fix #45764). tracy `./run -t`, signpost-
+scoped, tt-perf-report device-merged (per-device == wall-clock under SPMD). Methodology
+matches the pre-moe_compute baseline (preamble 126.6μs == baseline 126μs).
+
+Per-segment device time (μs), now vs baseline (commit 35b98b0, hand-emitted MoE):
+| segment            | now (fused) | baseline | note |
+|--------------------|-------------|----------|------|
+| preamble           |     126.6   |    126   | unchanged |
+| attention / layer  |     812     |   8547   | 10.5x: good-PCC head-sharded KV dropped ~1792 axis-0 KV P2P ops |
+| dense MLP / layer  |     641     |    595   | unchanged |
+| MoE / layer (fused)|    2810     |  67381   | **24x**: ttnn.experimental.moe_compute replaces dispatch+token_remap+3 sparse_matmul+combine |
+| lm_head (+tail)    |    3779     |  22084   | argmax-over-vocab dominated |
+
+Full-model extrapolation (full = preamble + lm_head + 92*attn + 3*dense + 89*moe):
+- **~330.7 ms = 0.331 s/token** (was ~6.81 s/token) → **~20x faster end-to-end**, at PCC 0.992.
+- Composition: MoE **76%** (89 x 2.81ms = 250ms), attention **23%** (92 x 812μs = 75ms),
+  lm_head ~1%, dense ~1%, preamble ~0%.
+
+Next perf levers (now that MoE is no longer 88%): MoE is still the top at 76% — moe_compute
+internals (num_links / mux / fused-combine vs compute_only) + prune the now-dead embedding
+chain still left in the L3 router (superseded by the native gather; drops an all_gather_10).
+Then attention (23%). lm_head argmax (~per-device) is the 3rd item. Note the MoE segment time
+includes the full router (router gate + topk + group-mask + the dead embedding path) + dispatch
++ epilogue, not just the moe_compute op itself (~0.4ms) — most of the 2.81ms is glue/CCL.
