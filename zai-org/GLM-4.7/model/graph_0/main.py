@@ -157,7 +157,9 @@ def main():
     if os.environ.get("GLM_CHECK_PCC") == "1":
         import model_pt
 
-        exact_pcc = 0.89453125
+        # PCC floor for perf tuning: the routing-fixed fused-moe_compute model has
+        # 0.992; hold >= 0.99 (the initial good version's quality) while optimizing.
+        exact_pcc = 0.99
 
         ttnn_output = [ttnn.from_device(output) for output in outputs]
 
@@ -190,8 +192,8 @@ def main():
         # sharding -- the codegen path quantizes experts to bf8 and runs default
         # (LoFi) math fidelity on those matmuls; the SPMD runtime keeps higher
         # effective precision. Compare with tolerance instead of exact equality.
-        assert pcc >= exact_pcc - 0.01, f"PCC {pcc} below expected {exact_pcc}"
-        print(f"PCC check passed (expected ~{exact_pcc}, tol 0.01)")
+        assert pcc >= exact_pcc, f"PCC {pcc} below floor {exact_pcc}"
+        print(f"PCC check passed (floor {exact_pcc})")
 
     close_device(device)
     return 0
