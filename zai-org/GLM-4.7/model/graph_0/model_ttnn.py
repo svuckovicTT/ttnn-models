@@ -1022,19 +1022,14 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             _gathered, ttnn.DataType.FLOAT32, memory_config=dram_mem
         )
         ttnn.deallocate(_gathered, False)
-        ttnn_reshape_73 = ttnn.reshape(
-            ttnn_typecast_45,
-            [16, 8],
-            memory_config=dram_mem,
-        )
+        # (folded: reshape_73 was an identity [16,8]->[16,8]; sum directly)
         ttnn_sum_1 = ttnn.sum(
-            ttnn_reshape_73,
+            ttnn_typecast_45,
             [1],
             True,
             memory_config=dram_mem,
             compute_kernel_config=None,
         )
-        ttnn.deallocate(ttnn_reshape_73, False)
         ttnn_add_9 = ttnn.add(
             ttnn_sum_1,
             self.weights["consteval.moe_epsilon"],
@@ -1127,19 +1122,19 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             ttnn.Layout.ROW_MAJOR, None, memory_config=_disp_mc,
         )
         ttnn.deallocate(ttnn_typecast_40, False)
+        # multiply_3 [16,1,8] -> [16,1,1,8] reshaped ONCE, reused for the dispatch
+        # scores (bf16, ROW_MAJOR) and the epilogue scaling weights (permute->TILE).
+        _m3_4d = ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem)
+        ttnn.deallocate(ttnn_multiply_3, False)
         disp_scores = ttnn.to_layout(
-            ttnn.typecast(
-                ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem),
-                ttnn.DataType.BFLOAT16, memory_config=dram_mem,
-            ),
+            ttnn.typecast(_m3_4d, ttnn.DataType.BFLOAT16, memory_config=dram_mem),
             ttnn.Layout.ROW_MAJOR, None, memory_config=_disp_mc,
         )
-        # Scaling weights for the epilogue: [16,1,8] -> [8,1,16,1] (k, 1, tokens, 1).
+        # Scaling weights for the epilogue: [16,1,1,8] -> [8,1,16,1] (k, 1, tokens, 1).
         scores_k = ttnn.permute(
-            ttnn.reshape(ttnn_multiply_3, [16, 1, 1, 8], memory_config=dram_mem),
-            (3, 1, 0, 2), memory_config=dram_mem, pad_value=0.0,
+            _m3_4d, (3, 1, 0, 2), memory_config=dram_mem, pad_value=0.0,
         )
-        ttnn.deallocate(ttnn_multiply_3, False)
+        ttnn.deallocate(_m3_4d, False)
         scores_k = ttnn.to_layout(scores_k, ttnn.Layout.TILE, None, memory_config=dram_mem)
 
         import sys as _sys
