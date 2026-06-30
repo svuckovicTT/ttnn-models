@@ -105,3 +105,11 @@ chain still left in the L3 router (superseded by the native gather; drops an all
 Then attention (23%). lm_head argmax (~per-device) is the 3rd item. Note the MoE segment time
 includes the full router (router gate + topk + group-mask + the dead embedding path) + dispatch
 + epilogue, not just the moe_compute op itself (~0.4ms) — most of the 2.81ms is glue/CCL.
+
+## Tuning ledger (branch mvasiljevic/glm-moe-compute-l1-goodpcc-perf, baseline = fused moe_compute 0.300... see iter0)
+| # | patch | scope | tracy DT (full est) | PCC | decision | why |
+|---|-------|-------|---------------------|-----|----------|-----|
+| 0 | baseline: fused moe_compute + routing fix + L1 dispatch | full | 0.331 s/tok (moe 2.81ms, attn 0.81ms, dense 0.64ms, lmhead 3.78ms) | 0.992188 | base | starting point |
+| 1 | prune dead embedding chain in L3 router (drop all_gather_10 + token*160+expert index matmul + ttnn.embedding) | MoE | 0.300 s/tok (moe 2.46ms; -12% moe, -9% full) | 0.992188 | keep | dead code superseded by native ttnn.gather |
+| 2 | remove vacuous group-mask branch (n_group=1): drop topk(2)+topk(1), concat_25 all_gather_9, scatter, mesh_partition_0, repeat_interleave(160), ne, where; top-8 directly on biased scores | MoE | 0.250 s/tok (moe 1.90ms; -23% moe, -17% full) | 0.992188 | keep | group-limited routing is a no-op for n_group=1 |
+| 3 | rms_norm HiFi4->HiFi2 (all per-layer norms) | MoE+attn | 0.250 s/tok (no change; LayerNorm stayed 192us) | 0.992188 | REVERT | rms_norm is DRAM-bound not fidelity-bound; reverted. (PCC floor set to 0.99 per user, kept.) |
