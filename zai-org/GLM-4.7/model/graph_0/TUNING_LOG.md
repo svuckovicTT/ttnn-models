@@ -115,3 +115,16 @@ includes the full router (router gate + topk + group-mask + the dead embedding p
 | 3 | rms_norm HiFi4->HiFi2 (all per-layer norms) | MoE+attn | 0.250 s/tok (no change; LayerNorm stayed 192us) | 0.992188 | REVERT | rms_norm is DRAM-bound not fidelity-bound; reverted. (PCC floor set to 0.99 per user, kept.) |
 | 4 | num_links=3 on MoE epilogue reduce_scatter + all_gather (cluster_axis=1) | MoE | 0.247 s/tok (moe 1869us; -1.5% moe, -1% full) | 0.992188 | keep | parallelize cross-col TP reduce; small win (decode tensors are small) |
 | 5 | num_links=3 on all other cluster_axis=1 CCLs (attention/dense/shared/lm_head) | full | 0.251 s/tok (WORSE +1.6%: lm_head vocab all_gather +713us, moe +37us variance) | 0.992188 | REVERT | num_links=3 hurts the large lm_head vocab all_gather; attn/dense gains within noise |
+
+## Summary after iters 1-5 (branch mvasiljevic/glm-moe-compute-l1-goodpcc-perf)
+Full-model device-time estimate: **0.331 -> 0.247 s/token (-25%)**, PCC held at 0.992188 (>= 0.99 floor).
+Significant wins (both structural / dead-code, MoE segment 2.81 -> 1.87 ms):
+- iter1: prune dead embedding chain (all_gather_10 + token*160+expert index matmul + ttnn.embedding) — superseded by the native ttnn.gather. -0.031 s/tok.
+- iter2: remove the vacuous group-mask branch (n_group=1: topk(2)+topk(1), concat_25 all_gather_9, scatter, mesh_partition, repeat_interleave(160), ne, where). -0.050 s/tok.
+- iter4: num_links=3 on the MoE epilogue cluster_axis=1 reduce_scatter+all_gather. -0.003 s/tok.
+Washes / reverted: iter3 (rms_norm HiFi2 — DRAM-bound, no gain), iter5 (num_links=3 on remaining axis1 CCLs — regressed the large lm_head vocab all_gather).
+Remaining levers (bigger, need restructuring; PCC margin is tight at 0.992 vs 0.99 floor so precision trades are mostly off the table):
+- MoE TM churn (~400us: Reshape/FillPad/Tilize/Untilize around dispatch/moe_compute) — DRAM-bound, needs L1-sharded op chains.
+- LayerNorm (MoE 192us + attn 236us, DRAM-bound) — needs L1-sharded input.
+- MoEComputeDeviceOperation 421us — would need moe_compute internal knobs (num_links / mux) or the compute_only path (not exact PCC).
+- Attention (30% of full): qkv/o_proj matmuls already DRAM-sharded; remaining is the 3 rms_norms (DRAM-bound) + CCL.
