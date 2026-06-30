@@ -522,10 +522,7 @@ class Glm4MoeAttention(LightweightModule):
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         )
         hifi4_config = ttnn.WormholeComputeKernelConfig(
-            # perf iter3: rms_norm uses HiFi2 (fp32 dest acc preserves the
-            # reduction precision; the x*x multiply is fine in 2 passes for
-            # bf16 inputs). Halves the layernorm math passes.
-            math_fidelity=ttnn.MathFidelity.HiFi2,
+            math_fidelity=ttnn.MathFidelity.HiFi4,
             math_approx_mode=False,
             fp32_dest_acc_en=True,
             packer_l1_acc=True,
@@ -1394,10 +1391,7 @@ class Glm4MoeDecoderLayer(LightweightModule):
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         )
         hifi4_config = ttnn.WormholeComputeKernelConfig(
-            # perf iter3: rms_norm uses HiFi2 (fp32 dest acc preserves the
-            # reduction precision; the x*x multiply is fine in 2 passes for
-            # bf16 inputs). Halves the layernorm math passes.
-            math_fidelity=ttnn.MathFidelity.HiFi2,
+            math_fidelity=ttnn.MathFidelity.HiFi4,
             math_approx_mode=False,
             fp32_dest_acc_en=True,
             packer_l1_acc=True,
