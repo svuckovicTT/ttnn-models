@@ -1184,111 +1184,12 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(v_20, False)
-        ttnn_typecast_41 = ttnn.typecast(
-            ttnn_typecast_40,
-            ttnn.DataType.UINT32,
-            memory_config=dram_mem,
-        )
-        ttnn_reshape_70 = ttnn.reshape(
-            ttnn_typecast_41,
-            [16, 8, 1],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_41, False)
-        ttnn_concat_26 = ttnn.concat(
-            [self.weights["consteval.moe_batch_indices"], ttnn_reshape_70],
-            2,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_70, False)
-        ttnn_all_gather_10 = ttnn.all_gather(
-            input_tensor=ttnn_matmul_14,
-            dim=0,
-            cluster_axis=0,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Ring,
-        )
-        # ttnn_matmul_14 (raw local router scores [16,160]) kept alive for the
-        # routing-weight gather below; deallocated right after the gather.
-        ttnn_reshape_71 = ttnn.reshape(
-            ttnn_all_gather_10,
-            [10240, 1],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_all_gather_10, False)
-        ttnn_typecast_42 = ttnn.typecast(
-            ttnn_concat_26,
-            ttnn.DataType.FLOAT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_concat_26, False)
-        ttnn_matmul_15 = ttnn.matmul(
-            ttnn_typecast_42,
-            self.weights["consteval.moe_constants"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=dram_mem,
-            dtype=ttnn.DataType.FLOAT32,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_typecast_42, False)
-        ttnn_reshape_72 = ttnn.reshape(
-            ttnn_matmul_15,
-            [128],
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_matmul_15, False)
-        ttnn_typecast_43 = ttnn.typecast(
-            ttnn_reshape_72,
-            ttnn.DataType.UINT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_72, False)
-        ttnn_to_layout_55 = ttnn.to_layout(
-            ttnn_typecast_43,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_43, False)
-        ttnn_typecast_44 = ttnn.typecast(
-            ttnn_reshape_71,
-            ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_reshape_71, False)
-        ttnn_to_layout_56 = ttnn.to_layout(
-            ttnn_typecast_44,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_typecast_44, False)
-        ttnn_embedding_1 = ttnn.embedding(
-            ttnn_to_layout_55,
-            ttnn_to_layout_56,
-            padding_idx=None,
-            layout=ttnn.Layout.TILE,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_to_layout_56, False)
-        ttnn.deallocate(ttnn_to_layout_55, False)
-        ttnn_typecast_45 = ttnn.typecast(
-            ttnn_embedding_1,
-            ttnn.DataType.FLOAT32,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(ttnn_embedding_1, False)
-        # Routing weights via native axis gather instead of the flat-index
-        # ttnn.embedding above (flat index token*160+expert at fp16 precision
-        # rounds the expert bits for mesh-rows 1-3 -> wrong weights;
-        # TT_MLIR_RECOMMENDATIONS.md #5b). gather keeps the expert index exact.
-        ttnn.deallocate(ttnn_typecast_45, False)
+        # Routing weights via native axis gather: scores[16,160].gather(dim=1,
+        # top8[16,8]) -- small exact expert index. Replaces the now-dead flat-index
+        # ttnn.embedding + its all_gather_10 score table + the token*160+expert
+        # index matmul (all pruned). See TT_MLIR_RECOMMENDATIONS.md #5b.
+        # ttnn_matmul_14 (raw local router scores [16,160]) and ttnn_typecast_40
+        # (top8 expert ids) are consumed here; matmul_14 freed right after.
         _gather_idx = ttnn.reshape(
             ttnn.typecast(
                 ttnn_typecast_40, ttnn.DataType.UINT32, memory_config=dram_mem
