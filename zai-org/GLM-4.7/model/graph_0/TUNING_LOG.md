@@ -128,3 +128,11 @@ Remaining levers (bigger, need restructuring; PCC margin is tight at 0.992 vs 0.
 - LayerNorm (MoE 192us + attn 236us, DRAM-bound) — needs L1-sharded input.
 - MoEComputeDeviceOperation 421us — would need moe_compute internal knobs (num_links / mux) or the compute_only path (not exact PCC).
 - Attention (30% of full): qkv/o_proj matmuls already DRAM-sharded; remaining is the 3 rms_norms (DRAM-bound) + CCL.
+| 6 | fold MoE router TMs: remove identity reshape_73 [16,8]->[16,8]; single multiply_3->[16,1,1,8] reshape (was 2x) | MoE | 0.247 s/tok (moe 1866us; -2.7us, flat) | 0.992188 | keep | cleaner; confirms cheap reshapes are ~free |
+
+## TM investigation (non-L1) conclusion
+Scanned all MoE+attention TM ops for reorder/fuse/commute (no L1):
+- FOLDABLE reshapes (identity / duplicate) are essentially FREE on device (iter6 moved 0). The ReshapeView cost is the few genuinely-shape-changing ones (e.g. matmul_output->[4480,5120]); those can't be folded.
+- The EXPENSIVE MoE TMs are Tilize(88us)+FillPad(93us)+Untilize(41us)=~222us, ALL at the dispatch(ROW_MAJOR)<->compute(TILE) boundary: disp_x untilizes post_normed[16,5120]; moe_compute combine output re-tilizes; dispatch idx/scores untilize. Each is a ONE-WAY conversion feeding a specific op (verified: no cancellable TILE<->ROW_MAJOR inverse pair in the chain), so reorder/commute cannot remove them. They need either L1-sharded op chains (the skill's last item) OR a moe_compute/all_to_all_dispatch API that accepts TILE inputs (a tt-metal change -> TT_MLIR_RECOMMENDATIONS).
+- Attention TMs (Slice/Concat from partial-RoPE) were found load-bearing in prior attention tuning (see top of this log) and don't fold.
+So: non-L1 TM headroom here is ~0; the real TM win requires L1-sharding or a TILE-accepting dispatch.
