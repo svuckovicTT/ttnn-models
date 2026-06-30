@@ -322,7 +322,7 @@ class ModelTTNN(LightweightModule):
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(ttnn_all_gather_16, False)
@@ -792,7 +792,7 @@ class Glm4MoeAttention(LightweightModule):
             cluster_axis=1,
             subdevice_id=None,
             memory_config=dram_mem,
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Ring,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
@@ -814,7 +814,7 @@ class Glm4MoeAttention(LightweightModule):
             cluster_axis=1,
             subdevice_id=None,
             memory_config=dram_mem,
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(o_reshaped2, False)
@@ -892,7 +892,7 @@ class Glm4MoeMLP(LightweightModule):
             cluster_axis=1,
             subdevice_id=None,
             memory_config=dram_mem,
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Ring,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
@@ -914,7 +914,7 @@ class Glm4MoeMLP(LightweightModule):
             cluster_axis=1,
             subdevice_id=None,
             memory_config=dram_mem,
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(rs_reshaped, False)
@@ -1336,7 +1336,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             cluster_axis=1,
             subdevice_id=None,
             memory_config=dram_mem,
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Ring,
             compute_kernel_config=ttnn.WormholeComputeKernelConfig(
                 math_fidelity=ttnn.MathFidelity.HiFi4,
@@ -1358,7 +1358,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             cluster_axis=1,
             subdevice_id=None,
             memory_config=dram_mem,
-            num_links=3,
+            num_links=None,
             topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(shared_rs_reshaped, False)
