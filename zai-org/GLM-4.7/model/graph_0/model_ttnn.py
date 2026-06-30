@@ -1258,7 +1258,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         summed = ttnn.reshape(summed, [1, 1, 16, 5120], memory_config=dram_mem)
         mc_rs = ttnn.reduce_scatter(
             input_tensor=summed, dim=3, cluster_axis=1, subdevice_id=None,
-            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Ring,
+            memory_config=dram_mem, num_links=3, topology=ttnn.Topology.Ring,
             compute_kernel_config=mc_hifi4,
         )
         ttnn.deallocate(summed, False)
@@ -1273,7 +1273,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         ttnn.deallocate(mc_rs, False)
         sparse_output = ttnn.all_gather(
             input_tensor=mc_rs_reshaped, dim=1, cluster_axis=1, subdevice_id=None,
-            memory_config=dram_mem, num_links=None, topology=ttnn.Topology.Ring,
+            memory_config=dram_mem, num_links=3, topology=ttnn.Topology.Ring,
         )
         ttnn.deallocate(mc_rs_reshaped, False)
         print(">>> moe epilogue all_gather enqueued", flush=True, file=_sys.stderr)
