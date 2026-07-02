@@ -1,0 +1,3 @@
+Everything looks correct. The forward function `_main` and all its supporting infrastructure (`ce_cache__main`, `consteval__main`, all `main_const_eval_*` and `cpu_hoisted_const_eval_*` functions) are now in `model_ttnn.py`, and `main.py` imports `_main` from there.
+
+--- Time taken: 111.9s | session: b2df9c6b-aeb5-4699-b853-1bf7545fe7c6 ---

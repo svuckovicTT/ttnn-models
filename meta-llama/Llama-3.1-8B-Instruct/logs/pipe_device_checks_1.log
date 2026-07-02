@@ -1,0 +1,89 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/meta-llama/Llama-3.1-8B-Instruct/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 1 item
+
+main.py [cpu] decode logits (32, 128256)
+
+PCC: 0.992188
+.
+
+=============================== warnings summary ===============================
+../../../../../tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: 14 warnings
+  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 1 passed, 16 warnings in 114.44s (0:01:54) ==================
+2026-07-02 16:18:10.058 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 32028.51it/s]
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 33002.80it/s]
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 31823.91it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x7b746b9b2ec8 of type "ttnn._ttnn.tensor.MemoryConfig"
+ - leaked instance 0x1711db20 of type "ttnn._ttnn.operations.unary.celu_t"
+ - leaked instance 0x17425c70 of type "ttnn._ttnn.operations.binary.divide_t"
+ - leaked instance 0x17bd0630 of type "ttnn._ttnn.operations.complex_unary.is_real_t"
+ - leaked instance 0x17bca330 of type "ttnn._ttnn.operations.binary_backward.bias_gelu_bw_t"
+ - leaked instance 0x17b5a000 of type "ttnn._ttnn.operations.binary.logical_xor__t"
+ - leaked instance 0x17ab3520 of type "ttnn._ttnn.operations.binary.atan2_t"
+ - leaked instance 0x17980750 of type "ttnn._ttnn.operations.unary.i1_t"
+ - leaked instance 0x1746bd60 of type "ttnn._ttnn.operations.unary.reciprocal_t"
+ - leaked instance 0x179f6240 of type "ttnn._ttnn.operations.unary.nez_t"
+ - leaked instance 0x17af4620 of type "ttnn._ttnn.operations.ccl.reduce_to_root_t"
+ - leaked instance 0x177b9390 of type "ttnn._ttnn.operations.binary.rsub_t"
+ - leaked instance 0x17baa9c0 of type "ttnn._ttnn.operations.unary_backward.sinh_bw_t"
+ - leaked instance 0x17c2ad80 of type "ttnn._ttnn.operations.data_movement.tilize_t"
+ - leaked instance 0x17b372a0 of type "ttnn._ttnn.operations.unary_backward.erfinv_bw_t"
+ - leaked instance 0x17c22e30 of type "ttnn._ttnn.operations.data_movement.clone_t"
+ - leaked instance 0x17c30d00 of type "ttnn._ttnn.operations.data_movement.tosa_scatter_t"
+ - leaked instance 0x150892f0 of type "ttnn._ttnn.operations.unary.sin_t"
+ - leaked instance 0x17ab7300 of type "ttnn._ttnn.operations.unary.exp2_t"
+ - leaked instance 0x177d6530 of type "ttnn._ttnn.operations.unary.polygamma_t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step pipe_device, as expected
