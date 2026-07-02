@@ -1,9 +1,15 @@
+import time
+
 import ttnn
 import utils
 import torch
 import model_pt
 from utils import calculate_pcc
 from model_ttnn import ModelTTNN
+
+BATCH_SIZE = model_pt.BATCH_SIZE
+NUM_TOKENS_PER_SAMPLE = 1
+NUM_PERF_RUNS = 3
 
 
 def test_main():
@@ -55,8 +61,8 @@ def test_main():
             to_bf16_tile(layer.values),
         ])
 
-    model = ModelTTNN(device)
-    outputs = model(activations)
+    ttnn_model = ModelTTNN(device)
+    outputs = ttnn_model(activations)
 
     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
     ttnn_output = ttnn_output[:, -1, :]
@@ -66,6 +72,17 @@ def test_main():
     pcc = calculate_pcc(ttnn_output, golden_output)
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+
+    tokens_per_run = BATCH_SIZE * NUM_TOKENS_PER_SAMPLE
+    print(f"\nPerf measurement ({NUM_PERF_RUNS} runs):")
+    for i in range(NUM_PERF_RUNS):
+        start = time.perf_counter()
+        ttnn_model(activations)
+        ttnn.synchronize_device(device)
+        end = time.perf_counter()
+        elapsed = end - start
+        tps = tokens_per_run / elapsed
+        print(f"  Run {i + 1}: {elapsed:.4f}s, {tps:.2f} TPS")
 
 
 if __name__ == "__main__":
