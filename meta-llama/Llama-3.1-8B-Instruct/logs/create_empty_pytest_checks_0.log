@@ -1,0 +1,70 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/meta-llama/Llama-3.1-8B-Instruct/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 1 item
+
+main.py .
+
+=============================== warnings summary ===============================
+main.py::test_main
+  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but main.py::test_main returned <class 'int'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 1 passed, 1 warning in 1.73s =========================
+nanobind: leaked 473 instances!
+ - leaked instance 0x30c132b0 of type "ttnn._ttnn.operations.data_movement.fill_implicit_tile_padding_t"
+ - leaked instance 0x30b83320 of type "ttnn._ttnn.operations.unary_backward.softplus_bw_t"
+ - leaked instance 0x30c31a30 of type "ttnn._ttnn.operations.data_movement.view_t"
+ - leaked instance 0x30d17850 of type "ttnn._ttnn.operations.moreh.moreh_abs_pow_t"
+ - leaked instance 0x30d2f960 of type "ttnn._ttnn.operations.moreh.moreh_sum_t"
+ - leaked instance 0x30bb7000 of type "ttnn._ttnn.operations.binary_backward.addalpha_bw_t"
+ - leaked instance 0x30d20d30 of type "ttnn._ttnn.operations.moreh.moreh_linear_backward_t"
+ - leaked instance 0x30d1a2c0 of type "ttnn._ttnn.operations.moreh.moreh_bmm_backward_t"
+ - leaked instance 0x30b80ba0 of type "ttnn._ttnn.operations.unary_backward.celu_bw_t"
+ - leaked instance 0x30b93c20 of type "ttnn._ttnn.operations.unary_backward.neg_bw_t"
+ - leaked instance 0x30b133d0 of type "ttnn._ttnn.operations.unary.tril_t"
+ - leaked instance 0x30b869f0 of type "ttnn._ttnn.operations.unary_backward.pow_bw_t"
+ - leaked instance 0x30b75ad0 of type "ttnn._ttnn.operations.quantization.quantize_t"
+ - leaked instance 0x2e048440 of type "ttnn._ttnn.operations.unary.swish_t"
+ - leaked instance 0x30807570 of type "ttnn._ttnn.operations.unary.softplus_t"
+ - leaked instance 0x301c9690 of type "ttnn._ttnn.operations.unary.gtz_t"
+ - leaked instance 0x300ff240 of type "ttnn._ttnn.operations.binary.remainder_t"
+ - leaked instance 0x30b4af50 of type "ttnn._ttnn.operations.binary.atan2_t"
+ - leaked instance 0x30d2a0a0 of type "ttnn._ttnn.operations.moreh.moreh_softmin_backward_t"
+ - leaked instance 0x304d5de0 of type "ttnn._ttnn.operations.unary.cosh_t"
+ - ... skipped remainder
+nanobind: leaked 532 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2335 functions!
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step create_empty_pytest, as expected

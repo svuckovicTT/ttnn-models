@@ -1,0 +1,7 @@
+Done. Here's what was changed:
+
+- **`model_pt.py`** — Created with `load_pytorch_model()`, `load_input()`, and `run_pytorch_model()` mirroring the CPU path from `xla.py` (model loading, CPU prefill to populate KV cache, then decode-step inference).
+- **`utils.py`** — Added `import torch` and the `calculate_pcc()` function at the end.
+- **`main.py`** — Added `from utils import calculate_pcc` import.
+
+--- Time taken: 59.2s | session: 5a212e9e-d276-47df-a905-b1f19a6d2f6a ---
