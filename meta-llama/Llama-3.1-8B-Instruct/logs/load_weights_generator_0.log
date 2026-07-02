@@ -1,0 +1,16 @@
+292 total weights (65 TILE layernorm + 227 ROW_MAJOR host-only). All checks pass.
+
+Summary of changes:
+
+1. **`params.py` (new)**: Contains the original `load_weights_for__main()` function moved from `main.py`, plus:
+   - `ALL_WEIGHTS` — sorted list of all 292 weight key names
+   - `LAYERNORM_WEIGHTS` — set of 65 layernorm weight keys (TILE layout, on device, DRAM)
+   - `load_weights_for__main_from_state_dict()` — loads the same weights from the PyTorch model's `state_dict` (with `named_buffers()` fallback for non-persistent buffers like `rotary_emb.inv_freq`), applying matching properties per group:
+     - Layernorm weights: TILE layout, BFLOAT16, on device with `ttnn.DRAM_MEMORY_CONFIG`
+     - All others: ROW_MAJOR layout, BFLOAT16, host-only (no device)
+
+2. **`main.py` (modified)**: Added `from params import load_weights_for__main`, removed the `_main_weights` global and `load_weights_for__main()` function definition (~3050 lines removed)
+
+3. **`verify_weights.py` (new)**: pytest test `test_verify_weights` that loads weights both ways and verifies key sets match and all tensor values are identical
+
+--- Time taken: 276.5s | session: 78995154-4256-45b7-81e2-4676a9fba1be ---
