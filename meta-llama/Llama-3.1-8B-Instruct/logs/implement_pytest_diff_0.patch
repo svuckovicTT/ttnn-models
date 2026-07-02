@@ -1,5 +1,5 @@
 diff --git a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
-index f0f3e5b..bda868b 100644
+index a82a255..c1a9c97 100644
 --- a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
 +++ b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
 @@ -2,6 +2,7 @@ import ttnn
@@ -10,7 +10,7 @@ index f0f3e5b..bda868b 100644
  from utils import calculate_pcc
  
  
-@@ -33569,7 +33570,22 @@ def main():
+@@ -33601,7 +33602,21 @@ def main():
  
  
  def test_main():
@@ -21,10 +21,9 @@ index f0f3e5b..bda868b 100644
 +    weights = load_weights_for__main()
 +    outputs = _main(activations, weights)
 +
-+    ttnn_output = ttnn.from_device(outputs[-1])
-+    ttnn_output = ttnn.to_torch(ttnn_output).to(torch.float32)
++    ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
 +
-+    golden_output = model_pt.run_pytorch_model().to(torch.float32)
++    golden_output = model_pt.run_pytorch_model()
 +
 +    ttnn_output = ttnn_output.reshape(golden_output.shape)
 +
