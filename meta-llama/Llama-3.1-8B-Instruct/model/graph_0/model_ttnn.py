@@ -53,7 +53,6 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(input_ids, False)
         ttnn_reshape_0 = ttnn.reshape(
             ttnn_typecast_548,
             [32],
@@ -430,7 +429,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(args_1, False)
             ttnn_reshape_2 = ttnn.reshape(
                 ttnn_typecast_549,
                 [1, 1, 1],
@@ -619,7 +617,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(activation_0, False)
             ttnn_to_memory_config_8 = ttnn.to_memory_config(
                 ttnn_reshape_4,
                 ttnn.MemoryConfig(
@@ -662,7 +659,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(activation_1, False)
             ttnn_to_memory_config_9 = ttnn.to_memory_config(
                 ttnn_reshape_5,
                 ttnn.MemoryConfig(
@@ -732,7 +728,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(activation_2, False)
             ttnn_to_memory_config_12 = ttnn.to_memory_config(
                 weights["arange_128"],
                 ttnn.MemoryConfig(
@@ -1143,7 +1138,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(activation_63, False)
             ttnn_to_memory_config_445 = ttnn.to_memory_config(
                 ttnn_reshape_160,
                 ttnn.MemoryConfig(
@@ -1186,7 +1180,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(activation_64, False)
             ttnn_to_memory_config_446 = ttnn.to_memory_config(
                 ttnn_reshape_161,
                 ttnn.MemoryConfig(
@@ -1567,7 +1560,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(activation_3, False)
             ttnn_to_memory_config_25 = ttnn.to_memory_config(
                 ttnn_reshape_10,
                 ttnn.MemoryConfig(
@@ -1610,7 +1602,6 @@ class LlamaAttention(LightweightModule):
                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
                 ),
             )
-            ttnn.deallocate(activation_4, False)
             ttnn_to_memory_config_26 = ttnn.to_memory_config(
                 ttnn_reshape_11,
                 ttnn.MemoryConfig(
