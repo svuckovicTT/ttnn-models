@@ -1,0 +1,14 @@
+diff --git a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
+index 0d96b36..78b839f 100644
+--- a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
++++ b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
+@@ -33567,5 +33567,9 @@ def main():
+     return 0
+ 
+ 
++def test_main():
++    return 0
++
++
+ if __name__ == "__main__":
+     main()
