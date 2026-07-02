@@ -1,0 +1,16 @@
+The file parses correctly. Here's a summary of the refactoring:
+
+**Structure** (matching PyTorch's `LlamaForCausalLM` hierarchy):
+- `LightweightModule` — base class with `__call__` → `forward`
+- `LlamaAttention_N` (×32) — input_layernorm → QKV projection → rotary embedding → KV cache scatter → SDPA → concat heads → o_proj → residual add
+- `LlamaMLP_N` (×32) — post_attention_layernorm → gate_proj (fused SiLU) → up_proj → multiply → down_proj → residual add
+- `LlamaDecoderLayer_N` (×32) — composes `self.self_attn` and `self.mlp`, each as `LightweightModule` subclasses
+- `ModelTTNN` — embedding → 32 decoder layers → final norm → lm_head → reshape
+
+**Key design**:
+- Each layer has unique TTNN configs (shard specs, program configs, memory configs) preserved verbatim
+- Shared rotary/mask tensors (`ttnn_typecast_550/551`, `ttnn_repeat_2`) flow through attention modules as parameters
+- Layer 0 creates them, layers 1-30 pass them through, layer 31 deallocates them
+- All 1,375 deallocate calls, 162 matmuls, 65 rms_norms, 64 adds, etc. are preserved exactly
+
+--- Time taken: 1400.8s | session: b18edede-f0f7-4c23-a64d-85a34ed98c23 ---
