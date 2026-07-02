@@ -3435,7 +3435,15 @@ def load_weights_for__main_from_state_dict():
 
     weights = {}
     for key in ALL_WEIGHTS:
-        ttnn_tensor = ttnn.from_torch(sd[key])
+        # ALL_WEIGHTS uses the parametrized names captured during tracing, where
+        # the weight-dtype override registered a parametrization that renamed
+        # "<module>.weight" -> "<module>.parametrizations.weight.original". The
+        # freshly loaded model here has no such parametrization, so map back to
+        # the plain parameter name. The ".original" tensor holds the raw weight,
+        # so the values are identical. (Non-weight keys such as buffers have no
+        # ".parametrizations.weight.original" suffix and pass through unchanged.)
+        sd_key = key.replace(".parametrizations.weight.original", ".weight")
+        ttnn_tensor = ttnn.from_torch(sd[sd_key])
 
         if key in LAYERNORM_WEIGHTS:
             ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.TILE)
