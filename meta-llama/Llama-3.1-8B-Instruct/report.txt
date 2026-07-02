@@ -12,7 +12,7 @@ branch = auto/benchmark/test_llama_3_1_8b_instruct_tp-2
 reached_step = 6
 final_status = failed
 final_step_name = run_graph
-notes = DECODE-ONLY on a single p150 (no TP): prefill runs on CPU to populate the KV cache; only the decode step runs on device (single graph). Device decode is correct end-to-end via the torch_xla/tt runtime path: --run-tt passed and --golden decode PCC = 0.9921875. --codegen produced exactly one graph (graph_0 = decode). The FAILURE is codegen-only: the generated main.py crashes at ttnn.experimental.nlp_concat_heads_decode with "bad optional access". That decode-optimized attention op (selected for seq_len=1) is emitted by EmitPy with an input lacking the sharded memory config the op requires; the runtime/flatbuffer path supplies it, hence --run-tt works but the standalone codegen python does not. This is a tt-mlir EmitPy codegen limitation, not a model or xla.py issue, and cannot be fixed in xla.py (main.py is regenerated each --codegen).
+notes = DECODE-ONLY on a single p150 (no TP): prefill runs on CPU to populate the KV cache; only the decode step runs on device (single graph). Device decode is correct end-to-end via the torch_xla/tt runtime path: --run-tt passed and --golden decode PCC = 0.9921875. --codegen produced exactly one graph (graph_0 = decode). The FAILURE is codegen-only: the generated main.py crashes at ttnn.experimental.nlp_concat_heads_decode with "bad optional access". That decode-optimized attention op (selected for seq_len=1) is emitted by EmitPy with an input lacking the sharded memory config the op requires; the runtime/flatbuffer path supplies it, hence --run-tt works but the standalone codegen python does not. This is a tt-mlir EmitPy codegen limitation, not a model or xla.py issue, and cannot be fixed in xla.py (main.py is regenerated each --codegen). WORKAROUND (verified): patch_nlp_concat_heads_decode.py adds sub_core_grids=<input>.memory_config().shard_spec.grid to all 32 calls (what the tt-mlir runtime does at runtime/lib/ttnn/operations/transformer/nlp_concat_heads_decode.cpp:19-30 but EmitPy omits). Patched graph_0/run passed on p150 (exit 0, 108s; log run-logs/step-6-patched.log). Proper fix belongs in tt-mlir EmitPy codegen (emit the sub_core_grids arg for nlp_concat_heads_decode when the input is sharded on a sub-core grid).
 
 [step_0_xla_py]
 status = passed
@@ -52,5 +52,9 @@ notes = exactly one graph (graph_0 = decode), as designed for decode-only.
 status = failed
 exit_code = 1
 elapsed_s = 113.0
-failure_summary = codegen main.py crashes at ttnn.experimental.nlp_concat_heads_decode: RuntimeError: bad optional access (decode-attn op emitted without required sharded input). Runtime path (--run-tt) passes at PCC 0.9921875, so this is an EmitPy codegen limitation, not a model/xla.py bug.
+failure_summary = codegen main.py crashes at ttnn.experimental.nlp_concat_heads_decode: RuntimeError: bad optional access (input sharded on a sub-core grid -> on_subcoregrids auto-true but sub_core_grids nullopt -> compute_output_specs .value() throws). Runtime path (--run-tt) passes at PCC 0.9921875. EmitPy codegen limitation, not a model/xla.py bug.
 log = run-logs/step-6.log
+patched_log = run-logs/step-6-patched.log
+patch = patch_nlp_concat_heads_decode.py
+patch_status = passed
+notes = Applying patch_nlp_concat_heads_decode.py (adds sub_core_grids to all 32 calls) makes graph_0/run pass on p150 (exit 0, 108s).
