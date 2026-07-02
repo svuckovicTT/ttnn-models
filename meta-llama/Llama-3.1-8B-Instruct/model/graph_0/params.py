@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import ttnn
+import utils
 import model_pt
 
 
@@ -370,12 +371,14 @@ ALL_WEIGHTS = [
 ]
 
 
-def load_weights_for__main_from_state_dict(device):
+def load_weights_for__main_from_state_dict():
     model = model_pt.load_pytorch_model()
     sd = dict(model.state_dict())
     for name, buf in model.named_buffers():
         if name not in sd:
             sd[name] = buf
+
+    device = utils.DeviceGetter.get_device((1, 1))
 
     weights = {}
     for key in ALL_WEIGHTS:
