@@ -11,180 +11,15 @@ class LightweightModule:
         return self.forward(*args, **kwargs)
 
 
-class ModelTTNN(LightweightModule):
-    def __init__(self, device):
+class LlamaAttention_0(LightweightModule):
+    def __init__(self, device, weights):
         self.device = device
-        self.weights = params.load_weights_for__main_from_state_dict(device)
-        self.weights = consteval.run_consteval(self.weights, device)
+        self.weights = weights
 
-    def forward(self, activations):
+    def forward(self, hidden_states, args_1, args_2, args_3, activation_0, activation_1, activation_2):
         device = self.device
         weights = self.weights
-        args_1 = activations[0]
-        args_0 = activations[1]
-        activation_0 = activations[2]
-        args_2 = activations[3]
-        activation_1 = activations[4]
-        args_3 = activations[5]
-        activation_2 = activations[6]
-        activation_3 = activations[7]
-        args_4 = activations[8]
-        activation_4 = activations[9]
-        args_5 = activations[10]
-        activation_5 = activations[11]
-        args_6 = activations[12]
-        activation_6 = activations[13]
-        args_7 = activations[14]
-        activation_7 = activations[15]
-        args_8 = activations[16]
-        activation_8 = activations[17]
-        args_9 = activations[18]
-        activation_9 = activations[19]
-        args_10 = activations[20]
-        activation_10 = activations[21]
-        args_11 = activations[22]
-        activation_11 = activations[23]
-        args_12 = activations[24]
-        activation_12 = activations[25]
-        args_13 = activations[26]
-        activation_13 = activations[27]
-        args_14 = activations[28]
-        activation_14 = activations[29]
-        args_15 = activations[30]
-        activation_15 = activations[31]
-        args_16 = activations[32]
-        activation_16 = activations[33]
-        args_17 = activations[34]
-        activation_17 = activations[35]
-        args_18 = activations[36]
-        activation_18 = activations[37]
-        args_19 = activations[38]
-        activation_19 = activations[39]
-        args_20 = activations[40]
-        activation_20 = activations[41]
-        args_21 = activations[42]
-        activation_21 = activations[43]
-        args_22 = activations[44]
-        activation_22 = activations[45]
-        args_23 = activations[46]
-        activation_23 = activations[47]
-        args_24 = activations[48]
-        activation_24 = activations[49]
-        args_25 = activations[50]
-        activation_25 = activations[51]
-        args_26 = activations[52]
-        activation_26 = activations[53]
-        args_27 = activations[54]
-        activation_27 = activations[55]
-        args_28 = activations[56]
-        activation_28 = activations[57]
-        args_29 = activations[58]
-        activation_29 = activations[59]
-        args_30 = activations[60]
-        activation_30 = activations[61]
-        args_31 = activations[62]
-        activation_31 = activations[63]
-        args_32 = activations[64]
-        activation_32 = activations[65]
-        args_33 = activations[66]
-        activation_33 = activations[67]
-        args_34 = activations[68]
-        activation_34 = activations[69]
-        args_35 = activations[70]
-        activation_35 = activations[71]
-        args_36 = activations[72]
-        activation_36 = activations[73]
-        args_37 = activations[74]
-        activation_37 = activations[75]
-        args_38 = activations[76]
-        activation_38 = activations[77]
-        args_39 = activations[78]
-        activation_39 = activations[79]
-        args_40 = activations[80]
-        activation_40 = activations[81]
-        args_41 = activations[82]
-        activation_41 = activations[83]
-        args_42 = activations[84]
-        activation_42 = activations[85]
-        args_43 = activations[86]
-        activation_43 = activations[87]
-        args_44 = activations[88]
-        activation_44 = activations[89]
-        args_45 = activations[90]
-        activation_45 = activations[91]
-        args_46 = activations[92]
-        activation_46 = activations[93]
-        args_47 = activations[94]
-        activation_47 = activations[95]
-        args_48 = activations[96]
-        activation_48 = activations[97]
-        args_49 = activations[98]
-        activation_49 = activations[99]
-        args_50 = activations[100]
-        activation_50 = activations[101]
-        args_51 = activations[102]
-        activation_51 = activations[103]
-        args_52 = activations[104]
-        activation_52 = activations[105]
-        args_53 = activations[106]
-        activation_53 = activations[107]
-        args_54 = activations[108]
-        activation_54 = activations[109]
-        args_55 = activations[110]
-        activation_55 = activations[111]
-        args_56 = activations[112]
-        activation_56 = activations[113]
-        args_57 = activations[114]
-        activation_57 = activations[115]
-        args_58 = activations[116]
-        activation_58 = activations[117]
-        args_59 = activations[118]
-        activation_59 = activations[119]
-        args_60 = activations[120]
-        activation_60 = activations[121]
-        args_61 = activations[122]
-        activation_61 = activations[123]
-        args_62 = activations[124]
-        activation_62 = activations[125]
-        args_63 = activations[126]
-        activation_63 = activations[127]
-        args_64 = activations[128]
-        activation_64 = activations[129]
-        args_65 = activations[130]
-        ttnn_typecast_548 = ttnn.typecast(
-            args_0,
-            ttnn.DataType.UINT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(args_0, False)
-        ttnn_reshape_0 = ttnn.reshape(
-            ttnn_typecast_548,
-            [32],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_548, False)
-        ttnn_to_memory_config_0 = ttnn.to_memory_config(
-            ttnn_reshape_0,
-            ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_0, False)
-        ttnn_embedding_0 = ttnn.embedding(
-            ttnn_to_memory_config_0,
-            weights["model.embed_tokens.parametrizations.weight.original"],
-            padding_idx=None,
-            layout=ttnn.Layout.TILE,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
-            ),
-        )
-        ttnn.deallocate(ttnn_to_memory_config_0, False)
+        ttnn_embedding_0 = hidden_states
         ttnn_to_memory_config_1 = ttnn.to_memory_config(
             ttnn_embedding_0,
             ttnn.MemoryConfig(
@@ -873,6 +708,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_2, False)
         ttnn.deallocate(ttnn_embedding_0, False)
+        return ttnn_add_0, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_0(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_0):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_19 = ttnn.to_memory_config(
             ttnn_add_0,
             ttnn.MemoryConfig(
@@ -1097,6 +943,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_5, False)
         ttnn.deallocate(ttnn_add_0, False)
+        return ttnn_add_1
+
+
+class LlamaDecoderLayer_0(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_0(device, weights)
+        self.mlp = LlamaMLP_0(device, weights)
+
+    def forward(self, hidden_states, args_1, args_2, args_3, activation_0, activation_1, activation_2):
+        ttnn_add_0, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, args_1, args_2, args_3, activation_0, activation_1, activation_2)
+        ttnn_add_1 = self.mlp(ttnn_add_0)
+        return ttnn_add_1, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_4, args_5, activation_3, activation_4):
+        device = self.device
+        weights = self.weights
+        ttnn_add_1 = hidden_states
         ttnn_to_memory_config_21 = ttnn.to_memory_config(
             ttnn_add_1,
             ttnn.MemoryConfig(
@@ -1518,6 +1389,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_7, False)
         ttnn.deallocate(ttnn_add_1, False)
+        return ttnn_add_2, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_2):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_33 = ttnn.to_memory_config(
             ttnn_add_2,
             ttnn.MemoryConfig(
@@ -1742,6 +1624,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_10, False)
         ttnn.deallocate(ttnn_add_2, False)
+        return ttnn_add_3
+
+
+class LlamaDecoderLayer_1(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_1(device, weights)
+        self.mlp = LlamaMLP_1(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_4, args_5, activation_3, activation_4):
+        ttnn_add_2, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_4, args_5, activation_3, activation_4)
+        ttnn_add_3 = self.mlp(ttnn_add_2)
+        return ttnn_add_3, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_6, args_7, activation_5, activation_6):
+        device = self.device
+        weights = self.weights
+        ttnn_add_3 = hidden_states
         ttnn_to_memory_config_35 = ttnn.to_memory_config(
             ttnn_add_3,
             ttnn.MemoryConfig(
@@ -2163,6 +2070,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_12, False)
         ttnn.deallocate(ttnn_add_3, False)
+        return ttnn_add_4, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_4):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_47 = ttnn.to_memory_config(
             ttnn_add_4,
             ttnn.MemoryConfig(
@@ -2387,6 +2305,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_15, False)
         ttnn.deallocate(ttnn_add_4, False)
+        return ttnn_add_5
+
+
+class LlamaDecoderLayer_2(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_2(device, weights)
+        self.mlp = LlamaMLP_2(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_6, args_7, activation_5, activation_6):
+        ttnn_add_4, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_6, args_7, activation_5, activation_6)
+        ttnn_add_5 = self.mlp(ttnn_add_4)
+        return ttnn_add_5, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_3(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_8, args_9, activation_7, activation_8):
+        device = self.device
+        weights = self.weights
+        ttnn_add_5 = hidden_states
         ttnn_to_memory_config_49 = ttnn.to_memory_config(
             ttnn_add_5,
             ttnn.MemoryConfig(
@@ -2808,6 +2751,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_17, False)
         ttnn.deallocate(ttnn_add_5, False)
+        return ttnn_add_6, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_3(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_6):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_61 = ttnn.to_memory_config(
             ttnn_add_6,
             ttnn.MemoryConfig(
@@ -3032,6 +2986,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_20, False)
         ttnn.deallocate(ttnn_add_6, False)
+        return ttnn_add_7
+
+
+class LlamaDecoderLayer_3(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_3(device, weights)
+        self.mlp = LlamaMLP_3(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_8, args_9, activation_7, activation_8):
+        ttnn_add_6, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_8, args_9, activation_7, activation_8)
+        ttnn_add_7 = self.mlp(ttnn_add_6)
+        return ttnn_add_7, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_4(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_10, args_11, activation_9, activation_10):
+        device = self.device
+        weights = self.weights
+        ttnn_add_7 = hidden_states
         ttnn_to_memory_config_63 = ttnn.to_memory_config(
             ttnn_add_7,
             ttnn.MemoryConfig(
@@ -3453,6 +3432,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_22, False)
         ttnn.deallocate(ttnn_add_7, False)
+        return ttnn_add_8, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_4(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_8):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_75 = ttnn.to_memory_config(
             ttnn_add_8,
             ttnn.MemoryConfig(
@@ -3677,6 +3667,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_25, False)
         ttnn.deallocate(ttnn_add_8, False)
+        return ttnn_add_9
+
+
+class LlamaDecoderLayer_4(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_4(device, weights)
+        self.mlp = LlamaMLP_4(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_10, args_11, activation_9, activation_10):
+        ttnn_add_8, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_10, args_11, activation_9, activation_10)
+        ttnn_add_9 = self.mlp(ttnn_add_8)
+        return ttnn_add_9, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_5(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_12, args_13, activation_11, activation_12):
+        device = self.device
+        weights = self.weights
+        ttnn_add_9 = hidden_states
         ttnn_to_memory_config_77 = ttnn.to_memory_config(
             ttnn_add_9,
             ttnn.MemoryConfig(
@@ -4098,6 +4113,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_27, False)
         ttnn.deallocate(ttnn_add_9, False)
+        return ttnn_add_10, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_5(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_10):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_89 = ttnn.to_memory_config(
             ttnn_add_10,
             ttnn.MemoryConfig(
@@ -4322,6 +4348,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_30, False)
         ttnn.deallocate(ttnn_add_10, False)
+        return ttnn_add_11
+
+
+class LlamaDecoderLayer_5(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_5(device, weights)
+        self.mlp = LlamaMLP_5(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_12, args_13, activation_11, activation_12):
+        ttnn_add_10, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_12, args_13, activation_11, activation_12)
+        ttnn_add_11 = self.mlp(ttnn_add_10)
+        return ttnn_add_11, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_6(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_14, args_15, activation_13, activation_14):
+        device = self.device
+        weights = self.weights
+        ttnn_add_11 = hidden_states
         ttnn_to_memory_config_91 = ttnn.to_memory_config(
             ttnn_add_11,
             ttnn.MemoryConfig(
@@ -4743,6 +4794,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_32, False)
         ttnn.deallocate(ttnn_add_11, False)
+        return ttnn_add_12, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_6(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_12):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_103 = ttnn.to_memory_config(
             ttnn_add_12,
             ttnn.MemoryConfig(
@@ -4967,6 +5029,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_35, False)
         ttnn.deallocate(ttnn_add_12, False)
+        return ttnn_add_13
+
+
+class LlamaDecoderLayer_6(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_6(device, weights)
+        self.mlp = LlamaMLP_6(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_14, args_15, activation_13, activation_14):
+        ttnn_add_12, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_14, args_15, activation_13, activation_14)
+        ttnn_add_13 = self.mlp(ttnn_add_12)
+        return ttnn_add_13, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_7(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_16, args_17, activation_15, activation_16):
+        device = self.device
+        weights = self.weights
+        ttnn_add_13 = hidden_states
         ttnn_to_memory_config_105 = ttnn.to_memory_config(
             ttnn_add_13,
             ttnn.MemoryConfig(
@@ -5388,6 +5475,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_37, False)
         ttnn.deallocate(ttnn_add_13, False)
+        return ttnn_add_14, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_7(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_14):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_117 = ttnn.to_memory_config(
             ttnn_add_14,
             ttnn.MemoryConfig(
@@ -5612,6 +5710,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_40, False)
         ttnn.deallocate(ttnn_add_14, False)
+        return ttnn_add_15
+
+
+class LlamaDecoderLayer_7(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_7(device, weights)
+        self.mlp = LlamaMLP_7(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_16, args_17, activation_15, activation_16):
+        ttnn_add_14, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_16, args_17, activation_15, activation_16)
+        ttnn_add_15 = self.mlp(ttnn_add_14)
+        return ttnn_add_15, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_8(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_18, args_19, activation_17, activation_18):
+        device = self.device
+        weights = self.weights
+        ttnn_add_15 = hidden_states
         ttnn_to_memory_config_119 = ttnn.to_memory_config(
             ttnn_add_15,
             ttnn.MemoryConfig(
@@ -6033,6 +6156,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_42, False)
         ttnn.deallocate(ttnn_add_15, False)
+        return ttnn_add_16, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_8(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_16):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_131 = ttnn.to_memory_config(
             ttnn_add_16,
             ttnn.MemoryConfig(
@@ -6257,6 +6391,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_45, False)
         ttnn.deallocate(ttnn_add_16, False)
+        return ttnn_add_17
+
+
+class LlamaDecoderLayer_8(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_8(device, weights)
+        self.mlp = LlamaMLP_8(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_18, args_19, activation_17, activation_18):
+        ttnn_add_16, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_18, args_19, activation_17, activation_18)
+        ttnn_add_17 = self.mlp(ttnn_add_16)
+        return ttnn_add_17, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_9(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_20, args_21, activation_19, activation_20):
+        device = self.device
+        weights = self.weights
+        ttnn_add_17 = hidden_states
         ttnn_to_memory_config_133 = ttnn.to_memory_config(
             ttnn_add_17,
             ttnn.MemoryConfig(
@@ -6678,6 +6837,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_47, False)
         ttnn.deallocate(ttnn_add_17, False)
+        return ttnn_add_18, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_9(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_18):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_145 = ttnn.to_memory_config(
             ttnn_add_18,
             ttnn.MemoryConfig(
@@ -6902,6 +7072,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_50, False)
         ttnn.deallocate(ttnn_add_18, False)
+        return ttnn_add_19
+
+
+class LlamaDecoderLayer_9(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_9(device, weights)
+        self.mlp = LlamaMLP_9(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_20, args_21, activation_19, activation_20):
+        ttnn_add_18, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_20, args_21, activation_19, activation_20)
+        ttnn_add_19 = self.mlp(ttnn_add_18)
+        return ttnn_add_19, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_10(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_22, args_23, activation_21, activation_22):
+        device = self.device
+        weights = self.weights
+        ttnn_add_19 = hidden_states
         ttnn_to_memory_config_147 = ttnn.to_memory_config(
             ttnn_add_19,
             ttnn.MemoryConfig(
@@ -7323,6 +7518,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_52, False)
         ttnn.deallocate(ttnn_add_19, False)
+        return ttnn_add_20, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_10(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_20):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_159 = ttnn.to_memory_config(
             ttnn_add_20,
             ttnn.MemoryConfig(
@@ -7547,6 +7753,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_55, False)
         ttnn.deallocate(ttnn_add_20, False)
+        return ttnn_add_21
+
+
+class LlamaDecoderLayer_10(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_10(device, weights)
+        self.mlp = LlamaMLP_10(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_22, args_23, activation_21, activation_22):
+        ttnn_add_20, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_22, args_23, activation_21, activation_22)
+        ttnn_add_21 = self.mlp(ttnn_add_20)
+        return ttnn_add_21, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_11(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_24, args_25, activation_23, activation_24):
+        device = self.device
+        weights = self.weights
+        ttnn_add_21 = hidden_states
         ttnn_to_memory_config_161 = ttnn.to_memory_config(
             ttnn_add_21,
             ttnn.MemoryConfig(
@@ -7968,6 +8199,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_57, False)
         ttnn.deallocate(ttnn_add_21, False)
+        return ttnn_add_22, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_11(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_22):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_173 = ttnn.to_memory_config(
             ttnn_add_22,
             ttnn.MemoryConfig(
@@ -8192,6 +8434,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_60, False)
         ttnn.deallocate(ttnn_add_22, False)
+        return ttnn_add_23
+
+
+class LlamaDecoderLayer_11(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_11(device, weights)
+        self.mlp = LlamaMLP_11(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_24, args_25, activation_23, activation_24):
+        ttnn_add_22, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_24, args_25, activation_23, activation_24)
+        ttnn_add_23 = self.mlp(ttnn_add_22)
+        return ttnn_add_23, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_12(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_26, args_27, activation_25, activation_26):
+        device = self.device
+        weights = self.weights
+        ttnn_add_23 = hidden_states
         ttnn_to_memory_config_175 = ttnn.to_memory_config(
             ttnn_add_23,
             ttnn.MemoryConfig(
@@ -8613,6 +8880,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_62, False)
         ttnn.deallocate(ttnn_add_23, False)
+        return ttnn_add_24, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_12(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_24):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_187 = ttnn.to_memory_config(
             ttnn_add_24,
             ttnn.MemoryConfig(
@@ -8837,6 +9115,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_65, False)
         ttnn.deallocate(ttnn_add_24, False)
+        return ttnn_add_25
+
+
+class LlamaDecoderLayer_12(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_12(device, weights)
+        self.mlp = LlamaMLP_12(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_26, args_27, activation_25, activation_26):
+        ttnn_add_24, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_26, args_27, activation_25, activation_26)
+        ttnn_add_25 = self.mlp(ttnn_add_24)
+        return ttnn_add_25, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_13(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_28, args_29, activation_27, activation_28):
+        device = self.device
+        weights = self.weights
+        ttnn_add_25 = hidden_states
         ttnn_to_memory_config_189 = ttnn.to_memory_config(
             ttnn_add_25,
             ttnn.MemoryConfig(
@@ -9258,6 +9561,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_67, False)
         ttnn.deallocate(ttnn_add_25, False)
+        return ttnn_add_26, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_13(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_26):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_201 = ttnn.to_memory_config(
             ttnn_add_26,
             ttnn.MemoryConfig(
@@ -9482,6 +9796,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_70, False)
         ttnn.deallocate(ttnn_add_26, False)
+        return ttnn_add_27
+
+
+class LlamaDecoderLayer_13(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_13(device, weights)
+        self.mlp = LlamaMLP_13(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_28, args_29, activation_27, activation_28):
+        ttnn_add_26, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_28, args_29, activation_27, activation_28)
+        ttnn_add_27 = self.mlp(ttnn_add_26)
+        return ttnn_add_27, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_14(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_30, args_31, activation_29, activation_30):
+        device = self.device
+        weights = self.weights
+        ttnn_add_27 = hidden_states
         ttnn_to_memory_config_203 = ttnn.to_memory_config(
             ttnn_add_27,
             ttnn.MemoryConfig(
@@ -9903,6 +10242,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_72, False)
         ttnn.deallocate(ttnn_add_27, False)
+        return ttnn_add_28, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_14(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_28):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_215 = ttnn.to_memory_config(
             ttnn_add_28,
             ttnn.MemoryConfig(
@@ -10127,6 +10477,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_75, False)
         ttnn.deallocate(ttnn_add_28, False)
+        return ttnn_add_29
+
+
+class LlamaDecoderLayer_14(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_14(device, weights)
+        self.mlp = LlamaMLP_14(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_30, args_31, activation_29, activation_30):
+        ttnn_add_28, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_30, args_31, activation_29, activation_30)
+        ttnn_add_29 = self.mlp(ttnn_add_28)
+        return ttnn_add_29, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_15(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_32, args_33, activation_31, activation_32):
+        device = self.device
+        weights = self.weights
+        ttnn_add_29 = hidden_states
         ttnn_to_memory_config_217 = ttnn.to_memory_config(
             ttnn_add_29,
             ttnn.MemoryConfig(
@@ -10548,6 +10923,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_77, False)
         ttnn.deallocate(ttnn_add_29, False)
+        return ttnn_add_30, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_15(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_30):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_229 = ttnn.to_memory_config(
             ttnn_add_30,
             ttnn.MemoryConfig(
@@ -10772,6 +11158,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_80, False)
         ttnn.deallocate(ttnn_add_30, False)
+        return ttnn_add_31
+
+
+class LlamaDecoderLayer_15(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_15(device, weights)
+        self.mlp = LlamaMLP_15(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_32, args_33, activation_31, activation_32):
+        ttnn_add_30, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_32, args_33, activation_31, activation_32)
+        ttnn_add_31 = self.mlp(ttnn_add_30)
+        return ttnn_add_31, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_16(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_34, args_35, activation_33, activation_34):
+        device = self.device
+        weights = self.weights
+        ttnn_add_31 = hidden_states
         ttnn_to_memory_config_231 = ttnn.to_memory_config(
             ttnn_add_31,
             ttnn.MemoryConfig(
@@ -11193,6 +11604,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_82, False)
         ttnn.deallocate(ttnn_add_31, False)
+        return ttnn_add_32, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_16(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_32):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_243 = ttnn.to_memory_config(
             ttnn_add_32,
             ttnn.MemoryConfig(
@@ -11417,6 +11839,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_85, False)
         ttnn.deallocate(ttnn_add_32, False)
+        return ttnn_add_33
+
+
+class LlamaDecoderLayer_16(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_16(device, weights)
+        self.mlp = LlamaMLP_16(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_34, args_35, activation_33, activation_34):
+        ttnn_add_32, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_34, args_35, activation_33, activation_34)
+        ttnn_add_33 = self.mlp(ttnn_add_32)
+        return ttnn_add_33, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_17(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_36, args_37, activation_35, activation_36):
+        device = self.device
+        weights = self.weights
+        ttnn_add_33 = hidden_states
         ttnn_to_memory_config_245 = ttnn.to_memory_config(
             ttnn_add_33,
             ttnn.MemoryConfig(
@@ -11838,6 +12285,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_87, False)
         ttnn.deallocate(ttnn_add_33, False)
+        return ttnn_add_34, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_17(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_34):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_257 = ttnn.to_memory_config(
             ttnn_add_34,
             ttnn.MemoryConfig(
@@ -12062,6 +12520,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_90, False)
         ttnn.deallocate(ttnn_add_34, False)
+        return ttnn_add_35
+
+
+class LlamaDecoderLayer_17(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_17(device, weights)
+        self.mlp = LlamaMLP_17(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_36, args_37, activation_35, activation_36):
+        ttnn_add_34, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_36, args_37, activation_35, activation_36)
+        ttnn_add_35 = self.mlp(ttnn_add_34)
+        return ttnn_add_35, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_18(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_38, args_39, activation_37, activation_38):
+        device = self.device
+        weights = self.weights
+        ttnn_add_35 = hidden_states
         ttnn_to_memory_config_259 = ttnn.to_memory_config(
             ttnn_add_35,
             ttnn.MemoryConfig(
@@ -12483,6 +12966,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_92, False)
         ttnn.deallocate(ttnn_add_35, False)
+        return ttnn_add_36, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_18(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_36):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_271 = ttnn.to_memory_config(
             ttnn_add_36,
             ttnn.MemoryConfig(
@@ -12707,6 +13201,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_95, False)
         ttnn.deallocate(ttnn_add_36, False)
+        return ttnn_add_37
+
+
+class LlamaDecoderLayer_18(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_18(device, weights)
+        self.mlp = LlamaMLP_18(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_38, args_39, activation_37, activation_38):
+        ttnn_add_36, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_38, args_39, activation_37, activation_38)
+        ttnn_add_37 = self.mlp(ttnn_add_36)
+        return ttnn_add_37, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_19(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_40, args_41, activation_39, activation_40):
+        device = self.device
+        weights = self.weights
+        ttnn_add_37 = hidden_states
         ttnn_to_memory_config_273 = ttnn.to_memory_config(
             ttnn_add_37,
             ttnn.MemoryConfig(
@@ -13128,6 +13647,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_97, False)
         ttnn.deallocate(ttnn_add_37, False)
+        return ttnn_add_38, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_19(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_38):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_285 = ttnn.to_memory_config(
             ttnn_add_38,
             ttnn.MemoryConfig(
@@ -13352,6 +13882,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_100, False)
         ttnn.deallocate(ttnn_add_38, False)
+        return ttnn_add_39
+
+
+class LlamaDecoderLayer_19(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_19(device, weights)
+        self.mlp = LlamaMLP_19(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_40, args_41, activation_39, activation_40):
+        ttnn_add_38, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_40, args_41, activation_39, activation_40)
+        ttnn_add_39 = self.mlp(ttnn_add_38)
+        return ttnn_add_39, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_20(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_42, args_43, activation_41, activation_42):
+        device = self.device
+        weights = self.weights
+        ttnn_add_39 = hidden_states
         ttnn_to_memory_config_287 = ttnn.to_memory_config(
             ttnn_add_39,
             ttnn.MemoryConfig(
@@ -13773,6 +14328,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_102, False)
         ttnn.deallocate(ttnn_add_39, False)
+        return ttnn_add_40, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_20(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_40):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_299 = ttnn.to_memory_config(
             ttnn_add_40,
             ttnn.MemoryConfig(
@@ -13997,6 +14563,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_105, False)
         ttnn.deallocate(ttnn_add_40, False)
+        return ttnn_add_41
+
+
+class LlamaDecoderLayer_20(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_20(device, weights)
+        self.mlp = LlamaMLP_20(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_42, args_43, activation_41, activation_42):
+        ttnn_add_40, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_42, args_43, activation_41, activation_42)
+        ttnn_add_41 = self.mlp(ttnn_add_40)
+        return ttnn_add_41, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_21(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_44, args_45, activation_43, activation_44):
+        device = self.device
+        weights = self.weights
+        ttnn_add_41 = hidden_states
         ttnn_to_memory_config_301 = ttnn.to_memory_config(
             ttnn_add_41,
             ttnn.MemoryConfig(
@@ -14418,6 +15009,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_107, False)
         ttnn.deallocate(ttnn_add_41, False)
+        return ttnn_add_42, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_21(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_42):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_313 = ttnn.to_memory_config(
             ttnn_add_42,
             ttnn.MemoryConfig(
@@ -14642,6 +15244,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_110, False)
         ttnn.deallocate(ttnn_add_42, False)
+        return ttnn_add_43
+
+
+class LlamaDecoderLayer_21(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_21(device, weights)
+        self.mlp = LlamaMLP_21(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_44, args_45, activation_43, activation_44):
+        ttnn_add_42, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_44, args_45, activation_43, activation_44)
+        ttnn_add_43 = self.mlp(ttnn_add_42)
+        return ttnn_add_43, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_22(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_46, args_47, activation_45, activation_46):
+        device = self.device
+        weights = self.weights
+        ttnn_add_43 = hidden_states
         ttnn_to_memory_config_315 = ttnn.to_memory_config(
             ttnn_add_43,
             ttnn.MemoryConfig(
@@ -15063,6 +15690,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_112, False)
         ttnn.deallocate(ttnn_add_43, False)
+        return ttnn_add_44, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_22(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_44):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_327 = ttnn.to_memory_config(
             ttnn_add_44,
             ttnn.MemoryConfig(
@@ -15287,6 +15925,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_115, False)
         ttnn.deallocate(ttnn_add_44, False)
+        return ttnn_add_45
+
+
+class LlamaDecoderLayer_22(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_22(device, weights)
+        self.mlp = LlamaMLP_22(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_46, args_47, activation_45, activation_46):
+        ttnn_add_44, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_46, args_47, activation_45, activation_46)
+        ttnn_add_45 = self.mlp(ttnn_add_44)
+        return ttnn_add_45, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_23(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_48, args_49, activation_47, activation_48):
+        device = self.device
+        weights = self.weights
+        ttnn_add_45 = hidden_states
         ttnn_to_memory_config_329 = ttnn.to_memory_config(
             ttnn_add_45,
             ttnn.MemoryConfig(
@@ -15708,6 +16371,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_117, False)
         ttnn.deallocate(ttnn_add_45, False)
+        return ttnn_add_46, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_23(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_46):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_341 = ttnn.to_memory_config(
             ttnn_add_46,
             ttnn.MemoryConfig(
@@ -15932,6 +16606,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_120, False)
         ttnn.deallocate(ttnn_add_46, False)
+        return ttnn_add_47
+
+
+class LlamaDecoderLayer_23(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_23(device, weights)
+        self.mlp = LlamaMLP_23(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_48, args_49, activation_47, activation_48):
+        ttnn_add_46, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_48, args_49, activation_47, activation_48)
+        ttnn_add_47 = self.mlp(ttnn_add_46)
+        return ttnn_add_47, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_24(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_50, args_51, activation_49, activation_50):
+        device = self.device
+        weights = self.weights
+        ttnn_add_47 = hidden_states
         ttnn_to_memory_config_343 = ttnn.to_memory_config(
             ttnn_add_47,
             ttnn.MemoryConfig(
@@ -16353,6 +17052,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_122, False)
         ttnn.deallocate(ttnn_add_47, False)
+        return ttnn_add_48, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_24(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_48):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_355 = ttnn.to_memory_config(
             ttnn_add_48,
             ttnn.MemoryConfig(
@@ -16577,6 +17287,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_125, False)
         ttnn.deallocate(ttnn_add_48, False)
+        return ttnn_add_49
+
+
+class LlamaDecoderLayer_24(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_24(device, weights)
+        self.mlp = LlamaMLP_24(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_50, args_51, activation_49, activation_50):
+        ttnn_add_48, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_50, args_51, activation_49, activation_50)
+        ttnn_add_49 = self.mlp(ttnn_add_48)
+        return ttnn_add_49, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_25(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_52, args_53, activation_51, activation_52):
+        device = self.device
+        weights = self.weights
+        ttnn_add_49 = hidden_states
         ttnn_to_memory_config_357 = ttnn.to_memory_config(
             ttnn_add_49,
             ttnn.MemoryConfig(
@@ -16998,6 +17733,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_127, False)
         ttnn.deallocate(ttnn_add_49, False)
+        return ttnn_add_50, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_25(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_50):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_369 = ttnn.to_memory_config(
             ttnn_add_50,
             ttnn.MemoryConfig(
@@ -17222,6 +17968,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_130, False)
         ttnn.deallocate(ttnn_add_50, False)
+        return ttnn_add_51
+
+
+class LlamaDecoderLayer_25(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_25(device, weights)
+        self.mlp = LlamaMLP_25(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_52, args_53, activation_51, activation_52):
+        ttnn_add_50, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_52, args_53, activation_51, activation_52)
+        ttnn_add_51 = self.mlp(ttnn_add_50)
+        return ttnn_add_51, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_26(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_54, args_55, activation_53, activation_54):
+        device = self.device
+        weights = self.weights
+        ttnn_add_51 = hidden_states
         ttnn_to_memory_config_371 = ttnn.to_memory_config(
             ttnn_add_51,
             ttnn.MemoryConfig(
@@ -17643,6 +18414,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_132, False)
         ttnn.deallocate(ttnn_add_51, False)
+        return ttnn_add_52, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_26(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_52):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_383 = ttnn.to_memory_config(
             ttnn_add_52,
             ttnn.MemoryConfig(
@@ -17867,6 +18649,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_135, False)
         ttnn.deallocate(ttnn_add_52, False)
+        return ttnn_add_53
+
+
+class LlamaDecoderLayer_26(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_26(device, weights)
+        self.mlp = LlamaMLP_26(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_54, args_55, activation_53, activation_54):
+        ttnn_add_52, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_54, args_55, activation_53, activation_54)
+        ttnn_add_53 = self.mlp(ttnn_add_52)
+        return ttnn_add_53, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_27(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_56, args_57, activation_55, activation_56):
+        device = self.device
+        weights = self.weights
+        ttnn_add_53 = hidden_states
         ttnn_to_memory_config_385 = ttnn.to_memory_config(
             ttnn_add_53,
             ttnn.MemoryConfig(
@@ -18288,6 +19095,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_137, False)
         ttnn.deallocate(ttnn_add_53, False)
+        return ttnn_add_54, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_27(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_54):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_397 = ttnn.to_memory_config(
             ttnn_add_54,
             ttnn.MemoryConfig(
@@ -18512,6 +19330,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_140, False)
         ttnn.deallocate(ttnn_add_54, False)
+        return ttnn_add_55
+
+
+class LlamaDecoderLayer_27(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_27(device, weights)
+        self.mlp = LlamaMLP_27(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_56, args_57, activation_55, activation_56):
+        ttnn_add_54, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_56, args_57, activation_55, activation_56)
+        ttnn_add_55 = self.mlp(ttnn_add_54)
+        return ttnn_add_55, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_28(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_58, args_59, activation_57, activation_58):
+        device = self.device
+        weights = self.weights
+        ttnn_add_55 = hidden_states
         ttnn_to_memory_config_399 = ttnn.to_memory_config(
             ttnn_add_55,
             ttnn.MemoryConfig(
@@ -18933,6 +19776,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_142, False)
         ttnn.deallocate(ttnn_add_55, False)
+        return ttnn_add_56, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_28(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_56):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_411 = ttnn.to_memory_config(
             ttnn_add_56,
             ttnn.MemoryConfig(
@@ -19157,6 +20011,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_145, False)
         ttnn.deallocate(ttnn_add_56, False)
+        return ttnn_add_57
+
+
+class LlamaDecoderLayer_28(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_28(device, weights)
+        self.mlp = LlamaMLP_28(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_58, args_59, activation_57, activation_58):
+        ttnn_add_56, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_58, args_59, activation_57, activation_58)
+        ttnn_add_57 = self.mlp(ttnn_add_56)
+        return ttnn_add_57, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_29(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_60, args_61, activation_59, activation_60):
+        device = self.device
+        weights = self.weights
+        ttnn_add_57 = hidden_states
         ttnn_to_memory_config_413 = ttnn.to_memory_config(
             ttnn_add_57,
             ttnn.MemoryConfig(
@@ -19578,6 +20457,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_147, False)
         ttnn.deallocate(ttnn_add_57, False)
+        return ttnn_add_58, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_29(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_58):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_425 = ttnn.to_memory_config(
             ttnn_add_58,
             ttnn.MemoryConfig(
@@ -19802,6 +20692,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_150, False)
         ttnn.deallocate(ttnn_add_58, False)
+        return ttnn_add_59
+
+
+class LlamaDecoderLayer_29(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_29(device, weights)
+        self.mlp = LlamaMLP_29(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_60, args_61, activation_59, activation_60):
+        ttnn_add_58, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_60, args_61, activation_59, activation_60)
+        ttnn_add_59 = self.mlp(ttnn_add_58)
+        return ttnn_add_59, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_30(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_62, args_63, activation_61, activation_62):
+        device = self.device
+        weights = self.weights
+        ttnn_add_59 = hidden_states
         ttnn_to_memory_config_427 = ttnn.to_memory_config(
             ttnn_add_59,
             ttnn.MemoryConfig(
@@ -20223,6 +21138,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_152, False)
         ttnn.deallocate(ttnn_add_59, False)
+        return ttnn_add_60, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaMLP_30(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_60):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_439 = ttnn.to_memory_config(
             ttnn_add_60,
             ttnn.MemoryConfig(
@@ -20447,6 +21373,31 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_155, False)
         ttnn.deallocate(ttnn_add_60, False)
+        return ttnn_add_61
+
+
+class LlamaDecoderLayer_30(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_30(device, weights)
+        self.mlp = LlamaMLP_30(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_62, args_63, activation_61, activation_62):
+        ttnn_add_60, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_62, args_63, activation_61, activation_62)
+        ttnn_add_61 = self.mlp(ttnn_add_60)
+        return ttnn_add_61, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2
+
+
+class LlamaAttention_31(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_64, args_65, activation_63, activation_64):
+        device = self.device
+        weights = self.weights
+        ttnn_add_61 = hidden_states
         ttnn_to_memory_config_441 = ttnn.to_memory_config(
             ttnn_add_61,
             ttnn.MemoryConfig(
@@ -20871,6 +21822,17 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_157, False)
         ttnn.deallocate(ttnn_add_61, False)
+        return ttnn_add_62
+
+
+class LlamaMLP_31(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, ttnn_add_62):
+        device = self.device
+        weights = self.weights
         ttnn_to_memory_config_453 = ttnn.to_memory_config(
             ttnn_add_62,
             ttnn.MemoryConfig(
@@ -21095,6 +22057,261 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_160, False)
         ttnn.deallocate(ttnn_add_62, False)
+        return ttnn_add_63
+
+
+class LlamaDecoderLayer_31(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+        self.self_attn = LlamaAttention_31(device, weights)
+        self.mlp = LlamaMLP_31(device, weights)
+
+    def forward(self, hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_64, args_65, activation_63, activation_64):
+        ttnn_add_62 = self.self_attn(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_64, args_65, activation_63, activation_64)
+        ttnn_add_63 = self.mlp(ttnn_add_62)
+        return ttnn_add_63
+
+
+class ModelTTNN(LightweightModule):
+    def __init__(self, device):
+        self.device = device
+        self.weights = params.load_weights_for__main_from_state_dict(device)
+        self.weights = consteval.run_consteval(self.weights, device)
+        self.layer_0 = LlamaDecoderLayer_0(device, self.weights)
+        self.layer_1 = LlamaDecoderLayer_1(device, self.weights)
+        self.layer_2 = LlamaDecoderLayer_2(device, self.weights)
+        self.layer_3 = LlamaDecoderLayer_3(device, self.weights)
+        self.layer_4 = LlamaDecoderLayer_4(device, self.weights)
+        self.layer_5 = LlamaDecoderLayer_5(device, self.weights)
+        self.layer_6 = LlamaDecoderLayer_6(device, self.weights)
+        self.layer_7 = LlamaDecoderLayer_7(device, self.weights)
+        self.layer_8 = LlamaDecoderLayer_8(device, self.weights)
+        self.layer_9 = LlamaDecoderLayer_9(device, self.weights)
+        self.layer_10 = LlamaDecoderLayer_10(device, self.weights)
+        self.layer_11 = LlamaDecoderLayer_11(device, self.weights)
+        self.layer_12 = LlamaDecoderLayer_12(device, self.weights)
+        self.layer_13 = LlamaDecoderLayer_13(device, self.weights)
+        self.layer_14 = LlamaDecoderLayer_14(device, self.weights)
+        self.layer_15 = LlamaDecoderLayer_15(device, self.weights)
+        self.layer_16 = LlamaDecoderLayer_16(device, self.weights)
+        self.layer_17 = LlamaDecoderLayer_17(device, self.weights)
+        self.layer_18 = LlamaDecoderLayer_18(device, self.weights)
+        self.layer_19 = LlamaDecoderLayer_19(device, self.weights)
+        self.layer_20 = LlamaDecoderLayer_20(device, self.weights)
+        self.layer_21 = LlamaDecoderLayer_21(device, self.weights)
+        self.layer_22 = LlamaDecoderLayer_22(device, self.weights)
+        self.layer_23 = LlamaDecoderLayer_23(device, self.weights)
+        self.layer_24 = LlamaDecoderLayer_24(device, self.weights)
+        self.layer_25 = LlamaDecoderLayer_25(device, self.weights)
+        self.layer_26 = LlamaDecoderLayer_26(device, self.weights)
+        self.layer_27 = LlamaDecoderLayer_27(device, self.weights)
+        self.layer_28 = LlamaDecoderLayer_28(device, self.weights)
+        self.layer_29 = LlamaDecoderLayer_29(device, self.weights)
+        self.layer_30 = LlamaDecoderLayer_30(device, self.weights)
+        self.layer_31 = LlamaDecoderLayer_31(device, self.weights)
+
+    def forward(self, activations):
+        device = self.device
+        weights = self.weights
+        args_1 = activations[0]
+        args_0 = activations[1]
+        activation_0 = activations[2]
+        args_2 = activations[3]
+        activation_1 = activations[4]
+        args_3 = activations[5]
+        activation_2 = activations[6]
+        activation_3 = activations[7]
+        args_4 = activations[8]
+        activation_4 = activations[9]
+        args_5 = activations[10]
+        activation_5 = activations[11]
+        args_6 = activations[12]
+        activation_6 = activations[13]
+        args_7 = activations[14]
+        activation_7 = activations[15]
+        args_8 = activations[16]
+        activation_8 = activations[17]
+        args_9 = activations[18]
+        activation_9 = activations[19]
+        args_10 = activations[20]
+        activation_10 = activations[21]
+        args_11 = activations[22]
+        activation_11 = activations[23]
+        args_12 = activations[24]
+        activation_12 = activations[25]
+        args_13 = activations[26]
+        activation_13 = activations[27]
+        args_14 = activations[28]
+        activation_14 = activations[29]
+        args_15 = activations[30]
+        activation_15 = activations[31]
+        args_16 = activations[32]
+        activation_16 = activations[33]
+        args_17 = activations[34]
+        activation_17 = activations[35]
+        args_18 = activations[36]
+        activation_18 = activations[37]
+        args_19 = activations[38]
+        activation_19 = activations[39]
+        args_20 = activations[40]
+        activation_20 = activations[41]
+        args_21 = activations[42]
+        activation_21 = activations[43]
+        args_22 = activations[44]
+        activation_22 = activations[45]
+        args_23 = activations[46]
+        activation_23 = activations[47]
+        args_24 = activations[48]
+        activation_24 = activations[49]
+        args_25 = activations[50]
+        activation_25 = activations[51]
+        args_26 = activations[52]
+        activation_26 = activations[53]
+        args_27 = activations[54]
+        activation_27 = activations[55]
+        args_28 = activations[56]
+        activation_28 = activations[57]
+        args_29 = activations[58]
+        activation_29 = activations[59]
+        args_30 = activations[60]
+        activation_30 = activations[61]
+        args_31 = activations[62]
+        activation_31 = activations[63]
+        args_32 = activations[64]
+        activation_32 = activations[65]
+        args_33 = activations[66]
+        activation_33 = activations[67]
+        args_34 = activations[68]
+        activation_34 = activations[69]
+        args_35 = activations[70]
+        activation_35 = activations[71]
+        args_36 = activations[72]
+        activation_36 = activations[73]
+        args_37 = activations[74]
+        activation_37 = activations[75]
+        args_38 = activations[76]
+        activation_38 = activations[77]
+        args_39 = activations[78]
+        activation_39 = activations[79]
+        args_40 = activations[80]
+        activation_40 = activations[81]
+        args_41 = activations[82]
+        activation_41 = activations[83]
+        args_42 = activations[84]
+        activation_42 = activations[85]
+        args_43 = activations[86]
+        activation_43 = activations[87]
+        args_44 = activations[88]
+        activation_44 = activations[89]
+        args_45 = activations[90]
+        activation_45 = activations[91]
+        args_46 = activations[92]
+        activation_46 = activations[93]
+        args_47 = activations[94]
+        activation_47 = activations[95]
+        args_48 = activations[96]
+        activation_48 = activations[97]
+        args_49 = activations[98]
+        activation_49 = activations[99]
+        args_50 = activations[100]
+        activation_50 = activations[101]
+        args_51 = activations[102]
+        activation_51 = activations[103]
+        args_52 = activations[104]
+        activation_52 = activations[105]
+        args_53 = activations[106]
+        activation_53 = activations[107]
+        args_54 = activations[108]
+        activation_54 = activations[109]
+        args_55 = activations[110]
+        activation_55 = activations[111]
+        args_56 = activations[112]
+        activation_56 = activations[113]
+        args_57 = activations[114]
+        activation_57 = activations[115]
+        args_58 = activations[116]
+        activation_58 = activations[117]
+        args_59 = activations[118]
+        activation_59 = activations[119]
+        args_60 = activations[120]
+        activation_60 = activations[121]
+        args_61 = activations[122]
+        activation_61 = activations[123]
+        args_62 = activations[124]
+        activation_62 = activations[125]
+        args_63 = activations[126]
+        activation_63 = activations[127]
+        args_64 = activations[128]
+        activation_64 = activations[129]
+        args_65 = activations[130]
+        ttnn_typecast_548 = ttnn.typecast(
+            args_0,
+            ttnn.DataType.UINT32,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(args_0, False)
+        ttnn_reshape_0 = ttnn.reshape(
+            ttnn_typecast_548,
+            [32],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
+            ),
+        )
+        ttnn.deallocate(ttnn_typecast_548, False)
+        ttnn_to_memory_config_0 = ttnn.to_memory_config(
+            ttnn_reshape_0,
+            ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_reshape_0, False)
+        ttnn_embedding_0 = ttnn.embedding(
+            ttnn_to_memory_config_0,
+            weights["model.embed_tokens.parametrizations.weight.original"],
+            padding_idx=None,
+            layout=ttnn.Layout.TILE,
+            dtype=ttnn.DataType.BFLOAT16,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
+            ),
+        )
+        ttnn.deallocate(ttnn_to_memory_config_0, False)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_0(ttnn_embedding_0, args_1, args_2, args_3, activation_0, activation_1, activation_2)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_1(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_4, args_5, activation_3, activation_4)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_2(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_6, args_7, activation_5, activation_6)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_3(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_8, args_9, activation_7, activation_8)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_4(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_10, args_11, activation_9, activation_10)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_5(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_12, args_13, activation_11, activation_12)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_6(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_14, args_15, activation_13, activation_14)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_7(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_16, args_17, activation_15, activation_16)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_8(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_18, args_19, activation_17, activation_18)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_9(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_20, args_21, activation_19, activation_20)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_10(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_22, args_23, activation_21, activation_22)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_11(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_24, args_25, activation_23, activation_24)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_12(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_26, args_27, activation_25, activation_26)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_13(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_28, args_29, activation_27, activation_28)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_14(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_30, args_31, activation_29, activation_30)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_15(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_32, args_33, activation_31, activation_32)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_16(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_34, args_35, activation_33, activation_34)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_17(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_36, args_37, activation_35, activation_36)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_18(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_38, args_39, activation_37, activation_38)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_19(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_40, args_41, activation_39, activation_40)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_20(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_42, args_43, activation_41, activation_42)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_21(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_44, args_45, activation_43, activation_44)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_22(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_46, args_47, activation_45, activation_46)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_23(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_48, args_49, activation_47, activation_48)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_24(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_50, args_51, activation_49, activation_50)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_25(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_52, args_53, activation_51, activation_52)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_26(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_54, args_55, activation_53, activation_54)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_27(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_56, args_57, activation_55, activation_56)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_28(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_58, args_59, activation_57, activation_58)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_29(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_60, args_61, activation_59, activation_60)
+        hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2 = self.layer_30(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_62, args_63, activation_61, activation_62)
+        hidden_states = self.layer_31(hidden_states, ttnn_typecast_550, ttnn_typecast_551, ttnn_repeat_2, args_64, args_65, activation_63, activation_64)
+        ttnn_add_63 = hidden_states
         ttnn_to_memory_config_455 = ttnn.to_memory_config(
             ttnn_add_63,
             ttnn.MemoryConfig(
