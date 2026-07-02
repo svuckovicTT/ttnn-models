@@ -1,0 +1,18 @@
+All done. Here's a summary of the changes:
+
+**`params.py`** (new, 423 lines):
+- `_WEIGHT_FILE_MAP`: dict mapping all 292 weight keys to their tensorbin file paths
+- `LAYERNORM_WEIGHTS`: set of 65 keys (input_layernorm, post_attention_layernorm, model.norm) that use TILE layout and are placed on device
+- `ALL_WEIGHTS`: tuple of all weight keys
+- `load_weights_for__main()`: loads weights from disk using `utils.load_tensor()` with the same properties as the original — TILE/DRAM for layernorm weights, ROW_MAJOR/host for everything else
+- `load_weights_for__main_from_state_dict()`: loads weights from PyTorch model's state dict (including non-persistent buffers like `rotary_emb.inv_freq`), converts via `ttnn.from_torch()`, then applies `to_layout` → `to_dtype` → `to_device` per group
+
+**`main.py`** (modified):
+- Added `from params import load_weights_for__main` import
+- Removed the ~3050-line `load_weights_for__main()` function and `_main_weights` global
+- All existing call sites (`main()` and `test_main()`) now use the imported function
+
+**`verify_weights.py`** (new, 45 lines):
+- `test_verify_weights()`: pytest function that loads weights from both sources, asserts matching keys, and compares tensor values exactly
+
+--- Time taken: 409.9s | session: 75900927-8492-4e1e-928f-ded1393c7fa8 ---
