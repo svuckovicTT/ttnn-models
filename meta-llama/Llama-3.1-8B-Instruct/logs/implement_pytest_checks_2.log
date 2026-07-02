@@ -1,0 +1,123 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/meta-llama/Llama-3.1-8B-Instruct/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 1 item
+
+main.py Device: MeshDevice(1x1 grid, 1 devices)
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        exact_pcc = 0.9921875
+    
+        activations = load_activations_for__main()
+        weights = load_weights_for__main()
+>       outputs = _main(activations, weights)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+main.py:33577: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+main.py:7624: in _main
+    ttnn.experimental.nlp_concat_heads_decode(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FastOperation(python_fully_qualified_name='ttnn.experimental.nlp_concat_heads_decode', function=<ttnn._ttnn.operations...uts=None, golden_function=None, postprocess_golden_function_outputs=None, is_cpp_operation=True, is_experimental=False)
+function_args = (ttnn.Tensor([[[[-4.5776e-03, -1.3199e-03,  ...,  2.7924e-03,  1.7090e-02],
+               [ 8.9111e-03,  4.7493e-04, ...03,  ..., -9.5367e-04,  3.4332e-04]]]], shape=Shape([1, 32, 32, 128]), dtype=DataType::BFLOAT16, layout=Layout::TILE),)
+function_kwargs = {'memory_config': MemoryConfig(memory_layout=TensorMemoryLayout::WIDTH_SHARDED,buffer_type=BufferType::L1,shard_spec=S...8], orientation=ShardOrientation::ROW_MAJOR},nd_shard_spec=std::nullopt,created_with_nd_shard_spec=0), 'num_heads': 32}
+cq_id = None, recording = False
+
+    def __call__(self, *function_args, **function_kwargs):
+        cq_id = None
+        if "queue_id" in function_kwargs:
+            cq_id = function_kwargs.pop("queue_id")
+        elif "cq_id" in function_kwargs:
+            cq_id = function_kwargs.pop("cq_id")
+    
+        recording = ttnn.graph.is_python_io_recording_enabled()
+        if recording:
+            ttnn.graph.track_function_start(self.python_fully_qualified_name)
+            ttnn.graph.record_python_operation(self.python_fully_qualified_name, function_args, function_kwargs)
+            input_tensors = get_all_tensors((function_args, function_kwargs))
+            set_tensor_id(input_tensors)
+    
+        try:
+            if cq_id is None:
+>               result = self.function(*function_args, **function_kwargs)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               RuntimeError: bad optional access
+
+../../../../../tt-xla/python_package/ttnn/_original/decorators.py:473: RuntimeError
+=============================== warnings summary ===============================
+../../../../../tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: 14 warnings
+  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - RuntimeError: bad optional access
+================== 1 failed, 16 warnings in 107.71s (0:01:47) ==================
+2026-07-02 14:00:25.991 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x3e37d380 of type "ttnn._ttnn.operations.unary.alt_complex_rotate90_t"
+ - leaked instance 0x3e700af0 of type "ttnn._ttnn.operations.binary.logical_right_shift_t"
+ - leaked instance 0x3e814450 of type "ttnn._ttnn.operations.pool.upsample_t"
+ - leaked instance 0x3e5a0750 of type "ttnn._ttnn.operations.binary.gt_t"
+ - leaked instance 0x3e6b07f0 of type "ttnn._ttnn.operations.embedding.embedding_t"
+ - leaked instance 0x3e463460 of type "ttnn._ttnn.operations.unary.heaviside_t"
+ - leaked instance 0x3e742a20 of type "ttnn._ttnn.operations.unary_backward.multigammaln_bw_t"
+ - leaked instance 0x3de43a00 of type "ttnn._ttnn.operations.unary.sigmoid_t"
+ - leaked instance 0x3e41a280 of type "ttnn._ttnn.operations.unary.logical_not_t"
+ - leaked instance 0x3e060830 of type "ttnn._ttnn.operations.unary.threshold_t"
+ - leaked instance 0x3e6a4570 of type "ttnn._ttnn.operations.ccl.reduce_scatter_t"
+ - leaked instance 0x3dfd9e70 of type "ttnn._ttnn.operations.unary.geglu_t"
+ - leaked instance 0x3e7e2ef0 of type "ttnn._ttnn.operations.data_movement.moe_expert_token_remap_t"
+ - leaked instance 0x3e760cf0 of type "ttnn._ttnn.operations.unary_backward.expm1_bw_t"
+ - leaked instance 0x7dc681b42528 of type "ttnn._ttnn.operations.sliding_window.Op2DSliceConfig"
+ - leaked instance 0x3dfc56a0 of type "ttnn._ttnn.operations.unary.log2_t"
+ - leaked instance 0x3e718d00 of type "ttnn._ttnn.operations.binary.outer_t"
+ - leaked instance 0x3e81d670 of type "ttnn._ttnn.operations.normalization.scale_mask_softmax_in_place_t"
+ - leaked instance 0x3e7ed190 of type "ttnn._ttnn.operations.data_movement.sharded_to_interleaved_t"
+ - leaked instance 0x3e833d90 of type "ttnn._ttnn.operations.normalization.batch_norm_t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function "to_torch"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step implement_pytest, as expected
