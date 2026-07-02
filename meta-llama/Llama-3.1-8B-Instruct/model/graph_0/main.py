@@ -23,63 +23,52 @@ def test_main():
         ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
     )
 
+    def to_int32(t):
+        return ttnn.to_device(
+            ttnn.from_torch(t, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR),
+            device,
+            dram_interleaved,
+        )
+
+    def to_bf16_tile(t):
+        return ttnn.to_device(
+            ttnn.from_torch(t, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.TILE),
+            device,
+            dram_interleaved,
+        )
+
     cache_position = pytorch_input["cache_position"]
     input_ids = pytorch_input["input_ids"]
     layers = pytorch_input["past_key_values"].layers
 
-    # Build host-side TTNN tensors (not on device)
-    def to_host_int32(t):
-        return ttnn.from_torch(t, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR)
-
-    def to_host_bf16_tile(t):
-        return ttnn.from_torch(t, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.TILE)
-
-    # Same order as the original build_activations:
-    # [0] cache_position, [1] input_ids
-    host_tensors = [to_host_int32(cache_position), to_host_int32(input_ids)]
-    # Layer 0: cp, keys, cp, values, cp (extra for attention mask)
-    host_tensors.extend([
-        to_host_int32(cache_position),
-        to_host_bf16_tile(layers[0].keys),
-        to_host_int32(cache_position),
-        to_host_bf16_tile(layers[0].values),
-        to_host_int32(cache_position),
-    ])
-    # Layers 1-31: cp, keys, cp, values
-    for layer in layers[1:]:
-        host_tensors.extend([
-            to_host_int32(cache_position),
-            to_host_bf16_tile(layer.keys),
-            to_host_int32(cache_position),
-            to_host_bf16_tile(layer.values),
+    # forward() consumes (deallocates) its input tensors and mutates the KV
+    # cache tensors in place, so every invocation needs a freshly built set of
+    # device tensors. Rebuild them here rather than reusing one shared list.
+    def build_activations():
+        # Same order as load_activations_for__main():
+        # [0] cache_position, [1] input_ids
+        activations = [to_int32(cache_position), to_int32(input_ids)]
+        # Layer 0: cp, keys, cp, values, cp (extra for attention mask)
+        activations.extend([
+            to_int32(cache_position),
+            to_bf16_tile(layers[0].keys),
+            to_int32(cache_position),
+            to_bf16_tile(layers[0].values),
+            to_int32(cache_position),
         ])
-
-    # Allocate persistent DRAM input buffers
-    device_tensors = [
-        ttnn.allocate_tensor_on_device(
-            ht.shape, ht.dtype, ht.layout, device, dram_interleaved
-        )
-        for ht in host_tensors
-    ]
-
-    def copy_inputs():
-        for ht, dt in zip(host_tensors, device_tensors):
-            ttnn.copy_host_to_device_tensor(ht, dt, cq_id=0)
+        # Layers 1-31: cp, keys, cp, values
+        for layer in layers[1:]:
+            activations.extend([
+                to_int32(cache_position),
+                to_bf16_tile(layer.keys),
+                to_int32(cache_position),
+                to_bf16_tile(layer.values),
+            ])
+        return activations
 
     ttnn_model = ModelTTNN(device)
-    tokens_per_run = BATCH_SIZE * NUM_TOKENS_PER_SAMPLE
+    outputs = ttnn_model(build_activations())
 
-    # Run 1: Compile run (fills program cache)
-    copy_inputs()
-    start = time.perf_counter()
-    outputs = ttnn_model(device_tensors)
-    ttnn.synchronize_device(device)
-    end = time.perf_counter()
-    elapsed = end - start
-    tps = tokens_per_run / elapsed
-    print(f"  Compile: {elapsed:.4f}s, {tps:.2f} TPS")
-
-    # PCC check on compile run output
     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
     ttnn_output = ttnn_output[:, -1, :]
 
@@ -89,25 +78,14 @@ def test_main():
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
-    # Run 2: Trace capture
-    copy_inputs()
-    start = time.perf_counter()
-    tid = ttnn.begin_trace_capture(device, cq_id=0)
-    outputs = ttnn_model(device_tensors)
-    ttnn.end_trace_capture(device, tid, cq_id=0)
-    ttnn.synchronize_device(device)
-    end = time.perf_counter()
-    elapsed = end - start
-    tps = tokens_per_run / elapsed
-    print(f"  Trace capture: {elapsed:.4f}s, {tps:.2f} TPS")
-
-    # Runs 3-5: Trace execution
+    tokens_per_run = BATCH_SIZE * NUM_TOKENS_PER_SAMPLE
     print(f"\nPerf measurement ({NUM_PERF_RUNS} runs):")
     for i in range(NUM_PERF_RUNS):
-        copy_inputs()
+        # Build fresh activations outside the timed region — forward() frees
+        # its inputs, so reusing the same tensors across runs would fault.
+        run_activations = build_activations()
         start = time.perf_counter()
-        ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
-        outputs[-1].cpu(blocking=False)
+        ttnn_model(run_activations)
         ttnn.synchronize_device(device)
         end = time.perf_counter()
         elapsed = end - start
