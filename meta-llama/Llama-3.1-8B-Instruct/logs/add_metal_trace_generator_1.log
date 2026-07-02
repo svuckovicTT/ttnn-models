@@ -1,0 +1,24 @@
+The implementation is complete. Here's a summary of what was changed:
+
+**`main.py`** — Rewrote `test_main()` to use metal trace with persistent DRAM inputs:
+1. Host tensors are built once via `build_host_activations()` (ttnn tensors on host, not on device)
+2. Persistent device tensors are allocated via `ttnn.allocate_tensor_on_device()` matching each host tensor's shape/dtype/layout
+3. A `copy_inputs()` helper copies all host tensors into the persistent device buffers via `ttnn.copy_host_to_device_tensor(h, d, cq_id=0)`
+4. **Run 1 (compile)**: copies inputs, runs model, syncs — populates program cache; PCC is checked against this run
+5. **Run 2 (trace capture)**: copies inputs, `begin_trace_capture` → model forward → `end_trace_capture` → sync
+6. **Runs 3–5 (trace execute)**: copies inputs, `execute_trace(blocking=False)` → sync
+7. All 5 runs are timed and logged with TPS
+8. Trace is released at the end
+
+**`model_ttnn.py`** — Removed 9 `ttnn.deallocate` calls on input activation tensors (the persistent DRAM buffers must not be freed during forward):
+- `input_ids` (line 56)
+- `args_1` / cache_position in layer 0 (line 433)
+- `activation_0` / key_cache_idx layer 0 (line 622)
+- `activation_1` / value_cache_idx layer 0 (line 665)
+- `activation_2` / attn_mask_scalar layer 0 (line 735)
+- `activation_63` / key_cache_idx layer 31 (line 1146)
+- `activation_64` / value_cache_idx layer 31 (line 1189)
+- `activation_3` / key_cache_idx generic layers (line 1570)
+- `activation_4` / value_cache_idx generic layers (line 1613)
+
+--- Time taken: 197.5s | session: 42187026-8955-4b45-a557-7dc1fa6504ff ---
