@@ -1,0 +1,12 @@
+The changes are:
+
+1. Added `import time` at the top of the file
+2. In `test_main`:
+   - Extracted `batch_size = model_pt.BATCH_SIZE` (32) for TPS calculation
+   - Model is instantiated once before the loop
+   - The model is called 3 times in a loop, each timed with `time.perf_counter()`
+   - `ttnn.synchronize_device(device)` is called after each forward pass before capturing end time
+   - Each run logs: `Run {i}: time={elapsed:.4f}s, TPS={tps:.2f}` (time with 4 decimal places, TPS with 2)
+   - PCC validation uses the output from the last run
+
+--- Time taken: 54.0s | session: a3d56367-7bfb-4ad3-8f29-0092478c1ae1 ---

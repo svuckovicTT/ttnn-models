@@ -1,0 +1,259 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/meta-llama/Llama-3.1-8B-Instruct/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 1 item
+
+main.py 2026-07-02 18:22:10.169 | critical |          Always | TT_THROW: Tensor is not allocated (assert.hpp:104)
+[cpu] decode logits (32, 128256)
+
+PCC: 0.992188
+
+Performance (3 runs, batch_size=32):
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        exact_pcc = 0.9921875
+    
+        model = model_pt.load_pytorch_model()
+        pytorch_input = model_pt.load_input(model)
+    
+        device = utils.open_device()
+        dram_interleaved = ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        )
+    
+        def to_int32(t):
+            return ttnn.to_device(
+                ttnn.from_torch(t, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR),
+                device,
+                dram_interleaved,
+            )
+    
+        def to_bf16_tile(t):
+            return ttnn.to_device(
+                ttnn.from_torch(t, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.TILE),
+                device,
+                dram_interleaved,
+            )
+    
+        cache_position = pytorch_input["cache_position"]
+        input_ids = pytorch_input["input_ids"]
+        layers = pytorch_input["past_key_values"].layers
+    
+        # Build activations in the same order as load_activations_for__main():
+        # [0] cache_position, [1] input_ids
+        activations = [to_int32(cache_position), to_int32(input_ids)]
+        # Layer 0: cp, keys, cp, values, cp (extra for attention mask)
+        activations.extend([
+            to_int32(cache_position),
+            to_bf16_tile(layers[0].keys),
+            to_int32(cache_position),
+            to_bf16_tile(layers[0].values),
+            to_int32(cache_position),
+        ])
+        # Layers 1-31: cp, keys, cp, values
+        for layer in layers[1:]:
+            activations.extend([
+                to_int32(cache_position),
+                to_bf16_tile(layer.keys),
+                to_int32(cache_position),
+                to_bf16_tile(layer.values),
+            ])
+    
+        model = ModelTTNN(device)
+        outputs = model(activations)
+    
+        ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+        ttnn_output = ttnn_output[:, -1, :]
+    
+        golden_output = model_pt.run_pytorch_model()
+    
+        pcc = calculate_pcc(ttnn_output, golden_output)
+        print(f"\nPCC: {pcc:.6f}")
+        assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+    
+        batch_size = model_pt.BATCH_SIZE
+        num_runs = 3
+        print(f"\nPerformance ({num_runs} runs, batch_size={batch_size}):")
+        for i in range(num_runs):
+            start = time.perf_counter()
+>           model(activations)
+
+main.py:1400: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+model_ttnn.py:11: in __call__
+    return self.forward(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+model_ttnn.py:156: in forward
+    ttnn_typecast_548 = ttnn.typecast(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = FastOperation(python_fully_qualified_name='ttnn.typecast', function=<ttnn._ttnn.operations.copy.typecast_t object at 0...<function default_postprocess_golden_function_outputs at 0x7eedecc0c680>, is_cpp_operation=True, is_experimental=False)
+function_args = (ttnn.Tensor(<buffer is not allocated>, shape=Shape([32, 1]), dtype=DataType::INT32, layout=Layout::ROW_MAJOR), DataType.UINT32)
+function_kwargs = {'memory_config': MemoryConfig(memory_layout=TensorMemoryLayout::INTERLEAVED,buffer_type=BufferType::DRAM,shard_spec=std::nullopt,nd_shard_spec=std::nullopt,created_with_nd_shard_spec=0)}
+cq_id = None, recording = False
+
+    def __call__(self, *function_args, **function_kwargs):
+        cq_id = None
+        if "queue_id" in function_kwargs:
+            cq_id = function_kwargs.pop("queue_id")
+        elif "cq_id" in function_kwargs:
+            cq_id = function_kwargs.pop("cq_id")
+    
+        recording = ttnn.graph.is_python_io_recording_enabled()
+        if recording:
+            ttnn.graph.track_function_start(self.python_fully_qualified_name)
+            ttnn.graph.record_python_operation(self.python_fully_qualified_name, function_args, function_kwargs)
+            input_tensors = get_all_tensors((function_args, function_kwargs))
+            set_tensor_id(input_tensors)
+    
+        try:
+            if cq_id is None:
+>               result = self.function(*function_args, **function_kwargs)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               RuntimeError: TT_THROW @ /localdev/svuckovic/_workspace/repos/project-alchemy/tt-metal/ttnn/core/tensor/storage.cpp:162: tt::exception
+E               info:
+E               Tensor is not allocated
+E               backtrace:
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/python_package/ttnn/_original/_ttnn.so(+0x350824) [0x7eee3ab50824]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-metal/build_Release/lib/_ttnncpp.so(+0x7476b0) [0x7eee395476b0]
+E                --- tt::tt_metal::Tensor::buffer() const
+E                --- ttnn::prim::TypecastDeviceOperation::validate_on_program_cache_miss(ttnn::prim::TypecastParams const&, ttnn::prim::TypecastInputs const&)
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-metal/build_Release/lib/_ttnncpp.so(_ZN4ttnn16device_operation6detail29handle_mesh_adapter_cache_hitITkNS0_36DeviceOperationWithMeshDeviceAdapterENS0_26MeshDeviceOperationAdapterINS_4prim23TypecastDeviceOperationEEEEEvRKNT_22operation_attributes_tERKNS7_13tensor_args_tERNS7_21tensor_return_value_tEPN2tt8tt_metal11distributed10MeshDeviceERNSH_13program_cache6detail12ProgramCacheEm+0x29) [0x7eee3a62de59]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-metal/build_Release/lib/_ttnncpp.so(_ZN4ttnn16device_operation6detail29launch_operation_with_adapterITkNS0_36DeviceOperationWithMeshDeviceAdapterENS0_26MeshDeviceOperationAdapterINS_4prim23TypecastDeviceOperationEEEEEvRKNT_22operation_attributes_tERKNS7_13tensor_args_tERNS7_21tensor_return_value_tEPN2tt8tt_metal11distributed10MeshDeviceE+0x17d) [0x7eee3a62d0ad]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-metal/build_Release/lib/_ttnncpp.so(_ZN4ttnn16device_operation6detail6launchITkNS0_22DeviceOperationConceptENS_4prim23TypecastDeviceOperationEEENT_21tensor_return_value_tERKNS5_22operation_attributes_tERKNS5_13tensor_args_tE+0x3a2) [0x7eee3a62c5a2]
+E                --- ttnn::prim::typecast(tt::tt_metal::Tensor const&, tt::tt_metal::DataType, tt::tt_metal::MemoryConfig const&, bool, bool, bool, std::optional<tt::tt_metal::Tensor> const&, std::optional<tt::tt_metal::CoreRangeSet> const&)
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-metal/build_Release/lib/_ttnncpp.so(+0x181dd4b) [0x7eee3a61dd4b]
+E                --- ttnn::typecast(tt::tt_metal::Tensor const&, tt::tt_metal::DataType const&, std::optional<tt::tt_metal::MemoryConfig> const&, std::optional<tt::tt_metal::Tensor> const&, std::optional<tt::tt_metal::CoreRangeSet> const&)
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/python_package/ttnn/_original/_ttnn.so(+0x33409e) [0x7eee3ab3409e]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/python_package/ttnn/_original/_ttnn.so(+0x2945f5) [0x7eee3aa945f5]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x3ab) [0x54adeb]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(PyObject_Call+0x9c) [0x54b45c]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0x4c32) [0x5db532]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x54cded]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0x4c32) [0x5db532]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0xc2) [0x54ab02]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x75) [0x5492b5]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(PyObject_Call+0x9c) [0x54b45c]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0x4c32) [0x5db532]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_Call_Prepend+0x18a) [0x54abca]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x5a37f8]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyObject_MakeTpCall+0x13e) [0x54937e]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyEval_EvalFrameDefault+0xa89) [0x5d7389]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(PyEval_EvalCode+0x15b) [0x5d58bb]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x608b52]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3() [0x6b5263]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyRun_SimpleFileObject+0x1aa) [0x6b4fca]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_PyRun_AnyFileObject+0x4f) [0x6b4dff]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(Py_RunMain+0x3b5) [0x6bce65]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(Py_BytesMain+0x2d) [0x6bc94d]
+E                --- /lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca) [0x7eee65db01ca]
+E                --- /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b) [0x7eee65db028b]
+E                --- /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/bin/python3(_start+0x25) [0x657b05]
+
+../../../../../tt-xla/python_package/ttnn/_original/decorators.py:473: RuntimeError
+=============================== warnings summary ===============================
+../../../../../tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: 14 warnings
+  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - RuntimeError: TT_THROW @ /localdev/svuckovic/_wor...
+================== 1 failed, 16 warnings in 110.69s (0:01:50) ==================
+2026-07-02 18:20:22.798 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 32907.59it/s]
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 31882.93it/s]
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 32984.07it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0x2b3cb9c0 of type "ttnn._ttnn.operations.embedding.embedding_t"
+ - leaked instance 0x2b498480 of type "ttnn._ttnn.operations.complex_unary.polar_t"
+ - leaked instance 0x2b606be0 of type "ttnn._ttnn.operations.generic.generic_op_t"
+ - leaked instance 0x2b45b100 of type "ttnn._ttnn.operations.unary_backward.multigammaln_bw_t"
+ - leaked instance 0x2b475920 of type "ttnn._ttnn.operations.unary_backward.cosh_bw_t"
+ - leaked instance 0x28c676c0 of type "ttnn._ttnn.operations.binary.logical_right_shift_t"
+ - leaked instance 0x2b3b9b10 of type "ttnn._ttnn.operations.ccl.all_gather_t"
+ - leaked instance 0x2b45a570 of type "ttnn._ttnn.operations.unary_backward.sqrt_bw_t"
+ - leaked instance 0x2b5f8980 of type "ttnn._ttnn.operations.moreh.moreh_sgd_t"
+ - leaked instance 0x2b3c4450 of type "ttnn._ttnn.operations.creation.ones_t"
+ - leaked instance 0x2b46cda0 of type "ttnn._ttnn.operations.unary_backward.selu_bw_t"
+ - leaked instance 0x2b5f49a0 of type "ttnn._ttnn.operations.moreh.moreh_mean_backward_t"
+ - leaked instance 0x2ac0c420 of type "ttnn._ttnn.operations.unary.cos_t"
+ - leaked instance 0x2aae3e30 of type "ttnn._ttnn.operations.binary.ne_t"
+ - leaked instance 0x2ad082f0 of type "ttnn._ttnn.operations.binary.divide_t"
+ - leaked instance 0x2b45fcf0 of type "ttnn._ttnn.operations.unary_backward.acos_bw_t"
+ - leaked instance 0x2b422e00 of type "ttnn._ttnn.operations.binary.logical_and__t"
+ - leaked instance 0x2b470840 of type "ttnn._ttnn.operations.unary_backward.asinh_bw_t"
+ - leaked instance 0x2b32a020 of type "ttnn._ttnn.operations.unary.reciprocal_t"
+ - leaked instance 0x2b4344e0 of type "ttnn._ttnn.operations.binary.gt__t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function "__init__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step add_perf_logging, as expected
