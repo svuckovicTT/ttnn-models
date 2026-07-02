@@ -1,0 +1,15 @@
+All done. Here's a summary of all changes:
+
+**`utils.py`**: Removed the `DeviceGetter` singleton class and the `math` import. Added a simple `open_device()` function that calls `ttnn.open_mesh_device(mesh_shape=ttnn.MeshShape((1, 1)), l1_small_size=1 << 15)`.
+
+**`main.py`**:
+- All 166 `main_const_eval_*(arg)` functions now take `(device, arg)` (or just `(device)` for the 3 that had no `arg`), with the internal `utils.DeviceGetter.get_device((1, 1))` calls removed — `device` comes from the parameter.
+- `load_activations_for__main()` → `load_activations_for__main(device)` — device passed as parameter.
+- `_main(activations, weights)` → `_main(device, activations, weights)` — pipes device to `consteval__main`.
+- `consteval__main(ce_cache, weights)` → `consteval__main(device, ce_cache, weights)` — pipes device to all `main_const_eval_*` calls.
+- `main()` opens the device via `utils.open_device()` and pipes it to `load_activations_for__main`, `load_weights_for__main_from_state_dict`, and `_main`.
+- `test_main()` opens the device via `utils.open_device()` and pipes it to `load_weights_for__main_from_state_dict` and `_main`.
+
+**`params.py`**: `load_weights_for__main_from_state_dict()` → `load_weights_for__main_from_state_dict(device)` — device passed as parameter. Removed the `import utils` line (no longer needed).
+
+--- Time taken: 325.4s | session: 38abb368-60b3-4794-949c-532ac48cdcd6 ---
