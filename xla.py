@@ -19,7 +19,6 @@ import torch_xla
 import torch_xla.runtime as xr
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.cache_utils import StaticCache
-from tt_torch import codegen_py
 from tt_torch.weight_dtype import apply_weight_dtype_overrides
 
 MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
@@ -132,10 +131,21 @@ def load_input():
 
     cache_position = torch.arange(0, input_ids.shape[1])
 
+    # position_ids is NOT part of construct_inputs() in the benchmark, which runs on the
+    # pinned transformers==5.2.0. This venv has 5.9.0, whose LlamaModel.forward computes
+    #   position_ids = torch.arange(seq_len, device=xla) + past_key_values.get_seq_length()
+    # (modeling_llama.py:394-397) WITHOUT moving the cache's CPU seq-length tensor to the
+    # device, which crashes FakeTensor device propagation during dynamo tracing on TT.
+    # (The mask path handles this via .to(device); the position_ids path does not.) We pass
+    # position_ids explicitly to skip that branch; for a fresh-cache prefill it equals what
+    # the model would compute (arange(seq_len) + 0), so the CPU golden is unchanged.
+    position_ids = cache_position.unsqueeze(0)
+
     return {
         "input_ids": input_ids,
         "past_key_values": past_key_values,
         "cache_position": cache_position,
+        "position_ids": position_ids,
         "use_cache": True,
     }
 
@@ -146,6 +156,7 @@ def _inputs_to_device(inputs, device):
     out = dict(inputs)
     out["input_ids"] = out["input_ids"].to(device)
     out["cache_position"] = out["cache_position"].to(device)
+    out["position_ids"] = out["position_ids"].to(device)
     for layer in out["past_key_values"].layers:
         layer.keys = layer.keys.to(device)
         layer.values = layer.values.to(device)
@@ -189,22 +200,40 @@ def codegen_model():
     os.environ["XLA_HLO_DEBUG"] = "1"
 
     model = load_pytorch_model()
-    # Same overrides as run_tt_model so the codegen graph matches the device run.
-    apply_weight_dtype_overrides(model, WEIGHT_DTYPE_OVERRIDES)
     inputs = load_input()
 
-    codegen_py(
-        model,
-        inputs,
-        export_path=OUTPUT_DIR,
-        export_tensors=True,
-        compiler_options=COMPILE_OPTIONS,
-    )
+    # codegen_py() (tt_torch/codegen.py) only forwards *args/**kwargs that are
+    # torch.Tensor. Our inputs include a StaticCache (past_key_values) and a bool
+    # (use_cache), which its filter would drop — leaving the model with no cache and
+    # no input_ids context (raises "specify exactly one of input_ids or inputs_embeds").
+    # So we inline codegen_py's body but call model(**inputs) directly with the full
+    # dict, moving the cache to device ourselves (as run_tt_model does).
+    real_compile_options = {
+        **COMPILE_OPTIONS,
+        "backend": "codegen_py",
+        "export_path": OUTPUT_DIR,
+        "export_tensors": True,
+    }
+    torch_xla.set_custom_compile_options(real_compile_options)
+
+    device = torch_xla.device()
+    model = model.to(device, dtype=DATA_FORMAT)
+    # Same weight dtype parametrization as run_tt_model so codegen matches the device run.
+    apply_weight_dtype_overrides(model, WEIGHT_DTYPE_OVERRIDES)
+    model.compile(backend="tt", options={"tt_legacy_compile": True})
+    inputs = _inputs_to_device(inputs, device)
+
+    with torch.no_grad():
+        model(**inputs)
+
+    import torch_xla.core.xla_model as xm
+
+    xm.wait_device_ops()
 
 
 def compare_pytorch_and_tt_runs():
     # Capture exact PCC from first --golden run and paste here.
-    exact_pcc = None
+    exact_pcc = 0.9921875
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()

@@ -1,0 +1,6 @@
+2026-07-02 09:47:55.923 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:58<05:54, 118.22s/it]Fetching 4 files:  50%|█████     | 2/4 [01:59<01:38, 49.25s/it] Fetching 4 files: 100%|██████████| 4/4 [01:59<00:00, 29.80s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 22270.64it/s]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 33411.14it/s]
+___STEP1_DONE exit=0 elapsed=129s
