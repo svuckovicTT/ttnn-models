@@ -1,0 +1,158 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/meta-llama/Llama-3.1-8B-Instruct/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 1 item
+
+main.py [cpu] decode logits (32, 128256)
+
+PCC: 0.402344
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        exact_pcc = 0.9921875
+    
+        model = model_pt.load_pytorch_model()
+        pytorch_input = model_pt.load_input(model)
+    
+        device = utils.open_device()
+        dram_interleaved = ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        )
+    
+        def to_int32(t):
+            return ttnn.to_device(
+                ttnn.from_torch(t, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR),
+                device,
+                dram_interleaved,
+            )
+    
+        def to_bf16_tile(t):
+            return ttnn.to_device(
+                ttnn.from_torch(t, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.TILE),
+                device,
+                dram_interleaved,
+            )
+    
+        cache_position = pytorch_input["cache_position"]
+        input_ids = pytorch_input["input_ids"]
+        layers = pytorch_input["past_key_values"].layers
+    
+        # Build activations in the same order as load_activations_for__main():
+        # [0] cache_position, [1] input_ids
+        activations = [to_int32(cache_position), to_int32(input_ids)]
+        # Layer 0: cp, keys, cp, values, cp (extra for attention mask)
+        activations.extend([
+            to_int32(cache_position),
+            to_bf16_tile(layers[0].keys),
+            to_int32(cache_position),
+            to_bf16_tile(layers[0].values),
+            to_int32(cache_position),
+        ])
+        # Layers 1-31: cp, keys, cp, values
+        for layer in layers[1:]:
+            activations.extend([
+                to_int32(cache_position),
+                to_bf16_tile(layer.keys),
+                to_int32(cache_position),
+                to_bf16_tile(layer.values),
+            ])
+    
+        model = ModelTTNN(device)
+        outputs = model(activations)
+    
+        ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+        ttnn_output = ttnn_output[:, -1, :]
+    
+        golden_output = model_pt.run_pytorch_model()
+    
+        pcc = calculate_pcc(ttnn_output, golden_output)
+        print(f"\nPCC: {pcc:.6f}")
+>       assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+E       AssertionError: PCC 0.40234375 does not match expected 0.9921875
+E       assert 0.40234375 == 0.9921875
+
+main.py:1392: AssertionError
+=============================== warnings summary ===============================
+../../../../../tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: 14 warnings
+  /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - AssertionError: PCC 0.40234375 does not match exp...
+================== 1 failed, 16 warnings in 112.08s (0:01:52) ==================
+2026-07-02 16:46:05.256 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 32431.05it/s]
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 32975.16it/s]
+
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 291/291 [00:00<00:00, 30098.95it/s]
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+nanobind: leaked 473 instances!
+ - leaked instance 0xb5fc750 of type "ttnn._ttnn.operations.unary_backward.tan_bw_t"
+ - leaked instance 0xb5198e0 of type "ttnn._ttnn.operations.unary.frac_t"
+ - leaked instance 0xaf99d30 of type "ttnn._ttnn.operations.binary.ne_t"
+ - leaked instance 0xac01b90 of type "ttnn._ttnn.operations.unary.logical_not_t"
+ - leaked instance 0xb5d9fd0 of type "ttnn._ttnn.operations.binary.multiply__t"
+ - leaked instance 0xb5bc100 of type "ttnn._ttnn.operations.binary.isclose_t"
+ - leaked instance 0xb5f1300 of type "ttnn._ttnn.operations.unary_backward.exp_bw_t"
+ - leaked instance 0xb2c6310 of type "ttnn._ttnn.operations.unary.tan_t"
+ - leaked instance 0xb30fc50 of type "ttnn._ttnn.operations.unary.rsqrt_t"
+ - leaked instance 0xb61b240 of type "ttnn._ttnn.operations.binary_backward.add_bw_t"
+ - leaked instance 0xb352e60 of type "ttnn._ttnn.operations.unary.log1p_t"
+ - leaked instance 0xb5be8e0 of type "ttnn._ttnn.operations.binary.lcm_t"
+ - leaked instance 0xb6c68b0 of type "ttnn._ttnn.operations.pool.grid_sample_t"
+ - leaked instance 0xb0c54e0 of type "ttnn._ttnn.operations.unary.rdiv_t"
+ - leaked instance 0xb5f0400 of type "ttnn._ttnn.operations.unary_backward.gelu_bw_t"
+ - leaked instance 0xad65f20 of type "ttnn._ttnn.operations.unary.hardtanh_t"
+ - leaked instance 0xb5e56d0 of type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked instance 0xb6fd610 of type "ttnn._ttnn.operations.reduction.min_t"
+ - leaked instance 0xb605120 of type "ttnn._ttnn.operations.unary_backward.selu_bw_t"
+ - leaked instance 0xb5b7900 of type "ttnn._ttnn.operations.binary.logical_xor_t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2337 functions!
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step simplify_consteval, as expected
