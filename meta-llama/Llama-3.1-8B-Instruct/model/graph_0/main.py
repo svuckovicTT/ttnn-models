@@ -3,8 +3,7 @@ import utils
 import torch
 import model_pt
 from utils import calculate_pcc
-from params import load_weights_for__main_from_state_dict
-from model_ttnn import _main
+from model_ttnn import ModelTTNN
 
 
 
@@ -1325,9 +1324,9 @@ def load_activations_for__main(device):
 
 def main():
     device = utils.open_device()
-    load_activations_for__main_0 = load_activations_for__main(device)
-    load_weights_for__main_0 = load_weights_for__main_from_state_dict(device)
-    _main_0 = _main(device, load_activations_for__main_0, load_weights_for__main_0)
+    model = ModelTTNN(device)
+    activations = load_activations_for__main(device)
+    model(activations)
     return 0
 
 
@@ -1380,8 +1379,8 @@ def test_main():
             to_bf16_tile(layer.values),
         ])
 
-    weights = load_weights_for__main_from_state_dict(device)
-    outputs = _main(device, activations, weights)
+    model = ModelTTNN(device)
+    outputs = model(activations)
 
     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
     ttnn_output = ttnn_output[:, -1, :]
