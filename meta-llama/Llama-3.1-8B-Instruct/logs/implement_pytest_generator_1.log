@@ -1,0 +1,9 @@
+Implemented `test_main()` in `main.py`:
+
+- **`exact_pcc = 0.9921875`** — matches the value from `xla.py` line 262
+- **TTNN path**: loads activations via `load_activations_for__main()` (pre-saved tensors from the codegen run), loads weights via `load_weights_for__main()`, runs `_main()`, extracts the logits output (`outputs[-2]`, shape [32, 128256]) and converts to torch via `ttnn.to_torch(ttnn.from_device(...))`
+- **Golden path**: calls `model_pt.run_pytorch_model()` which loads the model, runs CPU prefill, then decode, returning `logits[:, -1]` (shape [32, 128256])
+- **Comparison**: uses `calculate_pcc()` from utils and asserts exact PCC match
+- Added `import model_pt` to the imports
+
+--- Time taken: 195.7s | session: af9f939a-fdf8-4136-bd9a-0e15cd66b012 ---
