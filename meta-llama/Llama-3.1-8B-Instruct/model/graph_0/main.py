@@ -1,4 +1,3 @@
-import time
 import ttnn
 import utils
 import torch
@@ -1333,7 +1332,6 @@ def main():
 
 def test_main():
     exact_pcc = 0.9921875
-    batch_size = model_pt.BATCH_SIZE
 
     model = model_pt.load_pytorch_model()
     pytorch_input = model_pt.load_input(model)
@@ -1381,16 +1379,8 @@ def test_main():
             to_bf16_tile(layer.values),
         ])
 
-    ttnn_model = ModelTTNN(device)
-
-    for i in range(3):
-        start = time.perf_counter()
-        outputs = ttnn_model(activations)
-        ttnn.synchronize_device(device)
-        end = time.perf_counter()
-        elapsed = end - start
-        tps = batch_size / elapsed
-        print(f"Run {i}: time={elapsed:.4f}s, TPS={tps:.2f}")
+    model = ModelTTNN(device)
+    outputs = model(activations)
 
     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
     ttnn_output = ttnn_output[:, -1, :]
