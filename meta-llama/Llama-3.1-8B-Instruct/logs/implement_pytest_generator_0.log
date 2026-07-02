@@ -1,0 +1,10 @@
+Done. Here's what `test_main()` now does:
+
+1. **`exact_pcc = 0.9921875`** — from `xla.py`'s `compare_pytorch_and_tt_runs()`
+2. **Loads TTNN activations and weights** via `load_activations_for__main()` and `load_weights_for__main()` (the saved tensors from codegen capture the exact decode-step state including populated KV caches)
+3. **Runs `_main()`** to get TTNN outputs — `outputs[-2]` is the logits tensor with shape `[32, 128256]` (the lm_head matmul output on DRAM)
+4. **Converts TTNN output to torch** via `ttnn.from_device()` + `ttnn.to_torch()`, cast to `bfloat16`
+5. **Gets golden output** via `model_pt.run_pytorch_model()` which does CPU prefill + decode, returning logits `[32, 128256]`
+6. **Compares PCC** using `calculate_pcc()` and asserts exact match
+
+--- Time taken: 228.1s | session: 441d469c-7b74-4775-a054-1aecc5fc4ad0 ---
