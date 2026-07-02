@@ -1,0 +1,18 @@
+Both files look correct. Here's a summary of what was done:
+
+**`main.py`** — Rewrote `test_main()` to use metal trace with persistent DRAM inputs:
+
+1. **Host tensors**: Build TTNN tensors on host (not device) using `ttnn.from_torch()` — same order/dtypes/layouts as the original `build_activations()`.
+2. **Persistent device buffers**: Allocate via `ttnn.allocate_tensor_on_device()` matching each host tensor's shape/dtype/layout.
+3. **`copy_inputs()`**: Copies all host tensors to their persistent device buffers using `ttnn.copy_host_to_device_tensor()`.
+4. **Run 1 (Compile)**: Copy inputs → run model → sync. PCC check follows.
+5. **Run 2 (Trace capture)**: Copy inputs → `begin_trace_capture` → run model → `end_trace_capture` → sync.
+6. **Runs 3–5 (Trace execution)**: Copy inputs → `execute_trace(blocking=False)` → `outputs[-1].cpu(blocking=False)` → sync. All 5 runs are timed and logged.
+
+**`model_ttnn.py`** — Removed 9 `ttnn.deallocate()` calls on input activation tensors so they survive across trace replays:
+- `input_ids` (line 56), `args_1`/cache_position (line 433), `activation_2`/attn_mask_scalar (line 735)
+- `activation_0`/key_cache_idx[0] (line 622), `activation_1`/value_cache_idx[0] (line 665)
+- `activation_63`/key_cache_idx[31] (line 1146), `activation_64`/value_cache_idx[31] (line 1189)
+- `activation_3`/key_cache_idx[1-30] (line 1570), `activation_4`/value_cache_idx[1-30] (line 1613)
+
+--- Time taken: 338.6s | session: c866ebd9-1acf-4b2e-bc29-ac91c087be15 ---

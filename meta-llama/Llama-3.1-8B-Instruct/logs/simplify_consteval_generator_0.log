@@ -1,0 +1,19 @@
+Summary of changes:
+
+**`consteval.py` (new file)**: Contains deduplicated consteval operations:
+- `_transpose_weight()` — CPU-side weight transpose (replaces 4 identical `cpu_hoisted_const_eval_*` functions)
+- `_transpose_concat_qkv()` — CPU-side QKV transpose+concat (replaces `cpu_hoisted_const_eval_a07936ce`)
+- `_to_device_bf8b()` — transpose + tile + cast to BFLOAT8_B on device (replaces 65 identical functions)
+- `_to_device_bf4b()` — transpose + tile + cast to BFLOAT4_B on device (replaces 64 identical functions)
+- `_concat_qkv_to_device_bf8b()` — QKV concat + tile + cast to BFLOAT8_B (replaces 31 functions)
+- `_concat_qkv_reorder_to_device_bf8b()` — same but with slice+reorder for layer 31 (replaces 1 function)
+- `_reshape_inv_freq()` — reshape rotary embedding frequencies (replaces 1 function)
+- `run_consteval(weights, device)` — single entry point that transforms all weights in a loop over 32 layers, plus embed_tokens, lm_head, rotary_emb, and 3 constant tensors. Uses descriptive new keys like `"model.layers.N.self_attn.qkv_proj.parametrizations.weight.original"`, `"attention.neg_inf_scalar"`, `"attention.position_ids"`, `"attention.zero_scalar"`.
+
+**`model_ttnn.py`**: 
+- Removed all 166 `main_const_eval_*` functions, 5 `cpu_hoisted_const_eval_*` functions, and `consteval__main` (~28k lines eliminated)
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` 
+- Forward function references updated from `ce_cache__main["main_const_eval_N"]` to proper `weights["..."]` keys
+- Removed `ttir_cpu` import, added `consteval` import
+
+--- Time taken: 709.4s | session: b134f928-cbc5-4e81-8835-1d22c332ddfc ---

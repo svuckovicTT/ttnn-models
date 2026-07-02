@@ -1,0 +1,8 @@
+The changes add perf logging to `test_main`:
+
+- Imports `time` at the top
+- Defines `BATCH_SIZE` (32 from model_pt), `NUM_TOKENS_PER_SAMPLE` (1, since this is a decode step), and `NUM_PERF_RUNS` (3)
+- After the PCC assertion passes, runs the model 3 more times, each time calling `ttnn.synchronize_device(device)` before capturing the end time
+- Logs elapsed time with 4 decimal places and TPS (tokens per second = batch_size × tokens_per_sample / elapsed) with 2 decimal places
+
+--- Time taken: 50.8s | session: 0acff4db-15ac-4152-b3a5-818d6cbd8a3a ---

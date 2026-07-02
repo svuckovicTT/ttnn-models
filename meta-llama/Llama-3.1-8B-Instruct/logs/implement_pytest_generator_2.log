@@ -1,0 +1,9 @@
+Done. The `test_main()` implementation:
+
+1. Loads activations and weights using the existing `load_activations_for__main()` and `load_weights_for__main()` functions
+2. Runs the TTNN forward pass via `_main()`
+3. Extracts the last output (the reshaped logits with shape `[32, 1, 128256]`), moves it off-device, converts to torch float32, and reshapes to `[32, 128256]`
+4. Gets the golden PyTorch output via `model_pt.run_pytorch_model()` (which returns `logits[:, -1]` with shape `[32, 128256]`)
+5. Compares PCC using `calculate_pcc()` against `exact_pcc = 0.9921875` (from `xla.py`)
+
+--- Time taken: 98.8s | session: ce08de4f-777d-4dc1-ad53-21d6e6a043e7 ---

@@ -1,0 +1,14 @@
+Everything is consistent. Here's a summary of the changes:
+
+**`model_ttnn.py`**:
+- Added `import params` and `LightweightModule` base class
+- Replaced the module-level `ce_cache__main = {}` and standalone `_main(device, activations, weights)` function with a `ModelTTNN(LightweightModule)` class
+- `__init__` takes `device`, saves it as `self.device`, loads weights via `params.load_weights_for__main_from_state_dict(device)` into `self.weights`, and initializes `self.ce_cache = {}`
+- `forward(self, activations)` contains the same logic as the old `_main`, using `self.device`, `self.weights`, and `self.ce_cache` via local aliases for seamless compatibility with the existing 21k lines of TTNN ops
+
+**`main.py`**:
+- Changed import from `from model_ttnn import _main` to `from model_ttnn import ModelTTNN`
+- Removed `from params import load_weights_for__main_from_state_dict` (no longer needed here)
+- Both `main()` and `test_main()` now instantiate `ModelTTNN(device)` and call it with just activations
+
+--- Time taken: 189.0s | session: 1e723b10-363a-4839-9e68-fad1bac50213 ---

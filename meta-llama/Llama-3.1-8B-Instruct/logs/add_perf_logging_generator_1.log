@@ -1,0 +1,3 @@
+Added perf logging to `test_main`: after the PCC check, runs the model 3 more times, each measured with `time.perf_counter()` and `ttnn.synchronize_device(device)` for accurate timing, logging elapsed time (4 decimal places) and TPS (2 decimal places) per run.
+
+--- Time taken: 43.2s | session: e7880d6f-96b6-4dc2-9c3f-be95d0a12fb7 ---

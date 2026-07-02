@@ -1,0 +1,14 @@
+The implementation is complete. Here's what I did:
+
+1. **Added `import model_pt`** to the imports (line 5)
+2. **Implemented `test_main()`** (lines 33604-33619) which:
+   - Sets `exact_pcc = 0.9921875` from `xla.py`
+   - Loads activations via `load_activations_for__main()` and weights via `load_weights_for__main()`
+   - Runs the TTNN forward pass with `_main(activations, weights)`
+   - Extracts the logits output (last element, shape `[32, 1, 128256]`), converts to torch via `ttnn.to_torch(ttnn.from_device(...))`
+   - Gets the golden reference from `model_pt.run_pytorch_model()` (shape `[32, 128256]`)
+   - Reshapes the TTNN output to match the golden shape
+   - Computes PCC using `calculate_pcc()` from `utils.py`
+   - Prints PCC to 6 decimal places and asserts equality with `exact_pcc`
+
+--- Time taken: 247.3s | session: 4e99b2e5-c521-4153-8a1a-6e34361f4b06 ---

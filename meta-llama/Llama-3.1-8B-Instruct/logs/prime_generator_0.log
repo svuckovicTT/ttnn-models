@@ -1,0 +1,55 @@
+I now have a thorough understanding of the codegen. Here's the summary:
+
+---
+
+## Codegen Summary: Llama 3.1 8B Instruct (Decode-Only)
+
+### Files in `graph_0/`
+
+| File | Lines | Role |
+|------|-------|------|
+| `main.py` | 33,571 | **The entire model** — all ops, weight loading, activation loading, entry point |
+| `utils.py` | 83 | Device singleton (`DeviceGetter`), tensor loading, and a `create_global_semaphore` helper |
+| `ttir_cpu.py` | 908 | CPU-side op implementations (torch-based), used by `cpu_hoisted_const_eval_*` helpers |
+| `__init__.py` | 4 | Empty (license header) |
+
+Siblings: `xla.py` (304 lines, the decode-only XLA reference that generated this) and `patch_nlp_concat_heads_decode.py` (a post-codegen patch for `sub_core_grids`).
+
+### Overall Structure of `main.py`
+
+Everything lives in one monolithic 33.5k-line file with these sections:
+
+1. **`main_const_eval_0` through `main_const_eval_165`** (lines 7–6863): ~166 functions that pre-process weights into device-ready constant tensors. They perform typecast, permute (via CPU-hoisted helpers), layout conversion, and to-device transfers. Three patterns:
+   - **Single-weight transpose**: typecast → `cpu_hoisted_const_eval_*` (permute [1,0]) → bf16/bf8_b/bf4_b → tile → to_device (most common, ~130 of them)
+   - **QKV fuse**: takes 3 weights (k/q/v), concatenates them via `cpu_hoisted_const_eval_a07936ce` → slices to reorder → bf8_b (one per layer's attention, ~32 of them)
+   - **Special**: `main_const_eval_88` creates a `-inf` scalar, `main_const_eval_107` creates a 0..127 iota tensor, `main_const_eval_143` creates a `0.0` scalar, `main_const_eval_127` reshapes `inv_freq`
+
+2. **`_main(activations, weights)`** (lines 6864–28081): The **forward pass** — a single monolithic function, ~21,200 lines. Contains:
+   - 131 activation unpacking statements (lines 6867–6997)
+   - Embedding lookup → **32 transformer layers** → final RMS norm → lm_head matmul
+   - Each layer follows: `rms_norm` → `matmul` (QKV fused) → `split_query_key_value_and_split_heads` → `rotary_embedding` (for K and Q separately) → `paged_update_cache` (K and V) → `scaled_dot_product_attention_decode` → `nlp_concat_heads_decode` → `matmul` (o_proj) → residual add → `rms_norm` → `matmul` (gate_proj) → `silu` → `multiply` with up_proj result → `matmul` (down_proj) → residual add
+   - Every `ttnn.*` call includes explicit `memory_config` with shard specs, deallocations after each use
+   - Returns a list of 66 updated KV cache tensors + 2 logit tensors
+
+3. **`consteval__main(ce_cache, weights)`** (lines 28083–29192): Calls all 166 `main_const_eval_*` functions once, caching results in `ce_cache` dict keyed by function name.
+
+4. **`load_activations_for__main()`** (lines 29194–30512): Loads 131 activation tensors from `./tensors/arg*.tensorbin` files (token IDs, KV cache tensors, position indices, causal mask scalars).
+
+5. **`load_weights_for__main()`** (lines 30513–33560): Loads ~260 weight tensors into `_main_weights` dict, keyed by `model.layers.N.*` names.
+
+6. **`main()`** (lines 33563–33571): Entry point — calls load_activations → load_weights → `_main`.
+
+### Key Auto-Generated / Messy Characteristics
+
+- **Extreme verbosity**: every `ttnn.*` call has fully spelled-out `MemoryConfig` with inline `ShardSpec`, `CoreRangeSet`, `CoreRange`, `CoreCoord` — these are massive and highly repetitive
+- **Numbered variable names**: `ttnn_matmul_0` through `ttnn_matmul_161`, `ttnn_to_memory_config_0` through `_457`, etc. — no semantic naming
+- **No layer abstraction**: 32 identical transformer layers are inlined sequentially with no loop or function extraction
+- **Redundant device getter calls**: `utils.DeviceGetter.get_device((1, 1))` is called with a fresh local variable in every single `main_const_eval_*` function
+- **Redundant memory config objects**: the same `MemoryConfig(INTERLEAVED, DRAM, None)` pattern appears hundreds of times
+- **The const-eval functions are highly repetitive**: ~130 of the 166 follow the exact same transpose→typecast→tile→device pattern, differing only in the target dtype (bf8_b vs bf4_b)
+- **CPU-hoisted helpers with hash names**: `cpu_hoisted_const_eval_55172ee5`, `_845b58b8`, `_4a4b48dc`, `_a07936ce`, `_c52acb16`, `_9f9d8053` — opaque hex identifiers
+- **Activation unpacking**: 131 lines of `args_N = activations[2*N]` / `activation_N = activations[2*N+1]` with no structure
+- **Global mutable state**: `ce_cache__main` is a module-level `dict` mutated via `global` declaration
+- **No `model_ttnn.py`**: everything is in `main.py`
+
+--- Time taken: 119.8s | session: cc064136-4a8e-471b-99ca-833482dc4da8 ---

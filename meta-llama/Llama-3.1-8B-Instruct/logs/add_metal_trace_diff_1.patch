@@ -1,0 +1,216 @@
+diff --git a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
+index d787f51..7c520ba 100644
+--- a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
++++ b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
+@@ -23,51 +23,63 @@ def test_main():
+         ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+     )
+ 
+-    def to_int32(t):
+-        return ttnn.to_device(
+-            ttnn.from_torch(t, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR),
+-            device,
+-            dram_interleaved,
+-        )
++    def to_int32_host(t):
++        return ttnn.from_torch(t, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR)
+ 
+-    def to_bf16_tile(t):
+-        return ttnn.to_device(
+-            ttnn.from_torch(t, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.TILE),
+-            device,
+-            dram_interleaved,
+-        )
++    def to_bf16_tile_host(t):
++        return ttnn.from_torch(t, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.TILE)
+ 
+     cache_position = pytorch_input["cache_position"]
+     input_ids = pytorch_input["input_ids"]
+     layers = pytorch_input["past_key_values"].layers
+ 
+-    # forward() consumes (deallocates) its input tensors and mutates the KV
+-    # cache tensors in place, so every invocation needs a freshly built set of
+-    # device tensors. Rebuild them here rather than reusing one shared list.
+-    def build_activations():
+-        # Same order as load_activations_for__main():
+-        # [0] cache_position, [1] input_ids
+-        activations = [to_int32(cache_position), to_int32(input_ids)]
+-        # Layer 0: cp, keys, cp, values, cp (extra for attention mask)
+-        activations.extend([
+-            to_int32(cache_position),
+-            to_bf16_tile(layers[0].keys),
+-            to_int32(cache_position),
+-            to_bf16_tile(layers[0].values),
+-            to_int32(cache_position),
++    # Build host-side tensors (not on device) for copy_host_to_device_tensor.
++    def build_host_activations():
++        host = [to_int32_host(cache_position), to_int32_host(input_ids)]
++        host.extend([
++            to_int32_host(cache_position),
++            to_bf16_tile_host(layers[0].keys),
++            to_int32_host(cache_position),
++            to_bf16_tile_host(layers[0].values),
++            to_int32_host(cache_position),
+         ])
+-        # Layers 1-31: cp, keys, cp, values
+         for layer in layers[1:]:
+-            activations.extend([
+-                to_int32(cache_position),
+-                to_bf16_tile(layer.keys),
+-                to_int32(cache_position),
+-                to_bf16_tile(layer.values),
++            host.extend([
++                to_int32_host(cache_position),
++                to_bf16_tile_host(layer.keys),
++                to_int32_host(cache_position),
++                to_bf16_tile_host(layer.values),
+             ])
+-        return activations
++        return host
++
++    host_activations = build_host_activations()
++
++    # Allocate persistent DRAM tensors that survive across trace runs.
++    device_activations = [
++        ttnn.allocate_tensor_on_device(
++            h.shape, h.dtype, h.layout, device, dram_interleaved
++        )
++        for h in host_activations
++    ]
++
++    def copy_inputs():
++        for h, d in zip(host_activations, device_activations):
++            ttnn.copy_host_to_device_tensor(h, d, cq_id=0)
+ 
+     ttnn_model = ModelTTNN(device)
+-    outputs = ttnn_model(build_activations())
++
++    tokens_per_run = BATCH_SIZE * NUM_TOKENS_PER_SAMPLE
++    print(f"\nPerf measurement (5 runs: 1 compile + 1 trace capture + {NUM_PERF_RUNS} trace execute):")
++
++    # Run 1: compile run — populates program cache.
++    copy_inputs()
++    start = time.perf_counter()
++    outputs = ttnn_model(device_activations)
++    ttnn.synchronize_device(device)
++    end = time.perf_counter()
++    elapsed = end - start
++    tps = tokens_per_run / elapsed
++    print(f"  Run 1 (compile): {elapsed:.4f}s, {tps:.2f} TPS")
+ 
+     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
+     ttnn_output = ttnn_output[:, -1, :]
+@@ -78,19 +90,30 @@ def test_main():
+     print(f"\nPCC: {pcc:.6f}")
+     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+ 
+-    tokens_per_run = BATCH_SIZE * NUM_TOKENS_PER_SAMPLE
+-    print(f"\nPerf measurement ({NUM_PERF_RUNS} runs):")
++    # Run 2: trace capture.
++    copy_inputs()
++    start = time.perf_counter()
++    tid = ttnn.begin_trace_capture(device, cq_id=0)
++    trace_outputs = ttnn_model(device_activations)
++    ttnn.end_trace_capture(device, tid, cq_id=0)
++    ttnn.synchronize_device(device)
++    end = time.perf_counter()
++    elapsed = end - start
++    tps = tokens_per_run / elapsed
++    print(f"  Run 2 (trace capture): {elapsed:.4f}s, {tps:.2f} TPS")
++
++    # Runs 3-5: trace execute.
+     for i in range(NUM_PERF_RUNS):
+-        # Build fresh activations outside the timed region — forward() frees
+-        # its inputs, so reusing the same tensors across runs would fault.
+-        run_activations = build_activations()
++        copy_inputs()
+         start = time.perf_counter()
+-        ttnn_model(run_activations)
++        ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
+         ttnn.synchronize_device(device)
+         end = time.perf_counter()
+         elapsed = end - start
+         tps = tokens_per_run / elapsed
+-        print(f"  Run {i + 1}: {elapsed:.4f}s, {tps:.2f} TPS")
++        print(f"  Run {i + 3} (trace execute): {elapsed:.4f}s, {tps:.2f} TPS")
++
++    ttnn.release_trace(device, tid)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/model_ttnn.py b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/model_ttnn.py
+index e1b4491..5ada7fe 100644
+--- a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/model_ttnn.py
++++ b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/model_ttnn.py
+@@ -53,7 +53,6 @@ class ModelTTNN(LightweightModule):
+                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+             ),
+         )
+-        ttnn.deallocate(input_ids, False)
+         ttnn_reshape_0 = ttnn.reshape(
+             ttnn_typecast_548,
+             [32],
+@@ -430,7 +429,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(args_1, False)
+             ttnn_reshape_2 = ttnn.reshape(
+                 ttnn_typecast_549,
+                 [1, 1, 1],
+@@ -619,7 +617,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(activation_0, False)
+             ttnn_to_memory_config_8 = ttnn.to_memory_config(
+                 ttnn_reshape_4,
+                 ttnn.MemoryConfig(
+@@ -662,7 +659,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(activation_1, False)
+             ttnn_to_memory_config_9 = ttnn.to_memory_config(
+                 ttnn_reshape_5,
+                 ttnn.MemoryConfig(
+@@ -732,7 +728,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(activation_2, False)
+             ttnn_to_memory_config_12 = ttnn.to_memory_config(
+                 weights["arange_128"],
+                 ttnn.MemoryConfig(
+@@ -1143,7 +1138,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(activation_63, False)
+             ttnn_to_memory_config_445 = ttnn.to_memory_config(
+                 ttnn_reshape_160,
+                 ttnn.MemoryConfig(
+@@ -1186,7 +1180,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(activation_64, False)
+             ttnn_to_memory_config_446 = ttnn.to_memory_config(
+                 ttnn_reshape_161,
+                 ttnn.MemoryConfig(
+@@ -1567,7 +1560,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(activation_3, False)
+             ttnn_to_memory_config_25 = ttnn.to_memory_config(
+                 ttnn_reshape_10,
+                 ttnn.MemoryConfig(
+@@ -1610,7 +1602,6 @@ class LlamaAttention(LightweightModule):
+                     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+                 ),
+             )
+-            ttnn.deallocate(activation_4, False)
+             ttnn_to_memory_config_26 = ttnn.to_memory_config(
+                 ttnn_reshape_11,
+                 ttnn.MemoryConfig(

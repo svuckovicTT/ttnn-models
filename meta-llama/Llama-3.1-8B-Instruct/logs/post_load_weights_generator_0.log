@@ -1,0 +1,9 @@
+All clean. Summary of changes:
+
+1. **`params.py`**: Deleted the `_main_weights` global and the entire `load_weights_for__main()` function (~3,047 lines). The file now only contains the `LAYERNORM_WEIGHTS` set, `ALL_WEIGHTS` list, and the `load_weights_for__main_from_state_dict()` function (405 lines total).
+
+2. **`main.py`**: Updated the import and both call sites from `load_weights_for__main` to `load_weights_for__main_from_state_dict`.
+
+3. **`verify_weights.py`**: Deleted.
+
+--- Time taken: 147.0s | session: b3236726-9a80-45a7-804e-05c2e380e129 ---

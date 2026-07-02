@@ -1,0 +1,12 @@
+All three files are in place. Here's a summary of what was done:
+
+1. **`params.py`** (new, 3450 lines): Contains the original `load_weights_for__main()` function moved verbatim from `main.py`, plus:
+   - `LAYERNORM_WEIGHTS` set (65 entries) — the layernorm/norm weights that go on-device with TILE layout
+   - `ALL_WEIGHTS` list (292 entries) — all weight keys
+   - `load_weights_for__main_from_state_dict()` — loads weights from PyTorch `state_dict` using `ttnn.from_torch()`, applying TILE layout + device placement for layernorm weights, ROW_MAJOR for everything else, all BFLOAT16
+
+2. **`main.py`** (updated): Removed `_main_weights = {}` global and `load_weights_for__main()` definition (~3052 lines); added `from params import load_weights_for__main` import
+
+3. **`verify_weights.py`** (new): Single `test_verify_weights()` pytest function that loads weights both ways, asserts key sets match, compares tensor values element-wise, and reports mismatches
+
+--- Time taken: 269.3s | session: f5e7d06f-f1c6-41a9-8d7c-3268e0b254c2 ---

@@ -1,0 +1,21 @@
+The modularization is complete. Here's a summary of the changes to `model_ttnn.py`:
+
+**Structure mirrors the PyTorch `LlamaForCausalLM`:**
+
+- **`LightweightModule`** — base class with `__call__` → `forward` pattern
+- **`LlamaDecoderLayer_0`** through **`LlamaDecoderLayer_31`** — each wraps one transformer layer's full attention + MLP pipeline
+  - `__init__(self, device, weights)` — stores device and weights references
+  - `forward(self, hidden_states, ...)` — executes that layer's attention (RMS norm → QKV projection → rotary embedding → KV cache scatter → SDPA → o_proj → residual add) and MLP (RMS norm → gate/up proj with fused SiLU → multiply → down_proj → residual add)
+  - Layer 0 is special: it computes the rotary cos/sin embeddings and returns them alongside the hidden states
+  - Layers 1-31 receive the shared rotary embeddings as parameters
+
+- **`ModelTTNN`** — top-level model class (stays at top conceptually, placed after layer definitions for name resolution)
+  - `__init__` — loads weights, runs consteval, instantiates all 32 decoder layers
+  - `forward` — unpacks activations, runs embedding, calls each `self.layers[i](...)` in sequence, then runs final RMS norm + lm_head matmul
+
+**Key design decisions:**
+- Variable renaming at module boundaries: `ttnn_embedding_0` / `ttnn_add_N` → `hidden_states` as the layer input; `args_N` / `activation_N` → `cache_position`, `keys`, `values` etc. for layer parameters
+- Shared rotary embeddings (`cos`, `sin`, `repeat_interleave`) computed once in layer 0, threaded through all subsequent layers
+- All TTNN ops preserved exactly as-is within each module (sharding configs, program configs, deallocates)
+
+--- Time taken: 460.7s | session: 79321907-2275-4aa2-89cb-de1d16622181 ---

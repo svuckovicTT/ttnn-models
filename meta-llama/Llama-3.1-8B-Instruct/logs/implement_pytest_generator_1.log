@@ -1,0 +1,13 @@
+The implementation is complete. Here's what `test_main()` does:
+
+1. **Loads PyTorch model and inputs** via `model_pt.load_pytorch_model()` and `model_pt.load_input(model)` — runs CPU prefill to populate the KV cache and returns decode inputs
+2. **Converts PyTorch tensors to TTNN** using `ttnn.from_torch()` with the same layout, dtype, device, and memory config as `load_activations_for__main()`:
+   - INT32, ROW_MAJOR for `cache_position` and `input_ids`
+   - BFLOAT16, TILE for KV cache tensors (`layer.keys`, `layer.values`)
+   - All placed on device in DRAM interleaved memory
+3. **Assembles the 131 activations list** matching `load_activations_for__main()` ordering: 2 headers (cache_position, input_ids) + layer 0 with 5 entries (including extra cache_position for attention mask) + layers 1-31 with 4 entries each
+4. **Runs `_main(activations, weights)`** and extracts the logits from the last output (shape `[32, 1, 128256]` → sliced to `[32, 128256]`)
+5. **Computes PCC** against `model_pt.run_pytorch_model()` golden output using `calculate_pcc()`
+6. **Asserts** `pcc == 0.9921875` (the exact PCC from `xla.py`)
+
+--- Time taken: 1097.0s | session: 5a838750-b055-4e36-884e-c6fdf87e946a ---

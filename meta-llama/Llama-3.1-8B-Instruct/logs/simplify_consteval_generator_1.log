@@ -1,0 +1,16 @@
+Here's a summary of changes:
+
+**`consteval.py`** (new file, 154 lines): Replaced 166 nearly-identical `main_const_eval_*` functions and 5 `cpu_hoisted_const_eval_*` functions with:
+- `_transpose_weight()` — CPU permute [1,0] (replaces all 5 identical `cpu_hoisted` functions)
+- `_transpose_and_cast(tensor, target_dtype, device)` — transpose + cast to target dtype (replaces 96 functions doing BF8B or BF4B conversion)
+- `_transpose_concat_kvq_and_cast()` — concat k,v,q after transpose, cast to BF8B (replaces 31 identical per-layer QKV functions)
+- `_transpose_concat_kvq_slice_reorder_and_cast()` — layer 31's special case with slice/reorder
+- `_reshape_inv_freq()` — rotary embedding reshape
+- `run_consteval(weights, device)` — loops over 32 layers, calling the above helpers; creates 3 constant tensors (`attn_mask_neg_inf`, `attn_mask_zero`, `arange_128`) directly in the weights dict
+
+**`model_ttnn.py`**: 
+- Removed ~6,700 lines of `main_const_eval_*`, `cpu_hoisted_const_eval_*`, and `consteval__main` functions
+- Removed `ce_cache` from `__init__`; now calls `consteval.run_consteval(self.weights, device)` 
+- Forward method uses `weights["..."]` directly instead of `ce_cache__main["main_const_eval_N"]`, with meaningful weight names matching the model's parameter hierarchy
+
+--- Time taken: 398.7s | session: 7d70af95-e7d0-4716-a11a-8a946516b86c ---

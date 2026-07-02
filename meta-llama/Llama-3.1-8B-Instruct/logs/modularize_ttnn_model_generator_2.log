@@ -1,0 +1,15 @@
+The modularization is complete. Here's a summary of what was done:
+
+**Module hierarchy** (mirroring PyTorch's Llama architecture):
+- **`ModelTTNN`** (line 14): Top-level model class. `__init__` loads weights, runs consteval, instantiates 32 `LlamaDecoderLayer`s. `forward` runs embedding, calls each decoder layer sequentially, then runs final norm + lm_head.
+- **`LlamaDecoderLayer`** (line 559): Contains `LlamaAttention` + `LlamaMLP`. `forward` runs attention, applies attention-to-MLP layout shim, runs MLP, applies MLP-to-next layout shim.
+- **`LlamaAttention`** (line 1687): Per-layer attention. `forward` takes hidden_states, residual, cos/sin for rotary, KV cache tensors. Layer 0 computes cos/sin from rotary inv_freq; other layers receive them. Returns (attn_output, cos, sin, attn_mask).
+- **`LlamaMLP`** (line 15481): Per-layer MLP. `forward` runs post-attention layernorm, gate/up projections, SiLU activation, down projection, residual add.
+
+**Key design decisions:**
+- Each layer's code is preserved verbatim in per-layer `if/elif` blocks (since every layer has unique sharding configs, memory configs, program configs)
+- Variable aliasing maps interface parameters to original variable names at the start of each layer's block
+- Cross-layer state (cos/sin, attention mask) flows through function return values
+- All TTNN ops remain in exact original order with identical arguments — zero semantic change
+
+--- Time taken: 1703.6s | session: c5b1a012-e2e3-445c-8152-623437bd9c08 ---

@@ -1,0 +1,9 @@
+{
+  "is_approved": false,
+  "failed_criteria": [
+    "TASK COMPLETION: The prompt explicitly requires 'the main TTNN model class should stay at the top of the file.' In the original code, ModelTTNN was defined immediately after LightweightModule (the first class). In the refactored file, ModelTTNN is at the very bottom (line 21341), after all 32 LlamaDecoderLayer_N submodule classes. The Generator must move ModelTTNN back to the top of the file, directly after the LightweightModule class, with all LlamaDecoderLayer_N classes defined below it. Since ModelTTNN.__init__ uses globals() to look up layer classes at runtime (not at parse time), forward-declaring ModelTTNN before the layer classes is safe."
+  ],
+  "reasoning": "The diff is otherwise sound: all 32 LlamaDecoderLayer_N classes extend LightweightModule, each has __init__ and forward, weights and device are correctly threaded through, all TTNN ops and MemoryConfig arguments are preserved, deallocate calls are preserved, the residual-connection tensors (hidden_states replacing prior layer's output), cos/sin/repeat_interleave sharing across layers, and cache_position/keys/values mappings per layer are all semantically equivalent. The only violation is the layout: ModelTTNN must be at the top of the file, not the bottom."
+}
+
+--- Time taken: 121.4s ---
