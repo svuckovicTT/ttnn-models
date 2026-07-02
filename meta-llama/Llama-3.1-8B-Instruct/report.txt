@@ -6,42 +6,40 @@ model_id = meta-llama/Llama-3.1-8B-Instruct
 family = llm
 hw_target = p150
 mesh_shape = 1x1
+mode = decode_only
 worktree = /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/meta-llama/Llama-3.1-8B-Instruct-3
 branch = auto/benchmark/test_llama_3_1_8b_instruct_tp-2
-reached_step = 6
-final_status = passed
-final_step_name = run_graph
+reached_step = 1
+final_status = failed
+final_step_name = run_pt
+notes = NOT a defect: device steps 2-6 are not_attempted because the device was busy (user constraint), not because anything failed. Script converted to DECODE-ONLY per user request: prefill runs on CPU to populate the KV cache, then ONLY the decode step runs on the TT device (single graph). CPU path (--run-pt) re-verified. For history: the earlier PREFILL-ONLY single-graph pipeline passed all 6 steps on p150 in this session (prefill PCC 0.9921875, graph_0 executed) at commit 434efea; those step-2..6 logs describe that superseded run and were removed here. Re-run --run-tt / --golden / --codegen / graph_0/run when the device is free to verify decode-only (expected: single graph_0 = decode; capture decode PCC into exact_pcc).
 
 [step_0_xla_py]
 status = passed
-notes = TP test retargeted per user request to a SINGLE p150 (blackhole) with no tensor parallelism (benchmark only shards when num_devices>1), so mesh/mark_sharding/KV-cache-sharding/lm_head-hook were dropped (mesh 1x1). Stock-transformers imports; LLM setup patches + auto-discovered weight_dtype_overrides (mixed_precision_configs/Llama-3.1-8B-Instruct.json: gate_proj/up_proj bfp_bf4, default bfp_bf8) inlined. Two execution-driven fixes: (1) pass position_ids explicitly (this venv is transformers 5.9.0; the benchmark pins 5.2.0, and 5.9.0's LlamaModel.forward adds arange(xla)+cache.get_seq_length()(cpu) without .to(device), crashing FakeTensor device propagation); (2) codegen inlines codegen_py's body and calls model(**inputs) directly because codegen_py filters out the non-tensor StaticCache and use_cache.
+notes = TP test retargeted to a SINGLE p150 (blackhole), no tensor parallelism (mesh 1x1; benchmark only shards when num_devices>1). DECODE-ONLY: cpu_prefill_to_decode_inputs() runs prefill on CPU (fresh StaticCache, full prompt) to populate the KV cache and pick the first-decode token (argmax of prefill last logits); run_tt_model/codegen then move that CPU cache to device and run ONLY the decode step (input_ids [batch,1], cache_position=[prompt_len]) -> a single device graph. Mirrors benchmark_llm_torch_xla decode_only=True. Stock-transformers imports; LLM setup patches + auto-discovered weight_dtype_overrides (Llama-3.1-8B-Instruct.json: gate_proj/up_proj bfp_bf4, default bfp_bf8) inlined. position_ids passed explicitly (transformers 5.9.0 leaks the cache's CPU seq-length tensor into arange(xla)+... without .to(device)). codegen inlines codegen_py's body because codegen_py filters out the non-tensor StaticCache/use_cache.
 
 [step_1_run_pt]
 status = passed
-elapsed_s = 129.0
+elapsed_s = 9.0
+notes = CPU prefill + CPU decode; decode logits [32, 128256].
 log = run-logs/step-1.log
 
 [step_2_run_tt]
-status = passed
-elapsed_s = 289.0
-log = run-logs/step-2.log
+status = not_attempted
+notes = device busy (user constraint); decode-only device run not executed.
 
 [step_3_golden]
-status = passed
-elapsed_s = 290.0
-pcc = 0.9921875
-log = run-logs/step-3.log
+status = not_attempted
+notes = device busy; decode PCC not captured (exact_pcc left None in xla.py).
 
 [step_4_codegen]
-status = passed
-elapsed_s = 184.0
-graph_count = 1
-log = run-logs/step-4.log
+status = not_attempted
+notes = device busy; expected to emit a single graph_0 (decode) since prefill is CPU-only.
 
 [step_5_single_graph]
-status = passed
+status = not_attempted
+notes = device busy; decode-only is single-graph by design (one decode graph, prefill on CPU).
 
 [step_6_run_graph]
-status = passed
-elapsed_s = 109.0
-log = run-logs/step-6.log
+status = not_attempted
+notes = device busy.

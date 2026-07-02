@@ -2,13 +2,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-### Standalone xla.py reproducing tt-xla benchmark test_llms.py::test_llama_3_1_8b_instruct_tp.
-### Resolved model: meta-llama/Llama-3.1-8B-Instruct (HF) via AutoModelForCausalLM.
+### Standalone xla.py reproducing tt-xla benchmark test_llms.py::test_llama_3_1_8b_instruct_tp
+### in DECODE-ONLY mode. Resolved model: meta-llama/Llama-3.1-8B-Instruct (HF) via AutoModelForCausalLM.
 ### Original benchmark: n300-llmbox (1x8 wormhole), tensor-parallel. Per user request this is
-### retargeted to a SINGLE p150 (blackhole) chip with NO tensor parallelism. The benchmark only
-### shards when num_devices > 1 (benchmarks/llm_benchmark.py:340-342), so on one chip it runs
-### unsharded — all mesh / mark_sharding / KV-cache-sharding / lm_head-hook machinery is dropped.
-### The weight-dtype overrides are kept: the benchmark applies them regardless of chip count.
+### retargeted to a SINGLE p150 (blackhole) chip with NO tensor parallelism AND runs decode-only:
+### PREFILL is run on CPU to populate the KV cache, then ONLY the first decode step (single token vs
+### the populated cache) runs on the TT device. This mirrors benchmark_llm_torch_xla's decode_only=True
+### path (CPU prefill baseline; device runs only decode). The device therefore compiles a SINGLE graph
+### (decode); --codegen emits just graph_0. The benchmark only shards when num_devices > 1
+### (llm_benchmark.py:340-342), so on one chip it runs unsharded — all mesh/sharding machinery is dropped.
 ### No imports from tt-xla/third_party/tt_forge_models or tt-xla/tests/benchmark/*.
 
 import os
@@ -84,10 +86,10 @@ class LastTokenLogitsWrapper(torch.nn.Module):
         return output.logits[:, -1]
 
 
-def load_input():
-    """Replicates construct_inputs() (benchmarks/llm_benchmark.py:85-169) plus
-    init_static_cache() (llm_utils/decode_utils.py:113-145). Every returned key and
-    every initialization step must match the benchmark exactly."""
+def _build_prefill_inputs(model):
+    """Full-prompt prefill inputs against a fresh StaticCache, built from the model's
+    (patched) config. Replicates construct_inputs() (benchmarks/llm_benchmark.py:85-169)
+    plus init_static_cache() (llm_utils/decode_utils.py:113-145)."""
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
     tokenizer.pad_token = tokenizer.eos_token  # loader._load_tokenizer sets this
     prompts = [DEFAULT_INPUT_PROMPT] * BATCH_SIZE
@@ -99,10 +101,6 @@ def load_input():
     )
     input_ids = tokenized["input_ids"]
 
-    # StaticCache lives on CPU and is moved to device explicitly later — see
-    # https://github.com/tenstorrent/tt-xla/issues/1645 for why we don't construct
-    # it directly on the device.
-    model = load_pytorch_model()
     config = model.config
     head_dim = (
         getattr(config, "head_dim", None)
@@ -130,29 +128,52 @@ def load_input():
     )
 
     cache_position = torch.arange(0, input_ids.shape[1])
-
-    # position_ids is NOT part of construct_inputs() in the benchmark, which runs on the
-    # pinned transformers==5.2.0. This venv has 5.9.0, whose LlamaModel.forward computes
-    #   position_ids = torch.arange(seq_len, device=xla) + past_key_values.get_seq_length()
-    # (modeling_llama.py:394-397) WITHOUT moving the cache's CPU seq-length tensor to the
-    # device, which crashes FakeTensor device propagation during dynamo tracing on TT.
-    # (The mask path handles this via .to(device); the position_ids path does not.) We pass
-    # position_ids explicitly to skip that branch; for a fresh-cache prefill it equals what
-    # the model would compute (arange(seq_len) + 0), so the CPU golden is unchanged.
-    position_ids = cache_position.unsqueeze(0)
-
     return {
         "input_ids": input_ids,
         "past_key_values": past_key_values,
         "cache_position": cache_position,
-        "position_ids": position_ids,
+        "position_ids": cache_position.unsqueeze(0),
+        "use_cache": True,
+    }
+
+
+def cpu_prefill_to_decode_inputs(model):
+    """Run PREFILL on CPU to populate the KV cache (this is the ONLY prefill anywhere —
+    it never runs on device), then return the first-decode inputs: the prefill's argmax
+    token as the single input, cache_position/position_ids at the slot right after the
+    prompt, and the now-populated CPU StaticCache. The device path moves this cache over
+    and runs ONLY the decode step. Mirrors decode_only=True in benchmark_llm_torch_xla
+    (llm_benchmark.py:399-430) and LLMSamplingWrapper's next_token = logits[:, -1].argmax
+    and next_cache_position = cache_position[-1:] + 1 (llm_utils/decode_utils.py:67,80).
+
+    `model` must be on CPU here so the cache is generated on CPU.
+    """
+    prefill_inputs = _build_prefill_inputs(model)
+    with torch.no_grad():
+        prefill_logits = model(**prefill_inputs).logits[:, -1]  # [batch, vocab]
+    next_token = prefill_logits.argmax(dim=-1, keepdim=True)  # [batch, 1]
+    cache_position = prefill_inputs["cache_position"][-1:] + 1  # [1], value == prompt_len
+
+    # position_ids must be passed explicitly for the DEVICE decode: this venv is
+    # transformers 5.9.0 (the benchmark pins 5.2.0), whose LlamaModel.forward computes
+    #   position_ids = torch.arange(seq_len, device=xla) + past_key_values.get_seq_length()
+    # (modeling_llama.py:394-397) WITHOUT moving the cache's CPU seq-length tensor to the
+    # device, crashing FakeTensor device propagation during tracing on TT. (The mask path
+    # handles it via .to(device); the position_ids path does not.) For a single decode
+    # token at position prompt_len this equals cache_position, so it is exact.
+    return {
+        "input_ids": next_token,
+        "past_key_values": prefill_inputs["past_key_values"],  # populated by the CPU prefill
+        "cache_position": cache_position,
+        "position_ids": cache_position.unsqueeze(0),
         "use_cache": True,
     }
 
 
 def _inputs_to_device(inputs, device):
     """Mirrors transfer_to_device() from benchmarks/llm_benchmark.py:179-204 for the
-    StaticCache path (Llama 3.1 has no MLA layers). use_cache is a bool and stays put."""
+    StaticCache path (Llama 3.1 has no MLA layers). use_cache is a bool and stays put;
+    cumulative_length stays on CPU (the mask path moves it to device where needed)."""
     out = dict(inputs)
     out["input_ids"] = out["input_ids"].to(device)
     out["cache_position"] = out["cache_position"].to(device)
@@ -165,12 +186,14 @@ def _inputs_to_device(inputs, device):
 
 def run_pytorch_model():
     model = load_pytorch_model()
-    inputs = load_input()
+    # Prefill on CPU populates the cache; then the CPU decode is the PCC reference.
+    decode_inputs = cpu_prefill_to_decode_inputs(model)
 
     with torch.no_grad():
-        output = model(**inputs)
+        decode_logits = model(**decode_inputs).logits[:, -1]
 
-    return output.logits[:, -1]
+    print(f"[cpu] decode logits {tuple(decode_logits.shape)}")
+    return decode_logits
 
 
 def run_tt_model():
@@ -178,36 +201,40 @@ def run_tt_model():
     device = torch_xla.device()
 
     model = load_pytorch_model()
-    model = model.to(device, dtype=DATA_FORMAT)
 
+    # 1) PREFILL ON CPU — generate the KV cache with the model still on CPU.
+    decode_inputs = cpu_prefill_to_decode_inputs(model)
+
+    # 2) Move the model to device and compile ONLY the decode step.
+    model = model.to(device, dtype=DATA_FORMAT)
     torch_xla.set_custom_compile_options(COMPILE_OPTIONS)
     # Weight dtype parametrization (llm_benchmark.py:474-485). Single-chip, so no
     # mark_sharding ordering constraint applies.
     apply_weight_dtype_overrides(model, WEIGHT_DTYPE_OVERRIDES)
-
     wrapper = LastTokenLogitsWrapper(model)
     compiled = torch.compile(wrapper, backend="tt")
 
-    inputs = _inputs_to_device(load_input(), device)
-
+    # 3) Move the CPU-populated cache + decode inputs to device; run the single decode graph.
+    decode_inputs = _inputs_to_device(decode_inputs, device)
     with torch.no_grad():
-        output = compiled(**inputs)
+        decode_logits = compiled(**decode_inputs)
 
-    return output.cpu()
+    return decode_logits.cpu()
 
 
 def codegen_model():
     os.environ["XLA_HLO_DEBUG"] = "1"
 
     model = load_pytorch_model()
-    inputs = load_input()
+
+    # PREFILL ON CPU — generate the KV cache (model on CPU).
+    decode_inputs = cpu_prefill_to_decode_inputs(model)
 
     # codegen_py() (tt_torch/codegen.py) only forwards *args/**kwargs that are
     # torch.Tensor. Our inputs include a StaticCache (past_key_values) and a bool
-    # (use_cache), which its filter would drop — leaving the model with no cache and
-    # no input_ids context (raises "specify exactly one of input_ids or inputs_embeds").
-    # So we inline codegen_py's body but call model(**inputs) directly with the full
-    # dict, moving the cache to device ourselves (as run_tt_model does).
+    # (use_cache), which its filter would drop. So we inline codegen_py's body but call
+    # model(**decode_inputs) directly, moving the cache to device ourselves. A single
+    # decode forward => a single graph (graph_0).
     real_compile_options = {
         **COMPILE_OPTIONS,
         "backend": "codegen_py",
@@ -218,13 +245,12 @@ def codegen_model():
 
     device = torch_xla.device()
     model = model.to(device, dtype=DATA_FORMAT)
-    # Same weight dtype parametrization as run_tt_model so codegen matches the device run.
     apply_weight_dtype_overrides(model, WEIGHT_DTYPE_OVERRIDES)
     model.compile(backend="tt", options={"tt_legacy_compile": True})
-    inputs = _inputs_to_device(inputs, device)
+    decode_inputs = _inputs_to_device(decode_inputs, device)
 
     with torch.no_grad():
-        model(**inputs)
+        model(**decode_inputs)
 
     import torch_xla.core.xla_model as xm
 
@@ -232,8 +258,9 @@ def codegen_model():
 
 
 def compare_pytorch_and_tt_runs():
-    # Capture exact PCC from first --golden run and paste here.
-    exact_pcc = 0.9921875
+    # Decode PCC. Capture from the first --golden run and paste here.
+    # (Not yet captured on device — device was busy when decode-only was added.)
+    exact_pcc = None
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()
@@ -255,7 +282,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="test_llama_3_1_8b_instruct_tp codegen pipeline"
+        description="test_llama_3_1_8b_instruct_tp decode-only codegen pipeline"
     )
 
     mode = parser.add_mutually_exclusive_group(required=True)

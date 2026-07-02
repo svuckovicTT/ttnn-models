@@ -1,14 +1,0 @@
-2026-07-02 10:07:55.086 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
-[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 32547.80it/s]
-Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 30683.86it/s]
-2026-07-02 10:07:56.999 (   1.912s) [        E1450140]              stubs.inc:122   WARN| STUB: PJRT_Client_TopologyDescription
-2026-07-02 10:07:56.999199: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
-/usr/lib/python3.12/copyreg.py:99: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
-  return cls.__new__(cls, *args)
-2026-07-02 10:08:16.401 (  21.314s) [        E1450140]      module_builder.cc:975   WARN| `mhlo.num_partitions` attribute not found, assuming default number of partitions: 1
-2026-07-02 10:08:16.401 (  21.314s) [        E1450140]      module_builder.cc:989   WARN| `mhlo.num_replicas` attribute not found, assuming default number of replicas: 1
-2026-07-02 10:08:16.401 (  21.314s) [        E1450140]      module_builder.cc:999   WARN| Num replicas and num partitions are not set, inferring the number of devices from mesh shape
-2026-07-02 10:10:49.562 ( 174.476s) [        E1450140]              stubs.inc:81    WARN| STUB: PJRT_Executable_GetCompiledMemoryStats
-Python codegen successful. Check /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/meta-llama/Llama-3.1-8B-Instruct-3/model/graph_0 for the results.
-___STEP4_DONE exit=0 elapsed=184s
