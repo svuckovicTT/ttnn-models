@@ -9,14 +9,14 @@ mesh_shape = 1x1
 mode = decode_only
 worktree = /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/meta-llama/Llama-3.1-8B-Instruct-3
 branch = auto/benchmark/test_llama_3_1_8b_instruct_tp-2
-reached_step = 1
+reached_step = 6
 final_status = failed
-final_step_name = run_pt
-notes = NOT a defect: device steps 2-6 are not_attempted because the device was busy (user constraint), not because anything failed. Script converted to DECODE-ONLY per user request: prefill runs on CPU to populate the KV cache, then ONLY the decode step runs on the TT device (single graph). CPU path (--run-pt) re-verified. For history: the earlier PREFILL-ONLY single-graph pipeline passed all 6 steps on p150 in this session (prefill PCC 0.9921875, graph_0 executed) at commit 434efea; those step-2..6 logs describe that superseded run and were removed here. Re-run --run-tt / --golden / --codegen / graph_0/run when the device is free to verify decode-only (expected: single graph_0 = decode; capture decode PCC into exact_pcc).
+final_step_name = run_graph
+notes = DECODE-ONLY on a single p150 (no TP): prefill runs on CPU to populate the KV cache; only the decode step runs on device (single graph). Device decode is correct end-to-end via the torch_xla/tt runtime path: --run-tt passed and --golden decode PCC = 0.9921875. --codegen produced exactly one graph (graph_0 = decode). The FAILURE is codegen-only: the generated main.py crashes at ttnn.experimental.nlp_concat_heads_decode with "bad optional access". That decode-optimized attention op (selected for seq_len=1) is emitted by EmitPy with an input lacking the sharded memory config the op requires; the runtime/flatbuffer path supplies it, hence --run-tt works but the standalone codegen python does not. This is a tt-mlir EmitPy codegen limitation, not a model or xla.py issue, and cannot be fixed in xla.py (main.py is regenerated each --codegen).
 
 [step_0_xla_py]
 status = passed
-notes = TP test retargeted to a SINGLE p150 (blackhole), no tensor parallelism (mesh 1x1; benchmark only shards when num_devices>1). DECODE-ONLY: cpu_prefill_to_decode_inputs() runs prefill on CPU (fresh StaticCache, full prompt) to populate the KV cache and pick the first-decode token (argmax of prefill last logits); run_tt_model/codegen then move that CPU cache to device and run ONLY the decode step (input_ids [batch,1], cache_position=[prompt_len]) -> a single device graph. Mirrors benchmark_llm_torch_xla decode_only=True. Stock-transformers imports; LLM setup patches + auto-discovered weight_dtype_overrides (Llama-3.1-8B-Instruct.json: gate_proj/up_proj bfp_bf4, default bfp_bf8) inlined. position_ids passed explicitly (transformers 5.9.0 leaks the cache's CPU seq-length tensor into arange(xla)+... without .to(device)). codegen inlines codegen_py's body because codegen_py filters out the non-tensor StaticCache/use_cache.
+notes = TP test retargeted to a SINGLE p150 (blackhole), no tensor parallelism (mesh 1x1; benchmark only shards when num_devices>1). DECODE-ONLY: cpu_prefill_to_decode_inputs() runs prefill on CPU (fresh StaticCache, full prompt) to populate the KV cache and pick the first-decode token (argmax of prefill last logits); run_tt_model/codegen move that CPU cache to device and run ONLY the decode step (input_ids [batch,1], cache_position=[prompt_len]) -> a single device graph. Mirrors benchmark_llm_torch_xla decode_only=True. Stock-transformers imports; LLM setup patches + auto-discovered weight_dtype_overrides (Llama-3.1-8B-Instruct.json: gate_proj/up_proj bfp_bf4, default bfp_bf8) inlined. position_ids passed explicitly (transformers 5.9.0 leaks the cache's CPU seq-length tensor into arange(xla)+... without .to(device)). codegen inlines codegen_py's body because codegen_py filters out the non-tensor StaticCache/use_cache.
 
 [step_1_run_pt]
 status = passed
@@ -25,21 +25,32 @@ notes = CPU prefill + CPU decode; decode logits [32, 128256].
 log = run-logs/step-1.log
 
 [step_2_run_tt]
-status = not_attempted
-notes = device busy (user constraint); decode-only device run not executed.
+status = passed
+elapsed_s = 179.0
+notes = CPU prefill then single decode graph on p150; no device-propagation errors.
+log = run-logs/step-2.log
 
 [step_3_golden]
-status = not_attempted
-notes = device busy; decode PCC not captured (exact_pcc left None in xla.py).
+status = passed
+elapsed_s = 178.0
+pcc = 0.9921875
+notes = decode PCC (CPU decode vs device decode), both from the CPU-generated cache.
+log = run-logs/step-3.log
 
 [step_4_codegen]
-status = not_attempted
-notes = device busy; expected to emit a single graph_0 (decode) since prefill is CPU-only.
+status = passed
+elapsed_s = 63.0
+graph_count = 1
+notes = single graph_0 = decode (prefill is CPU-only).
+log = run-logs/step-4.log
 
 [step_5_single_graph]
-status = not_attempted
-notes = device busy; decode-only is single-graph by design (one decode graph, prefill on CPU).
+status = passed
+notes = exactly one graph (graph_0 = decode), as designed for decode-only.
 
 [step_6_run_graph]
-status = not_attempted
-notes = device busy.
+status = failed
+exit_code = 1
+elapsed_s = 113.0
+failure_summary = codegen main.py crashes at ttnn.experimental.nlp_concat_heads_decode: RuntimeError: bad optional access (decode-attn op emitted without required sharded input). Runtime path (--run-tt) passes at PCC 0.9921875, so this is an EmitPy codegen limitation, not a model/xla.py bug.
+log = run-logs/step-6.log

@@ -258,9 +258,8 @@ def codegen_model():
 
 
 def compare_pytorch_and_tt_runs():
-    # Decode PCC. Capture from the first --golden run and paste here.
-    # (Not yet captured on device — device was busy when decode-only was added.)
-    exact_pcc = None
+    # Decode PCC, captured from the first --golden run on p150.
+    exact_pcc = 0.9921875
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()
