@@ -1,0 +1,26 @@
+diff --git a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
+index 846cde7..0565cc6 100644
+--- a/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
++++ b/meta-llama/Llama-3.1-8B-Instruct/model/graph_0/main.py
+@@ -1,3 +1,4 @@
++import time
+ import ttnn
+ import utils
+ import torch
+@@ -1391,6 +1392,16 @@ def test_main():
+     print(f"\nPCC: {pcc:.6f}")
+     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+ 
++    tokens_per_call = model_pt.BATCH_SIZE
++    for i in range(3):
++        start = time.perf_counter()
++        outputs = model(activations)
++        ttnn.synchronize_device(device)
++        end = time.perf_counter()
++        elapsed = end - start
++        tps = tokens_per_call / elapsed
++        print(f"Run {i}: time={elapsed:.4f}s, TPS={tps:.2f}")
++
+ 
+ if __name__ == "__main__":
+     main()
