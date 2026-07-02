@@ -7622,6 +7622,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_0 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_17,
+            sub_core_grids=ttnn_to_memory_config_17.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -8266,6 +8267,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_1 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_31,
+            sub_core_grids=ttnn_to_memory_config_31.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -8910,6 +8912,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_2 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_45,
+            sub_core_grids=ttnn_to_memory_config_45.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -9554,6 +9557,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_3 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_59,
+            sub_core_grids=ttnn_to_memory_config_59.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -10198,6 +10202,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_4 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_73,
+            sub_core_grids=ttnn_to_memory_config_73.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -10842,6 +10847,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_5 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_87,
+            sub_core_grids=ttnn_to_memory_config_87.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -11486,6 +11492,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_6 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_101,
+            sub_core_grids=ttnn_to_memory_config_101.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -12130,6 +12137,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_7 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_115,
+            sub_core_grids=ttnn_to_memory_config_115.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -12774,6 +12782,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_8 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_129,
+            sub_core_grids=ttnn_to_memory_config_129.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -13418,6 +13427,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_9 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_143,
+            sub_core_grids=ttnn_to_memory_config_143.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -14062,6 +14072,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_10 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_157,
+            sub_core_grids=ttnn_to_memory_config_157.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -14706,6 +14717,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_11 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_171,
+            sub_core_grids=ttnn_to_memory_config_171.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -15350,6 +15362,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_12 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_185,
+            sub_core_grids=ttnn_to_memory_config_185.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -15994,6 +16007,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_13 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_199,
+            sub_core_grids=ttnn_to_memory_config_199.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -16638,6 +16652,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_14 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_213,
+            sub_core_grids=ttnn_to_memory_config_213.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -17282,6 +17297,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_15 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_227,
+            sub_core_grids=ttnn_to_memory_config_227.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -17926,6 +17942,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_16 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_241,
+            sub_core_grids=ttnn_to_memory_config_241.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -18570,6 +18587,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_17 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_255,
+            sub_core_grids=ttnn_to_memory_config_255.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -19214,6 +19232,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_18 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_269,
+            sub_core_grids=ttnn_to_memory_config_269.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -19858,6 +19877,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_19 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_283,
+            sub_core_grids=ttnn_to_memory_config_283.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -20502,6 +20522,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_20 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_297,
+            sub_core_grids=ttnn_to_memory_config_297.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -21146,6 +21167,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_21 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_311,
+            sub_core_grids=ttnn_to_memory_config_311.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -21790,6 +21812,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_22 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_325,
+            sub_core_grids=ttnn_to_memory_config_325.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -22434,6 +22457,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_23 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_339,
+            sub_core_grids=ttnn_to_memory_config_339.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -23078,6 +23102,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_24 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_353,
+            sub_core_grids=ttnn_to_memory_config_353.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -23722,6 +23747,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_25 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_367,
+            sub_core_grids=ttnn_to_memory_config_367.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -24366,6 +24392,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_26 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_381,
+            sub_core_grids=ttnn_to_memory_config_381.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -25010,6 +25037,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_27 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_395,
+            sub_core_grids=ttnn_to_memory_config_395.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -25654,6 +25682,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_28 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_409,
+            sub_core_grids=ttnn_to_memory_config_409.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -26298,6 +26327,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_29 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_423,
+            sub_core_grids=ttnn_to_memory_config_423.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -26942,6 +26972,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_30 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_437,
+            sub_core_grids=ttnn_to_memory_config_437.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
@@ -27589,6 +27620,7 @@ def _main(activations, weights):
     ttnn_experimental_nlp_concat_heads_decode_31 = (
         ttnn.experimental.nlp_concat_heads_decode(
             ttnn_to_memory_config_451,
+            sub_core_grids=ttnn_to_memory_config_451.memory_config().shard_spec.grid,
             num_heads=32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.WIDTH_SHARDED,
