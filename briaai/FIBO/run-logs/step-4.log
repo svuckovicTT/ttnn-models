@@ -1,0 +1,12 @@
+2026-07-06 16:12:53.555 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+2026-07-06 16:12:56.892780: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 64.77it/s]
+Loading pipeline components...:  20%|██        | 1/5 [00:00<00:01,  3.32it/s]Loading pipeline components...:  40%|████      | 2/5 [00:00<00:01,  2.20it/s]
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s][ALoading weights: 100%|██████████| 326/326 [00:00<00:00, 29728.73it/s]
+The config attributes {'clip_output': False} were passed to AutoencoderKLWan, but are not expected and will be ignored. Please verify your config.json configuration file.
+Loading pipeline components...:  80%|████████  | 4/5 [00:01<00:00,  4.12it/s]Loading pipeline components...: 100%|██████████| 5/5 [00:01<00:00,  4.55it/s]
+  0%|          | 0/50 [00:00<?, ?it/s]  0%|          | 0/50 [01:14<?, ?it/s]
+Python codegen successful. Check /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO/briaai/FIBO/model/graph_0 for the results.

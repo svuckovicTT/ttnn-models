@@ -32,7 +32,6 @@ import torch
 import torch_xla
 import torch_xla.distributed.spmd as xs
 import torch_xla.runtime as xr
-from tt_torch import codegen_py
 
 # --- Make the tt_forge_models FIBO loader importable -------------------------
 # The loader lives under tt-xla/third_party. This script is lifted out of
@@ -118,6 +117,22 @@ def _enable_spmd():
     xr.use_spmd()
 
 
+def _inputs_to_device(inputs, device):
+    """Recursively move every tensor leaf to ``device``, leaving non-tensors as-is.
+
+    FIBO's captured inputs are a mix of tensors, lists of per-layer tensors
+    (caption / text-encoder hidden states), and non-tensor values. The runner
+    moves them with tree_map; a shallow top-level move leaves the inner tensors
+    on CPU and crashes FakeTensor device propagation inside the traced graph.
+    """
+    from torch.utils._pytree import tree_map
+
+    return tree_map(
+        lambda x: x.to(device) if torch.is_tensor(x) else x,
+        inputs,
+    )
+
+
 def run_pytorch_model():
     model = load_pytorch_model()
     inputs = load_input()
@@ -149,9 +164,7 @@ def run_tt_model():
     # sharding is marked — same as the runner's compile_torch_workload_for_tt_device.
     compiled = torch.compile(model, backend="tt", options=COMPILE_OPTIONS)
 
-    inputs = tuple(
-        x.to(device) if torch.is_tensor(x) else x for x in load_input()
-    )
+    inputs = _inputs_to_device(load_input(), device)
 
     with torch.no_grad():
         output = compiled(*inputs)
@@ -163,28 +176,44 @@ def codegen_model():
     os.environ["XLA_HLO_DEBUG"] = "1"
     xr.set_device_type("TT")
     _enable_spmd()  # same SPMD init as run_tt_model
+    device = torch_xla.device()
 
     mesh = _build_mesh()
 
     model = load_pytorch_model()
+    model = model.to(device, dtype=DATA_FORMAT)
     # CRITICAL: TP sharding must be applied here too, else codegen emits a
-    # single-chip graph instead of the sharded one.
+    # single-chip graph instead of the sharded one. mark_sharding requires the
+    # weights to already be XLA tensors, so this must run after model.to(device).
     _apply_tp_sharding(model, mesh)
 
-    inputs = load_input()
+    # We can't call tt_torch.codegen_py directly: it filters args/kwargs down to
+    # top-level torch.Tensors, which would silently drop FIBO's nested list-of-
+    # tensor inputs (caption / text-encoder hidden states) and break the
+    # wrapper's strict positional arg-count check. Inline codegen_py's body here
+    # but move the model + every input to device ourselves (via tree_map).
+    import torch_xla.core.xla_model as xm
 
-    codegen_py(
-        model,
-        *inputs,
-        export_path=OUTPUT_DIR,
-        export_tensors=True,
-        compiler_options=COMPILE_OPTIONS,
-    )
+    codegen_options = {
+        **COMPILE_OPTIONS,
+        "backend": "codegen_py",
+        "export_path": OUTPUT_DIR,
+        "export_tensors": True,
+    }
+    torch_xla.set_custom_compile_options(codegen_options)
+    # tt_legacy_compile mirrors codegen_py: makes MetaDataProp work and avoids
+    # codegenning graphs that never execute.
+    model.compile(backend="tt", options={"tt_legacy_compile": True})
+
+    inputs = _inputs_to_device(load_input(), device)
+    with torch.no_grad():
+        model(*inputs)
+    xm.wait_device_ops()  # ensure codegen files are fully written
 
 
 def compare_pytorch_and_tt_runs():
     # Capture exact PCC from first --golden run and paste here.
-    exact_pcc = None
+    exact_pcc = 0.999494
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()

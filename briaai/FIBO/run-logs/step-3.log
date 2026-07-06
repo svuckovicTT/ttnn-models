@@ -1,0 +1,19 @@
+2026-07-06 16:04:00.821 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 64.97it/s]
+Loading pipeline components...:  20%|██        | 1/5 [00:00<00:01,  3.29it/s]Loading pipeline components...:  40%|████      | 2/5 [00:01<00:01,  1.75it/s]The config attributes {'clip_output': False} were passed to AutoencoderKLWan, but are not expected and will be ignored. Please verify your config.json configuration file.
+Loading pipeline components...:  60%|██████    | 3/5 [00:01<00:00,  2.54it/s]
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s][ALoading weights: 100%|██████████| 326/326 [00:00<00:00, 31902.55it/s]
+Loading pipeline components...: 100%|██████████| 5/5 [00:01<00:00,  3.85it/s]
+  0%|          | 0/50 [00:00<?, ?it/s]  0%|          | 0/50 [01:14<?, ?it/s]
+2026-07-06 16:06:36.886369: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
+PCC: 0.999494
+Traceback (most recent call last):
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO/briaai/FIBO/xla.py", line 243, in <module>
+    compare_pytorch_and_tt_runs()
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO/briaai/FIBO/xla.py", line 216, in compare_pytorch_and_tt_runs
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+           ^^^^^^^^^^^^^^^^
+AssertionError: PCC 0.9994940757751465 does not match expected None
