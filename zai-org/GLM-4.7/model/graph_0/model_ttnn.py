@@ -18,6 +18,58 @@ class LightweightModule:
         return self.forward(*args, **kwargs)
 
 
+# Width-sharded rms_norm for the decode hidden-state norms ([*, 5120]). The
+# default DRAM rms_norm on a single 16-token tile-row runs on ONE core over all
+# 160 width-tiles (~191 us; ~30% of the attention block, ~10% of MoE). Splitting
+# the 5120 width across an 8-core (4x2) block and using the sharded multicore
+# LayerNorm parallelizes the reduction ~8-way -> ~2x faster on device, at
+# bit-identical PCC (validated in micro_norm.py: 0.999997). The 4x2 block
+# (cols 0-3, rows 0-1) avoids grid column x=7 that COL dispatch reserves, and is
+# transient (deallocated before attention's KV reshard / the MoE mux cores).
+_LN_GX, _LN_GY = 4, 2                       # 8 cores
+_LN_WTILES = (5120 // 32) // (_LN_GX * _LN_GY)   # = 20 width-tiles/core
+_LN_SHARD_MEM = ttnn.MemoryConfig(
+    ttnn.TensorMemoryLayout.WIDTH_SHARDED, ttnn.BufferType.L1,
+    ttnn.ShardSpec(
+        ttnn.CoreRangeSet({ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(_LN_GX - 1, _LN_GY - 1))}),
+        [32, _LN_WTILES * 32], ttnn.ShardOrientation.ROW_MAJOR,
+    ),
+)
+_LN_PROG_CFG = ttnn.LayerNormShardedMultiCoreProgramConfig(
+    compute_with_storage_grid_size=ttnn.CoreCoord(_LN_GX, _LN_GY),
+    subblock_w=1, block_h=1, block_w=_LN_WTILES, inplace=False,
+)
+
+
+def sharded_rms_norm(x, weight, epsilon, ckc, dram_mem):
+    """Reshard x (DRAM, [.., 5120]) to an 8-core width-sharded L1 tensor, run the
+    sharded multicore rms_norm, and reshard the result back to DRAM. Same shape
+    and (bit-identical) values as ttnn.rms_norm(..., memory_config=dram_mem).
+
+    The width-shard needs a 2D physical [32, 5120] tile layout, so any middle dim
+    (e.g. [16,1,5120], which would tile-pad to physical height 16*32=512) is
+    flattened to [16,5120] before the norm and restored afterward. Both reshapes
+    are free size-1 views on the tile tensor."""
+    orig_shape = list(x.shape)
+    rows = 1
+    for d in orig_shape[:-1]:
+        rows *= d
+    x2d = ttnn.reshape(x, [rows, orig_shape[-1]], memory_config=dram_mem) if len(orig_shape) != 2 else x
+    xs = ttnn.to_memory_config(x2d, _LN_SHARD_MEM)
+    if x2d is not x:
+        ttnn.deallocate(x2d, False)
+    ns = ttnn.rms_norm(
+        xs, epsilon=epsilon, weight=weight, bias=None, residual_input_tensor=None,
+        memory_config=_LN_SHARD_MEM, program_config=_LN_PROG_CFG, compute_kernel_config=ckc,
+    )
+    ttnn.deallocate(xs, False)
+    out = ttnn.to_memory_config(ns, dram_mem)
+    ttnn.deallocate(ns, False)
+    if len(orig_shape) != 2:
+        out = ttnn.reshape(out, orig_shape, memory_config=dram_mem)
+    return out
+
+
 def _make_moe_dispatch_runtime(device):
     """Create the per-forward moe_compute runtime (global semaphores +
     preallocated dispatch outputs) immediately before the MoE op, so nothing
@@ -1395,16 +1447,11 @@ class Glm4MoeDecoderLayer(LightweightModule):
         # Signpost: this layer's attention block (input_layernorm + self_attn +
         # residual add). Same structure across all 92 layers.
         signpost(f"L{self.layer_idx}_attn")
-        # Input layernorm
-        normed = ttnn.rms_norm(
+        # Input layernorm (8-core width-sharded; see sharded_rms_norm).
+        normed = sharded_rms_norm(
             hidden_states,
-            epsilon=9.9999997473787516e-06,
-            weight=self.weights[f"{layer_prefix}.input_layernorm.weight"],
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=dram_mem,
-            program_config=None,
-            compute_kernel_config=hifi4_config,
+            self.weights[f"{layer_prefix}.input_layernorm.weight"],
+            9.9999997473787516e-06, hifi4_config, dram_mem,
         )
         # Attention
         import os as _os_attn
@@ -1438,15 +1485,10 @@ class Glm4MoeDecoderLayer(LightweightModule):
                 [16, 1, 5120],
                 memory_config=dram_mem,
             )
-            post_normed = ttnn.rms_norm(
+            post_normed = sharded_rms_norm(
                 reshaped_for_norm,
-                epsilon=9.9999997473787516e-06,
-                weight=self.weights[f"{layer_prefix}.post_attention_layernorm.weight"],
-                bias=None,
-                residual_input_tensor=None,
-                memory_config=dram_mem,
-                program_config=None,
-                compute_kernel_config=hifi4_config,
+                self.weights[f"{layer_prefix}.post_attention_layernorm.weight"],
+                9.9999997473787516e-06, hifi4_config, dram_mem,
             )
             ttnn.deallocate(reshaped_for_norm, False)
             # Pass post_normed [16, 1, 5120] to MoE - it creates both
@@ -1463,15 +1505,10 @@ class Glm4MoeDecoderLayer(LightweightModule):
             ttnn.deallocate(residual, False)
         else:
             # Dense MLP path
-            post_normed = ttnn.rms_norm(
+            post_normed = sharded_rms_norm(
                 residual,
-                epsilon=9.9999997473787516e-06,
-                weight=self.weights[f"{layer_prefix}.post_attention_layernorm.weight"],
-                bias=None,
-                residual_input_tensor=None,
-                memory_config=dram_mem,
-                program_config=None,
-                compute_kernel_config=hifi4_config,
+                self.weights[f"{layer_prefix}.post_attention_layernorm.weight"],
+                9.9999997473787516e-06, hifi4_config, dram_mem,
             )
             mlp_output = self.mlp(post_normed)
             # Residual add after MLP

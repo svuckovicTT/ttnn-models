@@ -49,3 +49,18 @@ subsequent same-axis CCL (a fabric barrier/reset), OR running moe_compute's disp
 the rest of the model doesn't collective on (not possible here — lm_head uses both axes), OR a
 sub-device isolation for moe_compute's fabric. moe_compute NUMERICS are not yet PCC-validated
 because the forward can't complete to produce logits.
+
+# all_reduce_async not a drop-in for the RS+AG all-reduce pattern — 2026-07-06 (perf iter7)
+
+Goal: collapse each cluster_axis=1 reduce_scatter+all_gather TP all-reduce pair (o_proj x92,
+dense down, MoE epilogue x89, shared experts x89 — ~344 us/MoE-layer, ~134 us/attn-layer of CCL)
+into one ttnn.experimental.all_reduce_async. The pybind __doc__ advertises a simple
+(input_tensor, cluster_axis, mesh_device) form, but the ACTUAL overloads all require, in
+addition: math_op (ttnn.reduction.ReduceType, no default) AND three global-semaphore sequences
+(barrier_semaphores, rs_global_semaphores, ag_global_semaphores). i.e. it is the async/persistent
+variant needing explicit semaphore lifecycle management (create-once, per-op, matching link
+count), exactly the class of state that caused the moe_compute combine hang. The sparse tt-metal
+checkout under tt-mlir has no tests/models to copy the correct semaphore counts from. Abandoned
+as too hang-risky for the reward without a reference; the RS+AG pair is left intact.
+Alternatives if revisited: llama_rs_matmul / matmul_reduce_scatter_async (fuse the matmul with
+the RS) — same semaphore requirement; or a synchronous all_reduce if one exists in a later build.
