@@ -136,3 +136,20 @@ Scanned all MoE+attention TM ops for reorder/fuse/commute (no L1):
 - The EXPENSIVE MoE TMs are Tilize(88us)+FillPad(93us)+Untilize(41us)=~222us, ALL at the dispatch(ROW_MAJOR)<->compute(TILE) boundary: disp_x untilizes post_normed[16,5120]; moe_compute combine output re-tilizes; dispatch idx/scores untilize. Each is a ONE-WAY conversion feeding a specific op (verified: no cancellable TILE<->ROW_MAJOR inverse pair in the chain), so reorder/commute cannot remove them. They need either L1-sharded op chains (the skill's last item) OR a moe_compute/all_to_all_dispatch API that accepts TILE inputs (a tt-metal change -> TT_MLIR_RECOMMENDATIONS).
 - Attention TMs (Slice/Concat from partial-RoPE) were found load-bearing in prior attention tuning (see top of this log) and don't fold.
 So: non-L1 TM headroom here is ~0; the real TM win requires L1-sharding or a TILE-accepting dispatch.
+
+## 2026-07-06 — fresh baseline (post-iter6) + resumed tuning (branch ...-perf, HEAD 361c79d)
+
+Re-profiled HEAD on the current build. Per-segment device-FW (tt-perf-report, signpost-scoped, 32-device merged):
+| segment | device time | note |
+|---------|-------------|------|
+| attention / layer | 799 us | LayerNorm 238us(3 norms, input_layernorm ~191us on 1 CORE) + Matmul 158us(qkv+o_proj) + RS 85 + AG 49 (CCL 134) + RoPE 63 + reshapes/slices |
+| dense MLP / layer | 602 us | dominated by the single-core post_attn norm + gate/up/down + CCL |
+| MoE / layer | 1901 us | MoECompute 415 + RS 220 + AG 124 (CCL 344) + Matmul 194(router+shared) + LayerNorm 193 + TM churn (Reshape150/FillPad94/Tilize89/Untilize41) + TopK 99 + dispatch 82 |
+| lm_head (x1) | 16,195 us | argmax-over-vocab dominated |
+Full-model extrapolation (preamble + 92*attn + 3*dense + 89*moe + lm_head) = ~260.7 ms. Composition: MoE 65%, attention 28%, lm_head 6%.
+KEY finding: the hidden-state rms_norms run on ONE core (whole 160-tile-wide reduction serialized) -> ~191us each, the single fattest addressable op.
+
+| # | patch | scope | tracy DT | PCC | decision | why |
+|---|-------|-------|----------|-----|----------|-----|
+| 7-abandon | all_reduce_async to fuse RS+AG TP all-reduce | (attempt) | n/a (API error) | n/a | ABANDON | pybind needs math_op + barrier/rs/ag global-semaphore sequences (async/persistent variant); no reference in sparse checkout for correct semaphore counts; too hang-risky. See METAL_BLOCKERS.md |
+| 7 | width-sharded rms_norm (8-core 4x2 WIDTH_SHARDED LayerNormShardedMultiCore) at input_layernorm(x92)+post_attn(dense x3, MoE x89) | attn+dense+moe | attn 799->629 (-170), dense 602->429 (-173), moe 1901->1867 (-34); full ~260.7->~241.6 ms (-7.3%) | 0.992188 (== baseline, bit-identical) | keep | single-core 191us norm -> ~20us on 8 cores. Micro-validated (micro_norm.py PCC 0.999997). MoE gain small because its [16,1,5120] input forced reshape detours (fixed in iter8) |

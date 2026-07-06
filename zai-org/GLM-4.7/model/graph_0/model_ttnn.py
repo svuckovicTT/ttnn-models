@@ -1479,20 +1479,16 @@ class Glm4MoeDecoderLayer(LightweightModule):
         # residual add). Dense MLP for layers 0-2, MoE MLP for layers 3-91.
         signpost(f"L{self.layer_idx}_mlp")
         if self.is_moe:
-            # MoE path: reshape before post_attention_layernorm
-            reshaped_for_norm = ttnn.reshape(
-                residual,
-                [16, 1, 5120],
-                memory_config=dram_mem,
-            )
+            # Post-attention layernorm directly on the 2D [16,5120] residual (the
+            # sharded norm wants a 2D physical layout; the old [16,1,5120] detour
+            # tile-padded to 512 physical rows and forced two costly ReshapeViews
+            # that ate the sharded-norm savings). A2aSparse reshapes post_normed to
+            # [16,5120] / [16,1,1,5120] internally, so a 2D input is fine.
             post_normed = sharded_rms_norm(
-                reshaped_for_norm,
+                residual,
                 self.weights[f"{layer_prefix}.post_attention_layernorm.weight"],
                 9.9999997473787516e-06, hifi4_config, dram_mem,
             )
-            ttnn.deallocate(reshaped_for_norm, False)
-            # Pass post_normed [16, 1, 5120] to MoE - it creates both
-            # [16, 5120] for router/shared experts and [16, 1, 1, 5120] for all_gather
             moe_output = self.mlp(post_normed, var_0, var_2)
             # Residual add after MoE MLP
             output = ttnn.add(
