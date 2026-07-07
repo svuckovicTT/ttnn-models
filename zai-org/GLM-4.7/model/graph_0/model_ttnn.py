@@ -310,23 +310,18 @@ class ModelTTNN(LightweightModule):
         # Signpost: lm_head (final norm + lm_head matmul + output all_gathers),
         # run once per model forward.
         signpost("lm_head")
-        # Final norm and lm_head
-        ttnn_rms_norm_16 = ttnn.rms_norm(
-            hidden_states,
-            epsilon=9.9999997473787516e-06,
-            weight=self.weights["model.model.norm.weight"],
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            program_config=None,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=True,
-            ),
+        # Final norm and lm_head. hidden_states is [16,5120]; use the 8-core
+        # width-sharded norm (same single-core->8-core win as the per-layer norms).
+        _lmn_dram = ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        )
+        _lmn_ckc = ttnn.WormholeComputeKernelConfig(
+            math_fidelity=ttnn.MathFidelity.HiFi4, math_approx_mode=False,
+            fp32_dest_acc_en=True, packer_l1_acc=True,
+        )
+        ttnn_rms_norm_16 = sharded_rms_norm(
+            hidden_states, self.weights["model.model.norm.weight"],
+            9.9999997473787516e-06, _lmn_ckc, _lmn_dram,
         )
         ttnn.deallocate(hidden_states, False)
         ttnn_matmul_21 = ttnn.matmul(
