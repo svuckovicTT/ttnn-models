@@ -67,7 +67,24 @@ After the QKV DRAM-sharding change, the log records that "that row moved to DRAM
 
 The run logs contain no record of an o-proj DRAM-sharding change being implemented or measured. After the MLP-down rejection, the logs show a final full-harness run followed by a `TT_METAL_WATCHER=10` run and then the writing of the summary; the logs do not record an explicit stated reason for concluding the search.
 
-In terms of on-device executions, the logs show 12 invocations of the full harness (`python3 main.py`), the first being a plain run, two early ones using `HF_HUB_OFFLINE`, and the last using `TT_METAL_WATCHER=10`. The logs show 10 invocations of the reduced single-layer profiling script (`profile_reduced.py`), of which 4 were Tracy capture runs and 6 were direct runs.
+### Runs, iterations per try, and timing
+
+The logs record 22 on-device executions in total: 12 of the full harness (`python3 main.py`) and 10 of the reduced single-layer profiling script (`profile_reduced.py`, 6 direct runs and 4 Tracy captures). The table below breaks these into phases with the run count per phase (the iterations spent on each try) and the wall-clock window for each phase taken from the run timestamps. The whole session spans 15:22:54 to 16:42:09 UTC, about 79 minutes. The elapsed column is wall-clock per phase and includes kernel compilation, profiling, and agent time; it is not isolated device execution time, which the logs do not record per run (each harness invocation was polled at 30-second intervals).
+
+| Phase / try | Full runs | Reduced runs | Window (UTC) | Elapsed | Recorded outcome |
+| --- | --- | --- | --- | --- | --- |
+| Bring-up and legalization | 5 | 0 | 15:23:32–15:40:00 | ~16.5 min | Offline HF auth; grids legalized for 8x8; PCC reaches 1.000000 |
+| Baseline measurement | 1 | 0 | 15:40:00–15:44:23 | ~4.4 min | 0.0831 s, ~385 TPS, PCC 1.000000 |
+| Rejected: remove unused logits copy | 1 | 0 | 15:44:23–15:47:54 | ~3.5 min | "0.0831s before and after"; reverted |
+| Baseline profiling | 0 | 3 | 15:47:54–15:56:03 | ~8.2 min | Tracy capture + tt-perf-report baseline |
+| Rejected: reuse DRAM logits tensor | 1 | 0 | 15:56:03–16:03:13 | ~7.2 min | "83.7 ms versus the 83.1 ms" baseline; reverted |
+| Rejected: 2 sharded-QKV head variants | 0 | 2 | 16:03:13–16:10:08 | ~6.9 min | 4D shape-contract fail; rotary "sequence length 8 instead of 1"; reverted |
+| Kept: tail reshape removal | 1 | 2 | 16:10:08–16:19:51 | ~9.7 min | Reduced "8.435 ms to 5.048 ms", 71→69 ops |
+| Kept: QKV DRAM-sharding | 1 | 2 | 16:19:51–16:29:39 | ~9.8 min | QKV row "128 us to 107 us"; full path 0.0791 s |
+| Rejected: MLP-down DRAM-sharding | 0 | 1 | 16:29:39–16:33:21 | ~3.7 min | "regressed reduced replay to 20.8 ms"; reverted without full run |
+| Final headline run | 1 | 0 | 16:33:21–16:36:01 | ~2.7 min | 0.0791 / 0.0791 / 0.0792 s, ~404 TPS, PCC 1.000000 |
+| Watcher validation | 1 | 0 | 16:36:01–16:42:09 | ~6.1 min | `TT_METAL_WATCHER=10`, PCC 1.000000, no fault |
+| Total | 12 | 10 | 15:22:54–16:42:09 | ~79 min | — |
 
 ## Validation
 
