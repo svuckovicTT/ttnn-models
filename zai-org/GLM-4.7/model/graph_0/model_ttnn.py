@@ -1302,31 +1302,11 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         ttnn.deallocate(scores_k, False)
         summed = ttnn.sum(scaled, [0], False, memory_config=dram_mem, compute_kernel_config=None)
         ttnn.deallocate(scaled, False)
+        # sparse column-partial [1,1,16,5120]; the TP all-reduce over the 8 cols is
+        # DEFERRED and MERGED with the shared-experts all-reduce below (linearity:
+        # allreduce(sparse)+allreduce(shared) == allreduce(sparse+shared)), saving a
+        # whole reduce_scatter+all_gather pair per MoE layer.
         summed = ttnn.reshape(summed, [1, 1, 16, 5120], memory_config=dram_mem)
-        mc_rs = ttnn.reduce_scatter(
-            input_tensor=summed, dim=3, cluster_axis=1, subdevice_id=None,
-            memory_config=dram_mem, num_links=3, topology=ttnn.Topology.Ring,
-            compute_kernel_config=mc_hifi4,
-        )
-        ttnn.deallocate(summed, False)
-        print(">>> moe reduce_scatter enqueued", flush=True, file=_sys.stderr)
-        if _os.environ.get("GLM_MOE_PINPOINT") == "1":
-            ttnn.synchronize_device(self.device)
-            print(">>> SYNC after reduce_scatter OK", flush=True, file=_sys.stderr)
-        # Match the dense MLP's working all-gather exactly: reshape the
-        # reduce_scattered [1,1,16,640] -> [16,640], then all_gather on dim=1
-        # (all_gather dim=3 on the rank-4 tensor hangs under COL dispatch).
-        mc_rs_reshaped = ttnn.reshape(mc_rs, [16, 640], memory_config=dram_mem)
-        ttnn.deallocate(mc_rs, False)
-        sparse_output = ttnn.all_gather(
-            input_tensor=mc_rs_reshaped, dim=1, cluster_axis=1, subdevice_id=None,
-            memory_config=dram_mem, num_links=3, topology=ttnn.Topology.Ring,
-        )
-        ttnn.deallocate(mc_rs_reshaped, False)
-        print(">>> moe epilogue all_gather enqueued", flush=True, file=_sys.stderr)
-        if _os.environ.get("GLM_MOE_PINPOINT") == "1":
-            ttnn.synchronize_device(self.device)
-            print(">>> SYNC after epilogue all_gather OK", flush=True, file=_sys.stderr)
         # Shared experts
         shared_gate = ttnn.matmul(
             hidden_states,
@@ -1377,47 +1357,30 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             memory_config=dram_mem,
         )
         ttnn.deallocate(shared_down, False)
-        shared_rs = ttnn.reduce_scatter(
-            input_tensor=shared_reshaped,
-            dim=3,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Ring,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=False,
-            ),
+        # Merge the sparse + shared column-partials, then ONE all-reduce (was two
+        # separate reduce_scatter+all_gather pairs + a final add). The reduce runs
+        # at num_links=3 (the sparse epilogue's tuned value).
+        combined = ttnn.add(
+            summed, shared_reshaped, dtype=ttnn.DataType.BFLOAT16, memory_config=dram_mem,
         )
+        ttnn.deallocate(summed, False)
         ttnn.deallocate(shared_reshaped, False)
-        shared_rs_reshaped = ttnn.reshape(
-            shared_rs,
-            [16, 640],
-            memory_config=dram_mem,
+        mc_rs = ttnn.reduce_scatter(
+            input_tensor=combined, dim=3, cluster_axis=1, subdevice_id=None,
+            memory_config=dram_mem, num_links=3, topology=ttnn.Topology.Ring,
+            compute_kernel_config=mc_hifi4,
         )
-        ttnn.deallocate(shared_rs, False)
-        shared_ag = ttnn.all_gather(
-            input_tensor=shared_rs_reshaped,
-            dim=1,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=dram_mem,
-            num_links=None,
-            topology=ttnn.Topology.Ring,
+        ttnn.deallocate(combined, False)
+        # reshape [1,1,16,640] -> [16,640] then all_gather dim=1 (dim=3 rank-4
+        # all_gather hangs under COL dispatch).
+        mc_rs_reshaped = ttnn.reshape(mc_rs, [16, 640], memory_config=dram_mem)
+        ttnn.deallocate(mc_rs, False)
+        moe_output = ttnn.all_gather(
+            input_tensor=mc_rs_reshaped, dim=1, cluster_axis=1, subdevice_id=None,
+            memory_config=dram_mem, num_links=3, topology=ttnn.Topology.Ring,
         )
-        ttnn.deallocate(shared_rs_reshaped, False)
-        # Combine sparse + shared
-        moe_output = ttnn.add(
-            sparse_output,
-            shared_ag,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=dram_mem,
-        )
-        ttnn.deallocate(shared_ag, False)
-        ttnn.deallocate(sparse_output, False)
+        ttnn.deallocate(mc_rs_reshaped, False)
+        print(">>> moe merged sparse+shared all-reduce enqueued", flush=True, file=_sys.stderr)
         return moe_output
 
 
