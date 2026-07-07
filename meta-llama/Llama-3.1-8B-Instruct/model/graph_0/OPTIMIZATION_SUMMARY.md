@@ -6,17 +6,20 @@ This document summarizes an agentic performance-optimization pass over the tt-fo
 
 The warmed, trace-executed decode step for the full 32-layer model improved from a baseline of **0.0831 s/step (~385 TPS)** to a final **0.0791 s/step (~404 TPS)** while holding numerical correctness at **PCC 1.000000**. That is roughly a 4.8% latency reduction and about +19 tokens/s, with the final measurement reproduced across three consecutive trace-execute runs at 0.0791 s, 0.0791 s, and 0.0792 s.
 
+All throughput figures in this document are **batch-aggregate** across the batch of 32 concurrent sequences, since one decode step emits one token for each of the 32 sequences. The **per-user** rate is therefore the aggregate divided by 32, which is what a single sequence actually experiences: the step latency itself is the per-user token latency. In per-user tokens-per-second-per-user (t/s/u) terms the graph improved from about **12.0 t/s/u** (0.0831 s/token per sequence) to about **12.6 t/s/u** (0.0791 s/token per sequence).
+
 | Metric | Baseline (legalized graph) | Final (optimized) |
 | --- | --- | --- |
-| Warmed traced-decode latency | 0.0831 s/step | 0.0791 s/step |
-| Throughput | ~385 TPS | ~404 TPS |
+| Warmed traced-decode latency (per step = per-user token latency) | 0.0831 s | 0.0791 s |
+| Batch-aggregate throughput (batch 32) | ~385 TPS | ~404 TPS |
+| Per-user throughput | ~12.0 t/s/u | ~12.6 t/s/u |
 | Correctness gate (PCC vs HF golden) | 1.000000 | 1.000000 |
 
 Both numbers are for the identical default code path, so the comparison is apples-to-apples: the baseline is the emitted graph after only the minimal fixes needed to make it run legally on this device, and the final is that same graph with the kept optimizations applied.
 
 ## How performance is calculated
 
-Performance is measured by `main.py`, which runs the model five times in a fixed sequence and reports each timing so that dispatch/compile overhead is cleanly separated from steady-state device execution. The first run is a compile run that populates the program cache, the second run captures a device trace, and the final three runs replay that captured trace. Only the trace-execute runs are the headline latency, because they represent warmed steady-state execution with host dispatch overhead removed. Each measurement wraps `ttnn.execute_trace` followed by `ttnn.synchronize_device` in a wall-clock timer, and throughput is computed as tokens divided by elapsed seconds, where tokens per run equals batch size times tokens per sample (32 x 1 = 32). A single 0.0791 s step therefore corresponds to about 404 TPS across the batch.
+Performance is measured by `main.py`, which runs the model five times in a fixed sequence and reports each timing so that dispatch/compile overhead is cleanly separated from steady-state device execution. The first run is a compile run that populates the program cache, the second run captures a device trace, and the final three runs replay that captured trace. Only the trace-execute runs are the headline latency, because they represent warmed steady-state execution with host dispatch overhead removed. Each measurement wraps `ttnn.execute_trace` followed by `ttnn.synchronize_device` in a wall-clock timer, and throughput is computed as tokens divided by elapsed seconds, where tokens per run equals batch size times tokens per sample (32 x 1 = 32). A single 0.0791 s step therefore corresponds to about 404 TPS across the batch, or equivalently about 12.6 tokens/s per user for each of the 32 sequences.
 
 Correctness is gated in the same run: the last-token logits produced on device are compared against the Hugging Face PyTorch golden using PCC, and the harness asserts PCC is at or above 0.9921875. Every kept optimization was required to keep this gate passing, and the final graph passes it at 1.000000.
 
