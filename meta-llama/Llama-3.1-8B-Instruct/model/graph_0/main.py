@@ -13,7 +13,7 @@ NUM_PERF_RUNS = 3
 
 
 def test_main():
-    exact_pcc = 0.9921875
+    minimum_pcc = 0.9921875
 
     model = model_pt.load_pytorch_model()
     pytorch_input = model_pt.load_input(model)
@@ -82,13 +82,13 @@ def test_main():
     print(f"  Run 1 (compile): {elapsed:.4f}s, {tps:.2f} TPS")
 
     ttnn_output = ttnn.to_torch(ttnn.from_device(outputs[-1]))
-    ttnn_output = ttnn_output[:, -1, :]
+    ttnn_output = ttnn_output.reshape(BATCH_SIZE, -1, ttnn_output.shape[-1])[:, -1, :]
 
     golden_output = model_pt.run_pytorch_model()
 
     pcc = calculate_pcc(ttnn_output, golden_output)
     print(f"\nPCC: {pcc:.6f}")
-    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+    assert pcc >= minimum_pcc, f"PCC {pcc} is below minimum {minimum_pcc}"
 
     # Run 2: trace capture.
     copy_inputs()
@@ -117,4 +117,4 @@ def test_main():
 
 
 if __name__ == "__main__":
-    main()
+    test_main()

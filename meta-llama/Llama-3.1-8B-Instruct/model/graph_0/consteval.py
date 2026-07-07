@@ -9,23 +9,47 @@ DRAM_MEMORY_CONFIG = ttnn.MemoryConfig(
 )
 
 
+def _pad_to(value, multiple):
+    remainder = value % multiple
+    return value if remainder == 0 else value + multiple - remainder
+
+
+def _dram_width_sharded_weight_memory_config(device, k, n):
+    dram_grid = device.dram_grid_size()
+    dram_banks = dram_grid.x * dram_grid.y
+    shard_grid = ttnn.CoreRangeSet(
+        [
+            ttnn.CoreRange(
+                ttnn.CoreCoord(0, 0),
+                ttnn.CoreCoord(dram_grid.x - 1, dram_grid.y - 1),
+            )
+        ]
+    )
+    shard_shape = [k, _pad_to(n, 32 * dram_banks) // dram_banks]
+    return ttnn.MemoryConfig(
+        ttnn.TensorMemoryLayout.WIDTH_SHARDED,
+        ttnn.BufferType.DRAM,
+        ttnn.ShardSpec(shard_grid, shard_shape, ttnn.ShardOrientation.ROW_MAJOR),
+    )
+
+
 def _transpose_weight(tensor):
     t = ttnn.to_torch(ttnn.typecast(tensor, ttnn.DataType.FLOAT32, memory_config=None))
     t = ttir_cpu.permute(t, [1, 0])
     return ttnn.from_torch(t)
 
 
-def _transpose_and_cast(tensor, target_dtype, device):
+def _transpose_and_cast(tensor, target_dtype, device, memory_config=DRAM_MEMORY_CONFIG):
     transposed = _transpose_weight(tensor)
     bf16 = ttnn.typecast(transposed, ttnn.DataType.BFLOAT16, memory_config=None)
     tiled = ttnn.to_layout(bf16, ttnn.Layout.TILE, None, memory_config=None)
     on_device = ttnn.to_device(tiled, device=device, memory_config=DRAM_MEMORY_CONFIG)
     on_host = ttnn.from_device(on_device)
     casted = ttnn.typecast(on_host, target_dtype, memory_config=None)
-    return ttnn.to_device(casted, device=device, memory_config=DRAM_MEMORY_CONFIG)
+    return ttnn.to_device(casted, device=device, memory_config=memory_config)
 
 
-def _transpose_concat_kvq_and_cast(k_weight, v_weight, q_weight, device):
+def _transpose_concat_kvq_and_cast(k_weight, v_weight, q_weight, device, memory_config=DRAM_MEMORY_CONFIG):
     k_t = ttir_cpu.permute(ttnn.to_torch(ttnn.typecast(q_weight, ttnn.DataType.FLOAT32, memory_config=None)), [1, 0])
     v_t = ttir_cpu.permute(ttnn.to_torch(ttnn.typecast(v_weight, ttnn.DataType.FLOAT32, memory_config=None)), [1, 0])
     q_t = ttir_cpu.permute(ttnn.to_torch(ttnn.typecast(k_weight, ttnn.DataType.FLOAT32, memory_config=None)), [1, 0])
@@ -35,10 +59,12 @@ def _transpose_concat_kvq_and_cast(k_weight, v_weight, q_weight, device):
     on_device = ttnn.to_device(tiled, device=device, memory_config=DRAM_MEMORY_CONFIG)
     on_host = ttnn.from_device(on_device)
     casted = ttnn.typecast(on_host, ttnn.DataType.BFLOAT8_B, memory_config=None)
-    return ttnn.to_device(casted, device=device, memory_config=DRAM_MEMORY_CONFIG)
+    return ttnn.to_device(casted, device=device, memory_config=memory_config)
 
 
-def _transpose_concat_kvq_slice_reorder_and_cast(k_weight, v_weight, q_weight, device):
+def _transpose_concat_kvq_slice_reorder_and_cast(
+    k_weight, v_weight, q_weight, device, memory_config=DRAM_MEMORY_CONFIG
+):
     k_t = ttir_cpu.permute(ttnn.to_torch(ttnn.typecast(q_weight, ttnn.DataType.FLOAT32, memory_config=None)), [1, 0])
     v_t = ttir_cpu.permute(ttnn.to_torch(ttnn.typecast(v_weight, ttnn.DataType.FLOAT32, memory_config=None)), [1, 0])
     q_t = ttir_cpu.permute(ttnn.to_torch(ttnn.typecast(k_weight, ttnn.DataType.FLOAT32, memory_config=None)), [1, 0])
@@ -57,7 +83,7 @@ def _transpose_concat_kvq_slice_reorder_and_cast(k_weight, v_weight, q_weight, d
     on_host = ttnn.from_device(reordered)
     ttnn.deallocate(reordered, False)
     casted = ttnn.typecast(on_host, ttnn.DataType.BFLOAT8_B, memory_config=None)
-    return ttnn.to_device(casted, device=device, memory_config=DRAM_MEMORY_CONFIG)
+    return ttnn.to_device(casted, device=device, memory_config=memory_config)
 
 
 def _reshape_inv_freq(tensor, device):
@@ -83,6 +109,7 @@ def run_consteval(weights, device):
         )
 
         # QKV fused: transpose, concat [k,v,q] -> BFLOAT8_B
+        qkv_memcfg = _dram_width_sharded_weight_memory_config(device, 4096, 6144)
         if i == 31:
             w[f"model.layers.{i}.self_attn.qkv_proj{p}"] = (
                 _transpose_concat_kvq_slice_reorder_and_cast(
@@ -90,6 +117,7 @@ def run_consteval(weights, device):
                     w.pop(f"model.layers.{i}.self_attn.v_proj{p}"),
                     w.pop(f"model.layers.{i}.self_attn.q_proj{p}"),
                     device,
+                    qkv_memcfg,
                 )
             )
         else:
@@ -99,6 +127,7 @@ def run_consteval(weights, device):
                     w.pop(f"model.layers.{i}.self_attn.v_proj{p}"),
                     w.pop(f"model.layers.{i}.self_attn.q_proj{p}"),
                     device,
+                    qkv_memcfg,
                 )
             )
 
