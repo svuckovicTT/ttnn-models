@@ -12,11 +12,12 @@ class LightweightModule:
 
 
 class ModelTTNN(LightweightModule):
-    def __init__(self, device):
+    def __init__(self, device, num_layers=32):
         self.device = device
+        self.num_layers = num_layers
         self.weights = params.load_weights_for__main_from_state_dict(device)
         self.weights = consteval.run_consteval(self.weights, device)
-        self.layers = [LlamaDecoderLayer(i) for i in range(32)]
+        self.layers = [LlamaDecoderLayer(i) for i in range(num_layers)]
 
     def forward(self, activations):
         device = self.device
@@ -86,9 +87,9 @@ class ModelTTNN(LightweightModule):
                 ttnn.BufferType.L1,
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
-                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 0))]
+                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 0))]
                     ),
-                    [32, 384],
+                    [32, 512],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
@@ -102,7 +103,7 @@ class ModelTTNN(LightweightModule):
             cache_position=cache_position, attn_mask_scalar=attn_mask_scalar,
         )
 
-        for i in range(1, 32):
+        for i in range(1, self.num_layers):
             hidden, mlp_result, cos, sin, attn_mask = self.layers[i](
                 hidden, mlp_result,
                 weights, device, cos, sin, attn_mask,
@@ -121,9 +122,9 @@ class ModelTTNN(LightweightModule):
                 ttnn.BufferType.L1,
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
-                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1))]
+                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 1))]
                     ),
-                    [32, 192],
+                    [32, 256],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
@@ -147,24 +148,23 @@ class ModelTTNN(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 8)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 9), ttnn.CoreCoord(9, 9)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                         ]
                     ),
-                    [32, 1184],
+                    [32, 2016],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
             dtype=ttnn.DataType.BFLOAT16,
             program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                compute_with_storage_grid_size=ttnn.CoreCoord(11, 10),
+                compute_with_storage_grid_size=ttnn.CoreCoord(8, 8),
                 in0_block_w=2,
                 out_subblock_h=1,
-                out_subblock_w=1,
+                out_subblock_w=7,
                 out_block_h=1,
-                out_block_w=37,
+                out_block_w=63,
                 per_core_M=1,
-                per_core_N=37,
+                per_core_N=63,
                 fuse_batch=True,
                 fused_activation=None,
                 mcast_in0=True,
@@ -183,29 +183,15 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn_to_memory_config_457 = ttnn.to_memory_config(
-            ttnn_matmul_161,
-            ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.L1, None
-            ),
-        )
         ttnn.deallocate(ttnn_matmul_161, False)
-        ttnn_reshape_164 = ttnn.reshape(
-            ttnn_to_memory_config_457,
-            [32, 1, 128256],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_to_memory_config_457, False)
 
-        # Updated KV cache (key, value per layer), then the two model outputs.
+        # Updated KV cache (key, value per layer), then logits.
         kv_cache_out = []
         for i in range(32):
             kv_cache_out.append(key_cache[i])
             kv_cache_out.append(value_cache[i])
 
-        return kv_cache_out + [ttnn_to_memory_config_456, ttnn_reshape_164]
+        return kv_cache_out + [ttnn_to_memory_config_456]
 
 
 class LlamaDecoderLayer(LightweightModule):
@@ -245,9 +231,9 @@ class LlamaDecoderLayer(LightweightModule):
                 ttnn.BufferType.L1,
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
-                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1))]
+                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 1))]
                     ),
-                    [32, 192],
+                    [32, 256],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
@@ -264,9 +250,9 @@ class LlamaDecoderLayer(LightweightModule):
                 ttnn.BufferType.L1,
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
-                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1))]
+                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 1))]
                     ),
-                    [32, 192],
+                    [32, 256],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
@@ -322,9 +308,9 @@ class LlamaAttention(LightweightModule):
                     ttnn.BufferType.L1,
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
-                            [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 0))]
+                            [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 0))]
                         ),
-                        [32, 384],
+                        [32, 512],
                         ttnn.ShardOrientation.ROW_MAJOR,
                     ),
                 ),
@@ -345,8 +331,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
                         [32, 64],
@@ -366,31 +351,19 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 7)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 8), ttnn.CoreCoord(7, 8)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
-                        [32, 64],
+                        [32, 96],
                         ttnn.ShardOrientation.ROW_MAJOR,
                     ),
                 ),
                 dtype=ttnn.DataType.BFLOAT16,
-                program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                    compute_with_storage_grid_size=ttnn.CoreCoord(11, 9),
+                program_config=ttnn.MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig(
                     in0_block_w=2,
-                    out_subblock_h=1,
-                    out_subblock_w=2,
-                    out_block_h=1,
-                    out_block_w=2,
                     per_core_M=1,
-                    per_core_N=2,
-                    fuse_batch=True,
+                    per_core_N=3,
                     fused_activation=None,
-                    mcast_in0=True,
-                    gather_in0=False,
-                    hop_cores=ttnn.CoreRangeSet([]),
-                    num_global_cb_receivers=0,
-                    untilize_out=False,
                 ),
                 activation=None,
                 compute_kernel_config=None,
@@ -625,8 +598,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -667,8 +639,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -870,8 +841,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -891,8 +861,7 @@ class LlamaAttention(LightweightModule):
                         ttnn.ShardSpec(
                             ttnn.CoreRangeSet(
                                 [
-                                    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                    ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                                 ]
                             ),
                             [32, 128],
@@ -928,8 +897,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
                         [32, 64],
@@ -938,7 +906,7 @@ class LlamaAttention(LightweightModule):
                 ),
                 dtype=ttnn.DataType.BFLOAT16,
                 program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                    compute_with_storage_grid_size=ttnn.CoreCoord(11, 6),
+                    compute_with_storage_grid_size=ttnn.CoreCoord(8, 8),
                     in0_block_w=8,
                     out_subblock_h=1,
                     out_subblock_w=2,
@@ -968,8 +936,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
                         [32, 64],
@@ -1006,9 +973,9 @@ class LlamaAttention(LightweightModule):
                     ttnn.BufferType.L1,
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
-                            [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1))]
+                            [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 1))]
                         ),
-                        [32, 192],
+                        [32, 256],
                         ttnn.ShardOrientation.ROW_MAJOR,
                     ),
                 ),
@@ -1032,31 +999,19 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 7)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 8), ttnn.CoreCoord(7, 8)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
-                        [32, 64],
+                        [32, 96],
                         ttnn.ShardOrientation.ROW_MAJOR,
                     ),
                 ),
                 dtype=ttnn.DataType.BFLOAT16,
-                program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                    compute_with_storage_grid_size=ttnn.CoreCoord(11, 9),
+                program_config=ttnn.MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig(
                     in0_block_w=2,
-                    out_subblock_h=1,
-                    out_subblock_w=2,
-                    out_block_h=1,
-                    out_block_w=2,
                     per_core_M=1,
-                    per_core_N=2,
-                    fuse_batch=True,
+                    per_core_N=3,
                     fused_activation=None,
-                    mcast_in0=True,
-                    gather_in0=False,
-                    hop_cores=ttnn.CoreRangeSet([]),
-                    num_global_cb_receivers=0,
-                    untilize_out=False,
                 ),
                 activation=None,
                 compute_kernel_config=None,
@@ -1146,8 +1101,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -1188,8 +1142,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -1292,8 +1245,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -1313,8 +1265,7 @@ class LlamaAttention(LightweightModule):
                         ttnn.ShardSpec(
                             ttnn.CoreRangeSet(
                                 [
-                                    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                    ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                                 ]
                             ),
                             [32, 128],
@@ -1350,8 +1301,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
                         [32, 64],
@@ -1360,7 +1310,7 @@ class LlamaAttention(LightweightModule):
                 ),
                 dtype=ttnn.DataType.BFLOAT16,
                 program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                    compute_with_storage_grid_size=ttnn.CoreCoord(11, 6),
+                    compute_with_storage_grid_size=ttnn.CoreCoord(8, 8),
                     in0_block_w=8,
                     out_subblock_h=1,
                     out_subblock_w=2,
@@ -1390,8 +1340,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
                         [32, 64],
@@ -1428,9 +1377,9 @@ class LlamaAttention(LightweightModule):
                     ttnn.BufferType.L1,
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
-                            [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1))]
+                            [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 1))]
                         ),
-                        [32, 192],
+                        [32, 256],
                         ttnn.ShardOrientation.ROW_MAJOR,
                     ),
                 ),
@@ -1454,31 +1403,19 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 7)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 8), ttnn.CoreCoord(7, 8)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
-                        [32, 64],
+                        [32, 96],
                         ttnn.ShardOrientation.ROW_MAJOR,
                     ),
                 ),
                 dtype=ttnn.DataType.BFLOAT16,
-                program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                    compute_with_storage_grid_size=ttnn.CoreCoord(11, 9),
+                program_config=ttnn.MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig(
                     in0_block_w=2,
-                    out_subblock_h=1,
-                    out_subblock_w=2,
-                    out_block_h=1,
-                    out_block_w=2,
                     per_core_M=1,
-                    per_core_N=2,
-                    fuse_batch=True,
+                    per_core_N=3,
                     fused_activation=None,
-                    mcast_in0=True,
-                    gather_in0=False,
-                    hop_cores=ttnn.CoreRangeSet([]),
-                    num_global_cb_receivers=0,
-                    untilize_out=False,
                 ),
                 activation=None,
                 compute_kernel_config=None,
@@ -1568,8 +1505,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -1610,8 +1546,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -1711,8 +1646,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                             ]
                         ),
                         [32, 128],
@@ -1732,8 +1666,7 @@ class LlamaAttention(LightweightModule):
                         ttnn.ShardSpec(
                             ttnn.CoreRangeSet(
                                 [
-                                    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1)),
-                                    ttnn.CoreRange(ttnn.CoreCoord(0, 2), ttnn.CoreCoord(9, 2)),
+                                    ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 3)),
                                 ]
                             ),
                             [32, 128],
@@ -1769,8 +1702,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
                         [32, 64],
@@ -1779,7 +1711,7 @@ class LlamaAttention(LightweightModule):
                 ),
                 dtype=ttnn.DataType.BFLOAT16,
                 program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                    compute_with_storage_grid_size=ttnn.CoreCoord(11, 6),
+                    compute_with_storage_grid_size=ttnn.CoreCoord(8, 8),
                     in0_block_w=8,
                     out_subblock_h=1,
                     out_subblock_w=2,
@@ -1809,8 +1741,7 @@ class LlamaAttention(LightweightModule):
                     ttnn.ShardSpec(
                         ttnn.CoreRangeSet(
                             [
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                                ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                                ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                             ]
                         ),
                         [32, 64],
@@ -1846,9 +1777,9 @@ class LlamaMLP(LightweightModule):
                 ttnn.BufferType.L1,
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
-                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 1))]
+                        [ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 1))]
                     ),
-                    [32, 192],
+                    [32, 256],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
@@ -1872,24 +1803,23 @@ class LlamaMLP(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 7)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 8), ttnn.CoreCoord(1, 8)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                         ]
                     ),
-                    [32, 160],
+                    [32, 224],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
             dtype=ttnn.DataType.BFLOAT16,
             program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                compute_with_storage_grid_size=ttnn.CoreCoord(11, 9),
+                compute_with_storage_grid_size=ttnn.CoreCoord(8, 8),
                 in0_block_w=2,
                 out_subblock_h=1,
-                out_subblock_w=5,
+                out_subblock_w=7,
                 out_block_h=1,
-                out_block_w=5,
+                out_block_w=7,
                 per_core_M=1,
-                per_core_N=5,
+                per_core_N=7,
                 fuse_batch=True,
                 fused_activation=ttnn.UnaryWithParam(ttnn.UnaryOpType.SILU),
                 mcast_in0=True,
@@ -1912,24 +1842,23 @@ class LlamaMLP(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 7)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 8), ttnn.CoreCoord(1, 8)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                         ]
                     ),
-                    [32, 160],
+                    [32, 224],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
             dtype=ttnn.DataType.BFLOAT16,
             program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                compute_with_storage_grid_size=ttnn.CoreCoord(11, 9),
+                compute_with_storage_grid_size=ttnn.CoreCoord(8, 8),
                 in0_block_w=2,
                 out_subblock_h=1,
-                out_subblock_w=5,
+                out_subblock_w=7,
                 out_block_h=1,
-                out_block_w=5,
+                out_block_w=7,
                 per_core_M=1,
-                per_core_N=5,
+                per_core_N=7,
                 fuse_batch=True,
                 fused_activation=None,
                 mcast_in0=True,
@@ -1952,11 +1881,10 @@ class LlamaMLP(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 7)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 8), ttnn.CoreCoord(1, 8)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                         ]
                     ),
-                    [32, 160],
+                    [32, 224],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
@@ -1971,11 +1899,10 @@ class LlamaMLP(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(0, 5)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                         ]
                     ),
-                    [32, 256],
+                    [32, 224],
                     ttnn.ShardOrientation.ROW_MAJOR,
                 ),
             ),
@@ -1992,8 +1919,7 @@ class LlamaMLP(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                         ]
                     ),
                     [32, 64],
@@ -2002,8 +1928,8 @@ class LlamaMLP(LightweightModule):
             ),
             dtype=ttnn.DataType.BFLOAT16,
             program_config=ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
-                compute_with_storage_grid_size=ttnn.CoreCoord(11, 6),
-                in0_block_w=8,
+                compute_with_storage_grid_size=ttnn.CoreCoord(8, 8),
+                in0_block_w=7,
                 out_subblock_h=1,
                 out_subblock_w=2,
                 out_block_h=1,
@@ -2032,8 +1958,7 @@ class LlamaMLP(LightweightModule):
                 ttnn.ShardSpec(
                     ttnn.CoreRangeSet(
                         [
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(10, 4)),
-                            ttnn.CoreRange(ttnn.CoreCoord(0, 5), ttnn.CoreCoord(8, 5)),
+                            ttnn.CoreRange(ttnn.CoreCoord(0, 0), ttnn.CoreCoord(7, 7)),
                         ]
                     ),
                     [32, 64],
@@ -2045,4 +1970,3 @@ class LlamaMLP(LightweightModule):
         ttnn.deallocate(ttnn_add_0, False)
 
         return ttnn_add_1
-
