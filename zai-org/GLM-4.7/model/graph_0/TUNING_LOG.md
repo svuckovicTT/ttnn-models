@@ -153,3 +153,18 @@ KEY finding: the hidden-state rms_norms run on ONE core (whole 160-tile-wide red
 |---|-------|-------|----------|-----|----------|-----|
 | 7-abandon | all_reduce_async to fuse RS+AG TP all-reduce | (attempt) | n/a (API error) | n/a | ABANDON | pybind needs math_op + barrier/rs/ag global-semaphore sequences (async/persistent variant); no reference in sparse checkout for correct semaphore counts; too hang-risky. See METAL_BLOCKERS.md |
 | 7 | width-sharded rms_norm (8-core 4x2 WIDTH_SHARDED LayerNormShardedMultiCore) at input_layernorm(x92)+post_attn(dense x3, MoE x89) | attn+dense+moe | attn 799->629 (-170), dense 602->429 (-173), moe 1901->1867 (-34); full ~260.7->~241.6 ms (-7.3%) | 0.992188 (== baseline, bit-identical) | keep | single-core 191us norm -> ~20us on 8 cores. Micro-validated (micro_norm.py PCC 0.999997). MoE gain small because its [16,1,5120] input forced reshape detours (fixed in iter8) |
+| 8 | MoE post_attn norm directly on 2D [16,5120] residual (drop the [16,1,5120] reshape detour that forced 2x ReshapeView around the sharded norm) | MoE | folded into the iter8+9 combined profile below | 0.992188 | keep | recovers the sharded-norm win the reshapes ate: LayerNorm 193->17us (now width_sharded), ReshapeView 150(5op)->99(4op) |
+| 9 | merge MoE sparse+shared TP all-reduce: add the two column-partials, then ONE reduce_scatter+all_gather (was two RS+AG pairs + a post-add) | MoE | ReduceScatter 220(2op)->98(1op), AllGather 124(2op)->58(1op) | 0.992188 | keep | linearity: allreduce(a)+allreduce(b)==allreduce(a+b); drops a whole RS+AG pair/MoE-layer |
+| 10 | width-sharded rms_norm for the lm_head final norm (model.model.norm [16,5120]) | lm_head | lm_head 16195->16007 (-188) | 0.992188 | keep | last remaining single-core 193us norm |
+
+## Combined iter7-10 profile (measured, tracy signpost-scoped, HEAD 917b263) — 2026-07-07
+| segment | baseline | iter7-10 | delta |
+|---------|----------|----------|-------|
+| attention / layer | 799 us | 627 us | -172 (-22%) |
+| dense MLP / layer | 602 us | 428 us | -174 (-29%) |
+| MoE / layer | 1901 us | 1503 us | -398 (-21%) |
+| lm_head (x1) | 16,195 us | 16,007 us | -188 |
+| **full model** (preamble + 92*attn + 3*dense + 89*moe + lm_head) | **260.8 ms** | **208.9 ms** | **-51.9 ms (-19.9%)** |
+
+MoE now: MoECompute 423 (unchanged, top item), Matmul 195 (router+shared, unchanged), ReshapeView 99, TopK 99, ReduceScatter 98, FillPad 93, Tilize 89, dispatch 86, AllGather 58, Gather 45, Untilize 41, LayerNorm 17 (was 193). CCL more than halved (344->155us); norm 193->17us.
+Remaining MoE levers are all harder (see TT_MLIR_RECOMMENDATIONS.md): moe_compute internals 423us (deadlock-risky knobs), the ROW_MAJOR<->TILE dispatch TM churn ~220us (needs TILE-accepting dispatch or L1 chains), the router/shared matmuls 195us (N-limited, 5-6 cores). Attention (627us): qkv matmul 109 + o_proj CCL 134 + RoPE partial-slice churn ~130 + q/k norm ~45. lm_head all_gather 11.3ms is x1 and gated by the harness's full-logits PCC contract.
