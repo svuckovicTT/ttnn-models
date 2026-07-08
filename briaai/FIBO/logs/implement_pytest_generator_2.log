@@ -1,0 +1,9 @@
+Done. The `test_main()` function now:
+
+1. Loads PyTorch inputs via `model_pt.load_input()` and converts each tensor to TTNN format (`ttnn.from_torch` with BFLOAT16 + ROW_MAJOR layout, then `to_device` with DRAM interleaved memory config) — matching the `load_activations_for__main()` pattern. Nested lists/tuples (like `text_encoder_layers`) are flattened, and non-tensor entries (None, False) are skipped.
+2. Loads weights via `load_weights_for__main()`
+3. Runs `_main(activations, weights)` to get TTNN output
+4. Compares against `model_pt.run_pytorch_model()` using `calculate_pcc()`
+5. Asserts `pcc == 0.999389` (the exact PCC from `xla.py`)
+
+--- Time taken: 71.8s | session: 3b0b0fc0-1a6b-4bae-bacd-46dcdd7acffb ---
