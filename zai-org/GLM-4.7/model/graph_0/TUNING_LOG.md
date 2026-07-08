@@ -172,4 +172,14 @@ Remaining MoE levers are all harder (see TT_MLIR_RECOMMENDATIONS.md): moe_comput
 | 11 | 1D-mcast matmul program configs: qkv_proj 1D(7x8,ibw8) + shared experts gate/up 1D(6x1,ibw20). Micro-bench (matmul_micro.py) found the default factory ~2x slow on skinny M=1-tile DRAM matmuls with large K | attn+moe | attn 627->573 (qkv 112->56us), moe 1503->1451 (shared gate/up 56->31us x2); full 208.9->199.3 ms | 0.992188 (== baseline) | keep | 1D mcast_in0 blocks the K reduction; o_proj/shared_down default already optimal (left). Grids 7-wide (avoid COL-dispatch x=7) |
 
 ## Running total after iter11: 260.8 -> 199.3 ms (-23.6%), PCC 0.992188 (bit-identical throughout)
-Per-layer now: attn 573us, dense 427us, MoE 1451us; lm_head 16.0ms (x1). Next candidate: router-gate matmul config (FP32+sigmoid, ~-14us x89), attention RoPE partial-slice churn (~130us), moe_compute shared-expert fusion.
+Per-layer now: attn 573us, dense 427us, MoE 1451us; lm_head 16.0ms (x1).
+
+## Reverted / no-op attempts (2026-07-08)
+| # | patch | result | decision | why |
+|---|-------|--------|----------|-----|
+| 12 | router-gate 1D-mcast matmul config (5x1, ibw20; FP32+sigmoid) | DEVICE FAULT (TT_FATAL run_mailbox core 25-17) | REVERT | FP32 + sigmoid fused-activation matmul on a narrow 5-wide grid is unstable here (micro-bench couldn't even build the FP32 bmm_..._fused_bias_activation kernel). See HANGS.md |
+| 13a | fold the post-rotary q/k identity slices (slice(q_rotary,[0:64])) | concat shape TT_FATAL | REVERT | rotary_embedding pads its 64-wide output, so the re-slice is load-bearing (confirms the old attention-tuning note) |
+| 13b | alias the identity post_normed reshape in MoE (hidden_states=reshape(post_normed,[16,5120]) is identity since iter8) | MoE ReshapeView 99.38us/4ops -> 97.79us/4ops (SAME op count) | REVERT | ttnn already folds the identity reshape to a free view, so the source alias gains 0 device time (MoE 1451->1485 was run-to-run noise). PCC-exact but no measured win |
+
+## Tooling fix (2026-07-08): profiler output -> container-LOCAL /tmp
+The tracy report step cp's the ~1.4GB profile_log_device.csv; on the 98%-full shared NFS that cp HANGS indefinitely (was mis-read as a "tracy post-processing stall" for hours). Fix in prof.sh: run tracy with `-o /tmp/glm_prof` (container overlay disk, 2.9TB free) so the device-log + report cp are local/fast, then copy only the ~17MB ops_perf CSV back to NFS (generated/profiler/reports_local/) for the host-side tt-perf-report. Healthy tracy run is now ~6 min and exits cleanly. Always kill straggler `cp .*profile_log_device` + `tt-smi -glx_reset_auto` (on host) between runs.
