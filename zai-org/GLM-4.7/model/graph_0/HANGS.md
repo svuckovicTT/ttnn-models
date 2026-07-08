@@ -15,3 +15,12 @@ this the single-device micro-bench of the same config couldn't even build the FP
 `bmm_large_block_zm_fused_bias_activation` kernel (NFS cache rename flake). Reverted; router left on
 the default config. Not worth chasing (~2.8ms, x89) given the FP32 fused-activation-matmul path is
 unstable here. Recovery: pkill + `tt-smi -glx_reset_auto`.
+
+# moe_compute num_links=2 -> DEADLOCK — 2026-07-08 (deterministic)
+
+Adding `num_links=2` to the default fused moe_compute call (cluster_axis=0 selective_reduce_combine)
+deterministically HANGS the forward: reaches ">>> moe_compute enqueued" then never completes (no
+"layer 3 done" in 12min, host at ~241% CPU spinning on the device). The fused combine is
+hang-sensitive to link count — leave num_links unset (None/default). PCC run detects it (never
+finishes). Recovery: pkill main.py + `tt-smi -glx_reset_auto`. Same deadlock family as the other
+cluster_axis=0 combine hangs.
