@@ -41,6 +41,22 @@ same cluster_axis and rewrites to `all_reduce(add(a,b))` (generally: hoist eleme
 that are linear over the reduction out through sibling collectives). Applies anywhere two
 TP-partial tensors are separately all-reduced and then combined.
 
+## 4b. CONFIRMED: the MoE dispatch/combine TM churn is unavoidable in-graph (needs #4)
+
+Empirically verified (perf iter14, reverted): moe_compute emits its combine output in
+ROW_MAJOR, and all_to_all_dispatch consumes ROW_MAJOR, while the rest of the graph is TILE.
+This forces, per MoE layer: an Untilize (~38us) + FillPad (~46us) to feed dispatch, and a
+TilizeWithValPadding (~89us) to bring the [8,16,5120] combine back to TILE for the epilogue
+scale+sum. Attempted to dodge the epilogue tilize by doing the scale (multiply) + k-reduction
+(sum) in ROW_MAJOR and tilizing only the small [1,16,5120] result -- but ttnn's multiply/sum
+tilize internally (compute needs TILE), so the 89us tilize just moves into the multiply; net
+~0 (PCC stayed 0.992188). So ~170us/MoE-layer (~15ms full model) of pure format churn cannot
+be removed in-graph. It needs EITHER a TILE-accepting all_to_all_dispatch + a TILE-output
+moe_compute, OR a fused moe-combine op that takes the per-expert output + routing scores and
+returns the TILE weighted-sum directly (deepseek_moe_fast_reduce_nc_fused is close but reduces
+by expert index across devices, not a local scale-by-scores+sum-over-k). This is the single
+largest remaining MoE cost after the fused op's own (irreducible bf4 expert) FLOPs.
+
 ## 3. all_reduce_async pybind doc vs reality (blocker, see METAL_BLOCKERS.md #iter7)
 
 `ttnn.experimental.all_reduce_async`'s docstring advertises a simple
