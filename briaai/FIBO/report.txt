@@ -1,0 +1,48 @@
+[meta]
+schema_version = 1
+benchmark_test = test_fibo
+benchmark_file = tests/benchmark/test_fibo.py
+model_id = briaai/FIBO
+family = imagegen
+hw_target = qb2
+mesh_shape = 1x4
+worktree = /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO
+model_dir = /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO/briaai/FIBO
+branch = auto/benchmark/test_fibo
+reached_step = 6
+final_status = passed
+final_step_name = run_graph
+
+[step_0_xla_py]
+status = passed
+notes = standalone xla.py; stock diffusers BriaFiboPipeline; input-capture, FiboTransformerWrapper, and Megatron-1D TP-4 shard spec inlined; only the DiT (pipe.transformer) ported; effective batch=2 from CFG
+
+[step_1_run_pt]
+status = passed
+elapsed_s = 359.0
+log = run-logs/step-1.log
+
+[step_2_run_tt]
+status = passed
+elapsed_s = 187.0
+log = run-logs/step-2.log
+
+[step_3_golden]
+status = passed
+elapsed_s = 254.0
+pcc = 0.999389
+log = run-logs/step-3.log
+
+[step_4_codegen]
+status = passed
+elapsed_s = 193.0
+graph_count = 1
+log = run-logs/step-4.log
+
+[step_5_single_graph]
+status = passed
+
+[step_6_run_graph]
+status = passed
+elapsed_s = 56.0
+log = run-logs/step-6.log
