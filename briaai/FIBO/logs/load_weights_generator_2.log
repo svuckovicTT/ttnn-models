@@ -1,0 +1,19 @@
+Here's a summary of what was done:
+
+**`params.py`** (new, 1765 lines):
+- `WEIGHT_FILE_MAP`: ordered dict mapping 846 weight names → tensorbin file paths
+- `TILE_ON_DEVICE_WEIGHTS`: set of 262 weight keys that use TILE layout + on-device DRAM
+- `ROW_MAJOR_HOST_WEIGHTS`: set of 584 weight keys that use ROW_MAJOR layout + host-only
+- `ALL_WEIGHTS`: ordered list of all weight keys (preserves original load order)
+- `load_weights_for__main()`: loads weights from disk using `utils.load_tensor`, applying TILE+DRAM or ROW_MAJOR+host based on set membership
+- `load_weights_for__main_from_state_dict()`: loads weights from the PyTorch model's state dict (including non-persistent buffers), converts via `ttnn.from_torch` → `ttnn.to_layout` → `ttnn.to_dtype` → `ttnn.to_device` in that order, matching the same properties per weight group
+
+**`main.py`** (updated, 63709 lines, down from 72685):
+- Added `import params`
+- Removed the `_main_weights = {}` global and the entire 8,969-line `load_weights_for__main` function body
+- Added `load_weights_for__main = params.load_weights_for__main` alias so existing call sites (`main()`, `test_main()`) work unchanged
+
+**`verify_weights.py`** (new):
+- `test_verify_weights()`: pytest function that loads weights via both paths, asserts key sets match and all tensor values are identical
+
+--- Time taken: 254.4s | session: f6cac9b5-9600-4770-85c2-45157e03637b ---
