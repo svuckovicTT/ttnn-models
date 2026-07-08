@@ -1,5 +1,7 @@
+import torch
 import ttnn
 import utils
+import model_pt
 from utils import calculate_pcc
 
 
@@ -72653,7 +72655,29 @@ def main():
 
 
 def test_main():
-    return 0
+    exact_pcc = 0.999389111995697
+
+    # Use the codegen's own activation loader: it deserializes the captured
+    # input tensors already in the exact order `_main` unpacks them
+    # (`activations[0..51]`), applying the same layout/dtype/device transforms
+    # as any `load_activations_for_*()` helper.
+    activations = load_activations_for__main()
+    weights = load_weights_for__main()
+    outputs = _main(activations, weights)
+
+    # The DiT runs tensor-parallel on a 1x4 mesh, but `transformer.proj_out` is
+    # not sharded (see xla.py's shard spec), so the output is replicated across
+    # all 4 devices. Pull a single shard back to host to convert it to torch;
+    # `ttnn.to_torch` on the whole multi-device tensor would need a composer.
+    output_host = ttnn.from_device(outputs[0])
+    output_shard = ttnn.get_device_tensors(output_host)[0]
+    ttnn_output = ttnn.to_torch(output_shard).to(torch.float32)
+
+    golden_output = model_pt.run_pytorch_model().to(torch.float32)
+
+    pcc = calculate_pcc(ttnn_output, golden_output)
+    print(f"\nPCC: {pcc:.6f}")
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
 
 if __name__ == "__main__":

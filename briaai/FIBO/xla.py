@@ -406,7 +406,7 @@ def codegen_model():
 
 def compare_pytorch_and_tt_runs():
     # Capture exact PCC from first --golden run and paste here.
-    exact_pcc = 0.999389
+    exact_pcc = 0.999389111995697
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()
