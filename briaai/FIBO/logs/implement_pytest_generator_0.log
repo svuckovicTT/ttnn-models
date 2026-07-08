@@ -1,0 +1,10 @@
+Done. The `test_main()` function now:
+
+1. Sets `exact_pcc = 0.999389` (matching `xla.py`)
+2. Loads TTNN activations via `load_activations_for__main()` and weights via `load_weights_for__main()`
+3. Runs the TTNN forward pass with `_main(activations, weights)`
+4. Converts the TTNN output to a torch float32 tensor via `ttnn.from_device` + `ttnn.to_torch`
+5. Gets the golden PyTorch output via `model_pt.run_pytorch_model()`
+6. Computes PCC using `calculate_pcc` and asserts exact match
+
+--- Time taken: 178.4s | session: f141863b-106b-43af-b0ca-e48781626a37 ---
