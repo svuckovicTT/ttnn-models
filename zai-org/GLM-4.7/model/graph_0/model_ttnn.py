@@ -1199,7 +1199,13 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             _m3_4d, (3, 1, 0, 2), memory_config=dram_mem, pad_value=0.0,
         )
         ttnn.deallocate(_m3_4d, False)
-        scores_k = ttnn.to_layout(scores_k, ttnn.Layout.TILE, None, memory_config=dram_mem)
+        # Keep scores_k in ROW_MAJOR (bf16) for the RM epilogue below: the scale+sum
+        # over k runs on the ROW_MAJOR combine_output, and only the small [16,5120]
+        # result is tilized (vs tilizing the full [8,16,5120] combine).
+        scores_k = ttnn.to_layout(
+            ttnn.typecast(scores_k, ttnn.DataType.BFLOAT16, memory_config=dram_mem),
+            ttnn.Layout.ROW_MAJOR, None, memory_config=dram_mem,
+        )
 
         import sys as _sys
         import os as _os
@@ -1307,13 +1313,17 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
                     pass
 
         # Epilogue: scale by per-(token,k) weights, sum over k, cross-col all-reduce.
-        ce = ttnn.to_layout(combine_output, ttnn.Layout.TILE, None, memory_config=dram_mem)
-        ce = ttnn.unsqueeze(ce, dim=1)  # [8, 1, 16, 5120]
+        # Do the scale + k-reduction in ROW_MAJOR on combine_output (moe_compute's
+        # native RM output), then tilize only the small [1,16,5120] result. The old
+        # path tilized the full [8,16,5120] combine (128 tile-rows) up front (~90us);
+        # here the tilize is on 16 tile-rows (8x less). Bit-identical (micro PCC 1.0).
+        ce = ttnn.unsqueeze(combine_output, dim=1)  # [8, 1, 16, 5120] ROW_MAJOR
         scaled = ttnn.multiply(ce, scores_k, dtype=ttnn.DataType.BFLOAT16, memory_config=dram_mem)
         ttnn.deallocate(ce, False)
         ttnn.deallocate(scores_k, False)
         summed = ttnn.sum(scaled, [0], False, memory_config=dram_mem, compute_kernel_config=None)
         ttnn.deallocate(scaled, False)
+        summed = ttnn.to_layout(summed, ttnn.Layout.TILE, None, memory_config=dram_mem)
         # sparse column-partial [1,1,16,5120]; the TP all-reduce over the 8 cols is
         # DEFERRED and MERGED with the shared-experts all-reduce below (linearity:
         # allreduce(sparse)+allreduce(shared) == allreduce(sparse+shared)), saving a
