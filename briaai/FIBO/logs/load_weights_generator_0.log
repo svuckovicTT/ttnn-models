@@ -1,0 +1,17 @@
+Here's a summary of what was done:
+
+**Created `params.py`** (~10,131 lines):
+- Moved the `_main_weights` global dict and `load_weights_for__main()` function verbatim from `main.py`
+- Added `TILE_ON_DEVICE_WEIGHTS` set (262 weights that use TILE layout + on-device DRAM)
+- Added `ALL_WEIGHTS` list (all 846 weight names)
+- Added `load_weights_for__main_from_state_dict()` that loads weights from the PyTorch model's state_dict using `ttnn.from_torch()`, applies the same two property groups (TILE+device or ROW_MAJOR+host), using `ttnn.DRAM_MEMORY_CONFIG`
+
+**Updated `main.py`** (72,685 → 63,707 lines):
+- Added `import params`
+- Replaced both `load_weights_for__main()` calls with `params.load_weights_for__main()`
+- Removed the extracted function and its `_main_weights` global
+
+**Created `verify_weights.py`**:
+- Single `test_verify_weights()` pytest function that loads weights from both disk and state_dict, compares keys and tensor values exactly
+
+--- Time taken: 406.0s | session: 7c8c4e39-39de-48bd-886a-88059010e63a ---
