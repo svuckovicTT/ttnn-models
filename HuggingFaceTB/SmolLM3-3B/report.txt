@@ -46,5 +46,5 @@ status = passed
 status = failed
 elapsed_s = 43.0
 exit_code = 1
-failure_summary = TT_FATAL Out of Memory: Not enough space to allocate 9663676416 B DRAM buffer across 8 banks, each bank needs 1207959552 B but bank size is 4272341376 B (free 1226465664 B). Generated ./run executes single-device; the unsharded [1,16,24576,24576] attention buffer OOMs on one chip (needs the 4-chip TP-4 topology).
+failure_summary = TT_FATAL Out of Memory: 9663676416 B DRAM buffer across 8 banks (the 8 DRAM channels of ONE blackhole chip; free 1226465664 B). Graph IS tp=4 (mesh 1x4, chipIds [0,1,2,3], 72 all_gather + 72 reduce_scatter, scores sharded to 1x4x24576x24576 = 4 heads/chip). OOM is the per-chip fp32 Q@Kt score matrix: matmul->softmax materialize tensor<1x4x24576x24576xf32> = 4*24576^2*4B = 9.66GB, overflowing one chip DRAM. Codegen path (tt_legacy_compile, EmitPy) materializes it in fp32; the step-2 PJRT run at opt_level=1 did not hit the same peak, which is why --run-tt passed (PCC 1.0) but the codegen ./run OOMs.
 log = run-logs/step-6.log
