@@ -41,6 +41,23 @@ _LN_PROG_CFG = ttnn.LayerNormShardedMultiCoreProgramConfig(
 )
 
 
+# Decode matmul program configs (1D multicast-in0). The default matmul factory is
+# slow on these skinny (M=1 tile) DRAM-interleaved decode matmuls with a large K
+# reduction; a 1D mcast_in0 config that multicasts the tiny activation and blocks
+# the K reduction is ~2x faster at bit-identical math (micro-bench matmul_micro.py).
+# Grids are 7-wide (x=0-6) to avoid the COL-dispatch-reserved grid column x=7.
+def _mm1d(gx, gy, in0_block_w, per_core_n):
+    return ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
+        compute_with_storage_grid_size=ttnn.CoreCoord(gx, gy),
+        in0_block_w=in0_block_w, out_subblock_h=1, out_subblock_w=1,
+        per_core_M=1, per_core_N=per_core_n, fuse_batch=True, mcast_in0=True,
+    )
+# qkv_proj [16,5120]x[5120,1792/dev]: N=56 tiles -> 7x8 cores, K=160 tiles ibw=8.  112->56us
+_QKV_PC = _mm1d(7, 8, 8, 1)
+# shared experts gate/up [16,5120]x[5120,192/dev]: N=6 tiles -> 6 cores, ibw=20.  56->31us
+_SHARED_PC = _mm1d(6, 1, 20, 1)
+
+
 def sharded_rms_norm(x, weight, epsilon, ckc, dram_mem):
     """Reshard x (DRAM, [.., 5120]) to an 8-core width-sharded L1 tensor, run the
     sharded multicore rms_norm, and reshard the result back to DRAM. Same shape
@@ -584,7 +601,7 @@ class Glm4MoeAttention(LightweightModule):
             transpose_b=False,
             memory_config=dram_mem,
             dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
+            program_config=_QKV_PC,
             activation=None,
             compute_kernel_config=None,
         )
@@ -1310,7 +1327,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             transpose_b=False,
             memory_config=dram_mem,
             dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
+            program_config=_SHARED_PC,
             activation="silu",
             compute_kernel_config=None,
         )
@@ -1321,7 +1338,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             transpose_b=False,
             memory_config=dram_mem,
             dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
+            program_config=_SHARED_PC,
             activation=None,
             compute_kernel_config=None,
         )
