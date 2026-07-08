@@ -168,3 +168,8 @@ KEY finding: the hidden-state rms_norms run on ONE core (whole 160-tile-wide red
 
 MoE now: MoECompute 423 (unchanged, top item), Matmul 195 (router+shared, unchanged), ReshapeView 99, TopK 99, ReduceScatter 98, FillPad 93, Tilize 89, dispatch 86, AllGather 58, Gather 45, Untilize 41, LayerNorm 17 (was 193). CCL more than halved (344->155us); norm 193->17us.
 Remaining MoE levers are all harder (see TT_MLIR_RECOMMENDATIONS.md): moe_compute internals 423us (deadlock-risky knobs), the ROW_MAJOR<->TILE dispatch TM churn ~220us (needs TILE-accepting dispatch or L1 chains), the router/shared matmuls 195us (N-limited, 5-6 cores). Attention (627us): qkv matmul 109 + o_proj CCL 134 + RoPE partial-slice churn ~130 + q/k norm ~45. lm_head all_gather 11.3ms is x1 and gated by the harness's full-logits PCC contract.
+
+| 11 | 1D-mcast matmul program configs: qkv_proj 1D(7x8,ibw8) + shared experts gate/up 1D(6x1,ibw20). Micro-bench (matmul_micro.py) found the default factory ~2x slow on skinny M=1-tile DRAM matmuls with large K | attn+moe | attn 627->573 (qkv 112->56us), moe 1503->1451 (shared gate/up 56->31us x2); full 208.9->199.3 ms | 0.992188 (== baseline) | keep | 1D mcast_in0 blocks the K reduction; o_proj/shared_down default already optimal (left). Grids 7-wide (avoid COL-dispatch x=7) |
+
+## Running total after iter11: 260.8 -> 199.3 ms (-23.6%), PCC 0.992188 (bit-identical throughout)
+Per-layer now: attn 573us, dense 427us, MoE 1451us; lm_head 16.0ms (x1). Next candidate: router-gate matmul config (FP32+sigmoid, ~-14us x89), attention RoPE partial-slice churn (~130us), moe_compute shared-expert fusion.
