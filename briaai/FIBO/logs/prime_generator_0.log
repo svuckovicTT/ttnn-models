@@ -1,0 +1,58 @@
+I have a complete picture now. Here's the summary:
+
+---
+
+## Codegen Summary: `briaai/FIBO/model/graph_0/`
+
+### Model
+BRIA AI's **FIBO 8B DiT** (diffusion transformer for text-to-image), tensor-parallel across 4 Blackhole chips (TP-4, Megatron-1D). The XLA reference (`xla.py`) captures the DiT sub-network from the `BriaFiboPipeline` and benchmarks its forward pass.
+
+### Files
+| File | Lines | Role |
+|------|-------|------|
+| `main.py` | 72,655 | All codegen: const-eval prep, forward pass, weight/activation loading, entry point |
+| `utils.py` | 101 | Shared utilities: `DeviceGetter` singleton, `load_tensor`, `get_scalar_from_tensor`, `create_global_semaphore` |
+| `ttir_cpu.py` | 907 | Pure-torch CPU fallbacks for TTIR ops (not imported by `main.py`) |
+| `__init__.py` | 3 | Empty package marker |
+| `xla.py` | 450 | XLA reference: pipeline capture, TP sharding spec, codegen/golden/run modes |
+
+### Structure of `main.py`
+
+1. **242 `main_const_eval_N()` functions** (lines 5–17,365): Pre-compute constant tensors — each gets a device, moves weight tensors to device with `to_device` + `to_layout` (TILE), deallocates intermediates, returns a list. Patterns:
+   - Most do repetitive `to_device` → `to_layout` → `deallocate` chains on weight slices, then `concat` them
+   - `const_eval_0` creates a literal float-array tensor (128-element inverse-sqrt schedule)
+   - `const_eval_107` is the largest (~1,940 lines): processes 55 weight args through to_device/to_layout/typecast/concat, with a long deallocate tail
+   - `const_eval_176` and `const_eval_233` take no args (create scalar/literal constants)
+
+2. **`ce_cache__main` global dict** (line 17,366): Caches all const-eval results.
+
+3. **`_main(activations, weights)`** (lines 17,369–61,608) — **the forward pass**, ~44,240 lines:
+   - Unpacks 52 activations (`args_0` through `args_51`) in a non-sequential order
+   - Loads 2 cached const-eval values (`var_0`, `var_1`)
+   - Executes the full DiT forward as a flat SSA-style sequence of ~31,000 `ttnn.*` calls
+   - Key ops: `reshape`, `slice`, `to_layout`, `permute`, `typecast`, `add`, `multiply`, `concat`, `matmul`, `linear`, `rms_norm`, `layer_norm`, `gelu`, `neg`, `all_gather`, `reduce_scatter`, `mesh_partition`, `repeat_interleave`, `transformer.scaled_dot_product_attention`, `transformer.concatenate_heads`
+   - Every op gets an explicit `memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None)` — this identical pattern is repeated ~6,700 times
+   - Every intermediate is `deallocate`d immediately after its last use (SSA-style)
+   - Variable names are auto-numbered: `ttnn_reshape_180`, `ttnn_matmul_37`, etc.
+   - Returns `[ttnn_reshape_1326]` — the final DiT output
+
+4. **`consteval__main(ce_cache, weights)`** (lines 61,611–63,137): Calls all 242 const-eval functions, caching each result in `ce_cache[key]`.
+
+5. **`load_activations_for__main()`** (lines 63,140–63,665): Loads 52 activation tensors from `./tensors/argN.tensorbin` files via `utils.load_tensor`.
+
+6. **`load_weights_for__main()`** (lines 63,671–72,644): Loads ~846 weight tensors from `.tensorbin` files into the `_main_weights` global dict, keyed by transformer parameter names (e.g., `transformer.transformer_blocks.7.attn.to_q.weight`).
+
+7. **`main()`** (lines 72,647–72,655): Entry point — loads activations, loads weights, calls `_main`.
+
+### Key observations for refactoring
+
+- **Extreme repetition of `ttnn.MemoryConfig(...INTERLEAVED...DRAM...None)`**: This identical 3-arg `MemoryConfig` constructor appears ~6,700 times. A single module-level constant would eliminate massive duplication.
+- **Verbose auto-generated variable names**: `utils_DeviceGetter_get_device_107`, `ttnn_to_layout_584` etc. — readable but noisy.
+- **`const_eval_N` functions are highly repetitive**: Most follow one of ~3 templates (to_device/to_layout/deallocate chains, concat patterns, typecast chains). Many could be collapsed.
+- **`load_weights` and `load_activations` are repetitive**: Each `load_tensor` call follows the same pattern, differing only in path, layout, dtype, device, and memory_config.
+- **The `_main` forward function is a single 44K-line flat function**: No logical grouping into transformer blocks, attention layers, etc.
+- **No file `model_ttnn.py`** exists in this codegen.
+- **`ttir_cpu.py` is well-written** (not auto-generated) and won't need refactoring.
+- **`utils.py` is clean** shared infrastructure — also shouldn't be touched.
+
+--- Time taken: 180.2s | session: 142478ad-36df-4109-a26c-8c0c97b62368 ---
