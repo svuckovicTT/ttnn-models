@@ -1,0 +1,9 @@
+Done. Three changes made:
+
+1. **`model_pt.py`** — Created with `load_pytorch_model()`, `load_input()`, and `run_pytorch_model()` extracted from `xla.py`, with all tt-xla/SPMD/sharding code removed. Keeps the pipeline capture pattern, wrapper class, and CPU-only PyTorch execution.
+
+2. **`utils.py`** — Added `import torch` and the `calculate_pcc()` function at the end.
+
+3. **`main.py`** — Added `from utils import calculate_pcc` import.
+
+--- Time taken: 57.9s | session: dffcf271-bf68-4efc-9b54-c34216c15c4e ---
