@@ -1,5 +1,6 @@
 import ttnn
 import utils
+from utils import calculate_pcc
 
 
 def main_const_eval_0():
