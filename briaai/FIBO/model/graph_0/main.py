@@ -1,6 +1,8 @@
+import torch
 import ttnn
 import utils
 from utils import calculate_pcc
+import model_pt
 
 
 def main_const_eval_0():
@@ -72653,7 +72655,39 @@ def main():
 
 
 def test_main():
-    return 0
+    exact_pcc = 0.999389
+
+    device = utils.DeviceGetter.get_device(
+        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
+    )
+    memory_config = ttnn.MemoryConfig(
+        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+    )
+
+    pt_inputs = model_pt.load_input()
+    activations = []
+    for val in pt_inputs:
+        if torch.is_tensor(val):
+            t = ttnn.from_torch(val, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.ROW_MAJOR)
+            t = ttnn.to_device(t, device, memory_config)
+            activations.append(t)
+        elif isinstance(val, (list, tuple)):
+            for item in val:
+                if torch.is_tensor(item):
+                    t = ttnn.from_torch(item, dtype=ttnn.DataType.BFLOAT16, layout=ttnn.Layout.ROW_MAJOR)
+                    t = ttnn.to_device(t, device, memory_config)
+                    activations.append(t)
+
+    weights = load_weights_for__main()
+    outputs = _main(activations, weights)
+
+    ttnn_output = ttnn.from_device(outputs[0])
+    ttnn_output = ttnn.to_torch(ttnn_output).to(torch.float32)
+    golden_output = model_pt.run_pytorch_model().to(torch.float32)
+
+    pcc = calculate_pcc(ttnn_output, golden_output)
+    print(f"\nPCC: {pcc:.6f}")
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
 
 if __name__ == "__main__":
