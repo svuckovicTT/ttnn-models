@@ -181,5 +181,16 @@ Per-layer now: attn 573us, dense 427us, MoE 1451us; lm_head 16.0ms (x1).
 | 13a | fold the post-rotary q/k identity slices (slice(q_rotary,[0:64])) | concat shape TT_FATAL | REVERT | rotary_embedding pads its 64-wide output, so the re-slice is load-bearing (confirms the old attention-tuning note) |
 | 13b | alias the identity post_normed reshape in MoE (hidden_states=reshape(post_normed,[16,5120]) is identity since iter8) | MoE ReshapeView 99.38us/4ops -> 97.79us/4ops (SAME op count) | REVERT | ttnn already folds the identity reshape to a free view, so the source alias gains 0 device time (MoE 1451->1485 was run-to-run noise). PCC-exact but no measured win |
 
+## DEEP session (2026-07-08): frontier explored, model at practical floor for this architecture
+Went after every remaining lever autonomously. Outcomes:
+| lever | potential | outcome |
+|-------|-----------|---------|
+| MoE epilogue TM (tilize 89us) | ~15ms | DEAD-END: ttnn multiply/sum tilize internally; the [8,16,5120] combine tilize is unavoidable given moe_compute's ROW_MAJOR output. iter14 (RM epilogue) net ~0, reverted. Needs TILE-output moe_compute (tt-metal). |
+| moe_compute op (426us) | — | irreducible: dominated by bf4 top-8-of-160 expert FLOPs. num_links/mux affect only the small combine-CCL portion + are deadlock-prone -> not pursued. |
+| attention RoPE fused-qk | ~12ms | NOT VIABLE: fused op is Meta-interleaved, GLM is rotate-half; bridging needs permutes (add TM) + high PCC risk. Needs interleaved-layout weights from codegen. |
+| attention o_proj all-reduce | ~4ms (2%) | deferred: all_reduce_async needs persistent buffer + cycled semaphore + worker sub-device (risks colliding with moe_compute cores). |
+| lm_head vocab all_gather (11ms) | ~11ms | harness-blocked: PCC compares full replicated logits (outputs[-1]). |
+Also FIXED the env: 107,438 root-owned kernel-cache files (past root runs) -> chowned to mvasiljev (was causing "rename failed"/"permission denied" kernel-build errors); profiler output moved to container-local /tmp (NFS-cp hang fix). Conclusion: 199.3ms is the practical floor for this fused-op architecture; the remaining ~30ms of identified headroom (MoE TM churn + lm_head) needs tt-metal/codegen changes documented in TT_MLIR_RECOMMENDATIONS.md.
+
 ## Tooling fix (2026-07-08): profiler output -> container-LOCAL /tmp
 The tracy report step cp's the ~1.4GB profile_log_device.csv; on the 98%-full shared NFS that cp HANGS indefinitely (was mis-read as a "tracy post-processing stall" for hours). Fix in prof.sh: run tracy with `-o /tmp/glm_prof` (container overlay disk, 2.9TB free) so the device-log + report cp are local/fast, then copy only the ~17MB ops_perf CSV back to NFS (generated/profiler/reports_local/) for the host-side tt-perf-report. Healthy tracy run is now ~6 min and exits cleanly. Always kill straggler `cp .*profile_log_device` + `tt-smi -glx_reset_auto` (on host) between runs.

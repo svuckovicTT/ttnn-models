@@ -75,6 +75,27 @@ graph is TILE. A TILE-accepting dispatch API (or an L1-sharded op chain across t
 would remove ~220 us/MoE-layer of pure format churn. This is the largest remaining
 non-moe_compute MoE cost and needs a tt-metal-side change.
 
+## 4c. Attention RoPE: fused rotary_embedding_llama_fused_qk is convention-incompatible
+
+The fused QK rotary (rotary_embedding_llama_fused_qk) would collapse the partial-RoPE churn
+(RotaryEmbedding 63us + Slice 47us + Concat 20us = ~130us/attn-layer, ~12ms full) into one op.
+BUT it uses Meta-style INTERLEAVED rotary ([r,i,r,i], trans_mat swaps adjacent pairs), while
+GLM/HF uses rotate-half (the codegen emits slice[0:64]/slice[64:128]+concat = halves). Bridging
+needs dim permutes (halves<->interleaved) that add TM back and carry high PCC risk. Not a clean
+win unless the model is regenerated to emit interleaved-layout QKV weights (a tt-xla/codegen
+choice). RECOMMENDATION: if codegen can emit weights in interleaved RoPE layout, the fused_qk
+op becomes usable and removes the slice/concat churn.
+
+## 4d. Attention o_proj all-reduce: fusable but needs sub-device + persistent-semaphore infra
+
+o_proj's reduce_scatter+all_gather (cluster_axis=1 TP all-reduce, ~140us/attn-layer) could be
+one ttnn.experimental.all_reduce_async. The usable (llama3_70b_galaxy/tt/llama_ccl.py) overload
+needs a persistent output buffer + a cycled multi_device_global_semaphore + a worker
+subdevice_id. Setting up a sub-device risks colliding with moe_compute's core usage (the
+deadlock-prone op), for ~2% reward -- deferred. RECOMMENDATION: a managed ttnn.all_reduce that
+allocates its own semaphores/buffer (like the sync reduce_scatter/all_gather do) would make this
+adoptable from codegen without sub-device plumbing.
+
 ## 5. lm_head argmax gathers the full vocab (open)
 
 The lm_head all-gathers the full 151552-wide logits to every device (AllGather ~11.3 ms,
