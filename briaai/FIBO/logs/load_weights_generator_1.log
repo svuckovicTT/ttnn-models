@@ -1,0 +1,16 @@
+Everything looks correct. Here's a summary of what was done:
+
+**Created `params.py`** (1,173 lines):
+- `WEIGHT_FILE_MAP`: ordered dict mapping 846 weight keys to their `.tensorbin` file paths (preserves original load order)
+- `ON_DEVICE_WEIGHTS`: set of 262 weight keys that go on-device with TILE layout + DRAM memory config
+- `load_weights_for__main()`: loads weights from disk using `utils.load_tensor` with the same two property groups (on-device TILE vs host ROW_MAJOR, all BFLOAT16)
+- `load_weights_for__main_from_state_dict()`: loads weights from the PyTorch model's state_dict (including non-persistent buffers), converts via `ttnn.from_torch` then applies `to_layout` → `to_dtype` → `to_device` in the prescribed order based on the same ON_DEVICE_WEIGHTS grouping
+
+**Updated `main.py`**:
+- Added `from params import load_weights_for__main`
+- Removed the `_main_weights = {}` global and the entire original `load_weights_for__main` function (~8,980 lines)
+
+**Created `verify_weights.py`**:
+- Single pytest test `test_verify_weights` that loads both disk and state_dict weights, verifies key sets match, and compares tensor values exactly
+
+--- Time taken: 358.9s | session: 760a1dad-6611-4d65-a96d-1e047d8976de ---
