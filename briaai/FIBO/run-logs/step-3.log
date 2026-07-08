@@ -1,0 +1,27 @@
+2026-07-08 12:15:16.335 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s][ALoading weights: 100%|██████████| 326/326 [00:00<00:00, 29552.03it/s]
+Loading pipeline components...:  40%|████      | 2/5 [00:00<00:00,  3.17it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 57.31it/s]
+The config attributes {'clip_output': False} were passed to AutoencoderKLWan, but are not expected and will be ignored. Please verify your config.json configuration file.
+Loading pipeline components...: 100%|██████████| 5/5 [00:00<00:00,  6.35it/s]Loading pipeline components...: 100%|██████████| 5/5 [00:00<00:00,  5.67it/s]
+  0%|          | 0/50 [00:00<?, ?it/s]  0%|          | 0/50 [01:14<?, ?it/s]
+2026-07-08 12:17:51.055379: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
+/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO-2/briaai/FIBO/xla.py:359: DeprecationWarning: Use torch_xla.device instead
+  device = xm.xla_device()
+/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py:2056: UserWarning: Dynamo detected a call to a `functools.lru_cache`-wrapped function. Dynamo ignores the cache wrapper and directly traces the wrapped function. Silent incorrectness is only a *potential* risk, not something we have observed. Enable TORCH_LOGS="+dynamo" for a DEBUG stack trace.
+  torch._dynamo.utils.warn_once(msg)
+2026-07-08 12:18:25.390 ( 189.055s) [        28063140]      module_builder.cc:880   WARN| `mhlo.num_partitions` attribute not found, assuming default number of partitions: 1
+2026-07-08 12:18:25.390 ( 189.055s) [        28063140]      module_builder.cc:894   WARN| `mhlo.num_replicas` attribute not found, assuming default number of replicas: 1
+2026-07-08 12:18:25.390 ( 189.055s) [        28063140]      module_builder.cc:904   WARN| Num replicas and num partitions are not set, inferring the number of devices from mesh shape
+Created device mesh: (1, 4) with 4 devices.
+PCC: 0.999389
+Traceback (most recent call last):
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO-2/briaai/FIBO/xla.py", line 449, in <module>
+    compare_pytorch_and_tt_runs()
+  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/briaai__FIBO-2/briaai/FIBO/xla.py", line 424, in compare_pytorch_and_tt_runs
+    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+           ^^^^^^^^^^^^^^^^
+AssertionError: PCC 0.999389111995697 does not match expected None

@@ -1,0 +1,10 @@
+2026-07-08 12:08:32.823 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]The config attributes {'clip_output': False} were passed to AutoencoderKLWan, but are not expected and will be ignored. Please verify your config.json configuration file.
+Loading pipeline components...:  20%|██        | 1/5 [00:00<00:00,  5.01it/s]Loading pipeline components...:  40%|████      | 2/5 [00:00<00:01,  2.47it/s]
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s][ALoading weights: 100%|██████████| 326/326 [00:00<00:00, 28106.87it/s]
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 56.13it/s]
+Loading pipeline components...: 100%|██████████| 5/5 [00:00<00:00,  6.94it/s]Loading pipeline components...: 100%|██████████| 5/5 [00:00<00:00,  5.74it/s]
+  0%|          | 0/50 [00:00<?, ?it/s]  0%|          | 0/50 [01:14<?, ?it/s]
