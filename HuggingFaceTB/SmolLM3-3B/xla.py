@@ -229,7 +229,9 @@ def codegen_model():
 
 def compare_pytorch_and_tt_runs():
     # Capture exact PCC from first --golden run and paste here.
-    exact_pcc = None
+    # Captured at FIBO_TE_CONTEXT_LENGTH=512 (local validation ctx); the
+    # committed default context is 24576. Re-capture if you change the context.
+    exact_pcc = 0.994766
 
     pt_output = run_pytorch_model()
     tt_output = run_tt_model()

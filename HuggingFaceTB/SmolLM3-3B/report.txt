@@ -1,0 +1,49 @@
+[meta]
+schema_version = 1
+benchmark_test = test_fibo_text_encoder
+benchmark_file = tests/benchmark/test_fibo_text_encoder.py
+model_id = HuggingFaceTB/SmolLM3-3B
+family = encoder
+hw_target = qb2
+mesh_shape = 1x4
+worktree = /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/HuggingFaceTB__SmolLM3-3B
+model_dir = /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/HuggingFaceTB__SmolLM3-3B/HuggingFaceTB/SmolLM3-3B
+branch = auto/benchmark/test_fibo_text_encoder
+reached_step = 6
+final_status = passed
+final_step_name = run_graph
+notes = FIBO (briaai/FIBO) text encoder = base SmolLM3Model. Benchmark uses the non-standard video_gen sharded-component harness. Committed default context is 24576 (benchmark's TP-4 validated max); all steps below were run at FIBO_TE_CONTEXT_LENGTH=512 because a CPU golden of a 3B model at 24576 is impractical (~1e17 FLOPs). PCC captured at ctx 512.
+
+[step_0_xla_py]
+status = passed
+notes = generated standalone xla.py with stock transformers (SmolLM3Model); TP-4 Megatron-1D shard spec + (1,4) mesh inlined; wrapper returns last_hidden_state
+
+[step_1_run_pt]
+status = passed
+elapsed_s = 32.0
+log = run-logs/step-1.log
+
+[step_2_run_tt]
+status = passed
+elapsed_s = 60.0
+log = run-logs/step-2.log
+
+[step_3_golden]
+status = passed
+elapsed_s = 35.0
+pcc = 0.994766
+log = run-logs/step-3.log
+
+[step_4_codegen]
+status = passed
+elapsed_s = 30.0
+graph_count = 1
+log = run-logs/step-4.log
+
+[step_5_single_graph]
+status = passed
+
+[step_6_run_graph]
+status = passed
+elapsed_s = 42.0
+log = run-logs/step-6.log
