@@ -41,6 +41,34 @@ reference — TILE gives ~0.80 correlation, ROW_MAJOR gives ~1.0.
 
 Either removes ~90us/MoE-layer (~8ms/token here) with zero PCC change.
 
+### Update 2026-07-08 — investigated `ttnn.experimental.deepseek_moe_post_combine_tilize` (the purpose-built op) — does NOT work for GLM decode dims
+Commits: tt-metal HEAD 13adda80c11, built _ttnn.so from Jul-1 (has #45764 moe_compute + #46509
+shared-expert TP); tt-mlir 8e8f330d6f. There already IS a dedicated op for this exact step:
+`deepseek_moe_post_combine_tilize(input_rm, output_memory_config=<L1 nd-sharded>)` -> TILE. It
+works for DeepSeek's decode shape ([8,1,32,7168], shard [32,1024], 56 cores) but **throws for
+GLM's [8,1,16,5120]** at every valid shard config I could form:
+`TT_THROW: Statically allocated circular buffers clash with L1 buffers on core range ... L1 buffer
+allocated at 106496 and static circular buffer region ends at 145184` (program.cpp:1549).
+Root cause (deepseek_moe_post_combine_tilize_program_factory.cpp:63-70): the input CB `c_0` is
+sized `output_shard_width_bytes * TILE_HEIGHT`, and its static placement collides with the
+runtime-allocated sharded OUTPUT buffer for the smaller hidden (5120 vs 7168) / 16-token config.
+[8,1,32,5120] with [32,640]@64c runs; [8,1,16,5120] clashes at every core count (32/64/8).
+So the op is effectively hard-coded to DeepSeek's decode geometry.
+Also confirmed the op REQUIRES an L1-nd-sharded output (can't target DRAM), so even if it worked
+it would need an L1-sharded epilogue (mul-by-scores + sum-over-k on the sharded tensor) or a
+reshard-back.
+
+PROPOSED (refined): fix the CB/L1 budgeting in `deepseek_moe_post_combine_tilize`'s program
+factory so the input CB doesn't collide with the sharded output for hidden!=7168 / batch<32
+(i.e. make it general over (upper_dims, hidden, shard) rather than tuned to DeepSeek). Repro:
+call it on a ROW_MAJOR [8,1,16,5120] bf16 tensor with output nd-shard [32,640] on 32 cores.
+This is the cleanest unblock: a working general post_combine_tilize + an L1 epilogue removes the
+~90us tilize AND lets the whole MoE combine->epilogue stay L1-sharded.
+
+NOTE: no tt-metal source change / rebuild was made — the fix is non-trivial op-internals L1
+budgeting (not a cherry-pick; the related fusion issue #33855 is closed not_planned), so it is
+scoped here for a tt-metal owner rather than blind-patched on a deadlock-adjacent op.
+
 ---
 
 ## ISSUE 2 — `all_to_all_dispatch_metadata` hard-requires ROW_MAJOR input (forces a ~38us untilize + ~46us FillPad per MoE layer)
