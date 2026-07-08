@@ -1006,11 +1006,11 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
         )
         layer_prefix = f"model.model.layers.{self.layer_idx}.mlp"
         # Create the [16, 5120] reshape for router gate and shared experts
-        # post_normed is already [16,5120] (the norm runs on the 2D residual since
-        # iter8), so the old reshape to [16,5120] was an identity copy -- alias it
-        # directly (one fewer ReshapeView per MoE layer). post_normed is now freed
-        # with hidden_states after the shared experts (below), not early.
-        hidden_states = post_normed
+        hidden_states = ttnn.reshape(
+            post_normed,
+            [16, 5120],
+            memory_config=dram_mem,
+        )
         # Router gate
         ttnn_typecast_33 = ttnn.typecast(
             hidden_states,
@@ -1177,8 +1177,7 @@ class A2aSparseMLPWithSharedExperts(LightweightModule):
             ttnn.reshape(post_normed, [16, 1, 1, 5120], memory_config=dram_mem),
             ttnn.Layout.ROW_MAJOR, None, memory_config=_disp_mc,
         )
-        # NOTE: post_normed is aliased to hidden_states (used by the shared experts
-        # below), so it is NOT freed here -- freed once as hidden_states after shared.
+        ttnn.deallocate(post_normed, False)
         disp_idx = ttnn.to_layout(
             ttnn.typecast(
                 ttnn.reshape(ttnn_typecast_40, [16, 1, 1, 8], memory_config=dram_mem),
