@@ -1,4 +1,3 @@
-import time
 import torch
 import ttnn
 import utils
@@ -565,16 +564,6 @@ def test_main():
     pcc = calculate_pcc(ttnn_output, golden_output)
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
-
-    print("\nPerformance:")
-    for i in range(3):
-        start = time.perf_counter()
-        model(activations)
-        ttnn.synchronize_device(device)
-        end = time.perf_counter()
-        elapsed = end - start
-        fps = 1.0 / elapsed
-        print(f"  Run {i}: {elapsed:.4f}s, FPS: {fps:.2f}")
 
 
 if __name__ == "__main__":
