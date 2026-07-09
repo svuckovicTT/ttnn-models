@@ -1,0 +1,14 @@
+Both files compile cleanly. Here's a summary of what was done:
+
+**`consteval.py`** (new file, 418 lines — down from ~16,000+ lines of 242 duplicate functions):
+- 9 deduplicated helper functions: `_reshape_bias`, `_reshape_typecast_bias`, `_concat_biases`, `_permute_concat_weights`, `_typecast_bias`, `_permute_typecast_weight`, `_mesh_partition_permute_typecast`, `_mesh_partition_typecast`, `_permute_typecast_concat`
+- `run_consteval(weights, device)` — updates the weights dict in-place with computed tensors using loops over the 8 transformer blocks and 38 single transformer blocks
+- Each result stored under a descriptive key (e.g. `transformer.single_transformer_blocks.10.fused_qkvm.bias`, `transformer.transformer_blocks.3.attn.fused_qkv.weight`, `transformer.norm_out.linear.bias.reshaped`)
+
+**`model_ttnn.py`** (44,254 lines — down from 62,412):
+- Removed all 242 `main_const_eval_*` functions and `consteval__main`
+- Removed `ce_cache__main` global
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` after loading weights
+- `forward` references computed weights directly via `self.weights["descriptive.key"]` instead of `ce_cache__main["main_const_eval_N"]`
+
+--- Time taken: 851.7s | session: 1f0d8c3d-1bc5-4c44-aba0-28eb5fa02a6a ---
