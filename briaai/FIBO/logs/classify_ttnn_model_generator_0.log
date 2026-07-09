@@ -1,0 +1,16 @@
+Both files are clean. Here's a summary of what changed:
+
+**`model_ttnn.py`:**
+- Added `import params`
+- Added `LightweightModule` base class with `__call__` that delegates to `forward`
+- Wrapped the forward logic in `class ModelTTNN(LightweightModule)` with:
+  - `__init__(self, device)` — stores `self.device` and loads weights via `params.load_weights_for__main(device)` into `self.weights`
+  - `forward(self, activations)` — the former `_main` body, using `self.device` and `self.weights` instead of parameters
+- `consteval__main` and all `main_const_eval_*` helpers remain as module-level functions (called from `forward` with `self.device`/`self.weights`)
+
+**`main.py`:**
+- Removed `import params` (no longer needed)
+- Removed `load_weights_for__main` alias
+- `main()` and `test_main()` now instantiate `model = model_ttnn.ModelTTNN(device)` and call `model(activations)` via the `__call__` → `forward` dispatch
+
+--- Time taken: 187.4s | session: 264f399f-3fd5-4252-8c78-28b23edff969 ---
