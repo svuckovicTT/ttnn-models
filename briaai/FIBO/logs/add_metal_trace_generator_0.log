@@ -1,0 +1,13 @@
+Only the two intended files were changed. Here's a summary of what was done:
+
+**`model_ttnn.py`**: Removed all 52 `ttnn.deallocate(args_*, False)` calls that deallocated the input activation tensors. These must be kept alive because metal trace replays from the same device addresses, and deallocating inputs would invalidate the traced memory references.
+
+**`main.py`** (`test_main`): Rewrote the performance section to use metal trace (single CQ approach):
+
+1. **Load activations** normally, then move them to host (`ttnn.from_device`) to get host copies for repeated `copy_host_to_device_tensor` calls
+2. **Allocate persistent DRAM tensors** via `ttnn.allocate_tensor_on_device` matching each activation's shape/dtype/layout
+3. **Compile run**: Copy host→device, run model, sync (populates program cache)
+4. **Trace capture**: Copy host→device, `begin_trace_capture`, run model, `end_trace_capture`, sync
+5. **5 timed trace executions**: Each copies host→device, executes trace (non-blocking), reads output to host (non-blocking), syncs, measures elapsed time and FPS
+
+--- Time taken: 135.4s | session: f6db5b3c-209e-430a-8ed3-24cdb9bef3ba ---
