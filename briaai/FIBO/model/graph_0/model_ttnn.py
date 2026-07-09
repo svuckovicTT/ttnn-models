@@ -79,6 +79,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
+        ttnn.deallocate(args_2, False)
         ttnn_reshape_180 = ttnn.reshape(
             ttnn_to_layout_584,
             [90, 4096],
@@ -128,6 +129,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
+        ttnn.deallocate(args_5, False)
         ttnn_reshape_182 = ttnn.reshape(
             ttnn_to_layout_585,
             [90, 2048],
@@ -186,6 +188,7 @@ class ModelTTNN(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
+        ttnn.deallocate(args_1, False)
         ttnn_typecast_114 = ttnn.typecast(
             ttnn_to_layout_586,
             ttnn.DataType.FLOAT32,
@@ -1219,6 +1222,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_0, False)
     ttnn_reshape_192 = ttnn.reshape(
         ttnn_to_layout_587,
         [8192, 48],
@@ -1497,6 +1501,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_3, False)
     ttnn_to_layout_589 = ttnn.to_layout(
         args_4,
         ttnn.Layout.TILE,
@@ -1505,6 +1510,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_4, False)
     ttnn_concat_112 = ttnn.concat(
         [ttnn_to_layout_588, ttnn_to_layout_589],
         0,
@@ -2081,6 +2087,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_51, False)
     ttnn_transformer_scaled_dot_product_attention_0 = (
         ttnn.transformer.scaled_dot_product_attention(
             ttnn_typecast_120,
@@ -2452,6 +2459,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_6, False)
     ttnn_reshape_227 = ttnn.reshape(
         ttnn_to_layout_591,
         [90, 2048],
@@ -3999,6 +4007,7 @@ def _tb_forward_1(self, args_7, ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_7, False)
     ttnn_reshape_273 = ttnn.reshape(
         ttnn_to_layout_592,
         [90, 2048],
@@ -5546,6 +5555,7 @@ def _tb_forward_2(self, args_8, ttnn_add_22, ttnn_reshape_203, ttnn_reshape_209,
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_8, False)
     ttnn_reshape_319 = ttnn.reshape(
         ttnn_to_layout_593,
         [90, 2048],
@@ -7093,6 +7103,7 @@ def _tb_forward_3(self, args_9, ttnn_add_42, ttnn_reshape_203, ttnn_reshape_209,
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_9, False)
     ttnn_reshape_365 = ttnn.reshape(
         ttnn_to_layout_594,
         [90, 2048],
@@ -8640,6 +8651,7 @@ def _tb_forward_4(self, args_10, ttnn_add_62, ttnn_reshape_203, ttnn_reshape_209
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_10, False)
     ttnn_reshape_411 = ttnn.reshape(
         ttnn_to_layout_595,
         [90, 2048],
@@ -10187,6 +10199,7 @@ def _tb_forward_5(self, args_11, ttnn_add_82, ttnn_reshape_203, ttnn_reshape_209
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_11, False)
     ttnn_reshape_457 = ttnn.reshape(
         ttnn_to_layout_596,
         [90, 2048],
@@ -11734,6 +11747,7 @@ def _tb_forward_6(self, args_12, ttnn_add_102, ttnn_reshape_203, ttnn_reshape_20
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_12, False)
     ttnn_reshape_503 = ttnn.reshape(
         ttnn_to_layout_597,
         [90, 2048],
@@ -13281,6 +13295,7 @@ def _tb_forward_7(self, args_13, ttnn_add_122, ttnn_reshape_203, ttnn_reshape_20
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_13, False)
     ttnn_reshape_549 = ttnn.reshape(
         ttnn_to_layout_598,
         [90, 2048],
@@ -14448,6 +14463,7 @@ def _stb_forward_0(self, args_14, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_14, False)
     ttnn_reshape_581 = ttnn.reshape(
         ttnn_to_layout_601,
         [90, 2048],
@@ -15259,6 +15275,7 @@ def _stb_forward_1(self, args_15, ttnn_add_166, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_15, False)
     ttnn_reshape_601 = ttnn.reshape(
         ttnn_to_layout_604,
         [90, 2048],
@@ -16070,6 +16087,7 @@ def _stb_forward_2(self, args_16, ttnn_add_173, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_16, False)
     ttnn_reshape_621 = ttnn.reshape(
         ttnn_to_layout_607,
         [90, 2048],
@@ -16881,6 +16899,7 @@ def _stb_forward_3(self, args_17, ttnn_add_180, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_17, False)
     ttnn_reshape_641 = ttnn.reshape(
         ttnn_to_layout_610,
         [90, 2048],
@@ -17692,6 +17711,7 @@ def _stb_forward_4(self, args_18, ttnn_add_187, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_18, False)
     ttnn_reshape_661 = ttnn.reshape(
         ttnn_to_layout_613,
         [90, 2048],
@@ -18503,6 +18523,7 @@ def _stb_forward_5(self, args_19, ttnn_add_194, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_19, False)
     ttnn_reshape_681 = ttnn.reshape(
         ttnn_to_layout_616,
         [90, 2048],
@@ -19314,6 +19335,7 @@ def _stb_forward_6(self, args_20, ttnn_add_201, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_20, False)
     ttnn_reshape_701 = ttnn.reshape(
         ttnn_to_layout_619,
         [90, 2048],
@@ -20125,6 +20147,7 @@ def _stb_forward_7(self, args_21, ttnn_add_208, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_21, False)
     ttnn_reshape_721 = ttnn.reshape(
         ttnn_to_layout_622,
         [90, 2048],
@@ -20936,6 +20959,7 @@ def _stb_forward_8(self, args_22, ttnn_add_215, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_22, False)
     ttnn_reshape_741 = ttnn.reshape(
         ttnn_to_layout_625,
         [90, 2048],
@@ -21747,6 +21771,7 @@ def _stb_forward_9(self, args_23, ttnn_add_222, ttnn_reshape_203, ttnn_reshape_2
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_23, False)
     ttnn_reshape_761 = ttnn.reshape(
         ttnn_to_layout_628,
         [90, 2048],
@@ -22558,6 +22583,7 @@ def _stb_forward_10(self, args_24, ttnn_add_229, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_24, False)
     ttnn_reshape_781 = ttnn.reshape(
         ttnn_to_layout_631,
         [90, 2048],
@@ -23369,6 +23395,7 @@ def _stb_forward_11(self, args_25, ttnn_add_236, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_25, False)
     ttnn_reshape_801 = ttnn.reshape(
         ttnn_to_layout_634,
         [90, 2048],
@@ -24180,6 +24207,7 @@ def _stb_forward_12(self, args_26, ttnn_add_243, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_26, False)
     ttnn_reshape_821 = ttnn.reshape(
         ttnn_to_layout_637,
         [90, 2048],
@@ -24991,6 +25019,7 @@ def _stb_forward_13(self, args_27, ttnn_add_250, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_27, False)
     ttnn_reshape_841 = ttnn.reshape(
         ttnn_to_layout_640,
         [90, 2048],
@@ -25802,6 +25831,7 @@ def _stb_forward_14(self, args_28, ttnn_add_257, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_28, False)
     ttnn_reshape_861 = ttnn.reshape(
         ttnn_to_layout_643,
         [90, 2048],
@@ -26613,6 +26643,7 @@ def _stb_forward_15(self, args_29, ttnn_add_264, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_29, False)
     ttnn_reshape_881 = ttnn.reshape(
         ttnn_to_layout_646,
         [90, 2048],
@@ -27424,6 +27455,7 @@ def _stb_forward_16(self, args_30, ttnn_add_271, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_30, False)
     ttnn_reshape_901 = ttnn.reshape(
         ttnn_to_layout_649,
         [90, 2048],
@@ -28235,6 +28267,7 @@ def _stb_forward_17(self, args_31, ttnn_add_278, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_31, False)
     ttnn_reshape_921 = ttnn.reshape(
         ttnn_to_layout_652,
         [90, 2048],
@@ -29046,6 +29079,7 @@ def _stb_forward_18(self, args_32, ttnn_add_285, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_32, False)
     ttnn_reshape_941 = ttnn.reshape(
         ttnn_to_layout_655,
         [90, 2048],
@@ -29857,6 +29891,7 @@ def _stb_forward_19(self, args_33, ttnn_add_292, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_33, False)
     ttnn_reshape_961 = ttnn.reshape(
         ttnn_to_layout_658,
         [90, 2048],
@@ -30668,6 +30703,7 @@ def _stb_forward_20(self, args_34, ttnn_add_299, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_34, False)
     ttnn_reshape_981 = ttnn.reshape(
         ttnn_to_layout_661,
         [90, 2048],
@@ -31479,6 +31515,7 @@ def _stb_forward_21(self, args_35, ttnn_add_306, ttnn_reshape_203, ttnn_reshape_
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_35, False)
     ttnn_reshape_1001 = ttnn.reshape(
         ttnn_to_layout_664,
         [90, 2048],
@@ -32290,6 +32327,7 @@ def _stb_forward_22(self, args_36, ttnn_add_313, ttnn_reshape_1001, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_36, False)
     ttnn_reshape_1021 = ttnn.reshape(
         ttnn_to_layout_667,
         [90, 2048],
@@ -33101,6 +33139,7 @@ def _stb_forward_23(self, args_37, ttnn_add_320, ttnn_reshape_1021, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_37, False)
     ttnn_reshape_1041 = ttnn.reshape(
         ttnn_to_layout_670,
         [90, 2048],
@@ -33912,6 +33951,7 @@ def _stb_forward_24(self, args_38, ttnn_add_327, ttnn_reshape_1041, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_38, False)
     ttnn_reshape_1061 = ttnn.reshape(
         ttnn_to_layout_673,
         [90, 2048],
@@ -34723,6 +34763,7 @@ def _stb_forward_25(self, args_39, ttnn_add_334, ttnn_reshape_1061, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_39, False)
     ttnn_reshape_1081 = ttnn.reshape(
         ttnn_to_layout_676,
         [90, 2048],
@@ -35534,6 +35575,7 @@ def _stb_forward_26(self, args_40, ttnn_add_341, ttnn_reshape_1081, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_40, False)
     ttnn_reshape_1101 = ttnn.reshape(
         ttnn_to_layout_679,
         [90, 2048],
@@ -36345,6 +36387,7 @@ def _stb_forward_27(self, args_41, ttnn_add_348, ttnn_reshape_1101, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_41, False)
     ttnn_reshape_1121 = ttnn.reshape(
         ttnn_to_layout_682,
         [90, 2048],
@@ -37156,6 +37199,7 @@ def _stb_forward_28(self, args_42, ttnn_add_355, ttnn_reshape_1121, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_42, False)
     ttnn_reshape_1141 = ttnn.reshape(
         ttnn_to_layout_685,
         [90, 2048],
@@ -37967,6 +38011,7 @@ def _stb_forward_29(self, args_43, ttnn_add_362, ttnn_reshape_1141, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_43, False)
     ttnn_reshape_1161 = ttnn.reshape(
         ttnn_to_layout_688,
         [90, 2048],
@@ -38778,6 +38823,7 @@ def _stb_forward_30(self, args_44, ttnn_add_369, ttnn_reshape_1161, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_44, False)
     ttnn_reshape_1181 = ttnn.reshape(
         ttnn_to_layout_691,
         [90, 2048],
@@ -39589,6 +39635,7 @@ def _stb_forward_31(self, args_45, ttnn_add_376, ttnn_reshape_1181, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_45, False)
     ttnn_reshape_1201 = ttnn.reshape(
         ttnn_to_layout_694,
         [90, 2048],
@@ -40400,6 +40447,7 @@ def _stb_forward_32(self, args_46, ttnn_add_383, ttnn_reshape_1201, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_46, False)
     ttnn_reshape_1221 = ttnn.reshape(
         ttnn_to_layout_697,
         [90, 2048],
@@ -41211,6 +41259,7 @@ def _stb_forward_33(self, args_47, ttnn_add_390, ttnn_reshape_1221, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_47, False)
     ttnn_reshape_1241 = ttnn.reshape(
         ttnn_to_layout_700,
         [90, 2048],
@@ -42022,6 +42071,7 @@ def _stb_forward_34(self, args_48, ttnn_add_397, ttnn_reshape_1241, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_48, False)
     ttnn_reshape_1261 = ttnn.reshape(
         ttnn_to_layout_703,
         [90, 2048],
@@ -42833,6 +42883,7 @@ def _stb_forward_35(self, args_49, ttnn_add_404, ttnn_reshape_1261, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_49, False)
     ttnn_reshape_1281 = ttnn.reshape(
         ttnn_to_layout_706,
         [90, 2048],
@@ -43644,6 +43695,7 @@ def _stb_forward_36(self, args_50, ttnn_add_411, ttnn_reshape_1281, ttnn_reshape
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
     )
+    ttnn.deallocate(args_50, False)
     ttnn_reshape_1301 = ttnn.reshape(
         ttnn_to_layout_709,
         [90, 2048],
