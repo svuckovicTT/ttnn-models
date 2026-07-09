@@ -1,0 +1,9 @@
+Done. Here's what changed:
+
+1. **`params.py`**: Deleted the old `load_weights_for__main()` (which loaded from `.tensorbin` files via `utils.load_tensor`) and renamed `load_weights_for__main_from_state_dict` to `load_weights_for__main`. The function now loads weights directly from the PyTorch state dict.
+
+2. **`main.py`**: No changes needed — line 63672 (`load_weights_for__main = params.load_weights_for__main`) already references by name, so it automatically picks up the renamed function.
+
+3. **`verify_weights.py`**: Deleted.
+
+--- Time taken: 52.5s | session: d3e83bd5-e814-4571-bab8-e1f4ebfbb491 ---
