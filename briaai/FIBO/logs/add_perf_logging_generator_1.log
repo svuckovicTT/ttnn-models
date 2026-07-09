@@ -1,0 +1,11 @@
+The changes are:
+
+1. Added `import time` at the top
+2. Added a perf logging loop after the PCC assertion in `test_main` that:
+   - Runs the model 3 times (iterations 0, 1, 2)
+   - Calls `ttnn.synchronize_device(device)` after each `model(activations)` call to ensure accurate timing
+   - Uses `time.perf_counter()` for measurement
+   - Logs time with 4 decimal places and FPS with 2 decimal places
+   - Uses FPS since FIBO is an image (text-to-image DiT) model
+
+--- Time taken: 46.8s | session: 31208585-b2d4-462b-a8fa-4d900275231f ---
