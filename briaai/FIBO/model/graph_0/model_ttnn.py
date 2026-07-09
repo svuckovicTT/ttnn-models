@@ -67,8 +67,8 @@ class ModelTTNN(LightweightModule):
         args_48 = activations[49]
         args_49 = activations[50]
         args_50 = activations[51]
-        var_0 = self.weights["consteval.main_const_eval_233"]
-        var_1 = self.weights["consteval.main_const_eval_238"]
+        var_0 = self.weights["consteval.const_233"]
+        var_1 = self.weights["consteval.const_238"]
         ttnn_to_layout_584 = ttnn.to_layout(
             args_2,
             ttnn.Layout.TILE,
@@ -205,7 +205,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_typecast_114, False)
         ttnn_multiply_0 = ttnn.multiply(
             ttnn_reshape_184,
-            self.weights["consteval.main_const_eval_0"],
+            self.weights["consteval.const_0"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -236,8 +236,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_sin_0, False)
         ttnn_linear_1 = ttnn.linear(
             ttnn_concat_110,
-            self.weights["consteval.main_const_eval_168"],
-            bias=self.weights["consteval.main_const_eval_95"],
+            self.weights["transformer.time_embed.timestep_embedder.linear_1.weight.fused.transformer.time_embed.timestep_embedder.linear_1.weight"],
+            bias=self.weights["transformer.time_embed.timestep_embedder.linear_1.bias.fused.transformer.time_embed.timestep_embedder.linear_1.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -251,8 +251,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_concat_110, False)
         ttnn_linear_2 = ttnn.linear(
             ttnn_linear_1,
-            self.weights["consteval.main_const_eval_187"],
-            bias=self.weights["consteval.main_const_eval_199"],
+            self.weights["transformer.time_embed.timestep_embedder.linear_2.weight.fused.transformer.time_embed.timestep_embedder.linear_2.weight"],
+            bias=self.weights["transformer.time_embed.timestep_embedder.linear_2.bias.fused.transformer.time_embed.timestep_embedder.linear_2.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -266,7 +266,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_linear_1, False)
         ttnn_matmul_1 = ttnn.matmul(
             ttnn_linear_2,
-            self.weights["consteval.main_const_eval_107"],
+            self.weights["transformer.fused_norm_out_single_transformer_blocks_37_norm_36_35_34_33_32_31_30_29_28_27_26_25_24_23_22_21_20_19_18_17_16_15_14_13_12_11_10_9_8_7_6_5_4_3_2_1_0_transformer_blocks_norm1_norm1_context.linear.weight"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -822,7 +822,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_186, False)
         ttnn_add_0 = ttnn.add(
             ttnn_all_gather_0,
-            self.weights["consteval.main_const_eval_157"],
+            self.weights["transformer.transformer_blocks.0.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -927,8 +927,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_2, False)
         ttnn_linear_3 = ttnn.linear(
             ttnn_reshape_190,
-            self.weights["consteval.main_const_eval_132"],
-            bias=self.weights["consteval.main_const_eval_19"],
+            self.weights["transformer.transformer_blocks.0.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.0.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -1093,7 +1093,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_195, False)
         ttnn_add_3 = ttnn.add(
             ttnn_all_gather_1,
-            self.weights["consteval.main_const_eval_208"],
+            self.weights["transformer.transformer_blocks.0.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -1181,8 +1181,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_5, False)
         ttnn_linear_5 = ttnn.linear(
             ttnn_reshape_198,
-            self.weights["consteval.main_const_eval_71"],
-            bias=self.weights["consteval.main_const_eval_191"],
+            self.weights["transformer.transformer_blocks.0.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.0.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -1319,7 +1319,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_multiply_3 = ttnn.multiply(
             ttnn_slice_67,
-            self.weights["consteval.main_const_eval_176"],
+            self.weights["consteval.const_176"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -1974,7 +1974,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_218, False)
         ttnn_add_8 = ttnn.add(
             ttnn_all_gather_2,
-            self.weights["consteval.main_const_eval_134"],
+            self.weights["transformer.transformer_blocks.0.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2186,7 +2186,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_225, False)
         ttnn_add_12 = ttnn.add(
             ttnn_all_gather_3,
-            self.weights["consteval.main_const_eval_23"],
+            self.weights["transformer.transformer_blocks.0.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2338,7 +2338,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_230, False)
         ttnn_add_14 = ttnn.add(
             ttnn_all_gather_4,
-            self.weights["consteval.main_const_eval_147"],
+            self.weights["transformer.transformer_blocks.1.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2443,8 +2443,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_16, False)
         ttnn_linear_7 = ttnn.linear(
             ttnn_reshape_234,
-            self.weights["consteval.main_const_eval_39"],
-            bias=self.weights["consteval.main_const_eval_65"],
+            self.weights["transformer.transformer_blocks.1.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.1.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -2607,7 +2607,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_239, False)
         ttnn_add_17 = ttnn.add(
             ttnn_all_gather_5,
-            self.weights["consteval.main_const_eval_179"],
+            self.weights["transformer.transformer_blocks.0.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2819,7 +2819,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_246, False)
         ttnn_add_21 = ttnn.add(
             ttnn_all_gather_6,
-            self.weights["consteval.main_const_eval_212"],
+            self.weights["transformer.transformer_blocks.0.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2913,7 +2913,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_249, False)
         ttnn_add_23 = ttnn.add(
             ttnn_all_gather_7,
-            self.weights["consteval.main_const_eval_140"],
+            self.weights["transformer.transformer_blocks.1.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3001,8 +3001,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_25, False)
         ttnn_linear_9 = ttnn.linear(
             ttnn_reshape_252,
-            self.weights["consteval.main_const_eval_2"],
-            bias=self.weights["consteval.main_const_eval_142"],
+            self.weights["transformer.transformer_blocks.1.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.1.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -3518,7 +3518,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_264, False)
         ttnn_add_28 = ttnn.add(
             ttnn_all_gather_8,
-            self.weights["consteval.main_const_eval_42"],
+            self.weights["transformer.transformer_blocks.1.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3730,7 +3730,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_271, False)
         ttnn_add_32 = ttnn.add(
             ttnn_all_gather_9,
-            self.weights["consteval.main_const_eval_109"],
+            self.weights["transformer.transformer_blocks.1.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3882,7 +3882,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_276, False)
         ttnn_add_34 = ttnn.add(
             ttnn_all_gather_10,
-            self.weights["consteval.main_const_eval_184"],
+            self.weights["transformer.transformer_blocks.2.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3987,8 +3987,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_36, False)
         ttnn_linear_11 = ttnn.linear(
             ttnn_reshape_280,
-            self.weights["consteval.main_const_eval_224"],
-            bias=self.weights["consteval.main_const_eval_159"],
+            self.weights["transformer.transformer_blocks.2.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.2.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -4151,7 +4151,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_285, False)
         ttnn_add_37 = ttnn.add(
             ttnn_all_gather_11,
-            self.weights["consteval.main_const_eval_29"],
+            self.weights["transformer.transformer_blocks.1.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4363,7 +4363,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_292, False)
         ttnn_add_41 = ttnn.add(
             ttnn_all_gather_12,
-            self.weights["consteval.main_const_eval_126"],
+            self.weights["transformer.transformer_blocks.1.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4457,7 +4457,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_295, False)
         ttnn_add_43 = ttnn.add(
             ttnn_all_gather_13,
-            self.weights["consteval.main_const_eval_49"],
+            self.weights["transformer.transformer_blocks.2.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4545,8 +4545,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_45, False)
         ttnn_linear_13 = ttnn.linear(
             ttnn_reshape_298,
-            self.weights["consteval.main_const_eval_119"],
-            bias=self.weights["consteval.main_const_eval_51"],
+            self.weights["transformer.transformer_blocks.2.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.2.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -5062,7 +5062,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_310, False)
         ttnn_add_48 = ttnn.add(
             ttnn_all_gather_14,
-            self.weights["consteval.main_const_eval_195"],
+            self.weights["transformer.transformer_blocks.2.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5274,7 +5274,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_317, False)
         ttnn_add_52 = ttnn.add(
             ttnn_all_gather_15,
-            self.weights["consteval.main_const_eval_85"],
+            self.weights["transformer.transformer_blocks.2.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5426,7 +5426,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_322, False)
         ttnn_add_54 = ttnn.add(
             ttnn_all_gather_16,
-            self.weights["consteval.main_const_eval_24"],
+            self.weights["transformer.transformer_blocks.3.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5531,8 +5531,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_56, False)
         ttnn_linear_15 = ttnn.linear(
             ttnn_reshape_326,
-            self.weights["consteval.main_const_eval_129"],
-            bias=self.weights["consteval.main_const_eval_9"],
+            self.weights["transformer.transformer_blocks.3.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.3.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -5695,7 +5695,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_331, False)
         ttnn_add_57 = ttnn.add(
             ttnn_all_gather_17,
-            self.weights["consteval.main_const_eval_116"],
+            self.weights["transformer.transformer_blocks.2.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5907,7 +5907,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_338, False)
         ttnn_add_61 = ttnn.add(
             ttnn_all_gather_18,
-            self.weights["consteval.main_const_eval_35"],
+            self.weights["transformer.transformer_blocks.2.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6001,7 +6001,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_341, False)
         ttnn_add_63 = ttnn.add(
             ttnn_all_gather_19,
-            self.weights["consteval.main_const_eval_192"],
+            self.weights["transformer.transformer_blocks.3.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6089,8 +6089,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_65, False)
         ttnn_linear_17 = ttnn.linear(
             ttnn_reshape_344,
-            self.weights["consteval.main_const_eval_86"],
-            bias=self.weights["consteval.main_const_eval_34"],
+            self.weights["transformer.transformer_blocks.3.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.3.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -6606,7 +6606,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_356, False)
         ttnn_add_68 = ttnn.add(
             ttnn_all_gather_20,
-            self.weights["consteval.main_const_eval_220"],
+            self.weights["transformer.transformer_blocks.3.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6818,7 +6818,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_363, False)
         ttnn_add_72 = ttnn.add(
             ttnn_all_gather_21,
-            self.weights["consteval.main_const_eval_3"],
+            self.weights["transformer.transformer_blocks.3.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6970,7 +6970,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_368, False)
         ttnn_add_74 = ttnn.add(
             ttnn_all_gather_22,
-            self.weights["consteval.main_const_eval_111"],
+            self.weights["transformer.transformer_blocks.4.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7075,8 +7075,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_76, False)
         ttnn_linear_19 = ttnn.linear(
             ttnn_reshape_372,
-            self.weights["consteval.main_const_eval_40"],
-            bias=self.weights["consteval.main_const_eval_202"],
+            self.weights["transformer.transformer_blocks.4.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.4.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -7239,7 +7239,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_377, False)
         ttnn_add_77 = ttnn.add(
             ttnn_all_gather_23,
-            self.weights["consteval.main_const_eval_91"],
+            self.weights["transformer.transformer_blocks.3.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7451,7 +7451,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_384, False)
         ttnn_add_81 = ttnn.add(
             ttnn_all_gather_24,
-            self.weights["consteval.main_const_eval_76"],
+            self.weights["transformer.transformer_blocks.3.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7545,7 +7545,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_387, False)
         ttnn_add_83 = ttnn.add(
             ttnn_all_gather_25,
-            self.weights["consteval.main_const_eval_211"],
+            self.weights["transformer.transformer_blocks.4.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7633,8 +7633,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_85, False)
         ttnn_linear_21 = ttnn.linear(
             ttnn_reshape_390,
-            self.weights["consteval.main_const_eval_44"],
-            bias=self.weights["consteval.main_const_eval_127"],
+            self.weights["transformer.transformer_blocks.4.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.4.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -8150,7 +8150,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_402, False)
         ttnn_add_88 = ttnn.add(
             ttnn_all_gather_26,
-            self.weights["consteval.main_const_eval_41"],
+            self.weights["transformer.transformer_blocks.4.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8362,7 +8362,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_409, False)
         ttnn_add_92 = ttnn.add(
             ttnn_all_gather_27,
-            self.weights["consteval.main_const_eval_209"],
+            self.weights["transformer.transformer_blocks.4.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8514,7 +8514,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_414, False)
         ttnn_add_94 = ttnn.add(
             ttnn_all_gather_28,
-            self.weights["consteval.main_const_eval_80"],
+            self.weights["transformer.transformer_blocks.5.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8619,8 +8619,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_96, False)
         ttnn_linear_23 = ttnn.linear(
             ttnn_reshape_418,
-            self.weights["consteval.main_const_eval_73"],
-            bias=self.weights["consteval.main_const_eval_229"],
+            self.weights["transformer.transformer_blocks.5.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.5.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -8783,7 +8783,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_423, False)
         ttnn_add_97 = ttnn.add(
             ttnn_all_gather_29,
-            self.weights["consteval.main_const_eval_58"],
+            self.weights["transformer.transformer_blocks.4.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8995,7 +8995,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_430, False)
         ttnn_add_101 = ttnn.add(
             ttnn_all_gather_30,
-            self.weights["consteval.main_const_eval_113"],
+            self.weights["transformer.transformer_blocks.4.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -9089,7 +9089,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_433, False)
         ttnn_add_103 = ttnn.add(
             ttnn_all_gather_31,
-            self.weights["consteval.main_const_eval_10"],
+            self.weights["transformer.transformer_blocks.5.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -9177,8 +9177,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_105, False)
         ttnn_linear_25 = ttnn.linear(
             ttnn_reshape_436,
-            self.weights["consteval.main_const_eval_146"],
-            bias=self.weights["consteval.main_const_eval_100"],
+            self.weights["transformer.transformer_blocks.5.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.5.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -9694,7 +9694,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_448, False)
         ttnn_add_108 = ttnn.add(
             ttnn_all_gather_32,
-            self.weights["consteval.main_const_eval_70"],
+            self.weights["transformer.transformer_blocks.5.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -9906,7 +9906,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_455, False)
         ttnn_add_112 = ttnn.add(
             ttnn_all_gather_33,
-            self.weights["consteval.main_const_eval_232"],
+            self.weights["transformer.transformer_blocks.5.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10058,7 +10058,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_460, False)
         ttnn_add_114 = ttnn.add(
             ttnn_all_gather_34,
-            self.weights["consteval.main_const_eval_56"],
+            self.weights["transformer.transformer_blocks.6.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10163,8 +10163,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_116, False)
         ttnn_linear_27 = ttnn.linear(
             ttnn_reshape_464,
-            self.weights["consteval.main_const_eval_103"],
-            bias=self.weights["consteval.main_const_eval_5"],
+            self.weights["transformer.transformer_blocks.6.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.6.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -10327,7 +10327,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_469, False)
         ttnn_add_117 = ttnn.add(
             ttnn_all_gather_35,
-            self.weights["consteval.main_const_eval_151"],
+            self.weights["transformer.transformer_blocks.5.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10539,7 +10539,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_476, False)
         ttnn_add_121 = ttnn.add(
             ttnn_all_gather_36,
-            self.weights["consteval.main_const_eval_96"],
+            self.weights["transformer.transformer_blocks.5.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10633,7 +10633,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_479, False)
         ttnn_add_123 = ttnn.add(
             ttnn_all_gather_37,
-            self.weights["consteval.main_const_eval_171"],
+            self.weights["transformer.transformer_blocks.6.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10721,8 +10721,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_125, False)
         ttnn_linear_29 = ttnn.linear(
             ttnn_reshape_482,
-            self.weights["consteval.main_const_eval_239"],
-            bias=self.weights["consteval.main_const_eval_53"],
+            self.weights["transformer.transformer_blocks.6.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.6.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -11238,7 +11238,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_494, False)
         ttnn_add_128 = ttnn.add(
             ttnn_all_gather_38,
-            self.weights["consteval.main_const_eval_106"],
+            self.weights["transformer.transformer_blocks.6.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -11450,7 +11450,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_501, False)
         ttnn_add_132 = ttnn.add(
             ttnn_all_gather_39,
-            self.weights["consteval.main_const_eval_18"],
+            self.weights["transformer.transformer_blocks.6.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -11602,7 +11602,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_506, False)
         ttnn_add_134 = ttnn.add(
             ttnn_all_gather_40,
-            self.weights["consteval.main_const_eval_124"],
+            self.weights["transformer.transformer_blocks.7.norm1_context.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -11707,8 +11707,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_136, False)
         ttnn_linear_31 = ttnn.linear(
             ttnn_reshape_510,
-            self.weights["consteval.main_const_eval_17"],
-            bias=self.weights["consteval.main_const_eval_152"],
+            self.weights["transformer.transformer_blocks.7.attn.fused_add_q_proj_add_k_proj_add_v_proj.weight"],
+            bias=self.weights["transformer.transformer_blocks.7.attn.fused_add_q_proj_add_k_proj_add_v_proj.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -11871,7 +11871,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_515, False)
         ttnn_add_137 = ttnn.add(
             ttnn_all_gather_41,
-            self.weights["consteval.main_const_eval_225"],
+            self.weights["transformer.transformer_blocks.6.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12083,7 +12083,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_522, False)
         ttnn_add_141 = ttnn.add(
             ttnn_all_gather_42,
-            self.weights["consteval.main_const_eval_63"],
+            self.weights["transformer.transformer_blocks.6.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12177,7 +12177,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_525, False)
         ttnn_add_143 = ttnn.add(
             ttnn_all_gather_43,
-            self.weights["consteval.main_const_eval_78"],
+            self.weights["transformer.transformer_blocks.7.norm1.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12265,8 +12265,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_145, False)
         ttnn_linear_33 = ttnn.linear(
             ttnn_reshape_528,
-            self.weights["consteval.main_const_eval_28"],
-            bias=self.weights["consteval.main_const_eval_143"],
+            self.weights["transformer.transformer_blocks.7.attn.fused_to_q_to_k_to_v.weight"],
+            bias=self.weights["transformer.transformer_blocks.7.attn.fused_to_q_to_k_to_v.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -12782,7 +12782,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_540, False)
         ttnn_add_148 = ttnn.add(
             ttnn_all_gather_44,
-            self.weights["consteval.main_const_eval_11"],
+            self.weights["transformer.transformer_blocks.7.attn.to_add_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12994,7 +12994,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_547, False)
         ttnn_add_152 = ttnn.add(
             ttnn_all_gather_45,
-            self.weights["consteval.main_const_eval_172"],
+            self.weights["transformer.transformer_blocks.7.ff_context.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13184,7 +13184,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_554, False)
         ttnn_add_154 = ttnn.add(
             ttnn_all_gather_46,
-            self.weights["consteval.main_const_eval_236"],
+            self.weights["transformer.transformer_blocks.7.attn.to_out.0.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13396,7 +13396,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_561, False)
         ttnn_add_158 = ttnn.add(
             ttnn_all_gather_47,
-            self.weights["consteval.main_const_eval_74"],
+            self.weights["transformer.transformer_blocks.7.ff.net.2.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13499,7 +13499,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_564, False)
         ttnn_add_160 = ttnn.add(
             ttnn_all_gather_48,
-            self.weights["consteval.main_const_eval_69"],
+            self.weights["transformer.single_transformer_blocks.0.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13605,8 +13605,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_162, False)
         ttnn_linear_36 = ttnn.linear(
             ttnn_reshape_568,
-            self.weights["consteval.main_const_eval_205"],
-            bias=self.weights["consteval.main_const_eval_162"],
+            self.weights["transformer.single_transformer_blocks.0.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.0.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -14137,7 +14137,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_579, False)
         ttnn_add_165 = ttnn.add(
             ttnn_all_gather_51,
-            self.weights["consteval.main_const_eval_8"],
+            self.weights["transformer.single_transformer_blocks.0.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -14307,7 +14307,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_584, False)
         ttnn_add_167 = ttnn.add(
             ttnn_all_gather_52,
-            self.weights["consteval.main_const_eval_177"],
+            self.weights["transformer.single_transformer_blocks.1.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -14413,8 +14413,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_169, False)
         ttnn_linear_37 = ttnn.linear(
             ttnn_reshape_588,
-            self.weights["consteval.main_const_eval_215"],
-            bias=self.weights["consteval.main_const_eval_166"],
+            self.weights["transformer.single_transformer_blocks.1.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.1.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -14945,7 +14945,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_599, False)
         ttnn_add_172 = ttnn.add(
             ttnn_all_gather_55,
-            self.weights["consteval.main_const_eval_87"],
+            self.weights["transformer.single_transformer_blocks.1.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -15115,7 +15115,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_604, False)
         ttnn_add_174 = ttnn.add(
             ttnn_all_gather_56,
-            self.weights["consteval.main_const_eval_206"],
+            self.weights["transformer.single_transformer_blocks.2.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -15221,8 +15221,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_176, False)
         ttnn_linear_38 = ttnn.linear(
             ttnn_reshape_608,
-            self.weights["consteval.main_const_eval_165"],
-            bias=self.weights["consteval.main_const_eval_115"],
+            self.weights["transformer.single_transformer_blocks.2.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.2.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -15753,7 +15753,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_619, False)
         ttnn_add_179 = ttnn.add(
             ttnn_all_gather_59,
-            self.weights["consteval.main_const_eval_180"],
+            self.weights["transformer.single_transformer_blocks.2.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -15923,7 +15923,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_624, False)
         ttnn_add_181 = ttnn.add(
             ttnn_all_gather_60,
-            self.weights["consteval.main_const_eval_226"],
+            self.weights["transformer.single_transformer_blocks.3.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -16029,8 +16029,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_183, False)
         ttnn_linear_39 = ttnn.linear(
             ttnn_reshape_628,
-            self.weights["consteval.main_const_eval_154"],
-            bias=self.weights["consteval.main_const_eval_77"],
+            self.weights["transformer.single_transformer_blocks.3.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.3.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -16561,7 +16561,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_639, False)
         ttnn_add_186 = ttnn.add(
             ttnn_all_gather_63,
-            self.weights["consteval.main_const_eval_188"],
+            self.weights["transformer.single_transformer_blocks.3.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -16731,7 +16731,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_644, False)
         ttnn_add_188 = ttnn.add(
             ttnn_all_gather_64,
-            self.weights["consteval.main_const_eval_167"],
+            self.weights["transformer.single_transformer_blocks.4.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -16837,8 +16837,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_190, False)
         ttnn_linear_40 = ttnn.linear(
             ttnn_reshape_648,
-            self.weights["consteval.main_const_eval_93"],
-            bias=self.weights["consteval.main_const_eval_170"],
+            self.weights["transformer.single_transformer_blocks.4.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.4.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -17369,7 +17369,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_659, False)
         ttnn_add_193 = ttnn.add(
             ttnn_all_gather_67,
-            self.weights["consteval.main_const_eval_13"],
+            self.weights["transformer.single_transformer_blocks.4.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -17539,7 +17539,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_664, False)
         ttnn_add_195 = ttnn.add(
             ttnn_all_gather_68,
-            self.weights["consteval.main_const_eval_144"],
+            self.weights["transformer.single_transformer_blocks.5.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -17645,8 +17645,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_197, False)
         ttnn_linear_41 = ttnn.linear(
             ttnn_reshape_668,
-            self.weights["consteval.main_const_eval_90"],
-            bias=self.weights["consteval.main_const_eval_201"],
+            self.weights["transformer.single_transformer_blocks.5.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.5.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -18177,7 +18177,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_679, False)
         ttnn_add_200 = ttnn.add(
             ttnn_all_gather_71,
-            self.weights["consteval.main_const_eval_186"],
+            self.weights["transformer.single_transformer_blocks.5.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -18347,7 +18347,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_684, False)
         ttnn_add_202 = ttnn.add(
             ttnn_all_gather_72,
-            self.weights["consteval.main_const_eval_120"],
+            self.weights["transformer.single_transformer_blocks.6.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -18453,8 +18453,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_204, False)
         ttnn_linear_42 = ttnn.linear(
             ttnn_reshape_688,
-            self.weights["consteval.main_const_eval_160"],
-            bias=self.weights["consteval.main_const_eval_14"],
+            self.weights["transformer.single_transformer_blocks.6.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.6.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -18985,7 +18985,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_699, False)
         ttnn_add_207 = ttnn.add(
             ttnn_all_gather_75,
-            self.weights["consteval.main_const_eval_148"],
+            self.weights["transformer.single_transformer_blocks.6.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -19155,7 +19155,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_704, False)
         ttnn_add_209 = ttnn.add(
             ttnn_all_gather_76,
-            self.weights["consteval.main_const_eval_22"],
+            self.weights["transformer.single_transformer_blocks.7.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -19261,8 +19261,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_211, False)
         ttnn_linear_43 = ttnn.linear(
             ttnn_reshape_708,
-            self.weights["consteval.main_const_eval_216"],
-            bias=self.weights["consteval.main_const_eval_189"],
+            self.weights["transformer.single_transformer_blocks.7.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.7.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -19793,7 +19793,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_719, False)
         ttnn_add_214 = ttnn.add(
             ttnn_all_gather_79,
-            self.weights["consteval.main_const_eval_117"],
+            self.weights["transformer.single_transformer_blocks.7.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -19963,7 +19963,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_724, False)
         ttnn_add_216 = ttnn.add(
             ttnn_all_gather_80,
-            self.weights["consteval.main_const_eval_163"],
+            self.weights["transformer.single_transformer_blocks.8.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -20069,8 +20069,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_218, False)
         ttnn_linear_44 = ttnn.linear(
             ttnn_reshape_728,
-            self.weights["consteval.main_const_eval_218"],
-            bias=self.weights["consteval.main_const_eval_150"],
+            self.weights["transformer.single_transformer_blocks.8.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.8.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -20601,7 +20601,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_739, False)
         ttnn_add_221 = ttnn.add(
             ttnn_all_gather_83,
-            self.weights["consteval.main_const_eval_20"],
+            self.weights["transformer.single_transformer_blocks.8.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -20771,7 +20771,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_744, False)
         ttnn_add_223 = ttnn.add(
             ttnn_all_gather_84,
-            self.weights["consteval.main_const_eval_221"],
+            self.weights["transformer.single_transformer_blocks.9.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -20877,8 +20877,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_225, False)
         ttnn_linear_45 = ttnn.linear(
             ttnn_reshape_748,
-            self.weights["consteval.main_const_eval_48"],
-            bias=self.weights["consteval.main_const_eval_64"],
+            self.weights["transformer.single_transformer_blocks.9.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.9.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -21409,7 +21409,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_759, False)
         ttnn_add_228 = ttnn.add(
             ttnn_all_gather_87,
-            self.weights["consteval.main_const_eval_194"],
+            self.weights["transformer.single_transformer_blocks.9.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -21579,7 +21579,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_764, False)
         ttnn_add_230 = ttnn.add(
             ttnn_all_gather_88,
-            self.weights["consteval.main_const_eval_214"],
+            self.weights["transformer.single_transformer_blocks.10.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -21685,8 +21685,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_232, False)
         ttnn_linear_46 = ttnn.linear(
             ttnn_reshape_768,
-            self.weights["consteval.main_const_eval_138"],
-            bias=self.weights["consteval.main_const_eval_1"],
+            self.weights["transformer.single_transformer_blocks.10.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.10.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -22217,7 +22217,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_779, False)
         ttnn_add_235 = ttnn.add(
             ttnn_all_gather_91,
-            self.weights["consteval.main_const_eval_223"],
+            self.weights["transformer.single_transformer_blocks.10.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -22387,7 +22387,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_784, False)
         ttnn_add_237 = ttnn.add(
             ttnn_all_gather_92,
-            self.weights["consteval.main_const_eval_60"],
+            self.weights["transformer.single_transformer_blocks.11.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -22493,8 +22493,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_239, False)
         ttnn_linear_47 = ttnn.linear(
             ttnn_reshape_788,
-            self.weights["consteval.main_const_eval_114"],
-            bias=self.weights["consteval.main_const_eval_193"],
+            self.weights["transformer.single_transformer_blocks.11.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.11.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -23025,7 +23025,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_799, False)
         ttnn_add_242 = ttnn.add(
             ttnn_all_gather_95,
-            self.weights["consteval.main_const_eval_200"],
+            self.weights["transformer.single_transformer_blocks.11.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -23195,7 +23195,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_804, False)
         ttnn_add_244 = ttnn.add(
             ttnn_all_gather_96,
-            self.weights["consteval.main_const_eval_97"],
+            self.weights["transformer.single_transformer_blocks.12.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -23301,8 +23301,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_246, False)
         ttnn_linear_48 = ttnn.linear(
             ttnn_reshape_808,
-            self.weights["consteval.main_const_eval_12"],
-            bias=self.weights["consteval.main_const_eval_128"],
+            self.weights["transformer.single_transformer_blocks.12.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.12.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -23833,7 +23833,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_819, False)
         ttnn_add_249 = ttnn.add(
             ttnn_all_gather_99,
-            self.weights["consteval.main_const_eval_59"],
+            self.weights["transformer.single_transformer_blocks.12.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24003,7 +24003,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_824, False)
         ttnn_add_251 = ttnn.add(
             ttnn_all_gather_100,
-            self.weights["consteval.main_const_eval_104"],
+            self.weights["transformer.single_transformer_blocks.13.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24109,8 +24109,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_253, False)
         ttnn_linear_49 = ttnn.linear(
             ttnn_reshape_828,
-            self.weights["consteval.main_const_eval_190"],
-            bias=self.weights["consteval.main_const_eval_204"],
+            self.weights["transformer.single_transformer_blocks.13.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.13.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -24641,7 +24641,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_839, False)
         ttnn_add_256 = ttnn.add(
             ttnn_all_gather_103,
-            self.weights["consteval.main_const_eval_101"],
+            self.weights["transformer.single_transformer_blocks.13.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24811,7 +24811,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_844, False)
         ttnn_add_258 = ttnn.add(
             ttnn_all_gather_104,
-            self.weights["consteval.main_const_eval_36"],
+            self.weights["transformer.single_transformer_blocks.14.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24917,8 +24917,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_260, False)
         ttnn_linear_50 = ttnn.linear(
             ttnn_reshape_848,
-            self.weights["consteval.main_const_eval_237"],
-            bias=self.weights["consteval.main_const_eval_55"],
+            self.weights["transformer.single_transformer_blocks.14.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.14.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -25449,7 +25449,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_859, False)
         ttnn_add_263 = ttnn.add(
             ttnn_all_gather_107,
-            self.weights["consteval.main_const_eval_108"],
+            self.weights["transformer.single_transformer_blocks.14.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -25619,7 +25619,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_864, False)
         ttnn_add_265 = ttnn.add(
             ttnn_all_gather_108,
-            self.weights["consteval.main_const_eval_203"],
+            self.weights["transformer.single_transformer_blocks.15.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -25725,8 +25725,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_267, False)
         ttnn_linear_51 = ttnn.linear(
             ttnn_reshape_868,
-            self.weights["consteval.main_const_eval_207"],
-            bias=self.weights["consteval.main_const_eval_81"],
+            self.weights["transformer.single_transformer_blocks.15.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.15.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -26257,7 +26257,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_879, False)
         ttnn_add_270 = ttnn.add(
             ttnn_all_gather_111,
-            self.weights["consteval.main_const_eval_33"],
+            self.weights["transformer.single_transformer_blocks.15.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -26427,7 +26427,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_884, False)
         ttnn_add_272 = ttnn.add(
             ttnn_all_gather_112,
-            self.weights["consteval.main_const_eval_240"],
+            self.weights["transformer.single_transformer_blocks.16.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -26533,8 +26533,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_274, False)
         ttnn_linear_52 = ttnn.linear(
             ttnn_reshape_888,
-            self.weights["consteval.main_const_eval_6"],
-            bias=self.weights["consteval.main_const_eval_139"],
+            self.weights["transformer.single_transformer_blocks.16.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.16.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -27065,7 +27065,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_899, False)
         ttnn_add_277 = ttnn.add(
             ttnn_all_gather_115,
-            self.weights["consteval.main_const_eval_32"],
+            self.weights["transformer.single_transformer_blocks.16.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -27235,7 +27235,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_904, False)
         ttnn_add_279 = ttnn.add(
             ttnn_all_gather_116,
-            self.weights["consteval.main_const_eval_197"],
+            self.weights["transformer.single_transformer_blocks.17.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -27341,8 +27341,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_281, False)
         ttnn_linear_53 = ttnn.linear(
             ttnn_reshape_908,
-            self.weights["consteval.main_const_eval_62"],
-            bias=self.weights["consteval.main_const_eval_54"],
+            self.weights["transformer.single_transformer_blocks.17.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.17.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -27873,7 +27873,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_919, False)
         ttnn_add_284 = ttnn.add(
             ttnn_all_gather_119,
-            self.weights["consteval.main_const_eval_210"],
+            self.weights["transformer.single_transformer_blocks.17.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28043,7 +28043,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_924, False)
         ttnn_add_286 = ttnn.add(
             ttnn_all_gather_120,
-            self.weights["consteval.main_const_eval_50"],
+            self.weights["transformer.single_transformer_blocks.18.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28149,8 +28149,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_288, False)
         ttnn_linear_54 = ttnn.linear(
             ttnn_reshape_928,
-            self.weights["consteval.main_const_eval_125"],
-            bias=self.weights["consteval.main_const_eval_26"],
+            self.weights["transformer.single_transformer_blocks.18.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.18.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -28681,7 +28681,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_939, False)
         ttnn_add_291 = ttnn.add(
             ttnn_all_gather_123,
-            self.weights["consteval.main_const_eval_156"],
+            self.weights["transformer.single_transformer_blocks.18.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28851,7 +28851,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_944, False)
         ttnn_add_293 = ttnn.add(
             ttnn_all_gather_124,
-            self.weights["consteval.main_const_eval_72"],
+            self.weights["transformer.single_transformer_blocks.19.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28957,8 +28957,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_295, False)
         ttnn_linear_55 = ttnn.linear(
             ttnn_reshape_948,
-            self.weights["consteval.main_const_eval_57"],
-            bias=self.weights["consteval.main_const_eval_234"],
+            self.weights["transformer.single_transformer_blocks.19.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.19.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -29489,7 +29489,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_959, False)
         ttnn_add_298 = ttnn.add(
             ttnn_all_gather_127,
-            self.weights["consteval.main_const_eval_46"],
+            self.weights["transformer.single_transformer_blocks.19.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -29659,7 +29659,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_964, False)
         ttnn_add_300 = ttnn.add(
             ttnn_all_gather_128,
-            self.weights["consteval.main_const_eval_145"],
+            self.weights["transformer.single_transformer_blocks.20.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -29765,8 +29765,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_302, False)
         ttnn_linear_56 = ttnn.linear(
             ttnn_reshape_968,
-            self.weights["consteval.main_const_eval_21"],
-            bias=self.weights["consteval.main_const_eval_164"],
+            self.weights["transformer.single_transformer_blocks.20.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.20.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -30297,7 +30297,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_979, False)
         ttnn_add_305 = ttnn.add(
             ttnn_all_gather_131,
-            self.weights["consteval.main_const_eval_102"],
+            self.weights["transformer.single_transformer_blocks.20.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -30467,7 +30467,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_984, False)
         ttnn_add_307 = ttnn.add(
             ttnn_all_gather_132,
-            self.weights["consteval.main_const_eval_181"],
+            self.weights["transformer.single_transformer_blocks.21.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -30573,8 +30573,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_309, False)
         ttnn_linear_57 = ttnn.linear(
             ttnn_reshape_988,
-            self.weights["consteval.main_const_eval_231"],
-            bias=self.weights["consteval.main_const_eval_47"],
+            self.weights["transformer.single_transformer_blocks.21.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.21.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -31105,7 +31105,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_999, False)
         ttnn_add_312 = ttnn.add(
             ttnn_all_gather_135,
-            self.weights["consteval.main_const_eval_149"],
+            self.weights["transformer.single_transformer_blocks.21.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -31275,7 +31275,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1004, False)
         ttnn_add_314 = ttnn.add(
             ttnn_all_gather_136,
-            self.weights["consteval.main_const_eval_4"],
+            self.weights["transformer.single_transformer_blocks.22.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -31381,8 +31381,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_316, False)
         ttnn_linear_58 = ttnn.linear(
             ttnn_reshape_1008,
-            self.weights["consteval.main_const_eval_135"],
-            bias=self.weights["consteval.main_const_eval_99"],
+            self.weights["transformer.single_transformer_blocks.22.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.22.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -31913,7 +31913,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1019, False)
         ttnn_add_319 = ttnn.add(
             ttnn_all_gather_139,
-            self.weights["consteval.main_const_eval_169"],
+            self.weights["transformer.single_transformer_blocks.22.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32083,7 +32083,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1024, False)
         ttnn_add_321 = ttnn.add(
             ttnn_all_gather_140,
-            self.weights["consteval.main_const_eval_185"],
+            self.weights["transformer.single_transformer_blocks.23.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32189,8 +32189,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_323, False)
         ttnn_linear_59 = ttnn.linear(
             ttnn_reshape_1028,
-            self.weights["consteval.main_const_eval_79"],
-            bias=self.weights["consteval.main_const_eval_92"],
+            self.weights["transformer.single_transformer_blocks.23.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.23.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -32721,7 +32721,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1039, False)
         ttnn_add_326 = ttnn.add(
             ttnn_all_gather_143,
-            self.weights["consteval.main_const_eval_16"],
+            self.weights["transformer.single_transformer_blocks.23.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32891,7 +32891,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1044, False)
         ttnn_add_328 = ttnn.add(
             ttnn_all_gather_144,
-            self.weights["consteval.main_const_eval_122"],
+            self.weights["transformer.single_transformer_blocks.24.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32997,8 +32997,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_330, False)
         ttnn_linear_60 = ttnn.linear(
             ttnn_reshape_1048,
-            self.weights["consteval.main_const_eval_112"],
-            bias=self.weights["consteval.main_const_eval_158"],
+            self.weights["transformer.single_transformer_blocks.24.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.24.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -33529,7 +33529,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1059, False)
         ttnn_add_333 = ttnn.add(
             ttnn_all_gather_147,
-            self.weights["consteval.main_const_eval_196"],
+            self.weights["transformer.single_transformer_blocks.24.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -33699,7 +33699,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1064, False)
         ttnn_add_335 = ttnn.add(
             ttnn_all_gather_148,
-            self.weights["consteval.main_const_eval_66"],
+            self.weights["transformer.single_transformer_blocks.25.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -33805,8 +33805,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_337, False)
         ttnn_linear_61 = ttnn.linear(
             ttnn_reshape_1068,
-            self.weights["consteval.main_const_eval_88"],
-            bias=self.weights["consteval.main_const_eval_219"],
+            self.weights["transformer.single_transformer_blocks.25.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.25.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -34337,7 +34337,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1079, False)
         ttnn_add_340 = ttnn.add(
             ttnn_all_gather_151,
-            self.weights["consteval.main_const_eval_173"],
+            self.weights["transformer.single_transformer_blocks.25.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -34507,7 +34507,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1084, False)
         ttnn_add_342 = ttnn.add(
             ttnn_all_gather_152,
-            self.weights["consteval.main_const_eval_121"],
+            self.weights["transformer.single_transformer_blocks.26.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -34613,8 +34613,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_344, False)
         ttnn_linear_62 = ttnn.linear(
             ttnn_reshape_1088,
-            self.weights["consteval.main_const_eval_174"],
-            bias=self.weights["consteval.main_const_eval_217"],
+            self.weights["transformer.single_transformer_blocks.26.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.26.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -35145,7 +35145,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1099, False)
         ttnn_add_347 = ttnn.add(
             ttnn_all_gather_155,
-            self.weights["consteval.main_const_eval_83"],
+            self.weights["transformer.single_transformer_blocks.26.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -35315,7 +35315,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1104, False)
         ttnn_add_349 = ttnn.add(
             ttnn_all_gather_156,
-            self.weights["consteval.main_const_eval_84"],
+            self.weights["transformer.single_transformer_blocks.27.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -35421,8 +35421,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_351, False)
         ttnn_linear_63 = ttnn.linear(
             ttnn_reshape_1108,
-            self.weights["consteval.main_const_eval_222"],
-            bias=self.weights["consteval.main_const_eval_175"],
+            self.weights["transformer.single_transformer_blocks.27.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.27.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -35953,7 +35953,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1119, False)
         ttnn_add_354 = ttnn.add(
             ttnn_all_gather_159,
-            self.weights["consteval.main_const_eval_118"],
+            self.weights["transformer.single_transformer_blocks.27.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -36123,7 +36123,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1124, False)
         ttnn_add_356 = ttnn.add(
             ttnn_all_gather_160,
-            self.weights["consteval.main_const_eval_131"],
+            self.weights["transformer.single_transformer_blocks.28.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -36229,8 +36229,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_358, False)
         ttnn_linear_64 = ttnn.linear(
             ttnn_reshape_1128,
-            self.weights["consteval.main_const_eval_213"],
-            bias=self.weights["consteval.main_const_eval_89"],
+            self.weights["transformer.single_transformer_blocks.28.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.28.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -36761,7 +36761,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1139, False)
         ttnn_add_361 = ttnn.add(
             ttnn_all_gather_163,
-            self.weights["consteval.main_const_eval_67"],
+            self.weights["transformer.single_transformer_blocks.28.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -36931,7 +36931,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1144, False)
         ttnn_add_363 = ttnn.add(
             ttnn_all_gather_164,
-            self.weights["consteval.main_const_eval_227"],
+            self.weights["transformer.single_transformer_blocks.29.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -37037,8 +37037,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_365, False)
         ttnn_linear_65 = ttnn.linear(
             ttnn_reshape_1148,
-            self.weights["consteval.main_const_eval_153"],
-            bias=self.weights["consteval.main_const_eval_110"],
+            self.weights["transformer.single_transformer_blocks.29.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.29.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -37569,7 +37569,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1159, False)
         ttnn_add_368 = ttnn.add(
             ttnn_all_gather_167,
-            self.weights["consteval.main_const_eval_137"],
+            self.weights["transformer.single_transformer_blocks.29.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -37739,7 +37739,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1164, False)
         ttnn_add_370 = ttnn.add(
             ttnn_all_gather_168,
-            self.weights["consteval.main_const_eval_15"],
+            self.weights["transformer.single_transformer_blocks.30.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -37845,8 +37845,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_372, False)
         ttnn_linear_66 = ttnn.linear(
             ttnn_reshape_1168,
-            self.weights["consteval.main_const_eval_94"],
-            bias=self.weights["consteval.main_const_eval_82"],
+            self.weights["transformer.single_transformer_blocks.30.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.30.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -38377,7 +38377,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1179, False)
         ttnn_add_375 = ttnn.add(
             ttnn_all_gather_171,
-            self.weights["consteval.main_const_eval_183"],
+            self.weights["transformer.single_transformer_blocks.30.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -38547,7 +38547,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1184, False)
         ttnn_add_377 = ttnn.add(
             ttnn_all_gather_172,
-            self.weights["consteval.main_const_eval_182"],
+            self.weights["transformer.single_transformer_blocks.31.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -38653,8 +38653,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_379, False)
         ttnn_linear_67 = ttnn.linear(
             ttnn_reshape_1188,
-            self.weights["consteval.main_const_eval_98"],
-            bias=self.weights["consteval.main_const_eval_133"],
+            self.weights["transformer.single_transformer_blocks.31.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.31.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -39185,7 +39185,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1199, False)
         ttnn_add_382 = ttnn.add(
             ttnn_all_gather_175,
-            self.weights["consteval.main_const_eval_25"],
+            self.weights["transformer.single_transformer_blocks.31.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -39355,7 +39355,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1204, False)
         ttnn_add_384 = ttnn.add(
             ttnn_all_gather_176,
-            self.weights["consteval.main_const_eval_141"],
+            self.weights["transformer.single_transformer_blocks.32.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -39461,8 +39461,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_386, False)
         ttnn_linear_68 = ttnn.linear(
             ttnn_reshape_1208,
-            self.weights["consteval.main_const_eval_43"],
-            bias=self.weights["consteval.main_const_eval_230"],
+            self.weights["transformer.single_transformer_blocks.32.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.32.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -39993,7 +39993,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1219, False)
         ttnn_add_389 = ttnn.add(
             ttnn_all_gather_179,
-            self.weights["consteval.main_const_eval_178"],
+            self.weights["transformer.single_transformer_blocks.32.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -40163,7 +40163,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1224, False)
         ttnn_add_391 = ttnn.add(
             ttnn_all_gather_180,
-            self.weights["consteval.main_const_eval_105"],
+            self.weights["transformer.single_transformer_blocks.33.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -40269,8 +40269,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_393, False)
         ttnn_linear_69 = ttnn.linear(
             ttnn_reshape_1228,
-            self.weights["consteval.main_const_eval_161"],
-            bias=self.weights["consteval.main_const_eval_30"],
+            self.weights["transformer.single_transformer_blocks.33.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.33.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -40801,7 +40801,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1239, False)
         ttnn_add_396 = ttnn.add(
             ttnn_all_gather_183,
-            self.weights["consteval.main_const_eval_130"],
+            self.weights["transformer.single_transformer_blocks.33.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -40971,7 +40971,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1244, False)
         ttnn_add_398 = ttnn.add(
             ttnn_all_gather_184,
-            self.weights["consteval.main_const_eval_37"],
+            self.weights["transformer.single_transformer_blocks.34.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -41077,8 +41077,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_400, False)
         ttnn_linear_70 = ttnn.linear(
             ttnn_reshape_1248,
-            self.weights["consteval.main_const_eval_235"],
-            bias=self.weights["consteval.main_const_eval_68"],
+            self.weights["transformer.single_transformer_blocks.34.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.34.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -41609,7 +41609,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1259, False)
         ttnn_add_403 = ttnn.add(
             ttnn_all_gather_187,
-            self.weights["consteval.main_const_eval_75"],
+            self.weights["transformer.single_transformer_blocks.34.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -41779,7 +41779,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1264, False)
         ttnn_add_405 = ttnn.add(
             ttnn_all_gather_188,
-            self.weights["consteval.main_const_eval_155"],
+            self.weights["transformer.single_transformer_blocks.35.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -41885,8 +41885,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_407, False)
         ttnn_linear_71 = ttnn.linear(
             ttnn_reshape_1268,
-            self.weights["consteval.main_const_eval_27"],
-            bias=self.weights["consteval.main_const_eval_123"],
+            self.weights["transformer.single_transformer_blocks.35.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.35.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -42417,7 +42417,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1279, False)
         ttnn_add_410 = ttnn.add(
             ttnn_all_gather_191,
-            self.weights["consteval.main_const_eval_52"],
+            self.weights["transformer.single_transformer_blocks.35.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -42587,7 +42587,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1284, False)
         ttnn_add_412 = ttnn.add(
             ttnn_all_gather_192,
-            self.weights["consteval.main_const_eval_241"],
+            self.weights["transformer.single_transformer_blocks.36.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -42693,8 +42693,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_414, False)
         ttnn_linear_72 = ttnn.linear(
             ttnn_reshape_1288,
-            self.weights["consteval.main_const_eval_45"],
-            bias=self.weights["consteval.main_const_eval_61"],
+            self.weights["transformer.single_transformer_blocks.36.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.36.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -43225,7 +43225,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1299, False)
         ttnn_add_417 = ttnn.add(
             ttnn_all_gather_195,
-            self.weights["consteval.main_const_eval_198"],
+            self.weights["transformer.single_transformer_blocks.36.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -43395,7 +43395,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1304, False)
         ttnn_add_419 = ttnn.add(
             ttnn_all_gather_196,
-            self.weights["consteval.main_const_eval_31"],
+            self.weights["transformer.single_transformer_blocks.37.norm.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -43501,8 +43501,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_421, False)
         ttnn_linear_73 = ttnn.linear(
             ttnn_reshape_1308,
-            self.weights["consteval.main_const_eval_136"],
-            bias=self.weights["consteval.main_const_eval_7"],
+            self.weights["transformer.single_transformer_blocks.37.fused_attn_to_q_to_k_to_v_proj_mlp.weight"],
+            bias=self.weights["transformer.single_transformer_blocks.37.fused_attn_to_q_to_k_to_v_proj_mlp.bias"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -44036,7 +44036,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1319, False)
         ttnn_add_424 = ttnn.add(
             ttnn_all_gather_199,
-            self.weights["consteval.main_const_eval_228"],
+            self.weights["transformer.single_transformer_blocks.37.proj_out.bias.reshaped"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -44141,7 +44141,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1322, False)
         ttnn_add_426 = ttnn.add(
             ttnn_all_gather_200,
-            self.weights["consteval.main_const_eval_38"],
+            self.weights["transformer.norm_out.linear.bias.f32"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
