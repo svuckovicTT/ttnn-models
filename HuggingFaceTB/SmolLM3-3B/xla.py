@@ -43,9 +43,11 @@ DATA_FORMAT = torch.bfloat16     # test loads with dtype_override=torch.bfloat16
 BATCH_SIZE = 1                   # test: loader.load_inputs(batch_size=1)
 
 # test_fibo_text_encoder.py: MAX_TP4_CONTEXT_LENGTH = 24576 — the largest context
-# validated under TP-4 during model-bringup (PCC 0.9987). Pinned via the
-# FIBO_TE_CONTEXT_LENGTH env var in the test; the sequence length the model runs.
-CONTEXT_LENGTH = 24576
+# validated under TP-4 during model-bringup (PCC 0.9987); the sequence length the
+# model runs. The real loader reads FIBO_TE_CONTEXT_LENGTH, so honor the same env
+# var here (default 24576) to make shorter-context experiments reproducible, e.g.
+# FIBO_TE_CONTEXT_LENGTH=4096 python xla.py --golden.
+CONTEXT_LENGTH = int(os.environ.get("FIBO_TE_CONTEXT_LENGTH", "24576"))
 
 # Stub structured-JSON prompt (fibo/pytorch/src/model_utils.py:BRINGUP_PROMPT).
 # FIBO is trained on structured JSON captions; the exact text only affects the
