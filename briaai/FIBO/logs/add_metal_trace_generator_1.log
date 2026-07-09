@@ -1,0 +1,16 @@
+Good, `main()` is unchanged.
+
+**Summary of changes:**
+
+1. **`model_ttnn.py`**: Removed all 52 `ttnn.deallocate(args_N, False)` lines (args_0 through args_51). These deallocated input activation tensors, which would destroy the persistent DRAM buffers needed for metal trace re-execution.
+
+2. **`main.py` `test_main()`**: Rewrote to use the metal trace pattern:
+   - Loads activations to device, then moves them to host as source tensors
+   - Allocates 52 persistent DRAM input buffers via `ttnn.allocate_tensor_on_device`
+   - Defines `copy_inputs()` helper to copy all 52 host activations into DRAM buffers
+   - **Run 0 (compile)**: Copies inputs → runs model → syncs (timed). Also does PCC check.
+   - **Run 1 (capture)**: Copies inputs → `begin_trace_capture` → runs model → `end_trace_capture` → syncs (timed)
+   - **Runs 2-4 (trace)**: Copies inputs → `execute_trace(blocking=False)` → `cpu(blocking=False)` → syncs (timed)
+   - All 5 runs are logged with elapsed time and FPS
+
+--- Time taken: 150.3s | session: f201b1a7-ba13-40fa-9343-a53b21fc1a1d ---
