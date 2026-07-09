@@ -1,0 +1,7 @@
+Everything is consistent. `main.py` references `params.load_weights_for__main` at line 63672, which now points to the state_dict-based implementation (the former `load_weights_for__main_from_state_dict`). No changes needed in `main.py`.
+
+Done. Two changes made:
+- **`params.py`**: Deleted the old disk-based `load_weights_for__main()` and renamed `load_weights_for__main_from_state_dict()` to `load_weights_for__main()` — the state_dict path is now the only weight loader.
+- **`verify_weights.py`**: Deleted entirely (verification already passed).
+
+--- Time taken: 70.3s | session: 249caefc-e6f6-44ec-beba-8215ee02a67a ---
