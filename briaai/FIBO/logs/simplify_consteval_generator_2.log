@@ -1,0 +1,12 @@
+Both files parse correctly. Here's a summary of what was done:
+
+**Created `consteval.py` (510 lines)** — down from ~16,600+ lines of 242 duplicated functions:
+- 10 reusable helper functions (`_to_device_tile`, `_reshape_bias`, `_reshape_typecast_bias`, `_typecast_to_float32`, `_permute_typecast`, `_mesh_partition_permute_typecast`, `_mesh_partition_typecast`, `_concat_biases`, `_permute_concat_weights`, `_permute_typecast_concat_weights`)
+- `run_consteval(weights, device)` that uses loops to process all 38 single_transformer_blocks and 8 transformer_blocks systematically, storing results as individual named tensors in the weights dict
+
+**Updated `model_ttnn.py` (44,259 lines)** — down from 62,425:
+- Removed all 242 `main_const_eval_*` functions, `ce_cache__main`, and `consteval__main`
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` after loading weights
+- All 242 `ce_cache__main["main_const_eval_N"]` references replaced with descriptive `self.weights["transformer.X.Y.Z"]` keys matching the model's nomenclature (e.g., `transformer.transformer_blocks.0.attn.fused_qkv_weight`, `transformer.reshaped.single_transformer_blocks.5.proj_out.bias`)
+
+--- Time taken: 760.1s | session: 17adf63b-7d89-44c0-b2db-8f1356b621aa ---

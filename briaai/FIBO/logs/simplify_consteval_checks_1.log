@@ -1,0 +1,371 @@
+=== check: pytest main.py ===
+FAILED
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/briaai/FIBO/model/graph_0
+plugins: jaxtyping-0.3.9, metadata-3.1.1, forked-1.6.0, anyio-4.13.0, json-report-1.5.0, split-0.11.0
+collected 1 item
+
+main.py Device: MeshDevice(1x4 grid, 4 devices)
+
+PCC: 0.256831
+F
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+    def test_main():
+        exact_pcc = 0.999389111995697
+    
+        device = utils.open_device()
+        model = model_ttnn.ModelTTNN(device)
+    
+        # Use the codegen's own activation loader: it deserializes the captured
+        # input tensors already in the exact order the forward method unpacks them
+        # (`activations[0..51]`), applying the same layout/dtype/device transforms
+        # as any `load_activations_for_*()` helper.
+        activations = load_activations_for__main(device)
+        outputs = model(activations)
+    
+        # The DiT runs tensor-parallel on a 1x4 mesh, but `transformer.proj_out` is
+        # not sharded (see xla.py's shard spec), so the output is replicated across
+        # all 4 devices. Pull a single shard back to host to convert it to torch;
+        # `ttnn.to_torch` on the whole multi-device tensor would need a composer.
+        output_host = ttnn.from_device(outputs[0])
+        output_shard = ttnn.get_device_tensors(output_host)[0]
+        ttnn_output = ttnn.to_torch(output_shard).to(torch.float32)
+    
+        golden_output = model_pt.run_pytorch_model().to(torch.float32)
+    
+        pcc = calculate_pcc(ttnn_output, golden_output)
+        print(f"\nPCC: {pcc:.6f}")
+>       assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+E       AssertionError: PCC 0.2568310499191284 does not match expected 0.999389111995697
+E       assert 0.2568310499191284 == 0.999389111995697
+
+main.py:566: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pad_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'tilize_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'move_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'untilize_with_unpadding_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'slice_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'transpose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'reshard_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'conv2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'max_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'avg_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'linear_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_batched_weights_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addmm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'sparse_matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'remainder_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'xlogy_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'hypot_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'nextafter_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'minimum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'atan2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gcd_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lcm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'isclose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_no_nan_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'floor_div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'maximum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'prelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'outer_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'polyval_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'fmod_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pow_t' was already registered!
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED main.py::test_main - AssertionError: PCC 0.2568310499191284 does not m...
+================== 1 failed, 80 warnings in 191.25s (0:03:11) ==================
+2026-07-09 13:43:08.343 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+Flax classes are deprecated and will be removed in Diffusers v1.0.0. We recommend migrating to PyTorch classes or pinning your version of Diffusers.
+
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading pipeline components...:  20%|██        | 1/5 [00:00<00:02,  1.66it/s]
+
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s][A
+Loading weights: 100%|██████████| 326/326 [00:00<00:00, 26724.19it/s]
+The config attributes {'clip_output': False} were passed to AutoencoderKLWan, but are not expected and will be ignored. Please verify your config.json configuration file.
+
+Loading pipeline components...:  60%|██████    | 3/5 [00:00<00:00,  3.88it/s]
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][A
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 55.10it/s]
+
+Loading pipeline components...: 100%|██████████| 5/5 [00:01<00:00,  4.75it/s]
+Loading pipeline components...: 100%|██████████| 5/5 [00:01<00:00,  4.13it/s]
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+  0%|          | 0/50 [01:20<?, ?it/s]
+Building ncrisc, compile step:
+cd /data/svuckovic/.cache/tt-metal-cache/15546448249451378817/kernels/reader_concat_stick_layout_interleaved_start_id/12468505161076116851/ncrisc/ && /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/runtime/sfpi/compiler/bin/riscv-tt-elf-g++ -O2 -std=c++17 -ftt-nttp -ftt-constinit -ftt-consteval -ftt-no-dyninit -flto=auto -ffast-math -fno-exceptions -fno-rtti -fno-use-cxa-atexit -MMD -Wall -Werror -Wno-error=deprecated-declarations -Wno-error=multistatement-macros -Wno-error=parentheses -Wno-error=unused-but-set-variable -Wno-unused-variable -Wno-unused-function -mcpu=tt-bh -fno-tree-loop-distribute-patterns -I. -I.. -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn/cpp -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/inc -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/tt-llk/common -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hostdevcommon/api -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/api/ -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/ckernels/blackhole/metal/common -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/ckernels/blackhole/metal/llk_io -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/inc/internal/tt-1xx -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/inc/internal/tt-1xx/blackhole -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/inc/internal/tt-1xx/blackhole/blackhole_defines -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/inc/internal/tt-1xx/blackhole/noc -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/tt-llk/tt_llk_blackhole/common/inc -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/tt-llk/tt_llk_blackhole/llk_lib -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/firmware/src/tt-1xx -I/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn/cpp/ttnn/operations/data_movement/concat/device/kernels/dataflow -c -o /data/svuckovic/.cache/tt-metal-cache/15546448249451378817/kernels/reader_concat_stick_layout_interleaved_start_id/12468505161076116851/ncrisc/ncrisck.11760671270407068925.o /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/firmware/src/tt-1xx/ncrisck.cc -MF /data/svuckovic/.cache/tt-metal-cache/15546448249451378817/kernels/reader_concat_stick_layout_interleaved_start_id/12468505161076116851/ncrisc/ncrisck.11760671270407068925.d -DIS_NOT_POW2_NUM_L1_BANKS=1 -DLOG_BASE_2_OF_NUM_DRAM_BANKS=3 -DNUM_DRAM_BANKS=8 -DNUM_L1_BANKS=110 -DPCIE_NOC_X=19 -DPCIE_NOC_Y=24 -DTENSIX_FIRMWARE -DLOCAL_MEM_EN=0 -DPROCESSOR_INDEX=1 -DCOMPILE_FOR_NCRISC -DARCH_BLACKHOLE -DDISPATCH_MESSAGE_ADDR=4290184248 -DKERNEL_BUILD -DFULL_KERNEL_NAME="\"reader_concat_stick_layout_interleaved_start_id/12468505161076116851/\"" -DFABRIC_1D_PKT_HDR_EXTENSION_WORDS='0' -DROUTING_MODE='145' -DWIDTH_CONCAT='1' -DNOC_INDEX='0' -DNOC_MODE='0' -DKERNEL_COMPILE_TIME_ARGS=0,4,6144,1536,1536,1536,2,6144,2,1536,2,1536,2,1536 
+In file included from ../kernel_includes.hpp:1,
+                 from /localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/hw/firmware/src/tt-1xx/ncrisck.cc:22:
+/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn/cpp/ttnn/operations/data_movement/concat/device/kernels/dataflow/reader_concat_stick_layout_interleaved_start_id.cpp: In function 'void kernel_main()':
+/localdev/svuckovic/_workspace/repos/project-alchemy/tt-xla/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn/cpp/ttnn/operations/data_movement/concat/device/kernels/dataflow/reader_concat_stick_layout_interleaved_start_id.cpp:29:14: warning: variable 'num_pages_per_block' set but not used [-Wunused-but-set-variable]
+   29 |     uint32_t num_pages_per_block[num_tensors];
+      |              ^~~~~~~~~~~~~~~~~~~
+nanobind: leaked 474 instances!
+ - leaked instance 0x32992730 of type "ttnn._ttnn.operations.data_movement.sharded_to_interleaved_t"
+ - leaked instance 0x329c8bb0 of type "ttnn._ttnn.operations.binary.eq__t"
+ - leaked instance 0x3202f790 of type "ttnn._ttnn.operations.unary.geglu_t"
+ - leaked instance 0x329a8340 of type "ttnn._ttnn.operations.binary.logical_right_shift_t"
+ - leaked instance 0x32a5a970 of type "ttnn._ttnn.operations.embedding_backward.embedding_bw_t"
+ - leaked instance 0x32a16f20 of type "ttnn._ttnn.operations.binary_backward.div_bw_t"
+ - leaked instance 0x329fc590 of type "ttnn._ttnn.operations.unary_backward.log_bw_t"
+ - leaked instance 0x32a7ad90 of type "ttnn._ttnn.operations.data_movement.fill_ones_rm_t"
+ - leaked instance 0x32586af0 of type "ttnn._ttnn.operations.unary.hardmish_t"
+ - leaked instance 0x3299a220 of type "ttnn._ttnn.operations.binary.xlogy_t"
+ - leaked instance 0x32be4640 of type "ttnn._ttnn.operations.moreh.moreh_bmm_t"
+ - leaked instance 0x32a0a050 of type "ttnn._ttnn.operations.unary_backward.exp2_bw_t"
+ - leaked instance 0x32a8eda0 of type "ttnn._ttnn.operations.data_movement.moe_routing_remap_t"
+ - leaked instance 0x32a0ce90 of type "ttnn._ttnn.operations.data_movement.transpose_t"
+ - leaked instance 0x32a15d80 of type "ttnn._ttnn.operations.binary_backward.sub_bw_t"
+ - leaked instance 0x329a03f0 of type "ttnn._ttnn.operations.binary.logical_left_shift_t"
+ - leaked instance 0x329dae50 of type "ttnn._ttnn.operations.quantization.requantize_t"
+ - leaked instance 0x32a03c50 of type "ttnn._ttnn.operations.unary_backward.sinh_bw_t"
+ - leaked instance 0x329ab1e0 of type "ttnn._ttnn.operations.binary.atan2_t"
+ - leaked instance 0x32622f00 of type "ttnn._ttnn.operations.unary.floor_t"
+ - ... skipped remainder
+nanobind: leaked 534 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2344 functions!
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function "__repr__"
+ - leaked function ""
+ - leaked function "subtract"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step simplify_consteval, as expected
