@@ -1,6 +1,5 @@
 import ttnn
 import params
-import consteval
 
 
 class LightweightModule:
@@ -8,14 +7,16652 @@ class LightweightModule:
         return self.forward(*args, **kwargs)
 
 
+def main_const_eval_0(device):
+    ttnn_Tensor_0 = ttnn.Tensor(
+        [
+            1.0,
+            0.9305720329284668,
+            0.86596429347991943,
+            0.80584216117858887,
+            0.74989420175552368,
+            0.69783055782318115,
+            0.64938163757324219,
+            0.60429638624191284,
+            0.56234133243560791,
+            0.52329909801483154,
+            0.48696750402450562,
+            0.45315837860107422,
+            0.42169648408889771,
+            0.39241895079612732,
+            0.36517414450645447,
+            0.33982083201408386,
+            0.31622776389122009,
+            0.29427272081375122,
+            0.27384194731712341,
+            0.25482964515686035,
+            0.23713734745979309,
+            0.22067341208457947,
+            0.20535250008106232,
+            0.19109529256820679,
+            0.17782793939113617,
+            0.16548170149326324,
+            0.15399263799190521,
+            0.14330124855041504,
+            0.13335214555263519,
+            0.12409376353025436,
+            0.11547819525003433,
+            0.10746076703071594,
+            0.099999994039535522,
+            0.093057207763195038,
+            0.086596429347991943,
+            0.080584220588207245,
+            0.07498941570520401,
+            0.069783061742782593,
+            0.064938157796859741,
+            0.060429636389017105,
+            0.056234125047922134,
+            0.052329909056425095,
+            0.048696756362915039,
+            0.045315831899642944,
+            0.04216964915394783,
+            0.039241891354322433,
+            0.036517411470413208,
+            0.033982079476118088,
+            0.03162277489900589,
+            0.029427273198962212,
+            0.027384193614125252,
+            0.025482967495918274,
+            0.023713734000921249,
+            0.022067340090870857,
+            0.020535247400403023,
+            0.019109528511762619,
+            0.017782794311642647,
+            0.016548173502087593,
+            0.015399262309074402,
+            0.014330124482512474,
+            0.013335213996469975,
+            0.01240937877446413,
+            0.011547816917300224,
+            0.010746076703071594,
+            0.0099999997764825821,
+            0.0093057211488485336,
+            0.0086596440523862839,
+            0.0080584203824400902,
+            0.0074989409185945988,
+            0.006978305522352457,
+            0.0064938166178762913,
+            0.0060429619625210762,
+            0.0056234123185276985,
+            0.0052329907193779945,
+            0.0048696752637624741,
+            0.0045315842144191265,
+            0.0042169638909399509,
+            0.0039241891354322433,
+            0.0036517411936074495,
+            0.0033982084132730961,
+            0.0031622766982764006,
+            0.002942726481705904,
+            0.002738419221714139,
+            0.0025482967030256987,
+            0.0023713738191872835,
+            0.002206733450293541,
+            0.0020535246003419161,
+            0.0019109528511762619,
+            0.0017782794311642647,
+            0.0016548173734918237,
+            0.0015399261610582471,
+            0.001433012424968183,
+            0.0013335214462131262,
+            0.0012409378541633487,
+            0.0011547816684469581,
+            0.0010746076004579663,
+            0.00099999993108212948,
+            0.00093057204503566027,
+            0.0008659643935970962,
+            0.00080584199167788029,
+            0.00074989406857639551,
+            0.00069783051731064916,
+            0.00064938166178762913,
+            0.00060429621953517199,
+            0.00056234118528664112,
+            0.00052329903701320291,
+            0.00048696750309318304,
+            0.00045315839815884829,
+            0.00042169637163169682,
+            0.00039241890772245824,
+            0.00036517408443614841,
+            0.00033982083550654352,
+            0.00031622781534679234,
+            0.00029427278786897659,
+            0.00027384204440750182,
+            0.00025482953060418367,
+            0.00023713726841378957,
+            0.00022067333338782191,
+            0.0002053524658549577,
+            0.00019109527056571096,
+            0.00017782794020604342,
+            0.00016548173152841628,
+            0.00015399268886540085,
+            0.00014330129488371313,
+            0.00013335207768250257,
+            0.00012409372720867395,
+            0.00011547815665835515,
+            0.00010746075713541359,
+        ],
+        [1, 128],
+        ttnn.DataType.FLOAT32,
+        ttnn.Layout.TILE,
+        device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    return [ttnn_Tensor_0]
+
+
+def main_const_eval_1(device, arg):
+    ttnn_to_device_0 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_0 = ttnn.to_layout(
+        ttnn_to_device_0,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_0, False)
+    ttnn_to_device_1 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_1 = ttnn.to_layout(
+        ttnn_to_device_1,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_1, False)
+    ttnn_to_device_2 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_2 = ttnn.to_layout(
+        ttnn_to_device_2,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_2, False)
+    ttnn_to_device_3 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_3 = ttnn.to_layout(
+        ttnn_to_device_3,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_3, False)
+    ttnn_concat_0 = ttnn.concat(
+        [ttnn_to_layout_0, ttnn_to_layout_1, ttnn_to_layout_2, ttnn_to_layout_3],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_3, False)
+    ttnn.deallocate(ttnn_to_layout_2, False)
+    ttnn.deallocate(ttnn_to_layout_1, False)
+    ttnn.deallocate(ttnn_to_layout_0, False)
+    return [ttnn_concat_0]
+
+
+def main_const_eval_2(device, arg):
+    ttnn_to_device_4 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_4 = ttnn.to_layout(
+        ttnn_to_device_4,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_4, False)
+    ttnn_to_device_5 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_5 = ttnn.to_layout(
+        ttnn_to_device_5,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_5, False)
+    ttnn_to_device_6 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_6 = ttnn.to_layout(
+        ttnn_to_device_6,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_6, False)
+    ttnn_permute_0 = ttnn.permute(
+        ttnn_to_layout_5,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_5, False)
+    ttnn_permute_1 = ttnn.permute(
+        ttnn_to_layout_6,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_6, False)
+    ttnn_permute_2 = ttnn.permute(
+        ttnn_to_layout_4,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_4, False)
+    ttnn_concat_1 = ttnn.concat(
+        [ttnn_permute_2, ttnn_permute_0, ttnn_permute_1],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_2, False)
+    ttnn.deallocate(ttnn_permute_1, False)
+    ttnn.deallocate(ttnn_permute_0, False)
+    return [ttnn_concat_1]
+
+
+def main_const_eval_3(device, arg):
+    ttnn_to_device_7 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_7 = ttnn.to_layout(
+        ttnn_to_device_7,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_7, False)
+    ttnn_reshape_0 = ttnn.reshape(
+        ttnn_to_layout_7,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_7, False)
+    return [ttnn_reshape_0]
+
+
+def main_const_eval_4(device, arg):
+    ttnn_to_device_8 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_8 = ttnn.to_layout(
+        ttnn_to_device_8,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_8, False)
+    ttnn_reshape_1 = ttnn.reshape(
+        ttnn_to_layout_8,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_8, False)
+    ttnn_typecast_0 = ttnn.typecast(
+        ttnn_reshape_1,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_1, False)
+    ttnn_reshape_2 = ttnn.reshape(
+        ttnn_typecast_0,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_0, False)
+    return [ttnn_reshape_2]
+
+
+def main_const_eval_5(device, arg):
+    ttnn_to_device_9 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_9 = ttnn.to_layout(
+        ttnn_to_device_9,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_9, False)
+    ttnn_to_device_10 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_10 = ttnn.to_layout(
+        ttnn_to_device_10,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_10, False)
+    ttnn_to_device_11 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_11 = ttnn.to_layout(
+        ttnn_to_device_11,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_11, False)
+    ttnn_concat_2 = ttnn.concat(
+        [ttnn_to_layout_9, ttnn_to_layout_10, ttnn_to_layout_11],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_11, False)
+    ttnn.deallocate(ttnn_to_layout_10, False)
+    ttnn.deallocate(ttnn_to_layout_9, False)
+    return [ttnn_concat_2]
+
+
+def main_const_eval_6(device, arg):
+    ttnn_to_device_12 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_12 = ttnn.to_layout(
+        ttnn_to_device_12,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_12, False)
+    ttnn_to_device_13 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_13 = ttnn.to_layout(
+        ttnn_to_device_13,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_13, False)
+    ttnn_to_device_14 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_14 = ttnn.to_layout(
+        ttnn_to_device_14,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_14, False)
+    ttnn_to_device_15 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_15 = ttnn.to_layout(
+        ttnn_to_device_15,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_15, False)
+    ttnn_permute_3 = ttnn.permute(
+        ttnn_to_layout_13,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_13, False)
+    ttnn_permute_4 = ttnn.permute(
+        ttnn_to_layout_14,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_14, False)
+    ttnn_permute_5 = ttnn.permute(
+        ttnn_to_layout_15,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_15, False)
+    ttnn_permute_6 = ttnn.permute(
+        ttnn_to_layout_12,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_12, False)
+    ttnn_concat_3 = ttnn.concat(
+        [ttnn_permute_6, ttnn_permute_3, ttnn_permute_4, ttnn_permute_5],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_6, False)
+    ttnn.deallocate(ttnn_permute_5, False)
+    ttnn.deallocate(ttnn_permute_4, False)
+    ttnn.deallocate(ttnn_permute_3, False)
+    return [ttnn_concat_3]
+
+
+def main_const_eval_7(device, arg):
+    ttnn_to_device_16 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_16 = ttnn.to_layout(
+        ttnn_to_device_16,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_16, False)
+    ttnn_to_device_17 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_17 = ttnn.to_layout(
+        ttnn_to_device_17,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_17, False)
+    ttnn_to_device_18 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_18 = ttnn.to_layout(
+        ttnn_to_device_18,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_18, False)
+    ttnn_to_device_19 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_19 = ttnn.to_layout(
+        ttnn_to_device_19,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_19, False)
+    ttnn_concat_4 = ttnn.concat(
+        [ttnn_to_layout_16, ttnn_to_layout_17, ttnn_to_layout_18, ttnn_to_layout_19],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_19, False)
+    ttnn.deallocate(ttnn_to_layout_18, False)
+    ttnn.deallocate(ttnn_to_layout_17, False)
+    ttnn.deallocate(ttnn_to_layout_16, False)
+    return [ttnn_concat_4]
+
+
+def main_const_eval_8(device, arg):
+    ttnn_to_device_20 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_20 = ttnn.to_layout(
+        ttnn_to_device_20,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_20, False)
+    ttnn_reshape_3 = ttnn.reshape(
+        ttnn_to_layout_20,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_20, False)
+    return [ttnn_reshape_3]
+
+
+def main_const_eval_9(device, arg):
+    ttnn_to_device_21 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_21 = ttnn.to_layout(
+        ttnn_to_device_21,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_21, False)
+    ttnn_to_device_22 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_22 = ttnn.to_layout(
+        ttnn_to_device_22,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_22, False)
+    ttnn_to_device_23 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_23 = ttnn.to_layout(
+        ttnn_to_device_23,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_23, False)
+    ttnn_concat_5 = ttnn.concat(
+        [ttnn_to_layout_21, ttnn_to_layout_22, ttnn_to_layout_23],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_23, False)
+    ttnn.deallocate(ttnn_to_layout_22, False)
+    ttnn.deallocate(ttnn_to_layout_21, False)
+    return [ttnn_concat_5]
+
+
+def main_const_eval_10(device, arg):
+    ttnn_to_device_24 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_24 = ttnn.to_layout(
+        ttnn_to_device_24,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_24, False)
+    ttnn_reshape_4 = ttnn.reshape(
+        ttnn_to_layout_24,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_24, False)
+    ttnn_typecast_1 = ttnn.typecast(
+        ttnn_reshape_4,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_4, False)
+    ttnn_reshape_5 = ttnn.reshape(
+        ttnn_typecast_1,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_1, False)
+    return [ttnn_reshape_5]
+
+
+def main_const_eval_11(device, arg):
+    ttnn_to_device_25 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_25 = ttnn.to_layout(
+        ttnn_to_device_25,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_25, False)
+    ttnn_reshape_6 = ttnn.reshape(
+        ttnn_to_layout_25,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_25, False)
+    return [ttnn_reshape_6]
+
+
+def main_const_eval_12(device, arg):
+    ttnn_to_device_26 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_26 = ttnn.to_layout(
+        ttnn_to_device_26,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_26, False)
+    ttnn_to_device_27 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_27 = ttnn.to_layout(
+        ttnn_to_device_27,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_27, False)
+    ttnn_to_device_28 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_28 = ttnn.to_layout(
+        ttnn_to_device_28,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_28, False)
+    ttnn_to_device_29 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_29 = ttnn.to_layout(
+        ttnn_to_device_29,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_29, False)
+    ttnn_permute_7 = ttnn.permute(
+        ttnn_to_layout_27,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_27, False)
+    ttnn_permute_8 = ttnn.permute(
+        ttnn_to_layout_28,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_28, False)
+    ttnn_permute_9 = ttnn.permute(
+        ttnn_to_layout_29,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_29, False)
+    ttnn_permute_10 = ttnn.permute(
+        ttnn_to_layout_26,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_26, False)
+    ttnn_concat_6 = ttnn.concat(
+        [ttnn_permute_10, ttnn_permute_7, ttnn_permute_8, ttnn_permute_9],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_10, False)
+    ttnn.deallocate(ttnn_permute_9, False)
+    ttnn.deallocate(ttnn_permute_8, False)
+    ttnn.deallocate(ttnn_permute_7, False)
+    return [ttnn_concat_6]
+
+
+def main_const_eval_13(device, arg):
+    ttnn_to_device_30 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_30 = ttnn.to_layout(
+        ttnn_to_device_30,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_30, False)
+    ttnn_reshape_7 = ttnn.reshape(
+        ttnn_to_layout_30,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_30, False)
+    return [ttnn_reshape_7]
+
+
+def main_const_eval_14(device, arg):
+    ttnn_to_device_31 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_31 = ttnn.to_layout(
+        ttnn_to_device_31,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_31, False)
+    ttnn_to_device_32 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_32 = ttnn.to_layout(
+        ttnn_to_device_32,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_32, False)
+    ttnn_to_device_33 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_33 = ttnn.to_layout(
+        ttnn_to_device_33,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_33, False)
+    ttnn_to_device_34 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_34 = ttnn.to_layout(
+        ttnn_to_device_34,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_34, False)
+    ttnn_concat_7 = ttnn.concat(
+        [ttnn_to_layout_31, ttnn_to_layout_32, ttnn_to_layout_33, ttnn_to_layout_34],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_34, False)
+    ttnn.deallocate(ttnn_to_layout_33, False)
+    ttnn.deallocate(ttnn_to_layout_32, False)
+    ttnn.deallocate(ttnn_to_layout_31, False)
+    return [ttnn_concat_7]
+
+
+def main_const_eval_15(device, arg):
+    ttnn_to_device_35 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_35 = ttnn.to_layout(
+        ttnn_to_device_35,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_35, False)
+    ttnn_reshape_8 = ttnn.reshape(
+        ttnn_to_layout_35,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_35, False)
+    ttnn_typecast_2 = ttnn.typecast(
+        ttnn_reshape_8,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_8, False)
+    ttnn_reshape_9 = ttnn.reshape(
+        ttnn_typecast_2,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_2, False)
+    return [ttnn_reshape_9]
+
+
+def main_const_eval_16(device, arg):
+    ttnn_to_device_36 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_36 = ttnn.to_layout(
+        ttnn_to_device_36,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_36, False)
+    ttnn_reshape_10 = ttnn.reshape(
+        ttnn_to_layout_36,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_36, False)
+    return [ttnn_reshape_10]
+
+
+def main_const_eval_17(device, arg):
+    ttnn_to_device_37 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_37 = ttnn.to_layout(
+        ttnn_to_device_37,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_37, False)
+    ttnn_to_device_38 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_38 = ttnn.to_layout(
+        ttnn_to_device_38,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_38, False)
+    ttnn_to_device_39 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_39 = ttnn.to_layout(
+        ttnn_to_device_39,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_39, False)
+    ttnn_permute_11 = ttnn.permute(
+        ttnn_to_layout_38,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_38, False)
+    ttnn_permute_12 = ttnn.permute(
+        ttnn_to_layout_39,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_39, False)
+    ttnn_permute_13 = ttnn.permute(
+        ttnn_to_layout_37,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_37, False)
+    ttnn_concat_8 = ttnn.concat(
+        [ttnn_permute_13, ttnn_permute_11, ttnn_permute_12],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_13, False)
+    ttnn.deallocate(ttnn_permute_12, False)
+    ttnn.deallocate(ttnn_permute_11, False)
+    return [ttnn_concat_8]
+
+
+def main_const_eval_18(device, arg):
+    ttnn_to_device_40 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_40 = ttnn.to_layout(
+        ttnn_to_device_40,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_40, False)
+    ttnn_reshape_11 = ttnn.reshape(
+        ttnn_to_layout_40,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_40, False)
+    return [ttnn_reshape_11]
+
+
+def main_const_eval_19(device, arg):
+    ttnn_to_device_41 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_41 = ttnn.to_layout(
+        ttnn_to_device_41,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_41, False)
+    ttnn_to_device_42 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_42 = ttnn.to_layout(
+        ttnn_to_device_42,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_42, False)
+    ttnn_to_device_43 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_43 = ttnn.to_layout(
+        ttnn_to_device_43,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_43, False)
+    ttnn_concat_9 = ttnn.concat(
+        [ttnn_to_layout_41, ttnn_to_layout_42, ttnn_to_layout_43],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_43, False)
+    ttnn.deallocate(ttnn_to_layout_42, False)
+    ttnn.deallocate(ttnn_to_layout_41, False)
+    return [ttnn_concat_9]
+
+
+def main_const_eval_20(device, arg):
+    ttnn_to_device_44 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_44 = ttnn.to_layout(
+        ttnn_to_device_44,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_44, False)
+    ttnn_reshape_12 = ttnn.reshape(
+        ttnn_to_layout_44,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_44, False)
+    return [ttnn_reshape_12]
+
+
+def main_const_eval_21(device, arg):
+    ttnn_to_device_45 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_45 = ttnn.to_layout(
+        ttnn_to_device_45,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_45, False)
+    ttnn_to_device_46 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_46 = ttnn.to_layout(
+        ttnn_to_device_46,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_46, False)
+    ttnn_to_device_47 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_47 = ttnn.to_layout(
+        ttnn_to_device_47,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_47, False)
+    ttnn_to_device_48 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_48 = ttnn.to_layout(
+        ttnn_to_device_48,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_48, False)
+    ttnn_permute_14 = ttnn.permute(
+        ttnn_to_layout_46,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_46, False)
+    ttnn_permute_15 = ttnn.permute(
+        ttnn_to_layout_47,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_47, False)
+    ttnn_permute_16 = ttnn.permute(
+        ttnn_to_layout_48,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_48, False)
+    ttnn_permute_17 = ttnn.permute(
+        ttnn_to_layout_45,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_45, False)
+    ttnn_concat_10 = ttnn.concat(
+        [ttnn_permute_17, ttnn_permute_14, ttnn_permute_15, ttnn_permute_16],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_17, False)
+    ttnn.deallocate(ttnn_permute_16, False)
+    ttnn.deallocate(ttnn_permute_15, False)
+    ttnn.deallocate(ttnn_permute_14, False)
+    return [ttnn_concat_10]
+
+
+def main_const_eval_22(device, arg):
+    ttnn_to_device_49 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_49 = ttnn.to_layout(
+        ttnn_to_device_49,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_49, False)
+    ttnn_reshape_13 = ttnn.reshape(
+        ttnn_to_layout_49,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_49, False)
+    ttnn_typecast_3 = ttnn.typecast(
+        ttnn_reshape_13,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_13, False)
+    ttnn_reshape_14 = ttnn.reshape(
+        ttnn_typecast_3,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_3, False)
+    return [ttnn_reshape_14]
+
+
+def main_const_eval_23(device, arg):
+    ttnn_to_device_50 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_50 = ttnn.to_layout(
+        ttnn_to_device_50,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_50, False)
+    ttnn_reshape_15 = ttnn.reshape(
+        ttnn_to_layout_50,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_50, False)
+    return [ttnn_reshape_15]
+
+
+def main_const_eval_24(device, arg):
+    ttnn_to_device_51 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_51 = ttnn.to_layout(
+        ttnn_to_device_51,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_51, False)
+    ttnn_reshape_16 = ttnn.reshape(
+        ttnn_to_layout_51,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_51, False)
+    ttnn_typecast_4 = ttnn.typecast(
+        ttnn_reshape_16,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_16, False)
+    ttnn_reshape_17 = ttnn.reshape(
+        ttnn_typecast_4,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_4, False)
+    return [ttnn_reshape_17]
+
+
+def main_const_eval_25(device, arg):
+    ttnn_to_device_52 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_52 = ttnn.to_layout(
+        ttnn_to_device_52,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_52, False)
+    ttnn_reshape_18 = ttnn.reshape(
+        ttnn_to_layout_52,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_52, False)
+    return [ttnn_reshape_18]
+
+
+def main_const_eval_26(device, arg):
+    ttnn_to_device_53 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_53 = ttnn.to_layout(
+        ttnn_to_device_53,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_53, False)
+    ttnn_to_device_54 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_54 = ttnn.to_layout(
+        ttnn_to_device_54,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_54, False)
+    ttnn_to_device_55 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_55 = ttnn.to_layout(
+        ttnn_to_device_55,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_55, False)
+    ttnn_to_device_56 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_56 = ttnn.to_layout(
+        ttnn_to_device_56,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_56, False)
+    ttnn_concat_11 = ttnn.concat(
+        [ttnn_to_layout_53, ttnn_to_layout_54, ttnn_to_layout_55, ttnn_to_layout_56],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_56, False)
+    ttnn.deallocate(ttnn_to_layout_55, False)
+    ttnn.deallocate(ttnn_to_layout_54, False)
+    ttnn.deallocate(ttnn_to_layout_53, False)
+    return [ttnn_concat_11]
+
+
+def main_const_eval_27(device, arg):
+    ttnn_to_device_57 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_57 = ttnn.to_layout(
+        ttnn_to_device_57,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_57, False)
+    ttnn_to_device_58 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_58 = ttnn.to_layout(
+        ttnn_to_device_58,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_58, False)
+    ttnn_to_device_59 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_59 = ttnn.to_layout(
+        ttnn_to_device_59,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_59, False)
+    ttnn_to_device_60 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_60 = ttnn.to_layout(
+        ttnn_to_device_60,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_60, False)
+    ttnn_permute_18 = ttnn.permute(
+        ttnn_to_layout_58,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_58, False)
+    ttnn_permute_19 = ttnn.permute(
+        ttnn_to_layout_59,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_59, False)
+    ttnn_permute_20 = ttnn.permute(
+        ttnn_to_layout_60,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_60, False)
+    ttnn_permute_21 = ttnn.permute(
+        ttnn_to_layout_57,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_57, False)
+    ttnn_concat_12 = ttnn.concat(
+        [ttnn_permute_21, ttnn_permute_18, ttnn_permute_19, ttnn_permute_20],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_21, False)
+    ttnn.deallocate(ttnn_permute_20, False)
+    ttnn.deallocate(ttnn_permute_19, False)
+    ttnn.deallocate(ttnn_permute_18, False)
+    return [ttnn_concat_12]
+
+
+def main_const_eval_28(device, arg):
+    ttnn_to_device_61 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_61 = ttnn.to_layout(
+        ttnn_to_device_61,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_61, False)
+    ttnn_to_device_62 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_62 = ttnn.to_layout(
+        ttnn_to_device_62,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_62, False)
+    ttnn_to_device_63 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_63 = ttnn.to_layout(
+        ttnn_to_device_63,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_63, False)
+    ttnn_permute_22 = ttnn.permute(
+        ttnn_to_layout_62,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_62, False)
+    ttnn_permute_23 = ttnn.permute(
+        ttnn_to_layout_63,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_63, False)
+    ttnn_permute_24 = ttnn.permute(
+        ttnn_to_layout_61,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_61, False)
+    ttnn_concat_13 = ttnn.concat(
+        [ttnn_permute_24, ttnn_permute_22, ttnn_permute_23],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_24, False)
+    ttnn.deallocate(ttnn_permute_23, False)
+    ttnn.deallocate(ttnn_permute_22, False)
+    return [ttnn_concat_13]
+
+
+def main_const_eval_29(device, arg):
+    ttnn_to_device_64 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_64 = ttnn.to_layout(
+        ttnn_to_device_64,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_64, False)
+    ttnn_reshape_19 = ttnn.reshape(
+        ttnn_to_layout_64,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_64, False)
+    return [ttnn_reshape_19]
+
+
+def main_const_eval_30(device, arg):
+    ttnn_to_device_65 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_65 = ttnn.to_layout(
+        ttnn_to_device_65,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_65, False)
+    ttnn_to_device_66 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_66 = ttnn.to_layout(
+        ttnn_to_device_66,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_66, False)
+    ttnn_to_device_67 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_67 = ttnn.to_layout(
+        ttnn_to_device_67,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_67, False)
+    ttnn_to_device_68 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_68 = ttnn.to_layout(
+        ttnn_to_device_68,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_68, False)
+    ttnn_concat_14 = ttnn.concat(
+        [ttnn_to_layout_65, ttnn_to_layout_66, ttnn_to_layout_67, ttnn_to_layout_68],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_68, False)
+    ttnn.deallocate(ttnn_to_layout_67, False)
+    ttnn.deallocate(ttnn_to_layout_66, False)
+    ttnn.deallocate(ttnn_to_layout_65, False)
+    return [ttnn_concat_14]
+
+
+def main_const_eval_31(device, arg):
+    ttnn_to_device_69 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_69 = ttnn.to_layout(
+        ttnn_to_device_69,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_69, False)
+    ttnn_reshape_20 = ttnn.reshape(
+        ttnn_to_layout_69,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_69, False)
+    ttnn_typecast_5 = ttnn.typecast(
+        ttnn_reshape_20,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_20, False)
+    ttnn_reshape_21 = ttnn.reshape(
+        ttnn_typecast_5,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_5, False)
+    return [ttnn_reshape_21]
+
+
+def main_const_eval_32(device, arg):
+    ttnn_to_device_70 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_70 = ttnn.to_layout(
+        ttnn_to_device_70,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_70, False)
+    ttnn_reshape_22 = ttnn.reshape(
+        ttnn_to_layout_70,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_70, False)
+    return [ttnn_reshape_22]
+
+
+def main_const_eval_33(device, arg):
+    ttnn_to_device_71 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_71 = ttnn.to_layout(
+        ttnn_to_device_71,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_71, False)
+    ttnn_reshape_23 = ttnn.reshape(
+        ttnn_to_layout_71,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_71, False)
+    return [ttnn_reshape_23]
+
+
+def main_const_eval_34(device, arg):
+    ttnn_to_device_72 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_72 = ttnn.to_layout(
+        ttnn_to_device_72,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_72, False)
+    ttnn_to_device_73 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_73 = ttnn.to_layout(
+        ttnn_to_device_73,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_73, False)
+    ttnn_to_device_74 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_74 = ttnn.to_layout(
+        ttnn_to_device_74,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_74, False)
+    ttnn_concat_15 = ttnn.concat(
+        [ttnn_to_layout_72, ttnn_to_layout_73, ttnn_to_layout_74],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_74, False)
+    ttnn.deallocate(ttnn_to_layout_73, False)
+    ttnn.deallocate(ttnn_to_layout_72, False)
+    return [ttnn_concat_15]
+
+
+def main_const_eval_35(device, arg):
+    ttnn_to_device_75 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_75 = ttnn.to_layout(
+        ttnn_to_device_75,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_75, False)
+    ttnn_reshape_24 = ttnn.reshape(
+        ttnn_to_layout_75,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_75, False)
+    return [ttnn_reshape_24]
+
+
+def main_const_eval_36(device, arg):
+    ttnn_to_device_76 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_76 = ttnn.to_layout(
+        ttnn_to_device_76,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_76, False)
+    ttnn_reshape_25 = ttnn.reshape(
+        ttnn_to_layout_76,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_76, False)
+    ttnn_typecast_6 = ttnn.typecast(
+        ttnn_reshape_25,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_25, False)
+    ttnn_reshape_26 = ttnn.reshape(
+        ttnn_typecast_6,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_6, False)
+    return [ttnn_reshape_26]
+
+
+def main_const_eval_37(device, arg):
+    ttnn_to_device_77 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_77 = ttnn.to_layout(
+        ttnn_to_device_77,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_77, False)
+    ttnn_reshape_27 = ttnn.reshape(
+        ttnn_to_layout_77,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_77, False)
+    ttnn_typecast_7 = ttnn.typecast(
+        ttnn_reshape_27,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_27, False)
+    ttnn_reshape_28 = ttnn.reshape(
+        ttnn_typecast_7,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_7, False)
+    return [ttnn_reshape_28]
+
+
+def main_const_eval_38(device, arg):
+    ttnn_to_device_78 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_78 = ttnn.to_layout(
+        ttnn_to_device_78,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_78, False)
+    ttnn_reshape_29 = ttnn.reshape(
+        ttnn_to_layout_78,
+        [1, 1, 6144],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_78, False)
+    ttnn_typecast_8 = ttnn.typecast(
+        ttnn_reshape_29,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_29, False)
+    ttnn_reshape_30 = ttnn.reshape(
+        ttnn_typecast_8,
+        [1, 6144],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_8, False)
+    return [ttnn_reshape_30]
+
+
+def main_const_eval_39(device, arg):
+    ttnn_to_device_79 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_79 = ttnn.to_layout(
+        ttnn_to_device_79,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_79, False)
+    ttnn_to_device_80 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_80 = ttnn.to_layout(
+        ttnn_to_device_80,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_80, False)
+    ttnn_to_device_81 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_81 = ttnn.to_layout(
+        ttnn_to_device_81,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_81, False)
+    ttnn_permute_25 = ttnn.permute(
+        ttnn_to_layout_80,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_80, False)
+    ttnn_permute_26 = ttnn.permute(
+        ttnn_to_layout_81,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_81, False)
+    ttnn_permute_27 = ttnn.permute(
+        ttnn_to_layout_79,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_79, False)
+    ttnn_concat_16 = ttnn.concat(
+        [ttnn_permute_27, ttnn_permute_25, ttnn_permute_26],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_27, False)
+    ttnn.deallocate(ttnn_permute_26, False)
+    ttnn.deallocate(ttnn_permute_25, False)
+    return [ttnn_concat_16]
+
+
+def main_const_eval_40(device, arg):
+    ttnn_to_device_82 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_82 = ttnn.to_layout(
+        ttnn_to_device_82,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_82, False)
+    ttnn_to_device_83 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_83 = ttnn.to_layout(
+        ttnn_to_device_83,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_83, False)
+    ttnn_to_device_84 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_84 = ttnn.to_layout(
+        ttnn_to_device_84,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_84, False)
+    ttnn_permute_28 = ttnn.permute(
+        ttnn_to_layout_83,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_83, False)
+    ttnn_permute_29 = ttnn.permute(
+        ttnn_to_layout_84,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_84, False)
+    ttnn_permute_30 = ttnn.permute(
+        ttnn_to_layout_82,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_82, False)
+    ttnn_concat_17 = ttnn.concat(
+        [ttnn_permute_30, ttnn_permute_28, ttnn_permute_29],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_30, False)
+    ttnn.deallocate(ttnn_permute_29, False)
+    ttnn.deallocate(ttnn_permute_28, False)
+    return [ttnn_concat_17]
+
+
+def main_const_eval_41(device, arg):
+    ttnn_to_device_85 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_85 = ttnn.to_layout(
+        ttnn_to_device_85,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_85, False)
+    ttnn_reshape_31 = ttnn.reshape(
+        ttnn_to_layout_85,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_85, False)
+    return [ttnn_reshape_31]
+
+
+def main_const_eval_42(device, arg):
+    ttnn_to_device_86 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_86 = ttnn.to_layout(
+        ttnn_to_device_86,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_86, False)
+    ttnn_reshape_32 = ttnn.reshape(
+        ttnn_to_layout_86,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_86, False)
+    return [ttnn_reshape_32]
+
+
+def main_const_eval_43(device, arg):
+    ttnn_to_device_87 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_87 = ttnn.to_layout(
+        ttnn_to_device_87,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_87, False)
+    ttnn_to_device_88 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_88 = ttnn.to_layout(
+        ttnn_to_device_88,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_88, False)
+    ttnn_to_device_89 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_89 = ttnn.to_layout(
+        ttnn_to_device_89,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_89, False)
+    ttnn_to_device_90 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_90 = ttnn.to_layout(
+        ttnn_to_device_90,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_90, False)
+    ttnn_permute_31 = ttnn.permute(
+        ttnn_to_layout_88,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_88, False)
+    ttnn_permute_32 = ttnn.permute(
+        ttnn_to_layout_89,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_89, False)
+    ttnn_permute_33 = ttnn.permute(
+        ttnn_to_layout_90,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_90, False)
+    ttnn_permute_34 = ttnn.permute(
+        ttnn_to_layout_87,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_87, False)
+    ttnn_concat_18 = ttnn.concat(
+        [ttnn_permute_34, ttnn_permute_31, ttnn_permute_32, ttnn_permute_33],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_34, False)
+    ttnn.deallocate(ttnn_permute_33, False)
+    ttnn.deallocate(ttnn_permute_32, False)
+    ttnn.deallocate(ttnn_permute_31, False)
+    return [ttnn_concat_18]
+
+
+def main_const_eval_44(device, arg):
+    ttnn_to_device_91 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_91 = ttnn.to_layout(
+        ttnn_to_device_91,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_91, False)
+    ttnn_to_device_92 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_92 = ttnn.to_layout(
+        ttnn_to_device_92,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_92, False)
+    ttnn_to_device_93 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_93 = ttnn.to_layout(
+        ttnn_to_device_93,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_93, False)
+    ttnn_permute_35 = ttnn.permute(
+        ttnn_to_layout_92,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_92, False)
+    ttnn_permute_36 = ttnn.permute(
+        ttnn_to_layout_93,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_93, False)
+    ttnn_permute_37 = ttnn.permute(
+        ttnn_to_layout_91,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_91, False)
+    ttnn_concat_19 = ttnn.concat(
+        [ttnn_permute_37, ttnn_permute_35, ttnn_permute_36],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_37, False)
+    ttnn.deallocate(ttnn_permute_36, False)
+    ttnn.deallocate(ttnn_permute_35, False)
+    return [ttnn_concat_19]
+
+
+def main_const_eval_45(device, arg):
+    ttnn_to_device_94 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_94 = ttnn.to_layout(
+        ttnn_to_device_94,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_94, False)
+    ttnn_to_device_95 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_95 = ttnn.to_layout(
+        ttnn_to_device_95,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_95, False)
+    ttnn_to_device_96 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_96 = ttnn.to_layout(
+        ttnn_to_device_96,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_96, False)
+    ttnn_to_device_97 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_97 = ttnn.to_layout(
+        ttnn_to_device_97,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_97, False)
+    ttnn_permute_38 = ttnn.permute(
+        ttnn_to_layout_95,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_95, False)
+    ttnn_permute_39 = ttnn.permute(
+        ttnn_to_layout_96,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_96, False)
+    ttnn_permute_40 = ttnn.permute(
+        ttnn_to_layout_97,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_97, False)
+    ttnn_permute_41 = ttnn.permute(
+        ttnn_to_layout_94,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_94, False)
+    ttnn_concat_20 = ttnn.concat(
+        [ttnn_permute_41, ttnn_permute_38, ttnn_permute_39, ttnn_permute_40],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_41, False)
+    ttnn.deallocate(ttnn_permute_40, False)
+    ttnn.deallocate(ttnn_permute_39, False)
+    ttnn.deallocate(ttnn_permute_38, False)
+    return [ttnn_concat_20]
+
+
+def main_const_eval_46(device, arg):
+    ttnn_to_device_98 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_98 = ttnn.to_layout(
+        ttnn_to_device_98,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_98, False)
+    ttnn_reshape_33 = ttnn.reshape(
+        ttnn_to_layout_98,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_98, False)
+    return [ttnn_reshape_33]
+
+
+def main_const_eval_47(device, arg):
+    ttnn_to_device_99 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_99 = ttnn.to_layout(
+        ttnn_to_device_99,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_99, False)
+    ttnn_to_device_100 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_100 = ttnn.to_layout(
+        ttnn_to_device_100,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_100, False)
+    ttnn_to_device_101 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_101 = ttnn.to_layout(
+        ttnn_to_device_101,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_101, False)
+    ttnn_to_device_102 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_102 = ttnn.to_layout(
+        ttnn_to_device_102,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_102, False)
+    ttnn_concat_21 = ttnn.concat(
+        [ttnn_to_layout_99, ttnn_to_layout_100, ttnn_to_layout_101, ttnn_to_layout_102],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_102, False)
+    ttnn.deallocate(ttnn_to_layout_101, False)
+    ttnn.deallocate(ttnn_to_layout_100, False)
+    ttnn.deallocate(ttnn_to_layout_99, False)
+    return [ttnn_concat_21]
+
+
+def main_const_eval_48(device, arg):
+    ttnn_to_device_103 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_103 = ttnn.to_layout(
+        ttnn_to_device_103,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_103, False)
+    ttnn_to_device_104 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_104 = ttnn.to_layout(
+        ttnn_to_device_104,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_104, False)
+    ttnn_to_device_105 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_105 = ttnn.to_layout(
+        ttnn_to_device_105,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_105, False)
+    ttnn_to_device_106 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_106 = ttnn.to_layout(
+        ttnn_to_device_106,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_106, False)
+    ttnn_permute_42 = ttnn.permute(
+        ttnn_to_layout_104,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_104, False)
+    ttnn_permute_43 = ttnn.permute(
+        ttnn_to_layout_105,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_105, False)
+    ttnn_permute_44 = ttnn.permute(
+        ttnn_to_layout_106,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_106, False)
+    ttnn_permute_45 = ttnn.permute(
+        ttnn_to_layout_103,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_103, False)
+    ttnn_concat_22 = ttnn.concat(
+        [ttnn_permute_45, ttnn_permute_42, ttnn_permute_43, ttnn_permute_44],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_45, False)
+    ttnn.deallocate(ttnn_permute_44, False)
+    ttnn.deallocate(ttnn_permute_43, False)
+    ttnn.deallocate(ttnn_permute_42, False)
+    return [ttnn_concat_22]
+
+
+def main_const_eval_49(device, arg):
+    ttnn_to_device_107 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_107 = ttnn.to_layout(
+        ttnn_to_device_107,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_107, False)
+    ttnn_reshape_34 = ttnn.reshape(
+        ttnn_to_layout_107,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_107, False)
+    ttnn_typecast_9 = ttnn.typecast(
+        ttnn_reshape_34,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_34, False)
+    ttnn_reshape_35 = ttnn.reshape(
+        ttnn_typecast_9,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_9, False)
+    return [ttnn_reshape_35]
+
+
+def main_const_eval_50(device, arg):
+    ttnn_to_device_108 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_108 = ttnn.to_layout(
+        ttnn_to_device_108,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_108, False)
+    ttnn_reshape_36 = ttnn.reshape(
+        ttnn_to_layout_108,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_108, False)
+    ttnn_typecast_10 = ttnn.typecast(
+        ttnn_reshape_36,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_36, False)
+    ttnn_reshape_37 = ttnn.reshape(
+        ttnn_typecast_10,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_10, False)
+    return [ttnn_reshape_37]
+
+
+def main_const_eval_51(device, arg):
+    ttnn_to_device_109 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_109 = ttnn.to_layout(
+        ttnn_to_device_109,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_109, False)
+    ttnn_to_device_110 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_110 = ttnn.to_layout(
+        ttnn_to_device_110,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_110, False)
+    ttnn_to_device_111 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_111 = ttnn.to_layout(
+        ttnn_to_device_111,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_111, False)
+    ttnn_concat_23 = ttnn.concat(
+        [ttnn_to_layout_109, ttnn_to_layout_110, ttnn_to_layout_111],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_111, False)
+    ttnn.deallocate(ttnn_to_layout_110, False)
+    ttnn.deallocate(ttnn_to_layout_109, False)
+    return [ttnn_concat_23]
+
+
+def main_const_eval_52(device, arg):
+    ttnn_to_device_112 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_112 = ttnn.to_layout(
+        ttnn_to_device_112,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_112, False)
+    ttnn_reshape_38 = ttnn.reshape(
+        ttnn_to_layout_112,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_112, False)
+    return [ttnn_reshape_38]
+
+
+def main_const_eval_53(device, arg):
+    ttnn_to_device_113 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_113 = ttnn.to_layout(
+        ttnn_to_device_113,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_113, False)
+    ttnn_to_device_114 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_114 = ttnn.to_layout(
+        ttnn_to_device_114,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_114, False)
+    ttnn_to_device_115 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_115 = ttnn.to_layout(
+        ttnn_to_device_115,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_115, False)
+    ttnn_concat_24 = ttnn.concat(
+        [ttnn_to_layout_113, ttnn_to_layout_114, ttnn_to_layout_115],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_115, False)
+    ttnn.deallocate(ttnn_to_layout_114, False)
+    ttnn.deallocate(ttnn_to_layout_113, False)
+    return [ttnn_concat_24]
+
+
+def main_const_eval_54(device, arg):
+    ttnn_to_device_116 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_116 = ttnn.to_layout(
+        ttnn_to_device_116,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_116, False)
+    ttnn_to_device_117 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_117 = ttnn.to_layout(
+        ttnn_to_device_117,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_117, False)
+    ttnn_to_device_118 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_118 = ttnn.to_layout(
+        ttnn_to_device_118,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_118, False)
+    ttnn_to_device_119 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_119 = ttnn.to_layout(
+        ttnn_to_device_119,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_119, False)
+    ttnn_concat_25 = ttnn.concat(
+        [
+            ttnn_to_layout_116,
+            ttnn_to_layout_117,
+            ttnn_to_layout_118,
+            ttnn_to_layout_119,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_119, False)
+    ttnn.deallocate(ttnn_to_layout_118, False)
+    ttnn.deallocate(ttnn_to_layout_117, False)
+    ttnn.deallocate(ttnn_to_layout_116, False)
+    return [ttnn_concat_25]
+
+
+def main_const_eval_55(device, arg):
+    ttnn_to_device_120 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_120 = ttnn.to_layout(
+        ttnn_to_device_120,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_120, False)
+    ttnn_to_device_121 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_121 = ttnn.to_layout(
+        ttnn_to_device_121,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_121, False)
+    ttnn_to_device_122 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_122 = ttnn.to_layout(
+        ttnn_to_device_122,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_122, False)
+    ttnn_to_device_123 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_123 = ttnn.to_layout(
+        ttnn_to_device_123,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_123, False)
+    ttnn_concat_26 = ttnn.concat(
+        [
+            ttnn_to_layout_120,
+            ttnn_to_layout_121,
+            ttnn_to_layout_122,
+            ttnn_to_layout_123,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_123, False)
+    ttnn.deallocate(ttnn_to_layout_122, False)
+    ttnn.deallocate(ttnn_to_layout_121, False)
+    ttnn.deallocate(ttnn_to_layout_120, False)
+    return [ttnn_concat_26]
+
+
+def main_const_eval_56(device, arg):
+    ttnn_to_device_124 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_124 = ttnn.to_layout(
+        ttnn_to_device_124,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_124, False)
+    ttnn_reshape_39 = ttnn.reshape(
+        ttnn_to_layout_124,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_124, False)
+    ttnn_typecast_11 = ttnn.typecast(
+        ttnn_reshape_39,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_39, False)
+    ttnn_reshape_40 = ttnn.reshape(
+        ttnn_typecast_11,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_11, False)
+    return [ttnn_reshape_40]
+
+
+def main_const_eval_57(device, arg):
+    ttnn_to_device_125 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_125 = ttnn.to_layout(
+        ttnn_to_device_125,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_125, False)
+    ttnn_to_device_126 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_126 = ttnn.to_layout(
+        ttnn_to_device_126,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_126, False)
+    ttnn_to_device_127 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_127 = ttnn.to_layout(
+        ttnn_to_device_127,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_127, False)
+    ttnn_to_device_128 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_128 = ttnn.to_layout(
+        ttnn_to_device_128,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_128, False)
+    ttnn_permute_46 = ttnn.permute(
+        ttnn_to_layout_126,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_126, False)
+    ttnn_permute_47 = ttnn.permute(
+        ttnn_to_layout_127,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_127, False)
+    ttnn_permute_48 = ttnn.permute(
+        ttnn_to_layout_128,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_128, False)
+    ttnn_permute_49 = ttnn.permute(
+        ttnn_to_layout_125,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_125, False)
+    ttnn_concat_27 = ttnn.concat(
+        [ttnn_permute_49, ttnn_permute_46, ttnn_permute_47, ttnn_permute_48],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_49, False)
+    ttnn.deallocate(ttnn_permute_48, False)
+    ttnn.deallocate(ttnn_permute_47, False)
+    ttnn.deallocate(ttnn_permute_46, False)
+    return [ttnn_concat_27]
+
+
+def main_const_eval_58(device, arg):
+    ttnn_to_device_129 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_129 = ttnn.to_layout(
+        ttnn_to_device_129,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_129, False)
+    ttnn_reshape_41 = ttnn.reshape(
+        ttnn_to_layout_129,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_129, False)
+    return [ttnn_reshape_41]
+
+
+def main_const_eval_59(device, arg):
+    ttnn_to_device_130 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_130 = ttnn.to_layout(
+        ttnn_to_device_130,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_130, False)
+    ttnn_reshape_42 = ttnn.reshape(
+        ttnn_to_layout_130,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_130, False)
+    return [ttnn_reshape_42]
+
+
+def main_const_eval_60(device, arg):
+    ttnn_to_device_131 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_131 = ttnn.to_layout(
+        ttnn_to_device_131,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_131, False)
+    ttnn_reshape_43 = ttnn.reshape(
+        ttnn_to_layout_131,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_131, False)
+    ttnn_typecast_12 = ttnn.typecast(
+        ttnn_reshape_43,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_43, False)
+    ttnn_reshape_44 = ttnn.reshape(
+        ttnn_typecast_12,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_12, False)
+    return [ttnn_reshape_44]
+
+
+def main_const_eval_61(device, arg):
+    ttnn_to_device_132 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_132 = ttnn.to_layout(
+        ttnn_to_device_132,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_132, False)
+    ttnn_to_device_133 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_133 = ttnn.to_layout(
+        ttnn_to_device_133,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_133, False)
+    ttnn_to_device_134 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_134 = ttnn.to_layout(
+        ttnn_to_device_134,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_134, False)
+    ttnn_to_device_135 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_135 = ttnn.to_layout(
+        ttnn_to_device_135,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_135, False)
+    ttnn_concat_28 = ttnn.concat(
+        [
+            ttnn_to_layout_132,
+            ttnn_to_layout_133,
+            ttnn_to_layout_134,
+            ttnn_to_layout_135,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_135, False)
+    ttnn.deallocate(ttnn_to_layout_134, False)
+    ttnn.deallocate(ttnn_to_layout_133, False)
+    ttnn.deallocate(ttnn_to_layout_132, False)
+    return [ttnn_concat_28]
+
+
+def main_const_eval_62(device, arg):
+    ttnn_to_device_136 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_136 = ttnn.to_layout(
+        ttnn_to_device_136,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_136, False)
+    ttnn_to_device_137 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_137 = ttnn.to_layout(
+        ttnn_to_device_137,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_137, False)
+    ttnn_to_device_138 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_138 = ttnn.to_layout(
+        ttnn_to_device_138,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_138, False)
+    ttnn_to_device_139 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_139 = ttnn.to_layout(
+        ttnn_to_device_139,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_139, False)
+    ttnn_permute_50 = ttnn.permute(
+        ttnn_to_layout_137,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_137, False)
+    ttnn_permute_51 = ttnn.permute(
+        ttnn_to_layout_138,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_138, False)
+    ttnn_permute_52 = ttnn.permute(
+        ttnn_to_layout_139,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_139, False)
+    ttnn_permute_53 = ttnn.permute(
+        ttnn_to_layout_136,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_136, False)
+    ttnn_concat_29 = ttnn.concat(
+        [ttnn_permute_53, ttnn_permute_50, ttnn_permute_51, ttnn_permute_52],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_53, False)
+    ttnn.deallocate(ttnn_permute_52, False)
+    ttnn.deallocate(ttnn_permute_51, False)
+    ttnn.deallocate(ttnn_permute_50, False)
+    return [ttnn_concat_29]
+
+
+def main_const_eval_63(device, arg):
+    ttnn_to_device_140 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_140 = ttnn.to_layout(
+        ttnn_to_device_140,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_140, False)
+    ttnn_reshape_45 = ttnn.reshape(
+        ttnn_to_layout_140,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_140, False)
+    return [ttnn_reshape_45]
+
+
+def main_const_eval_64(device, arg):
+    ttnn_to_device_141 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_141 = ttnn.to_layout(
+        ttnn_to_device_141,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_141, False)
+    ttnn_to_device_142 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_142 = ttnn.to_layout(
+        ttnn_to_device_142,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_142, False)
+    ttnn_to_device_143 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_143 = ttnn.to_layout(
+        ttnn_to_device_143,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_143, False)
+    ttnn_to_device_144 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_144 = ttnn.to_layout(
+        ttnn_to_device_144,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_144, False)
+    ttnn_concat_30 = ttnn.concat(
+        [
+            ttnn_to_layout_141,
+            ttnn_to_layout_142,
+            ttnn_to_layout_143,
+            ttnn_to_layout_144,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_144, False)
+    ttnn.deallocate(ttnn_to_layout_143, False)
+    ttnn.deallocate(ttnn_to_layout_142, False)
+    ttnn.deallocate(ttnn_to_layout_141, False)
+    return [ttnn_concat_30]
+
+
+def main_const_eval_65(device, arg):
+    ttnn_to_device_145 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_145 = ttnn.to_layout(
+        ttnn_to_device_145,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_145, False)
+    ttnn_to_device_146 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_146 = ttnn.to_layout(
+        ttnn_to_device_146,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_146, False)
+    ttnn_to_device_147 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_147 = ttnn.to_layout(
+        ttnn_to_device_147,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_147, False)
+    ttnn_concat_31 = ttnn.concat(
+        [ttnn_to_layout_145, ttnn_to_layout_146, ttnn_to_layout_147],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_147, False)
+    ttnn.deallocate(ttnn_to_layout_146, False)
+    ttnn.deallocate(ttnn_to_layout_145, False)
+    return [ttnn_concat_31]
+
+
+def main_const_eval_66(device, arg):
+    ttnn_to_device_148 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_148 = ttnn.to_layout(
+        ttnn_to_device_148,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_148, False)
+    ttnn_reshape_46 = ttnn.reshape(
+        ttnn_to_layout_148,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_148, False)
+    ttnn_typecast_13 = ttnn.typecast(
+        ttnn_reshape_46,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_46, False)
+    ttnn_reshape_47 = ttnn.reshape(
+        ttnn_typecast_13,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_13, False)
+    return [ttnn_reshape_47]
+
+
+def main_const_eval_67(device, arg):
+    ttnn_to_device_149 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_149 = ttnn.to_layout(
+        ttnn_to_device_149,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_149, False)
+    ttnn_reshape_48 = ttnn.reshape(
+        ttnn_to_layout_149,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_149, False)
+    return [ttnn_reshape_48]
+
+
+def main_const_eval_68(device, arg):
+    ttnn_to_device_150 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_150 = ttnn.to_layout(
+        ttnn_to_device_150,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_150, False)
+    ttnn_to_device_151 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_151 = ttnn.to_layout(
+        ttnn_to_device_151,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_151, False)
+    ttnn_to_device_152 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_152 = ttnn.to_layout(
+        ttnn_to_device_152,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_152, False)
+    ttnn_to_device_153 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_153 = ttnn.to_layout(
+        ttnn_to_device_153,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_153, False)
+    ttnn_concat_32 = ttnn.concat(
+        [
+            ttnn_to_layout_150,
+            ttnn_to_layout_151,
+            ttnn_to_layout_152,
+            ttnn_to_layout_153,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_153, False)
+    ttnn.deallocate(ttnn_to_layout_152, False)
+    ttnn.deallocate(ttnn_to_layout_151, False)
+    ttnn.deallocate(ttnn_to_layout_150, False)
+    return [ttnn_concat_32]
+
+
+def main_const_eval_69(device, arg):
+    ttnn_to_device_154 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_154 = ttnn.to_layout(
+        ttnn_to_device_154,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_154, False)
+    ttnn_reshape_49 = ttnn.reshape(
+        ttnn_to_layout_154,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_154, False)
+    ttnn_typecast_14 = ttnn.typecast(
+        ttnn_reshape_49,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_49, False)
+    ttnn_reshape_50 = ttnn.reshape(
+        ttnn_typecast_14,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_14, False)
+    return [ttnn_reshape_50]
+
+
+def main_const_eval_70(device, arg):
+    ttnn_to_device_155 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_155 = ttnn.to_layout(
+        ttnn_to_device_155,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_155, False)
+    ttnn_reshape_51 = ttnn.reshape(
+        ttnn_to_layout_155,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_155, False)
+    return [ttnn_reshape_51]
+
+
+def main_const_eval_71(device, arg):
+    ttnn_to_device_156 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_156 = ttnn.to_layout(
+        ttnn_to_device_156,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_156, False)
+    ttnn_to_device_157 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_157 = ttnn.to_layout(
+        ttnn_to_device_157,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_157, False)
+    ttnn_to_device_158 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_158 = ttnn.to_layout(
+        ttnn_to_device_158,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_158, False)
+    ttnn_permute_54 = ttnn.permute(
+        ttnn_to_layout_157,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_157, False)
+    ttnn_permute_55 = ttnn.permute(
+        ttnn_to_layout_158,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_158, False)
+    ttnn_permute_56 = ttnn.permute(
+        ttnn_to_layout_156,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_156, False)
+    ttnn_concat_33 = ttnn.concat(
+        [ttnn_permute_56, ttnn_permute_54, ttnn_permute_55],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_56, False)
+    ttnn.deallocate(ttnn_permute_55, False)
+    ttnn.deallocate(ttnn_permute_54, False)
+    return [ttnn_concat_33]
+
+
+def main_const_eval_72(device, arg):
+    ttnn_to_device_159 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_159 = ttnn.to_layout(
+        ttnn_to_device_159,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_159, False)
+    ttnn_reshape_52 = ttnn.reshape(
+        ttnn_to_layout_159,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_159, False)
+    ttnn_typecast_15 = ttnn.typecast(
+        ttnn_reshape_52,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_52, False)
+    ttnn_reshape_53 = ttnn.reshape(
+        ttnn_typecast_15,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_15, False)
+    return [ttnn_reshape_53]
+
+
+def main_const_eval_73(device, arg):
+    ttnn_to_device_160 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_160 = ttnn.to_layout(
+        ttnn_to_device_160,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_160, False)
+    ttnn_to_device_161 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_161 = ttnn.to_layout(
+        ttnn_to_device_161,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_161, False)
+    ttnn_to_device_162 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_162 = ttnn.to_layout(
+        ttnn_to_device_162,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_162, False)
+    ttnn_permute_57 = ttnn.permute(
+        ttnn_to_layout_161,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_161, False)
+    ttnn_permute_58 = ttnn.permute(
+        ttnn_to_layout_162,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_162, False)
+    ttnn_permute_59 = ttnn.permute(
+        ttnn_to_layout_160,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_160, False)
+    ttnn_concat_34 = ttnn.concat(
+        [ttnn_permute_59, ttnn_permute_57, ttnn_permute_58],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_59, False)
+    ttnn.deallocate(ttnn_permute_58, False)
+    ttnn.deallocate(ttnn_permute_57, False)
+    return [ttnn_concat_34]
+
+
+def main_const_eval_74(device, arg):
+    ttnn_to_device_163 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_163 = ttnn.to_layout(
+        ttnn_to_device_163,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_163, False)
+    ttnn_reshape_54 = ttnn.reshape(
+        ttnn_to_layout_163,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_163, False)
+    return [ttnn_reshape_54]
+
+
+def main_const_eval_75(device, arg):
+    ttnn_to_device_164 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_164 = ttnn.to_layout(
+        ttnn_to_device_164,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_164, False)
+    ttnn_reshape_55 = ttnn.reshape(
+        ttnn_to_layout_164,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_164, False)
+    return [ttnn_reshape_55]
+
+
+def main_const_eval_76(device, arg):
+    ttnn_to_device_165 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_165 = ttnn.to_layout(
+        ttnn_to_device_165,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_165, False)
+    ttnn_reshape_56 = ttnn.reshape(
+        ttnn_to_layout_165,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_165, False)
+    return [ttnn_reshape_56]
+
+
+def main_const_eval_77(device, arg):
+    ttnn_to_device_166 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_166 = ttnn.to_layout(
+        ttnn_to_device_166,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_166, False)
+    ttnn_to_device_167 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_167 = ttnn.to_layout(
+        ttnn_to_device_167,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_167, False)
+    ttnn_to_device_168 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_168 = ttnn.to_layout(
+        ttnn_to_device_168,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_168, False)
+    ttnn_to_device_169 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_169 = ttnn.to_layout(
+        ttnn_to_device_169,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_169, False)
+    ttnn_concat_35 = ttnn.concat(
+        [
+            ttnn_to_layout_166,
+            ttnn_to_layout_167,
+            ttnn_to_layout_168,
+            ttnn_to_layout_169,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_169, False)
+    ttnn.deallocate(ttnn_to_layout_168, False)
+    ttnn.deallocate(ttnn_to_layout_167, False)
+    ttnn.deallocate(ttnn_to_layout_166, False)
+    return [ttnn_concat_35]
+
+
+def main_const_eval_78(device, arg):
+    ttnn_to_device_170 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_170 = ttnn.to_layout(
+        ttnn_to_device_170,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_170, False)
+    ttnn_reshape_57 = ttnn.reshape(
+        ttnn_to_layout_170,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_170, False)
+    ttnn_typecast_16 = ttnn.typecast(
+        ttnn_reshape_57,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_57, False)
+    ttnn_reshape_58 = ttnn.reshape(
+        ttnn_typecast_16,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_16, False)
+    return [ttnn_reshape_58]
+
+
+def main_const_eval_79(device, arg):
+    ttnn_to_device_171 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_171 = ttnn.to_layout(
+        ttnn_to_device_171,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_171, False)
+    ttnn_to_device_172 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_172 = ttnn.to_layout(
+        ttnn_to_device_172,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_172, False)
+    ttnn_to_device_173 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_173 = ttnn.to_layout(
+        ttnn_to_device_173,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_173, False)
+    ttnn_to_device_174 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_174 = ttnn.to_layout(
+        ttnn_to_device_174,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_174, False)
+    ttnn_permute_60 = ttnn.permute(
+        ttnn_to_layout_172,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_172, False)
+    ttnn_permute_61 = ttnn.permute(
+        ttnn_to_layout_173,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_173, False)
+    ttnn_permute_62 = ttnn.permute(
+        ttnn_to_layout_174,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_174, False)
+    ttnn_permute_63 = ttnn.permute(
+        ttnn_to_layout_171,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_171, False)
+    ttnn_concat_36 = ttnn.concat(
+        [ttnn_permute_63, ttnn_permute_60, ttnn_permute_61, ttnn_permute_62],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_63, False)
+    ttnn.deallocate(ttnn_permute_62, False)
+    ttnn.deallocate(ttnn_permute_61, False)
+    ttnn.deallocate(ttnn_permute_60, False)
+    return [ttnn_concat_36]
+
+
+def main_const_eval_80(device, arg):
+    ttnn_to_device_175 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_175 = ttnn.to_layout(
+        ttnn_to_device_175,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_175, False)
+    ttnn_reshape_59 = ttnn.reshape(
+        ttnn_to_layout_175,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_175, False)
+    ttnn_typecast_17 = ttnn.typecast(
+        ttnn_reshape_59,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_59, False)
+    ttnn_reshape_60 = ttnn.reshape(
+        ttnn_typecast_17,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_17, False)
+    return [ttnn_reshape_60]
+
+
+def main_const_eval_81(device, arg):
+    ttnn_to_device_176 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_176 = ttnn.to_layout(
+        ttnn_to_device_176,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_176, False)
+    ttnn_to_device_177 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_177 = ttnn.to_layout(
+        ttnn_to_device_177,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_177, False)
+    ttnn_to_device_178 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_178 = ttnn.to_layout(
+        ttnn_to_device_178,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_178, False)
+    ttnn_to_device_179 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_179 = ttnn.to_layout(
+        ttnn_to_device_179,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_179, False)
+    ttnn_concat_37 = ttnn.concat(
+        [
+            ttnn_to_layout_176,
+            ttnn_to_layout_177,
+            ttnn_to_layout_178,
+            ttnn_to_layout_179,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_179, False)
+    ttnn.deallocate(ttnn_to_layout_178, False)
+    ttnn.deallocate(ttnn_to_layout_177, False)
+    ttnn.deallocate(ttnn_to_layout_176, False)
+    return [ttnn_concat_37]
+
+
+def main_const_eval_82(device, arg):
+    ttnn_to_device_180 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_180 = ttnn.to_layout(
+        ttnn_to_device_180,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_180, False)
+    ttnn_to_device_181 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_181 = ttnn.to_layout(
+        ttnn_to_device_181,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_181, False)
+    ttnn_to_device_182 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_182 = ttnn.to_layout(
+        ttnn_to_device_182,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_182, False)
+    ttnn_to_device_183 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_183 = ttnn.to_layout(
+        ttnn_to_device_183,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_183, False)
+    ttnn_concat_38 = ttnn.concat(
+        [
+            ttnn_to_layout_180,
+            ttnn_to_layout_181,
+            ttnn_to_layout_182,
+            ttnn_to_layout_183,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_183, False)
+    ttnn.deallocate(ttnn_to_layout_182, False)
+    ttnn.deallocate(ttnn_to_layout_181, False)
+    ttnn.deallocate(ttnn_to_layout_180, False)
+    return [ttnn_concat_38]
+
+
+def main_const_eval_83(device, arg):
+    ttnn_to_device_184 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_184 = ttnn.to_layout(
+        ttnn_to_device_184,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_184, False)
+    ttnn_reshape_61 = ttnn.reshape(
+        ttnn_to_layout_184,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_184, False)
+    return [ttnn_reshape_61]
+
+
+def main_const_eval_84(device, arg):
+    ttnn_to_device_185 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_185 = ttnn.to_layout(
+        ttnn_to_device_185,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_185, False)
+    ttnn_reshape_62 = ttnn.reshape(
+        ttnn_to_layout_185,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_185, False)
+    ttnn_typecast_18 = ttnn.typecast(
+        ttnn_reshape_62,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_62, False)
+    ttnn_reshape_63 = ttnn.reshape(
+        ttnn_typecast_18,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_18, False)
+    return [ttnn_reshape_63]
+
+
+def main_const_eval_85(device, arg):
+    ttnn_to_device_186 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_186 = ttnn.to_layout(
+        ttnn_to_device_186,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_186, False)
+    ttnn_reshape_64 = ttnn.reshape(
+        ttnn_to_layout_186,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_186, False)
+    return [ttnn_reshape_64]
+
+
+def main_const_eval_86(device, arg):
+    ttnn_to_device_187 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_187 = ttnn.to_layout(
+        ttnn_to_device_187,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_187, False)
+    ttnn_to_device_188 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_188 = ttnn.to_layout(
+        ttnn_to_device_188,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_188, False)
+    ttnn_to_device_189 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_189 = ttnn.to_layout(
+        ttnn_to_device_189,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_189, False)
+    ttnn_permute_64 = ttnn.permute(
+        ttnn_to_layout_188,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_188, False)
+    ttnn_permute_65 = ttnn.permute(
+        ttnn_to_layout_189,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_189, False)
+    ttnn_permute_66 = ttnn.permute(
+        ttnn_to_layout_187,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_187, False)
+    ttnn_concat_39 = ttnn.concat(
+        [ttnn_permute_66, ttnn_permute_64, ttnn_permute_65],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_66, False)
+    ttnn.deallocate(ttnn_permute_65, False)
+    ttnn.deallocate(ttnn_permute_64, False)
+    return [ttnn_concat_39]
+
+
+def main_const_eval_87(device, arg):
+    ttnn_to_device_190 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_190 = ttnn.to_layout(
+        ttnn_to_device_190,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_190, False)
+    ttnn_reshape_65 = ttnn.reshape(
+        ttnn_to_layout_190,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_190, False)
+    return [ttnn_reshape_65]
+
+
+def main_const_eval_88(device, arg):
+    ttnn_to_device_191 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_191 = ttnn.to_layout(
+        ttnn_to_device_191,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_191, False)
+    ttnn_to_device_192 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_192 = ttnn.to_layout(
+        ttnn_to_device_192,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_192, False)
+    ttnn_to_device_193 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_193 = ttnn.to_layout(
+        ttnn_to_device_193,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_193, False)
+    ttnn_to_device_194 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_194 = ttnn.to_layout(
+        ttnn_to_device_194,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_194, False)
+    ttnn_permute_67 = ttnn.permute(
+        ttnn_to_layout_192,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_192, False)
+    ttnn_permute_68 = ttnn.permute(
+        ttnn_to_layout_193,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_193, False)
+    ttnn_permute_69 = ttnn.permute(
+        ttnn_to_layout_194,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_194, False)
+    ttnn_permute_70 = ttnn.permute(
+        ttnn_to_layout_191,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_191, False)
+    ttnn_concat_40 = ttnn.concat(
+        [ttnn_permute_70, ttnn_permute_67, ttnn_permute_68, ttnn_permute_69],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_70, False)
+    ttnn.deallocate(ttnn_permute_69, False)
+    ttnn.deallocate(ttnn_permute_68, False)
+    ttnn.deallocate(ttnn_permute_67, False)
+    return [ttnn_concat_40]
+
+
+def main_const_eval_89(device, arg):
+    ttnn_to_device_195 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_195 = ttnn.to_layout(
+        ttnn_to_device_195,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_195, False)
+    ttnn_to_device_196 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_196 = ttnn.to_layout(
+        ttnn_to_device_196,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_196, False)
+    ttnn_to_device_197 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_197 = ttnn.to_layout(
+        ttnn_to_device_197,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_197, False)
+    ttnn_to_device_198 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_198 = ttnn.to_layout(
+        ttnn_to_device_198,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_198, False)
+    ttnn_concat_41 = ttnn.concat(
+        [
+            ttnn_to_layout_195,
+            ttnn_to_layout_196,
+            ttnn_to_layout_197,
+            ttnn_to_layout_198,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_198, False)
+    ttnn.deallocate(ttnn_to_layout_197, False)
+    ttnn.deallocate(ttnn_to_layout_196, False)
+    ttnn.deallocate(ttnn_to_layout_195, False)
+    return [ttnn_concat_41]
+
+
+def main_const_eval_90(device, arg):
+    ttnn_to_device_199 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_199 = ttnn.to_layout(
+        ttnn_to_device_199,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_199, False)
+    ttnn_to_device_200 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_200 = ttnn.to_layout(
+        ttnn_to_device_200,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_200, False)
+    ttnn_to_device_201 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_201 = ttnn.to_layout(
+        ttnn_to_device_201,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_201, False)
+    ttnn_to_device_202 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_202 = ttnn.to_layout(
+        ttnn_to_device_202,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_202, False)
+    ttnn_permute_71 = ttnn.permute(
+        ttnn_to_layout_200,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_200, False)
+    ttnn_permute_72 = ttnn.permute(
+        ttnn_to_layout_201,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_201, False)
+    ttnn_permute_73 = ttnn.permute(
+        ttnn_to_layout_202,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_202, False)
+    ttnn_permute_74 = ttnn.permute(
+        ttnn_to_layout_199,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_199, False)
+    ttnn_concat_42 = ttnn.concat(
+        [ttnn_permute_74, ttnn_permute_71, ttnn_permute_72, ttnn_permute_73],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_74, False)
+    ttnn.deallocate(ttnn_permute_73, False)
+    ttnn.deallocate(ttnn_permute_72, False)
+    ttnn.deallocate(ttnn_permute_71, False)
+    return [ttnn_concat_42]
+
+
+def main_const_eval_91(device, arg):
+    ttnn_to_device_203 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_203 = ttnn.to_layout(
+        ttnn_to_device_203,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_203, False)
+    ttnn_reshape_66 = ttnn.reshape(
+        ttnn_to_layout_203,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_203, False)
+    return [ttnn_reshape_66]
+
+
+def main_const_eval_92(device, arg):
+    ttnn_to_device_204 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_204 = ttnn.to_layout(
+        ttnn_to_device_204,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_204, False)
+    ttnn_to_device_205 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_205 = ttnn.to_layout(
+        ttnn_to_device_205,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_205, False)
+    ttnn_to_device_206 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_206 = ttnn.to_layout(
+        ttnn_to_device_206,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_206, False)
+    ttnn_to_device_207 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_207 = ttnn.to_layout(
+        ttnn_to_device_207,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_207, False)
+    ttnn_concat_43 = ttnn.concat(
+        [
+            ttnn_to_layout_204,
+            ttnn_to_layout_205,
+            ttnn_to_layout_206,
+            ttnn_to_layout_207,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_207, False)
+    ttnn.deallocate(ttnn_to_layout_206, False)
+    ttnn.deallocate(ttnn_to_layout_205, False)
+    ttnn.deallocate(ttnn_to_layout_204, False)
+    return [ttnn_concat_43]
+
+
+def main_const_eval_93(device, arg):
+    ttnn_to_device_208 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_208 = ttnn.to_layout(
+        ttnn_to_device_208,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_208, False)
+    ttnn_to_device_209 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_209 = ttnn.to_layout(
+        ttnn_to_device_209,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_209, False)
+    ttnn_to_device_210 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_210 = ttnn.to_layout(
+        ttnn_to_device_210,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_210, False)
+    ttnn_to_device_211 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_211 = ttnn.to_layout(
+        ttnn_to_device_211,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_211, False)
+    ttnn_permute_75 = ttnn.permute(
+        ttnn_to_layout_209,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_209, False)
+    ttnn_permute_76 = ttnn.permute(
+        ttnn_to_layout_210,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_210, False)
+    ttnn_permute_77 = ttnn.permute(
+        ttnn_to_layout_211,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_211, False)
+    ttnn_permute_78 = ttnn.permute(
+        ttnn_to_layout_208,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_208, False)
+    ttnn_concat_44 = ttnn.concat(
+        [ttnn_permute_78, ttnn_permute_75, ttnn_permute_76, ttnn_permute_77],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_78, False)
+    ttnn.deallocate(ttnn_permute_77, False)
+    ttnn.deallocate(ttnn_permute_76, False)
+    ttnn.deallocate(ttnn_permute_75, False)
+    return [ttnn_concat_44]
+
+
+def main_const_eval_94(device, arg):
+    ttnn_to_device_212 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_212 = ttnn.to_layout(
+        ttnn_to_device_212,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_212, False)
+    ttnn_to_device_213 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_213 = ttnn.to_layout(
+        ttnn_to_device_213,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_213, False)
+    ttnn_to_device_214 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_214 = ttnn.to_layout(
+        ttnn_to_device_214,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_214, False)
+    ttnn_to_device_215 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_215 = ttnn.to_layout(
+        ttnn_to_device_215,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_215, False)
+    ttnn_permute_79 = ttnn.permute(
+        ttnn_to_layout_213,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_213, False)
+    ttnn_permute_80 = ttnn.permute(
+        ttnn_to_layout_214,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_214, False)
+    ttnn_permute_81 = ttnn.permute(
+        ttnn_to_layout_215,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_215, False)
+    ttnn_permute_82 = ttnn.permute(
+        ttnn_to_layout_212,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_212, False)
+    ttnn_concat_45 = ttnn.concat(
+        [ttnn_permute_82, ttnn_permute_79, ttnn_permute_80, ttnn_permute_81],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_82, False)
+    ttnn.deallocate(ttnn_permute_81, False)
+    ttnn.deallocate(ttnn_permute_80, False)
+    ttnn.deallocate(ttnn_permute_79, False)
+    return [ttnn_concat_45]
+
+
+def main_const_eval_95(device, arg):
+    ttnn_to_device_216 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_216 = ttnn.to_layout(
+        ttnn_to_device_216,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_216, False)
+    ttnn_typecast_19 = ttnn.typecast(
+        ttnn_to_layout_216,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_216, False)
+    return [ttnn_typecast_19]
+
+
+def main_const_eval_96(device, arg):
+    ttnn_to_device_217 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_217 = ttnn.to_layout(
+        ttnn_to_device_217,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_217, False)
+    ttnn_reshape_67 = ttnn.reshape(
+        ttnn_to_layout_217,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_217, False)
+    return [ttnn_reshape_67]
+
+
+def main_const_eval_97(device, arg):
+    ttnn_to_device_218 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_218 = ttnn.to_layout(
+        ttnn_to_device_218,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_218, False)
+    ttnn_reshape_68 = ttnn.reshape(
+        ttnn_to_layout_218,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_218, False)
+    ttnn_typecast_20 = ttnn.typecast(
+        ttnn_reshape_68,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_68, False)
+    ttnn_reshape_69 = ttnn.reshape(
+        ttnn_typecast_20,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_20, False)
+    return [ttnn_reshape_69]
+
+
+def main_const_eval_98(device, arg):
+    ttnn_to_device_219 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_219 = ttnn.to_layout(
+        ttnn_to_device_219,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_219, False)
+    ttnn_to_device_220 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_220 = ttnn.to_layout(
+        ttnn_to_device_220,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_220, False)
+    ttnn_to_device_221 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_221 = ttnn.to_layout(
+        ttnn_to_device_221,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_221, False)
+    ttnn_to_device_222 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_222 = ttnn.to_layout(
+        ttnn_to_device_222,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_222, False)
+    ttnn_permute_83 = ttnn.permute(
+        ttnn_to_layout_220,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_220, False)
+    ttnn_permute_84 = ttnn.permute(
+        ttnn_to_layout_221,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_221, False)
+    ttnn_permute_85 = ttnn.permute(
+        ttnn_to_layout_222,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_222, False)
+    ttnn_permute_86 = ttnn.permute(
+        ttnn_to_layout_219,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_219, False)
+    ttnn_concat_46 = ttnn.concat(
+        [ttnn_permute_86, ttnn_permute_83, ttnn_permute_84, ttnn_permute_85],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_86, False)
+    ttnn.deallocate(ttnn_permute_85, False)
+    ttnn.deallocate(ttnn_permute_84, False)
+    ttnn.deallocate(ttnn_permute_83, False)
+    return [ttnn_concat_46]
+
+
+def main_const_eval_99(device, arg):
+    ttnn_to_device_223 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_223 = ttnn.to_layout(
+        ttnn_to_device_223,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_223, False)
+    ttnn_to_device_224 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_224 = ttnn.to_layout(
+        ttnn_to_device_224,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_224, False)
+    ttnn_to_device_225 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_225 = ttnn.to_layout(
+        ttnn_to_device_225,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_225, False)
+    ttnn_to_device_226 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_226 = ttnn.to_layout(
+        ttnn_to_device_226,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_226, False)
+    ttnn_concat_47 = ttnn.concat(
+        [
+            ttnn_to_layout_223,
+            ttnn_to_layout_224,
+            ttnn_to_layout_225,
+            ttnn_to_layout_226,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_226, False)
+    ttnn.deallocate(ttnn_to_layout_225, False)
+    ttnn.deallocate(ttnn_to_layout_224, False)
+    ttnn.deallocate(ttnn_to_layout_223, False)
+    return [ttnn_concat_47]
+
+
+def main_const_eval_100(device, arg):
+    ttnn_to_device_227 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_227 = ttnn.to_layout(
+        ttnn_to_device_227,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_227, False)
+    ttnn_to_device_228 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_228 = ttnn.to_layout(
+        ttnn_to_device_228,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_228, False)
+    ttnn_to_device_229 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_229 = ttnn.to_layout(
+        ttnn_to_device_229,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_229, False)
+    ttnn_concat_48 = ttnn.concat(
+        [ttnn_to_layout_227, ttnn_to_layout_228, ttnn_to_layout_229],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_229, False)
+    ttnn.deallocate(ttnn_to_layout_228, False)
+    ttnn.deallocate(ttnn_to_layout_227, False)
+    return [ttnn_concat_48]
+
+
+def main_const_eval_101(device, arg):
+    ttnn_to_device_230 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_230 = ttnn.to_layout(
+        ttnn_to_device_230,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_230, False)
+    ttnn_reshape_70 = ttnn.reshape(
+        ttnn_to_layout_230,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_230, False)
+    return [ttnn_reshape_70]
+
+
+def main_const_eval_102(device, arg):
+    ttnn_to_device_231 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_231 = ttnn.to_layout(
+        ttnn_to_device_231,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_231, False)
+    ttnn_reshape_71 = ttnn.reshape(
+        ttnn_to_layout_231,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_231, False)
+    return [ttnn_reshape_71]
+
+
+def main_const_eval_103(device, arg):
+    ttnn_to_device_232 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_232 = ttnn.to_layout(
+        ttnn_to_device_232,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_232, False)
+    ttnn_to_device_233 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_233 = ttnn.to_layout(
+        ttnn_to_device_233,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_233, False)
+    ttnn_to_device_234 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_234 = ttnn.to_layout(
+        ttnn_to_device_234,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_234, False)
+    ttnn_permute_87 = ttnn.permute(
+        ttnn_to_layout_233,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_233, False)
+    ttnn_permute_88 = ttnn.permute(
+        ttnn_to_layout_234,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_234, False)
+    ttnn_permute_89 = ttnn.permute(
+        ttnn_to_layout_232,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_232, False)
+    ttnn_concat_49 = ttnn.concat(
+        [ttnn_permute_89, ttnn_permute_87, ttnn_permute_88],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_89, False)
+    ttnn.deallocate(ttnn_permute_88, False)
+    ttnn.deallocate(ttnn_permute_87, False)
+    return [ttnn_concat_49]
+
+
+def main_const_eval_104(device, arg):
+    ttnn_to_device_235 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_235 = ttnn.to_layout(
+        ttnn_to_device_235,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_235, False)
+    ttnn_reshape_72 = ttnn.reshape(
+        ttnn_to_layout_235,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_235, False)
+    ttnn_typecast_21 = ttnn.typecast(
+        ttnn_reshape_72,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_72, False)
+    ttnn_reshape_73 = ttnn.reshape(
+        ttnn_typecast_21,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_21, False)
+    return [ttnn_reshape_73]
+
+
+def main_const_eval_105(device, arg):
+    ttnn_to_device_236 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_236 = ttnn.to_layout(
+        ttnn_to_device_236,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_236, False)
+    ttnn_reshape_74 = ttnn.reshape(
+        ttnn_to_layout_236,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_236, False)
+    ttnn_typecast_22 = ttnn.typecast(
+        ttnn_reshape_74,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_74, False)
+    ttnn_reshape_75 = ttnn.reshape(
+        ttnn_typecast_22,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_22, False)
+    return [ttnn_reshape_75]
+
+
+def main_const_eval_106(device, arg):
+    ttnn_to_device_237 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_237 = ttnn.to_layout(
+        ttnn_to_device_237,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_237, False)
+    ttnn_reshape_76 = ttnn.reshape(
+        ttnn_to_layout_237,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_237, False)
+    return [ttnn_reshape_76]
+
+
+def main_const_eval_107(device, arg):
+    ttnn_to_device_238 = ttnn.to_device(
+        arg[54],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_238 = ttnn.to_layout(
+        ttnn_to_device_238,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_238, False)
+    ttnn_to_device_239 = ttnn.to_device(
+        arg[53],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_239 = ttnn.to_layout(
+        ttnn_to_device_239,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_239, False)
+    ttnn_to_device_240 = ttnn.to_device(
+        arg[52],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_240 = ttnn.to_layout(
+        ttnn_to_device_240,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_240, False)
+    ttnn_to_device_241 = ttnn.to_device(
+        arg[51],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_241 = ttnn.to_layout(
+        ttnn_to_device_241,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_241, False)
+    ttnn_to_device_242 = ttnn.to_device(
+        arg[50],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_242 = ttnn.to_layout(
+        ttnn_to_device_242,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_242, False)
+    ttnn_to_device_243 = ttnn.to_device(
+        arg[49],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_243 = ttnn.to_layout(
+        ttnn_to_device_243,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_243, False)
+    ttnn_to_device_244 = ttnn.to_device(
+        arg[48],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_244 = ttnn.to_layout(
+        ttnn_to_device_244,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_244, False)
+    ttnn_to_device_245 = ttnn.to_device(
+        arg[47],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_245 = ttnn.to_layout(
+        ttnn_to_device_245,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_245, False)
+    ttnn_to_device_246 = ttnn.to_device(
+        arg[46],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_246 = ttnn.to_layout(
+        ttnn_to_device_246,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_246, False)
+    ttnn_to_device_247 = ttnn.to_device(
+        arg[45],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_247 = ttnn.to_layout(
+        ttnn_to_device_247,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_247, False)
+    ttnn_to_device_248 = ttnn.to_device(
+        arg[44],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_248 = ttnn.to_layout(
+        ttnn_to_device_248,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_248, False)
+    ttnn_to_device_249 = ttnn.to_device(
+        arg[43],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_249 = ttnn.to_layout(
+        ttnn_to_device_249,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_249, False)
+    ttnn_to_device_250 = ttnn.to_device(
+        arg[42],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_250 = ttnn.to_layout(
+        ttnn_to_device_250,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_250, False)
+    ttnn_to_device_251 = ttnn.to_device(
+        arg[41],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_251 = ttnn.to_layout(
+        ttnn_to_device_251,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_251, False)
+    ttnn_to_device_252 = ttnn.to_device(
+        arg[40],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_252 = ttnn.to_layout(
+        ttnn_to_device_252,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_252, False)
+    ttnn_to_device_253 = ttnn.to_device(
+        arg[39],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_253 = ttnn.to_layout(
+        ttnn_to_device_253,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_253, False)
+    ttnn_to_device_254 = ttnn.to_device(
+        arg[38],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_254 = ttnn.to_layout(
+        ttnn_to_device_254,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_254, False)
+    ttnn_to_device_255 = ttnn.to_device(
+        arg[37],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_255 = ttnn.to_layout(
+        ttnn_to_device_255,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_255, False)
+    ttnn_to_device_256 = ttnn.to_device(
+        arg[36],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_256 = ttnn.to_layout(
+        ttnn_to_device_256,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_256, False)
+    ttnn_to_device_257 = ttnn.to_device(
+        arg[35],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_257 = ttnn.to_layout(
+        ttnn_to_device_257,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_257, False)
+    ttnn_to_device_258 = ttnn.to_device(
+        arg[34],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_258 = ttnn.to_layout(
+        ttnn_to_device_258,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_258, False)
+    ttnn_to_device_259 = ttnn.to_device(
+        arg[33],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_259 = ttnn.to_layout(
+        ttnn_to_device_259,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_259, False)
+    ttnn_to_device_260 = ttnn.to_device(
+        arg[32],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_260 = ttnn.to_layout(
+        ttnn_to_device_260,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_260, False)
+    ttnn_to_device_261 = ttnn.to_device(
+        arg[31],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_261 = ttnn.to_layout(
+        ttnn_to_device_261,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_261, False)
+    ttnn_to_device_262 = ttnn.to_device(
+        arg[30],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_262 = ttnn.to_layout(
+        ttnn_to_device_262,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_262, False)
+    ttnn_to_device_263 = ttnn.to_device(
+        arg[29],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_263 = ttnn.to_layout(
+        ttnn_to_device_263,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_263, False)
+    ttnn_to_device_264 = ttnn.to_device(
+        arg[28],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_264 = ttnn.to_layout(
+        ttnn_to_device_264,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_264, False)
+    ttnn_to_device_265 = ttnn.to_device(
+        arg[27],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_265 = ttnn.to_layout(
+        ttnn_to_device_265,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_265, False)
+    ttnn_to_device_266 = ttnn.to_device(
+        arg[26],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_266 = ttnn.to_layout(
+        ttnn_to_device_266,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_266, False)
+    ttnn_to_device_267 = ttnn.to_device(
+        arg[25],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_267 = ttnn.to_layout(
+        ttnn_to_device_267,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_267, False)
+    ttnn_to_device_268 = ttnn.to_device(
+        arg[24],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_268 = ttnn.to_layout(
+        ttnn_to_device_268,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_268, False)
+    ttnn_to_device_269 = ttnn.to_device(
+        arg[23],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_269 = ttnn.to_layout(
+        ttnn_to_device_269,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_269, False)
+    ttnn_to_device_270 = ttnn.to_device(
+        arg[22],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_270 = ttnn.to_layout(
+        ttnn_to_device_270,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_270, False)
+    ttnn_to_device_271 = ttnn.to_device(
+        arg[21],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_271 = ttnn.to_layout(
+        ttnn_to_device_271,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_271, False)
+    ttnn_to_device_272 = ttnn.to_device(
+        arg[20],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_272 = ttnn.to_layout(
+        ttnn_to_device_272,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_272, False)
+    ttnn_to_device_273 = ttnn.to_device(
+        arg[19],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_273 = ttnn.to_layout(
+        ttnn_to_device_273,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_273, False)
+    ttnn_to_device_274 = ttnn.to_device(
+        arg[18],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_274 = ttnn.to_layout(
+        ttnn_to_device_274,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_274, False)
+    ttnn_to_device_275 = ttnn.to_device(
+        arg[17],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_275 = ttnn.to_layout(
+        ttnn_to_device_275,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_275, False)
+    ttnn_to_device_276 = ttnn.to_device(
+        arg[16],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_276 = ttnn.to_layout(
+        ttnn_to_device_276,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_276, False)
+    ttnn_to_device_277 = ttnn.to_device(
+        arg[15],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_277 = ttnn.to_layout(
+        ttnn_to_device_277,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_277, False)
+    ttnn_to_device_278 = ttnn.to_device(
+        arg[14],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_278 = ttnn.to_layout(
+        ttnn_to_device_278,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_278, False)
+    ttnn_to_device_279 = ttnn.to_device(
+        arg[13],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_279 = ttnn.to_layout(
+        ttnn_to_device_279,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_279, False)
+    ttnn_to_device_280 = ttnn.to_device(
+        arg[12],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_280 = ttnn.to_layout(
+        ttnn_to_device_280,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_280, False)
+    ttnn_to_device_281 = ttnn.to_device(
+        arg[11],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_281 = ttnn.to_layout(
+        ttnn_to_device_281,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_281, False)
+    ttnn_to_device_282 = ttnn.to_device(
+        arg[10],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_282 = ttnn.to_layout(
+        ttnn_to_device_282,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_282, False)
+    ttnn_to_device_283 = ttnn.to_device(
+        arg[9],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_283 = ttnn.to_layout(
+        ttnn_to_device_283,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_283, False)
+    ttnn_to_device_284 = ttnn.to_device(
+        arg[8],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_284 = ttnn.to_layout(
+        ttnn_to_device_284,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_284, False)
+    ttnn_to_device_285 = ttnn.to_device(
+        arg[7],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_285 = ttnn.to_layout(
+        ttnn_to_device_285,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_285, False)
+    ttnn_to_device_286 = ttnn.to_device(
+        arg[6],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_286 = ttnn.to_layout(
+        ttnn_to_device_286,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_286, False)
+    ttnn_to_device_287 = ttnn.to_device(
+        arg[5],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_287 = ttnn.to_layout(
+        ttnn_to_device_287,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_287, False)
+    ttnn_to_device_288 = ttnn.to_device(
+        arg[4],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_288 = ttnn.to_layout(
+        ttnn_to_device_288,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_288, False)
+    ttnn_to_device_289 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_289 = ttnn.to_layout(
+        ttnn_to_device_289,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_289, False)
+    ttnn_to_device_290 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_290 = ttnn.to_layout(
+        ttnn_to_device_290,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_290, False)
+    ttnn_to_device_291 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_291 = ttnn.to_layout(
+        ttnn_to_device_291,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_291, False)
+    ttnn_to_device_292 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_292 = ttnn.to_layout(
+        ttnn_to_device_292,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_292, False)
+    ttnn_permute_90 = ttnn.permute(
+        ttnn_to_layout_292,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_292, False)
+    ttnn_typecast_23 = ttnn.typecast(
+        ttnn_permute_90,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_90, False)
+    ttnn_permute_91 = ttnn.permute(
+        ttnn_to_layout_291,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_291, False)
+    ttnn_typecast_24 = ttnn.typecast(
+        ttnn_permute_91,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_91, False)
+    ttnn_permute_92 = ttnn.permute(
+        ttnn_to_layout_290,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_290, False)
+    ttnn_typecast_25 = ttnn.typecast(
+        ttnn_permute_92,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_92, False)
+    ttnn_permute_93 = ttnn.permute(
+        ttnn_to_layout_289,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_289, False)
+    ttnn_typecast_26 = ttnn.typecast(
+        ttnn_permute_93,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_93, False)
+    ttnn_permute_94 = ttnn.permute(
+        ttnn_to_layout_288,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_288, False)
+    ttnn_typecast_27 = ttnn.typecast(
+        ttnn_permute_94,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_94, False)
+    ttnn_permute_95 = ttnn.permute(
+        ttnn_to_layout_287,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_287, False)
+    ttnn_typecast_28 = ttnn.typecast(
+        ttnn_permute_95,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_95, False)
+    ttnn_permute_96 = ttnn.permute(
+        ttnn_to_layout_286,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_286, False)
+    ttnn_typecast_29 = ttnn.typecast(
+        ttnn_permute_96,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_96, False)
+    ttnn_permute_97 = ttnn.permute(
+        ttnn_to_layout_285,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_285, False)
+    ttnn_typecast_30 = ttnn.typecast(
+        ttnn_permute_97,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_97, False)
+    ttnn_permute_98 = ttnn.permute(
+        ttnn_to_layout_284,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_284, False)
+    ttnn_typecast_31 = ttnn.typecast(
+        ttnn_permute_98,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_98, False)
+    ttnn_permute_99 = ttnn.permute(
+        ttnn_to_layout_283,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_283, False)
+    ttnn_typecast_32 = ttnn.typecast(
+        ttnn_permute_99,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_99, False)
+    ttnn_permute_100 = ttnn.permute(
+        ttnn_to_layout_282,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_282, False)
+    ttnn_typecast_33 = ttnn.typecast(
+        ttnn_permute_100,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_100, False)
+    ttnn_permute_101 = ttnn.permute(
+        ttnn_to_layout_281,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_281, False)
+    ttnn_typecast_34 = ttnn.typecast(
+        ttnn_permute_101,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_101, False)
+    ttnn_permute_102 = ttnn.permute(
+        ttnn_to_layout_280,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_280, False)
+    ttnn_typecast_35 = ttnn.typecast(
+        ttnn_permute_102,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_102, False)
+    ttnn_permute_103 = ttnn.permute(
+        ttnn_to_layout_279,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_279, False)
+    ttnn_typecast_36 = ttnn.typecast(
+        ttnn_permute_103,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_103, False)
+    ttnn_permute_104 = ttnn.permute(
+        ttnn_to_layout_278,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_278, False)
+    ttnn_typecast_37 = ttnn.typecast(
+        ttnn_permute_104,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_104, False)
+    ttnn_permute_105 = ttnn.permute(
+        ttnn_to_layout_277,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_277, False)
+    ttnn_typecast_38 = ttnn.typecast(
+        ttnn_permute_105,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_105, False)
+    ttnn_permute_106 = ttnn.permute(
+        ttnn_to_layout_276,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_276, False)
+    ttnn_typecast_39 = ttnn.typecast(
+        ttnn_permute_106,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_106, False)
+    ttnn_permute_107 = ttnn.permute(
+        ttnn_to_layout_275,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_275, False)
+    ttnn_typecast_40 = ttnn.typecast(
+        ttnn_permute_107,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_107, False)
+    ttnn_permute_108 = ttnn.permute(
+        ttnn_to_layout_274,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_274, False)
+    ttnn_typecast_41 = ttnn.typecast(
+        ttnn_permute_108,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_108, False)
+    ttnn_permute_109 = ttnn.permute(
+        ttnn_to_layout_273,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_273, False)
+    ttnn_typecast_42 = ttnn.typecast(
+        ttnn_permute_109,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_109, False)
+    ttnn_permute_110 = ttnn.permute(
+        ttnn_to_layout_272,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_272, False)
+    ttnn_typecast_43 = ttnn.typecast(
+        ttnn_permute_110,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_110, False)
+    ttnn_permute_111 = ttnn.permute(
+        ttnn_to_layout_271,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_271, False)
+    ttnn_typecast_44 = ttnn.typecast(
+        ttnn_permute_111,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_111, False)
+    ttnn_permute_112 = ttnn.permute(
+        ttnn_to_layout_270,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_270, False)
+    ttnn_typecast_45 = ttnn.typecast(
+        ttnn_permute_112,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_112, False)
+    ttnn_permute_113 = ttnn.permute(
+        ttnn_to_layout_269,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_269, False)
+    ttnn_typecast_46 = ttnn.typecast(
+        ttnn_permute_113,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_113, False)
+    ttnn_permute_114 = ttnn.permute(
+        ttnn_to_layout_268,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_268, False)
+    ttnn_typecast_47 = ttnn.typecast(
+        ttnn_permute_114,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_114, False)
+    ttnn_permute_115 = ttnn.permute(
+        ttnn_to_layout_267,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_267, False)
+    ttnn_typecast_48 = ttnn.typecast(
+        ttnn_permute_115,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_115, False)
+    ttnn_permute_116 = ttnn.permute(
+        ttnn_to_layout_266,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_266, False)
+    ttnn_typecast_49 = ttnn.typecast(
+        ttnn_permute_116,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_116, False)
+    ttnn_permute_117 = ttnn.permute(
+        ttnn_to_layout_265,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_265, False)
+    ttnn_typecast_50 = ttnn.typecast(
+        ttnn_permute_117,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_117, False)
+    ttnn_permute_118 = ttnn.permute(
+        ttnn_to_layout_264,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_264, False)
+    ttnn_typecast_51 = ttnn.typecast(
+        ttnn_permute_118,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_118, False)
+    ttnn_permute_119 = ttnn.permute(
+        ttnn_to_layout_263,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_263, False)
+    ttnn_typecast_52 = ttnn.typecast(
+        ttnn_permute_119,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_119, False)
+    ttnn_permute_120 = ttnn.permute(
+        ttnn_to_layout_262,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_262, False)
+    ttnn_typecast_53 = ttnn.typecast(
+        ttnn_permute_120,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_120, False)
+    ttnn_permute_121 = ttnn.permute(
+        ttnn_to_layout_261,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_261, False)
+    ttnn_typecast_54 = ttnn.typecast(
+        ttnn_permute_121,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_121, False)
+    ttnn_permute_122 = ttnn.permute(
+        ttnn_to_layout_260,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_260, False)
+    ttnn_typecast_55 = ttnn.typecast(
+        ttnn_permute_122,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_122, False)
+    ttnn_permute_123 = ttnn.permute(
+        ttnn_to_layout_259,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_259, False)
+    ttnn_typecast_56 = ttnn.typecast(
+        ttnn_permute_123,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_123, False)
+    ttnn_permute_124 = ttnn.permute(
+        ttnn_to_layout_258,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_258, False)
+    ttnn_typecast_57 = ttnn.typecast(
+        ttnn_permute_124,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_124, False)
+    ttnn_permute_125 = ttnn.permute(
+        ttnn_to_layout_257,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_257, False)
+    ttnn_typecast_58 = ttnn.typecast(
+        ttnn_permute_125,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_125, False)
+    ttnn_permute_126 = ttnn.permute(
+        ttnn_to_layout_256,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_256, False)
+    ttnn_typecast_59 = ttnn.typecast(
+        ttnn_permute_126,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_126, False)
+    ttnn_permute_127 = ttnn.permute(
+        ttnn_to_layout_255,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_255, False)
+    ttnn_typecast_60 = ttnn.typecast(
+        ttnn_permute_127,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_127, False)
+    ttnn_permute_128 = ttnn.permute(
+        ttnn_to_layout_254,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_254, False)
+    ttnn_typecast_61 = ttnn.typecast(
+        ttnn_permute_128,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_128, False)
+    ttnn_permute_129 = ttnn.permute(
+        ttnn_to_layout_253,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_253, False)
+    ttnn_typecast_62 = ttnn.typecast(
+        ttnn_permute_129,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_129, False)
+    ttnn_permute_130 = ttnn.permute(
+        ttnn_to_layout_238,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_238, False)
+    ttnn_typecast_63 = ttnn.typecast(
+        ttnn_permute_130,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_130, False)
+    ttnn_permute_131 = ttnn.permute(
+        ttnn_to_layout_252,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_252, False)
+    ttnn_typecast_64 = ttnn.typecast(
+        ttnn_permute_131,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_131, False)
+    ttnn_permute_132 = ttnn.permute(
+        ttnn_to_layout_239,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_239, False)
+    ttnn_typecast_65 = ttnn.typecast(
+        ttnn_permute_132,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_132, False)
+    ttnn_permute_133 = ttnn.permute(
+        ttnn_to_layout_251,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_251, False)
+    ttnn_typecast_66 = ttnn.typecast(
+        ttnn_permute_133,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_133, False)
+    ttnn_permute_134 = ttnn.permute(
+        ttnn_to_layout_240,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_240, False)
+    ttnn_typecast_67 = ttnn.typecast(
+        ttnn_permute_134,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_134, False)
+    ttnn_permute_135 = ttnn.permute(
+        ttnn_to_layout_250,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_250, False)
+    ttnn_typecast_68 = ttnn.typecast(
+        ttnn_permute_135,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_135, False)
+    ttnn_permute_136 = ttnn.permute(
+        ttnn_to_layout_241,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_241, False)
+    ttnn_typecast_69 = ttnn.typecast(
+        ttnn_permute_136,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_136, False)
+    ttnn_permute_137 = ttnn.permute(
+        ttnn_to_layout_249,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_249, False)
+    ttnn_typecast_70 = ttnn.typecast(
+        ttnn_permute_137,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_137, False)
+    ttnn_permute_138 = ttnn.permute(
+        ttnn_to_layout_242,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_242, False)
+    ttnn_typecast_71 = ttnn.typecast(
+        ttnn_permute_138,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_138, False)
+    ttnn_permute_139 = ttnn.permute(
+        ttnn_to_layout_248,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_248, False)
+    ttnn_typecast_72 = ttnn.typecast(
+        ttnn_permute_139,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_139, False)
+    ttnn_permute_140 = ttnn.permute(
+        ttnn_to_layout_243,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_243, False)
+    ttnn_typecast_73 = ttnn.typecast(
+        ttnn_permute_140,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_140, False)
+    ttnn_permute_141 = ttnn.permute(
+        ttnn_to_layout_247,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_247, False)
+    ttnn_typecast_74 = ttnn.typecast(
+        ttnn_permute_141,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_141, False)
+    ttnn_permute_142 = ttnn.permute(
+        ttnn_to_layout_244,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_244, False)
+    ttnn_typecast_75 = ttnn.typecast(
+        ttnn_permute_142,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_142, False)
+    ttnn_permute_143 = ttnn.permute(
+        ttnn_to_layout_246,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_246, False)
+    ttnn_typecast_76 = ttnn.typecast(
+        ttnn_permute_143,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_143, False)
+    ttnn_permute_144 = ttnn.permute(
+        ttnn_to_layout_245,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_245, False)
+    ttnn_typecast_77 = ttnn.typecast(
+        ttnn_permute_144,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_144, False)
+    ttnn_concat_50 = ttnn.concat(
+        [
+            ttnn_typecast_23,
+            ttnn_typecast_24,
+            ttnn_typecast_25,
+            ttnn_typecast_26,
+            ttnn_typecast_27,
+            ttnn_typecast_28,
+            ttnn_typecast_29,
+            ttnn_typecast_30,
+            ttnn_typecast_31,
+            ttnn_typecast_32,
+            ttnn_typecast_33,
+            ttnn_typecast_34,
+            ttnn_typecast_35,
+            ttnn_typecast_36,
+            ttnn_typecast_37,
+            ttnn_typecast_38,
+            ttnn_typecast_39,
+            ttnn_typecast_40,
+            ttnn_typecast_41,
+            ttnn_typecast_42,
+            ttnn_typecast_43,
+            ttnn_typecast_44,
+            ttnn_typecast_45,
+            ttnn_typecast_46,
+            ttnn_typecast_47,
+            ttnn_typecast_48,
+            ttnn_typecast_49,
+            ttnn_typecast_50,
+            ttnn_typecast_51,
+            ttnn_typecast_52,
+            ttnn_typecast_53,
+            ttnn_typecast_54,
+            ttnn_typecast_55,
+            ttnn_typecast_56,
+            ttnn_typecast_57,
+            ttnn_typecast_58,
+            ttnn_typecast_59,
+            ttnn_typecast_60,
+            ttnn_typecast_61,
+            ttnn_typecast_62,
+            ttnn_typecast_63,
+            ttnn_typecast_64,
+            ttnn_typecast_65,
+            ttnn_typecast_66,
+            ttnn_typecast_67,
+            ttnn_typecast_68,
+            ttnn_typecast_69,
+            ttnn_typecast_70,
+            ttnn_typecast_71,
+            ttnn_typecast_72,
+            ttnn_typecast_73,
+            ttnn_typecast_74,
+            ttnn_typecast_75,
+            ttnn_typecast_76,
+            ttnn_typecast_77,
+        ],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_77, False)
+    ttnn.deallocate(ttnn_typecast_76, False)
+    ttnn.deallocate(ttnn_typecast_75, False)
+    ttnn.deallocate(ttnn_typecast_74, False)
+    ttnn.deallocate(ttnn_typecast_73, False)
+    ttnn.deallocate(ttnn_typecast_72, False)
+    ttnn.deallocate(ttnn_typecast_71, False)
+    ttnn.deallocate(ttnn_typecast_70, False)
+    ttnn.deallocate(ttnn_typecast_69, False)
+    ttnn.deallocate(ttnn_typecast_68, False)
+    ttnn.deallocate(ttnn_typecast_67, False)
+    ttnn.deallocate(ttnn_typecast_66, False)
+    ttnn.deallocate(ttnn_typecast_65, False)
+    ttnn.deallocate(ttnn_typecast_64, False)
+    ttnn.deallocate(ttnn_typecast_63, False)
+    ttnn.deallocate(ttnn_typecast_62, False)
+    ttnn.deallocate(ttnn_typecast_61, False)
+    ttnn.deallocate(ttnn_typecast_60, False)
+    ttnn.deallocate(ttnn_typecast_59, False)
+    ttnn.deallocate(ttnn_typecast_58, False)
+    ttnn.deallocate(ttnn_typecast_57, False)
+    ttnn.deallocate(ttnn_typecast_56, False)
+    ttnn.deallocate(ttnn_typecast_55, False)
+    ttnn.deallocate(ttnn_typecast_54, False)
+    ttnn.deallocate(ttnn_typecast_53, False)
+    ttnn.deallocate(ttnn_typecast_52, False)
+    ttnn.deallocate(ttnn_typecast_51, False)
+    ttnn.deallocate(ttnn_typecast_50, False)
+    ttnn.deallocate(ttnn_typecast_49, False)
+    ttnn.deallocate(ttnn_typecast_48, False)
+    ttnn.deallocate(ttnn_typecast_47, False)
+    ttnn.deallocate(ttnn_typecast_46, False)
+    ttnn.deallocate(ttnn_typecast_45, False)
+    ttnn.deallocate(ttnn_typecast_44, False)
+    ttnn.deallocate(ttnn_typecast_43, False)
+    ttnn.deallocate(ttnn_typecast_42, False)
+    ttnn.deallocate(ttnn_typecast_41, False)
+    ttnn.deallocate(ttnn_typecast_40, False)
+    ttnn.deallocate(ttnn_typecast_39, False)
+    ttnn.deallocate(ttnn_typecast_38, False)
+    ttnn.deallocate(ttnn_typecast_37, False)
+    ttnn.deallocate(ttnn_typecast_36, False)
+    ttnn.deallocate(ttnn_typecast_35, False)
+    ttnn.deallocate(ttnn_typecast_34, False)
+    ttnn.deallocate(ttnn_typecast_33, False)
+    ttnn.deallocate(ttnn_typecast_32, False)
+    ttnn.deallocate(ttnn_typecast_31, False)
+    ttnn.deallocate(ttnn_typecast_30, False)
+    ttnn.deallocate(ttnn_typecast_29, False)
+    ttnn.deallocate(ttnn_typecast_28, False)
+    ttnn.deallocate(ttnn_typecast_27, False)
+    ttnn.deallocate(ttnn_typecast_26, False)
+    ttnn.deallocate(ttnn_typecast_25, False)
+    ttnn.deallocate(ttnn_typecast_24, False)
+    ttnn.deallocate(ttnn_typecast_23, False)
+    return [ttnn_concat_50]
+
+
+def main_const_eval_108(device, arg):
+    ttnn_to_device_293 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_293 = ttnn.to_layout(
+        ttnn_to_device_293,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_293, False)
+    ttnn_reshape_77 = ttnn.reshape(
+        ttnn_to_layout_293,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_293, False)
+    return [ttnn_reshape_77]
+
+
+def main_const_eval_109(device, arg):
+    ttnn_to_device_294 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_294 = ttnn.to_layout(
+        ttnn_to_device_294,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_294, False)
+    ttnn_reshape_78 = ttnn.reshape(
+        ttnn_to_layout_294,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_294, False)
+    return [ttnn_reshape_78]
+
+
+def main_const_eval_110(device, arg):
+    ttnn_to_device_295 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_295 = ttnn.to_layout(
+        ttnn_to_device_295,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_295, False)
+    ttnn_to_device_296 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_296 = ttnn.to_layout(
+        ttnn_to_device_296,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_296, False)
+    ttnn_to_device_297 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_297 = ttnn.to_layout(
+        ttnn_to_device_297,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_297, False)
+    ttnn_to_device_298 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_298 = ttnn.to_layout(
+        ttnn_to_device_298,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_298, False)
+    ttnn_concat_51 = ttnn.concat(
+        [
+            ttnn_to_layout_295,
+            ttnn_to_layout_296,
+            ttnn_to_layout_297,
+            ttnn_to_layout_298,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_298, False)
+    ttnn.deallocate(ttnn_to_layout_297, False)
+    ttnn.deallocate(ttnn_to_layout_296, False)
+    ttnn.deallocate(ttnn_to_layout_295, False)
+    return [ttnn_concat_51]
+
+
+def main_const_eval_111(device, arg):
+    ttnn_to_device_299 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_299 = ttnn.to_layout(
+        ttnn_to_device_299,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_299, False)
+    ttnn_reshape_79 = ttnn.reshape(
+        ttnn_to_layout_299,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_299, False)
+    ttnn_typecast_78 = ttnn.typecast(
+        ttnn_reshape_79,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_79, False)
+    ttnn_reshape_80 = ttnn.reshape(
+        ttnn_typecast_78,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_78, False)
+    return [ttnn_reshape_80]
+
+
+def main_const_eval_112(device, arg):
+    ttnn_to_device_300 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_300 = ttnn.to_layout(
+        ttnn_to_device_300,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_300, False)
+    ttnn_to_device_301 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_301 = ttnn.to_layout(
+        ttnn_to_device_301,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_301, False)
+    ttnn_to_device_302 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_302 = ttnn.to_layout(
+        ttnn_to_device_302,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_302, False)
+    ttnn_to_device_303 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_303 = ttnn.to_layout(
+        ttnn_to_device_303,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_303, False)
+    ttnn_permute_145 = ttnn.permute(
+        ttnn_to_layout_301,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_301, False)
+    ttnn_permute_146 = ttnn.permute(
+        ttnn_to_layout_302,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_302, False)
+    ttnn_permute_147 = ttnn.permute(
+        ttnn_to_layout_303,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_303, False)
+    ttnn_permute_148 = ttnn.permute(
+        ttnn_to_layout_300,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_300, False)
+    ttnn_concat_52 = ttnn.concat(
+        [ttnn_permute_148, ttnn_permute_145, ttnn_permute_146, ttnn_permute_147],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_148, False)
+    ttnn.deallocate(ttnn_permute_147, False)
+    ttnn.deallocate(ttnn_permute_146, False)
+    ttnn.deallocate(ttnn_permute_145, False)
+    return [ttnn_concat_52]
+
+
+def main_const_eval_113(device, arg):
+    ttnn_to_device_304 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_304 = ttnn.to_layout(
+        ttnn_to_device_304,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_304, False)
+    ttnn_reshape_81 = ttnn.reshape(
+        ttnn_to_layout_304,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_304, False)
+    return [ttnn_reshape_81]
+
+
+def main_const_eval_114(device, arg):
+    ttnn_to_device_305 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_305 = ttnn.to_layout(
+        ttnn_to_device_305,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_305, False)
+    ttnn_to_device_306 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_306 = ttnn.to_layout(
+        ttnn_to_device_306,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_306, False)
+    ttnn_to_device_307 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_307 = ttnn.to_layout(
+        ttnn_to_device_307,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_307, False)
+    ttnn_to_device_308 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_308 = ttnn.to_layout(
+        ttnn_to_device_308,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_308, False)
+    ttnn_permute_149 = ttnn.permute(
+        ttnn_to_layout_306,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_306, False)
+    ttnn_permute_150 = ttnn.permute(
+        ttnn_to_layout_307,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_307, False)
+    ttnn_permute_151 = ttnn.permute(
+        ttnn_to_layout_308,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_308, False)
+    ttnn_permute_152 = ttnn.permute(
+        ttnn_to_layout_305,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_305, False)
+    ttnn_concat_53 = ttnn.concat(
+        [ttnn_permute_152, ttnn_permute_149, ttnn_permute_150, ttnn_permute_151],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_152, False)
+    ttnn.deallocate(ttnn_permute_151, False)
+    ttnn.deallocate(ttnn_permute_150, False)
+    ttnn.deallocate(ttnn_permute_149, False)
+    return [ttnn_concat_53]
+
+
+def main_const_eval_115(device, arg):
+    ttnn_to_device_309 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_309 = ttnn.to_layout(
+        ttnn_to_device_309,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_309, False)
+    ttnn_to_device_310 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_310 = ttnn.to_layout(
+        ttnn_to_device_310,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_310, False)
+    ttnn_to_device_311 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_311 = ttnn.to_layout(
+        ttnn_to_device_311,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_311, False)
+    ttnn_to_device_312 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_312 = ttnn.to_layout(
+        ttnn_to_device_312,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_312, False)
+    ttnn_concat_54 = ttnn.concat(
+        [
+            ttnn_to_layout_309,
+            ttnn_to_layout_310,
+            ttnn_to_layout_311,
+            ttnn_to_layout_312,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_312, False)
+    ttnn.deallocate(ttnn_to_layout_311, False)
+    ttnn.deallocate(ttnn_to_layout_310, False)
+    ttnn.deallocate(ttnn_to_layout_309, False)
+    return [ttnn_concat_54]
+
+
+def main_const_eval_116(device, arg):
+    ttnn_to_device_313 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_313 = ttnn.to_layout(
+        ttnn_to_device_313,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_313, False)
+    ttnn_reshape_82 = ttnn.reshape(
+        ttnn_to_layout_313,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_313, False)
+    return [ttnn_reshape_82]
+
+
+def main_const_eval_117(device, arg):
+    ttnn_to_device_314 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_314 = ttnn.to_layout(
+        ttnn_to_device_314,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_314, False)
+    ttnn_reshape_83 = ttnn.reshape(
+        ttnn_to_layout_314,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_314, False)
+    return [ttnn_reshape_83]
+
+
+def main_const_eval_118(device, arg):
+    ttnn_to_device_315 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_315 = ttnn.to_layout(
+        ttnn_to_device_315,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_315, False)
+    ttnn_reshape_84 = ttnn.reshape(
+        ttnn_to_layout_315,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_315, False)
+    return [ttnn_reshape_84]
+
+
+def main_const_eval_119(device, arg):
+    ttnn_to_device_316 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_316 = ttnn.to_layout(
+        ttnn_to_device_316,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_316, False)
+    ttnn_to_device_317 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_317 = ttnn.to_layout(
+        ttnn_to_device_317,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_317, False)
+    ttnn_to_device_318 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_318 = ttnn.to_layout(
+        ttnn_to_device_318,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_318, False)
+    ttnn_permute_153 = ttnn.permute(
+        ttnn_to_layout_317,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_317, False)
+    ttnn_permute_154 = ttnn.permute(
+        ttnn_to_layout_318,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_318, False)
+    ttnn_permute_155 = ttnn.permute(
+        ttnn_to_layout_316,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_316, False)
+    ttnn_concat_55 = ttnn.concat(
+        [ttnn_permute_155, ttnn_permute_153, ttnn_permute_154],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_155, False)
+    ttnn.deallocate(ttnn_permute_154, False)
+    ttnn.deallocate(ttnn_permute_153, False)
+    return [ttnn_concat_55]
+
+
+def main_const_eval_120(device, arg):
+    ttnn_to_device_319 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_319 = ttnn.to_layout(
+        ttnn_to_device_319,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_319, False)
+    ttnn_reshape_85 = ttnn.reshape(
+        ttnn_to_layout_319,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_319, False)
+    ttnn_typecast_79 = ttnn.typecast(
+        ttnn_reshape_85,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_85, False)
+    ttnn_reshape_86 = ttnn.reshape(
+        ttnn_typecast_79,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_79, False)
+    return [ttnn_reshape_86]
+
+
+def main_const_eval_121(device, arg):
+    ttnn_to_device_320 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_320 = ttnn.to_layout(
+        ttnn_to_device_320,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_320, False)
+    ttnn_reshape_87 = ttnn.reshape(
+        ttnn_to_layout_320,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_320, False)
+    ttnn_typecast_80 = ttnn.typecast(
+        ttnn_reshape_87,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_87, False)
+    ttnn_reshape_88 = ttnn.reshape(
+        ttnn_typecast_80,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_80, False)
+    return [ttnn_reshape_88]
+
+
+def main_const_eval_122(device, arg):
+    ttnn_to_device_321 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_321 = ttnn.to_layout(
+        ttnn_to_device_321,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_321, False)
+    ttnn_reshape_89 = ttnn.reshape(
+        ttnn_to_layout_321,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_321, False)
+    ttnn_typecast_81 = ttnn.typecast(
+        ttnn_reshape_89,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_89, False)
+    ttnn_reshape_90 = ttnn.reshape(
+        ttnn_typecast_81,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_81, False)
+    return [ttnn_reshape_90]
+
+
+def main_const_eval_123(device, arg):
+    ttnn_to_device_322 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_322 = ttnn.to_layout(
+        ttnn_to_device_322,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_322, False)
+    ttnn_to_device_323 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_323 = ttnn.to_layout(
+        ttnn_to_device_323,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_323, False)
+    ttnn_to_device_324 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_324 = ttnn.to_layout(
+        ttnn_to_device_324,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_324, False)
+    ttnn_to_device_325 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_325 = ttnn.to_layout(
+        ttnn_to_device_325,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_325, False)
+    ttnn_concat_56 = ttnn.concat(
+        [
+            ttnn_to_layout_322,
+            ttnn_to_layout_323,
+            ttnn_to_layout_324,
+            ttnn_to_layout_325,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_325, False)
+    ttnn.deallocate(ttnn_to_layout_324, False)
+    ttnn.deallocate(ttnn_to_layout_323, False)
+    ttnn.deallocate(ttnn_to_layout_322, False)
+    return [ttnn_concat_56]
+
+
+def main_const_eval_124(device, arg):
+    ttnn_to_device_326 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_326 = ttnn.to_layout(
+        ttnn_to_device_326,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_326, False)
+    ttnn_reshape_91 = ttnn.reshape(
+        ttnn_to_layout_326,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_326, False)
+    ttnn_typecast_82 = ttnn.typecast(
+        ttnn_reshape_91,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_91, False)
+    ttnn_reshape_92 = ttnn.reshape(
+        ttnn_typecast_82,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_82, False)
+    return [ttnn_reshape_92]
+
+
+def main_const_eval_125(device, arg):
+    ttnn_to_device_327 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_327 = ttnn.to_layout(
+        ttnn_to_device_327,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_327, False)
+    ttnn_to_device_328 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_328 = ttnn.to_layout(
+        ttnn_to_device_328,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_328, False)
+    ttnn_to_device_329 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_329 = ttnn.to_layout(
+        ttnn_to_device_329,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_329, False)
+    ttnn_to_device_330 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_330 = ttnn.to_layout(
+        ttnn_to_device_330,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_330, False)
+    ttnn_permute_156 = ttnn.permute(
+        ttnn_to_layout_328,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_328, False)
+    ttnn_permute_157 = ttnn.permute(
+        ttnn_to_layout_329,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_329, False)
+    ttnn_permute_158 = ttnn.permute(
+        ttnn_to_layout_330,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_330, False)
+    ttnn_permute_159 = ttnn.permute(
+        ttnn_to_layout_327,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_327, False)
+    ttnn_concat_57 = ttnn.concat(
+        [ttnn_permute_159, ttnn_permute_156, ttnn_permute_157, ttnn_permute_158],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_159, False)
+    ttnn.deallocate(ttnn_permute_158, False)
+    ttnn.deallocate(ttnn_permute_157, False)
+    ttnn.deallocate(ttnn_permute_156, False)
+    return [ttnn_concat_57]
+
+
+def main_const_eval_126(device, arg):
+    ttnn_to_device_331 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_331 = ttnn.to_layout(
+        ttnn_to_device_331,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_331, False)
+    ttnn_reshape_93 = ttnn.reshape(
+        ttnn_to_layout_331,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_331, False)
+    return [ttnn_reshape_93]
+
+
+def main_const_eval_127(device, arg):
+    ttnn_to_device_332 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_332 = ttnn.to_layout(
+        ttnn_to_device_332,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_332, False)
+    ttnn_to_device_333 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_333 = ttnn.to_layout(
+        ttnn_to_device_333,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_333, False)
+    ttnn_to_device_334 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_334 = ttnn.to_layout(
+        ttnn_to_device_334,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_334, False)
+    ttnn_concat_58 = ttnn.concat(
+        [ttnn_to_layout_332, ttnn_to_layout_333, ttnn_to_layout_334],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_334, False)
+    ttnn.deallocate(ttnn_to_layout_333, False)
+    ttnn.deallocate(ttnn_to_layout_332, False)
+    return [ttnn_concat_58]
+
+
+def main_const_eval_128(device, arg):
+    ttnn_to_device_335 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_335 = ttnn.to_layout(
+        ttnn_to_device_335,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_335, False)
+    ttnn_to_device_336 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_336 = ttnn.to_layout(
+        ttnn_to_device_336,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_336, False)
+    ttnn_to_device_337 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_337 = ttnn.to_layout(
+        ttnn_to_device_337,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_337, False)
+    ttnn_to_device_338 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_338 = ttnn.to_layout(
+        ttnn_to_device_338,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_338, False)
+    ttnn_concat_59 = ttnn.concat(
+        [
+            ttnn_to_layout_335,
+            ttnn_to_layout_336,
+            ttnn_to_layout_337,
+            ttnn_to_layout_338,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_338, False)
+    ttnn.deallocate(ttnn_to_layout_337, False)
+    ttnn.deallocate(ttnn_to_layout_336, False)
+    ttnn.deallocate(ttnn_to_layout_335, False)
+    return [ttnn_concat_59]
+
+
+def main_const_eval_129(device, arg):
+    ttnn_to_device_339 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_339 = ttnn.to_layout(
+        ttnn_to_device_339,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_339, False)
+    ttnn_to_device_340 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_340 = ttnn.to_layout(
+        ttnn_to_device_340,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_340, False)
+    ttnn_to_device_341 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_341 = ttnn.to_layout(
+        ttnn_to_device_341,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_341, False)
+    ttnn_permute_160 = ttnn.permute(
+        ttnn_to_layout_340,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_340, False)
+    ttnn_permute_161 = ttnn.permute(
+        ttnn_to_layout_341,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_341, False)
+    ttnn_permute_162 = ttnn.permute(
+        ttnn_to_layout_339,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_339, False)
+    ttnn_concat_60 = ttnn.concat(
+        [ttnn_permute_162, ttnn_permute_160, ttnn_permute_161],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_162, False)
+    ttnn.deallocate(ttnn_permute_161, False)
+    ttnn.deallocate(ttnn_permute_160, False)
+    return [ttnn_concat_60]
+
+
+def main_const_eval_130(device, arg):
+    ttnn_to_device_342 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_342 = ttnn.to_layout(
+        ttnn_to_device_342,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_342, False)
+    ttnn_reshape_94 = ttnn.reshape(
+        ttnn_to_layout_342,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_342, False)
+    return [ttnn_reshape_94]
+
+
+def main_const_eval_131(device, arg):
+    ttnn_to_device_343 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_343 = ttnn.to_layout(
+        ttnn_to_device_343,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_343, False)
+    ttnn_reshape_95 = ttnn.reshape(
+        ttnn_to_layout_343,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_343, False)
+    ttnn_typecast_83 = ttnn.typecast(
+        ttnn_reshape_95,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_95, False)
+    ttnn_reshape_96 = ttnn.reshape(
+        ttnn_typecast_83,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_83, False)
+    return [ttnn_reshape_96]
+
+
+def main_const_eval_132(device, arg):
+    ttnn_to_device_344 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_344 = ttnn.to_layout(
+        ttnn_to_device_344,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_344, False)
+    ttnn_to_device_345 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_345 = ttnn.to_layout(
+        ttnn_to_device_345,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_345, False)
+    ttnn_to_device_346 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_346 = ttnn.to_layout(
+        ttnn_to_device_346,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_346, False)
+    ttnn_permute_163 = ttnn.permute(
+        ttnn_to_layout_345,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_345, False)
+    ttnn_permute_164 = ttnn.permute(
+        ttnn_to_layout_346,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_346, False)
+    ttnn_permute_165 = ttnn.permute(
+        ttnn_to_layout_344,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_344, False)
+    ttnn_concat_61 = ttnn.concat(
+        [ttnn_permute_165, ttnn_permute_163, ttnn_permute_164],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_165, False)
+    ttnn.deallocate(ttnn_permute_164, False)
+    ttnn.deallocate(ttnn_permute_163, False)
+    return [ttnn_concat_61]
+
+
+def main_const_eval_133(device, arg):
+    ttnn_to_device_347 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_347 = ttnn.to_layout(
+        ttnn_to_device_347,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_347, False)
+    ttnn_to_device_348 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_348 = ttnn.to_layout(
+        ttnn_to_device_348,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_348, False)
+    ttnn_to_device_349 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_349 = ttnn.to_layout(
+        ttnn_to_device_349,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_349, False)
+    ttnn_to_device_350 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_350 = ttnn.to_layout(
+        ttnn_to_device_350,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_350, False)
+    ttnn_concat_62 = ttnn.concat(
+        [
+            ttnn_to_layout_347,
+            ttnn_to_layout_348,
+            ttnn_to_layout_349,
+            ttnn_to_layout_350,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_350, False)
+    ttnn.deallocate(ttnn_to_layout_349, False)
+    ttnn.deallocate(ttnn_to_layout_348, False)
+    ttnn.deallocate(ttnn_to_layout_347, False)
+    return [ttnn_concat_62]
+
+
+def main_const_eval_134(device, arg):
+    ttnn_to_device_351 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_351 = ttnn.to_layout(
+        ttnn_to_device_351,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_351, False)
+    ttnn_reshape_97 = ttnn.reshape(
+        ttnn_to_layout_351,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_351, False)
+    return [ttnn_reshape_97]
+
+
+def main_const_eval_135(device, arg):
+    ttnn_to_device_352 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_352 = ttnn.to_layout(
+        ttnn_to_device_352,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_352, False)
+    ttnn_to_device_353 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_353 = ttnn.to_layout(
+        ttnn_to_device_353,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_353, False)
+    ttnn_to_device_354 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_354 = ttnn.to_layout(
+        ttnn_to_device_354,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_354, False)
+    ttnn_to_device_355 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_355 = ttnn.to_layout(
+        ttnn_to_device_355,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_355, False)
+    ttnn_permute_166 = ttnn.permute(
+        ttnn_to_layout_353,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_353, False)
+    ttnn_permute_167 = ttnn.permute(
+        ttnn_to_layout_354,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_354, False)
+    ttnn_permute_168 = ttnn.permute(
+        ttnn_to_layout_355,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_355, False)
+    ttnn_permute_169 = ttnn.permute(
+        ttnn_to_layout_352,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_352, False)
+    ttnn_concat_63 = ttnn.concat(
+        [ttnn_permute_169, ttnn_permute_166, ttnn_permute_167, ttnn_permute_168],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_169, False)
+    ttnn.deallocate(ttnn_permute_168, False)
+    ttnn.deallocate(ttnn_permute_167, False)
+    ttnn.deallocate(ttnn_permute_166, False)
+    return [ttnn_concat_63]
+
+
+def main_const_eval_136(device, arg):
+    ttnn_to_device_356 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_356 = ttnn.to_layout(
+        ttnn_to_device_356,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_356, False)
+    ttnn_to_device_357 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_357 = ttnn.to_layout(
+        ttnn_to_device_357,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_357, False)
+    ttnn_to_device_358 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_358 = ttnn.to_layout(
+        ttnn_to_device_358,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_358, False)
+    ttnn_to_device_359 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_359 = ttnn.to_layout(
+        ttnn_to_device_359,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_359, False)
+    ttnn_permute_170 = ttnn.permute(
+        ttnn_to_layout_357,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_357, False)
+    ttnn_permute_171 = ttnn.permute(
+        ttnn_to_layout_358,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_358, False)
+    ttnn_permute_172 = ttnn.permute(
+        ttnn_to_layout_359,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_359, False)
+    ttnn_permute_173 = ttnn.permute(
+        ttnn_to_layout_356,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_356, False)
+    ttnn_concat_64 = ttnn.concat(
+        [ttnn_permute_173, ttnn_permute_170, ttnn_permute_171, ttnn_permute_172],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_173, False)
+    ttnn.deallocate(ttnn_permute_172, False)
+    ttnn.deallocate(ttnn_permute_171, False)
+    ttnn.deallocate(ttnn_permute_170, False)
+    return [ttnn_concat_64]
+
+
+def main_const_eval_137(device, arg):
+    ttnn_to_device_360 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_360 = ttnn.to_layout(
+        ttnn_to_device_360,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_360, False)
+    ttnn_reshape_98 = ttnn.reshape(
+        ttnn_to_layout_360,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_360, False)
+    return [ttnn_reshape_98]
+
+
+def main_const_eval_138(device, arg):
+    ttnn_to_device_361 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_361 = ttnn.to_layout(
+        ttnn_to_device_361,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_361, False)
+    ttnn_to_device_362 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_362 = ttnn.to_layout(
+        ttnn_to_device_362,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_362, False)
+    ttnn_to_device_363 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_363 = ttnn.to_layout(
+        ttnn_to_device_363,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_363, False)
+    ttnn_to_device_364 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_364 = ttnn.to_layout(
+        ttnn_to_device_364,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_364, False)
+    ttnn_permute_174 = ttnn.permute(
+        ttnn_to_layout_362,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_362, False)
+    ttnn_permute_175 = ttnn.permute(
+        ttnn_to_layout_363,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_363, False)
+    ttnn_permute_176 = ttnn.permute(
+        ttnn_to_layout_364,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_364, False)
+    ttnn_permute_177 = ttnn.permute(
+        ttnn_to_layout_361,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_361, False)
+    ttnn_concat_65 = ttnn.concat(
+        [ttnn_permute_177, ttnn_permute_174, ttnn_permute_175, ttnn_permute_176],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_177, False)
+    ttnn.deallocate(ttnn_permute_176, False)
+    ttnn.deallocate(ttnn_permute_175, False)
+    ttnn.deallocate(ttnn_permute_174, False)
+    return [ttnn_concat_65]
+
+
+def main_const_eval_139(device, arg):
+    ttnn_to_device_365 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_365 = ttnn.to_layout(
+        ttnn_to_device_365,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_365, False)
+    ttnn_to_device_366 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_366 = ttnn.to_layout(
+        ttnn_to_device_366,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_366, False)
+    ttnn_to_device_367 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_367 = ttnn.to_layout(
+        ttnn_to_device_367,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_367, False)
+    ttnn_to_device_368 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_368 = ttnn.to_layout(
+        ttnn_to_device_368,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_368, False)
+    ttnn_concat_66 = ttnn.concat(
+        [
+            ttnn_to_layout_365,
+            ttnn_to_layout_366,
+            ttnn_to_layout_367,
+            ttnn_to_layout_368,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_368, False)
+    ttnn.deallocate(ttnn_to_layout_367, False)
+    ttnn.deallocate(ttnn_to_layout_366, False)
+    ttnn.deallocate(ttnn_to_layout_365, False)
+    return [ttnn_concat_66]
+
+
+def main_const_eval_140(device, arg):
+    ttnn_to_device_369 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_369 = ttnn.to_layout(
+        ttnn_to_device_369,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_369, False)
+    ttnn_reshape_99 = ttnn.reshape(
+        ttnn_to_layout_369,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_369, False)
+    ttnn_typecast_84 = ttnn.typecast(
+        ttnn_reshape_99,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_99, False)
+    ttnn_reshape_100 = ttnn.reshape(
+        ttnn_typecast_84,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_84, False)
+    return [ttnn_reshape_100]
+
+
+def main_const_eval_141(device, arg):
+    ttnn_to_device_370 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_370 = ttnn.to_layout(
+        ttnn_to_device_370,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_370, False)
+    ttnn_reshape_101 = ttnn.reshape(
+        ttnn_to_layout_370,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_370, False)
+    ttnn_typecast_85 = ttnn.typecast(
+        ttnn_reshape_101,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_101, False)
+    ttnn_reshape_102 = ttnn.reshape(
+        ttnn_typecast_85,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_85, False)
+    return [ttnn_reshape_102]
+
+
+def main_const_eval_142(device, arg):
+    ttnn_to_device_371 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_371 = ttnn.to_layout(
+        ttnn_to_device_371,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_371, False)
+    ttnn_to_device_372 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_372 = ttnn.to_layout(
+        ttnn_to_device_372,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_372, False)
+    ttnn_to_device_373 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_373 = ttnn.to_layout(
+        ttnn_to_device_373,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_373, False)
+    ttnn_concat_67 = ttnn.concat(
+        [ttnn_to_layout_371, ttnn_to_layout_372, ttnn_to_layout_373],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_373, False)
+    ttnn.deallocate(ttnn_to_layout_372, False)
+    ttnn.deallocate(ttnn_to_layout_371, False)
+    return [ttnn_concat_67]
+
+
+def main_const_eval_143(device, arg):
+    ttnn_to_device_374 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_374 = ttnn.to_layout(
+        ttnn_to_device_374,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_374, False)
+    ttnn_to_device_375 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_375 = ttnn.to_layout(
+        ttnn_to_device_375,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_375, False)
+    ttnn_to_device_376 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_376 = ttnn.to_layout(
+        ttnn_to_device_376,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_376, False)
+    ttnn_concat_68 = ttnn.concat(
+        [ttnn_to_layout_374, ttnn_to_layout_375, ttnn_to_layout_376],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_376, False)
+    ttnn.deallocate(ttnn_to_layout_375, False)
+    ttnn.deallocate(ttnn_to_layout_374, False)
+    return [ttnn_concat_68]
+
+
+def main_const_eval_144(device, arg):
+    ttnn_to_device_377 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_377 = ttnn.to_layout(
+        ttnn_to_device_377,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_377, False)
+    ttnn_reshape_103 = ttnn.reshape(
+        ttnn_to_layout_377,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_377, False)
+    ttnn_typecast_86 = ttnn.typecast(
+        ttnn_reshape_103,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_103, False)
+    ttnn_reshape_104 = ttnn.reshape(
+        ttnn_typecast_86,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_86, False)
+    return [ttnn_reshape_104]
+
+
+def main_const_eval_145(device, arg):
+    ttnn_to_device_378 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_378 = ttnn.to_layout(
+        ttnn_to_device_378,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_378, False)
+    ttnn_reshape_105 = ttnn.reshape(
+        ttnn_to_layout_378,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_378, False)
+    ttnn_typecast_87 = ttnn.typecast(
+        ttnn_reshape_105,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_105, False)
+    ttnn_reshape_106 = ttnn.reshape(
+        ttnn_typecast_87,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_87, False)
+    return [ttnn_reshape_106]
+
+
+def main_const_eval_146(device, arg):
+    ttnn_to_device_379 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_379 = ttnn.to_layout(
+        ttnn_to_device_379,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_379, False)
+    ttnn_to_device_380 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_380 = ttnn.to_layout(
+        ttnn_to_device_380,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_380, False)
+    ttnn_to_device_381 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_381 = ttnn.to_layout(
+        ttnn_to_device_381,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_381, False)
+    ttnn_permute_178 = ttnn.permute(
+        ttnn_to_layout_380,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_380, False)
+    ttnn_permute_179 = ttnn.permute(
+        ttnn_to_layout_381,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_381, False)
+    ttnn_permute_180 = ttnn.permute(
+        ttnn_to_layout_379,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_379, False)
+    ttnn_concat_69 = ttnn.concat(
+        [ttnn_permute_180, ttnn_permute_178, ttnn_permute_179],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_180, False)
+    ttnn.deallocate(ttnn_permute_179, False)
+    ttnn.deallocate(ttnn_permute_178, False)
+    return [ttnn_concat_69]
+
+
+def main_const_eval_147(device, arg):
+    ttnn_to_device_382 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_382 = ttnn.to_layout(
+        ttnn_to_device_382,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_382, False)
+    ttnn_reshape_107 = ttnn.reshape(
+        ttnn_to_layout_382,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_382, False)
+    ttnn_typecast_88 = ttnn.typecast(
+        ttnn_reshape_107,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_107, False)
+    ttnn_reshape_108 = ttnn.reshape(
+        ttnn_typecast_88,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_88, False)
+    return [ttnn_reshape_108]
+
+
+def main_const_eval_148(device, arg):
+    ttnn_to_device_383 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_383 = ttnn.to_layout(
+        ttnn_to_device_383,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_383, False)
+    ttnn_reshape_109 = ttnn.reshape(
+        ttnn_to_layout_383,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_383, False)
+    return [ttnn_reshape_109]
+
+
+def main_const_eval_149(device, arg):
+    ttnn_to_device_384 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_384 = ttnn.to_layout(
+        ttnn_to_device_384,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_384, False)
+    ttnn_reshape_110 = ttnn.reshape(
+        ttnn_to_layout_384,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_384, False)
+    return [ttnn_reshape_110]
+
+
+def main_const_eval_150(device, arg):
+    ttnn_to_device_385 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_385 = ttnn.to_layout(
+        ttnn_to_device_385,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_385, False)
+    ttnn_to_device_386 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_386 = ttnn.to_layout(
+        ttnn_to_device_386,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_386, False)
+    ttnn_to_device_387 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_387 = ttnn.to_layout(
+        ttnn_to_device_387,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_387, False)
+    ttnn_to_device_388 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_388 = ttnn.to_layout(
+        ttnn_to_device_388,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_388, False)
+    ttnn_concat_70 = ttnn.concat(
+        [
+            ttnn_to_layout_385,
+            ttnn_to_layout_386,
+            ttnn_to_layout_387,
+            ttnn_to_layout_388,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_388, False)
+    ttnn.deallocate(ttnn_to_layout_387, False)
+    ttnn.deallocate(ttnn_to_layout_386, False)
+    ttnn.deallocate(ttnn_to_layout_385, False)
+    return [ttnn_concat_70]
+
+
+def main_const_eval_151(device, arg):
+    ttnn_to_device_389 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_389 = ttnn.to_layout(
+        ttnn_to_device_389,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_389, False)
+    ttnn_reshape_111 = ttnn.reshape(
+        ttnn_to_layout_389,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_389, False)
+    return [ttnn_reshape_111]
+
+
+def main_const_eval_152(device, arg):
+    ttnn_to_device_390 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_390 = ttnn.to_layout(
+        ttnn_to_device_390,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_390, False)
+    ttnn_to_device_391 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_391 = ttnn.to_layout(
+        ttnn_to_device_391,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_391, False)
+    ttnn_to_device_392 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_392 = ttnn.to_layout(
+        ttnn_to_device_392,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_392, False)
+    ttnn_concat_71 = ttnn.concat(
+        [ttnn_to_layout_390, ttnn_to_layout_391, ttnn_to_layout_392],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_392, False)
+    ttnn.deallocate(ttnn_to_layout_391, False)
+    ttnn.deallocate(ttnn_to_layout_390, False)
+    return [ttnn_concat_71]
+
+
+def main_const_eval_153(device, arg):
+    ttnn_to_device_393 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_393 = ttnn.to_layout(
+        ttnn_to_device_393,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_393, False)
+    ttnn_to_device_394 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_394 = ttnn.to_layout(
+        ttnn_to_device_394,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_394, False)
+    ttnn_to_device_395 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_395 = ttnn.to_layout(
+        ttnn_to_device_395,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_395, False)
+    ttnn_to_device_396 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_396 = ttnn.to_layout(
+        ttnn_to_device_396,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_396, False)
+    ttnn_permute_181 = ttnn.permute(
+        ttnn_to_layout_394,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_394, False)
+    ttnn_permute_182 = ttnn.permute(
+        ttnn_to_layout_395,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_395, False)
+    ttnn_permute_183 = ttnn.permute(
+        ttnn_to_layout_396,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_396, False)
+    ttnn_permute_184 = ttnn.permute(
+        ttnn_to_layout_393,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_393, False)
+    ttnn_concat_72 = ttnn.concat(
+        [ttnn_permute_184, ttnn_permute_181, ttnn_permute_182, ttnn_permute_183],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_184, False)
+    ttnn.deallocate(ttnn_permute_183, False)
+    ttnn.deallocate(ttnn_permute_182, False)
+    ttnn.deallocate(ttnn_permute_181, False)
+    return [ttnn_concat_72]
+
+
+def main_const_eval_154(device, arg):
+    ttnn_to_device_397 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_397 = ttnn.to_layout(
+        ttnn_to_device_397,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_397, False)
+    ttnn_to_device_398 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_398 = ttnn.to_layout(
+        ttnn_to_device_398,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_398, False)
+    ttnn_to_device_399 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_399 = ttnn.to_layout(
+        ttnn_to_device_399,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_399, False)
+    ttnn_to_device_400 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_400 = ttnn.to_layout(
+        ttnn_to_device_400,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_400, False)
+    ttnn_permute_185 = ttnn.permute(
+        ttnn_to_layout_398,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_398, False)
+    ttnn_permute_186 = ttnn.permute(
+        ttnn_to_layout_399,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_399, False)
+    ttnn_permute_187 = ttnn.permute(
+        ttnn_to_layout_400,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_400, False)
+    ttnn_permute_188 = ttnn.permute(
+        ttnn_to_layout_397,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_397, False)
+    ttnn_concat_73 = ttnn.concat(
+        [ttnn_permute_188, ttnn_permute_185, ttnn_permute_186, ttnn_permute_187],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_188, False)
+    ttnn.deallocate(ttnn_permute_187, False)
+    ttnn.deallocate(ttnn_permute_186, False)
+    ttnn.deallocate(ttnn_permute_185, False)
+    return [ttnn_concat_73]
+
+
+def main_const_eval_155(device, arg):
+    ttnn_to_device_401 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_401 = ttnn.to_layout(
+        ttnn_to_device_401,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_401, False)
+    ttnn_reshape_112 = ttnn.reshape(
+        ttnn_to_layout_401,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_401, False)
+    ttnn_typecast_89 = ttnn.typecast(
+        ttnn_reshape_112,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_112, False)
+    ttnn_reshape_113 = ttnn.reshape(
+        ttnn_typecast_89,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_89, False)
+    return [ttnn_reshape_113]
+
+
+def main_const_eval_156(device, arg):
+    ttnn_to_device_402 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_402 = ttnn.to_layout(
+        ttnn_to_device_402,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_402, False)
+    ttnn_reshape_114 = ttnn.reshape(
+        ttnn_to_layout_402,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_402, False)
+    return [ttnn_reshape_114]
+
+
+def main_const_eval_157(device, arg):
+    ttnn_to_device_403 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_403 = ttnn.to_layout(
+        ttnn_to_device_403,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_403, False)
+    ttnn_reshape_115 = ttnn.reshape(
+        ttnn_to_layout_403,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_403, False)
+    ttnn_typecast_90 = ttnn.typecast(
+        ttnn_reshape_115,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_115, False)
+    ttnn_reshape_116 = ttnn.reshape(
+        ttnn_typecast_90,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_90, False)
+    return [ttnn_reshape_116]
+
+
+def main_const_eval_158(device, arg):
+    ttnn_to_device_404 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_404 = ttnn.to_layout(
+        ttnn_to_device_404,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_404, False)
+    ttnn_to_device_405 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_405 = ttnn.to_layout(
+        ttnn_to_device_405,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_405, False)
+    ttnn_to_device_406 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_406 = ttnn.to_layout(
+        ttnn_to_device_406,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_406, False)
+    ttnn_to_device_407 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_407 = ttnn.to_layout(
+        ttnn_to_device_407,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_407, False)
+    ttnn_concat_74 = ttnn.concat(
+        [
+            ttnn_to_layout_404,
+            ttnn_to_layout_405,
+            ttnn_to_layout_406,
+            ttnn_to_layout_407,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_407, False)
+    ttnn.deallocate(ttnn_to_layout_406, False)
+    ttnn.deallocate(ttnn_to_layout_405, False)
+    ttnn.deallocate(ttnn_to_layout_404, False)
+    return [ttnn_concat_74]
+
+
+def main_const_eval_159(device, arg):
+    ttnn_to_device_408 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_408 = ttnn.to_layout(
+        ttnn_to_device_408,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_408, False)
+    ttnn_to_device_409 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_409 = ttnn.to_layout(
+        ttnn_to_device_409,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_409, False)
+    ttnn_to_device_410 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_410 = ttnn.to_layout(
+        ttnn_to_device_410,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_410, False)
+    ttnn_concat_75 = ttnn.concat(
+        [ttnn_to_layout_408, ttnn_to_layout_409, ttnn_to_layout_410],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_410, False)
+    ttnn.deallocate(ttnn_to_layout_409, False)
+    ttnn.deallocate(ttnn_to_layout_408, False)
+    return [ttnn_concat_75]
+
+
+def main_const_eval_160(device, arg):
+    ttnn_to_device_411 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_411 = ttnn.to_layout(
+        ttnn_to_device_411,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_411, False)
+    ttnn_to_device_412 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_412 = ttnn.to_layout(
+        ttnn_to_device_412,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_412, False)
+    ttnn_to_device_413 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_413 = ttnn.to_layout(
+        ttnn_to_device_413,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_413, False)
+    ttnn_to_device_414 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_414 = ttnn.to_layout(
+        ttnn_to_device_414,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_414, False)
+    ttnn_permute_189 = ttnn.permute(
+        ttnn_to_layout_412,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_412, False)
+    ttnn_permute_190 = ttnn.permute(
+        ttnn_to_layout_413,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_413, False)
+    ttnn_permute_191 = ttnn.permute(
+        ttnn_to_layout_414,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_414, False)
+    ttnn_permute_192 = ttnn.permute(
+        ttnn_to_layout_411,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_411, False)
+    ttnn_concat_76 = ttnn.concat(
+        [ttnn_permute_192, ttnn_permute_189, ttnn_permute_190, ttnn_permute_191],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_192, False)
+    ttnn.deallocate(ttnn_permute_191, False)
+    ttnn.deallocate(ttnn_permute_190, False)
+    ttnn.deallocate(ttnn_permute_189, False)
+    return [ttnn_concat_76]
+
+
+def main_const_eval_161(device, arg):
+    ttnn_to_device_415 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_415 = ttnn.to_layout(
+        ttnn_to_device_415,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_415, False)
+    ttnn_to_device_416 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_416 = ttnn.to_layout(
+        ttnn_to_device_416,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_416, False)
+    ttnn_to_device_417 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_417 = ttnn.to_layout(
+        ttnn_to_device_417,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_417, False)
+    ttnn_to_device_418 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_418 = ttnn.to_layout(
+        ttnn_to_device_418,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_418, False)
+    ttnn_permute_193 = ttnn.permute(
+        ttnn_to_layout_416,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_416, False)
+    ttnn_permute_194 = ttnn.permute(
+        ttnn_to_layout_417,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_417, False)
+    ttnn_permute_195 = ttnn.permute(
+        ttnn_to_layout_418,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_418, False)
+    ttnn_permute_196 = ttnn.permute(
+        ttnn_to_layout_415,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_415, False)
+    ttnn_concat_77 = ttnn.concat(
+        [ttnn_permute_196, ttnn_permute_193, ttnn_permute_194, ttnn_permute_195],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_196, False)
+    ttnn.deallocate(ttnn_permute_195, False)
+    ttnn.deallocate(ttnn_permute_194, False)
+    ttnn.deallocate(ttnn_permute_193, False)
+    return [ttnn_concat_77]
+
+
+def main_const_eval_162(device, arg):
+    ttnn_to_device_419 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_419 = ttnn.to_layout(
+        ttnn_to_device_419,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_419, False)
+    ttnn_to_device_420 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_420 = ttnn.to_layout(
+        ttnn_to_device_420,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_420, False)
+    ttnn_to_device_421 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_421 = ttnn.to_layout(
+        ttnn_to_device_421,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_421, False)
+    ttnn_to_device_422 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_422 = ttnn.to_layout(
+        ttnn_to_device_422,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_422, False)
+    ttnn_concat_78 = ttnn.concat(
+        [
+            ttnn_to_layout_419,
+            ttnn_to_layout_420,
+            ttnn_to_layout_421,
+            ttnn_to_layout_422,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_422, False)
+    ttnn.deallocate(ttnn_to_layout_421, False)
+    ttnn.deallocate(ttnn_to_layout_420, False)
+    ttnn.deallocate(ttnn_to_layout_419, False)
+    return [ttnn_concat_78]
+
+
+def main_const_eval_163(device, arg):
+    ttnn_to_device_423 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_423 = ttnn.to_layout(
+        ttnn_to_device_423,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_423, False)
+    ttnn_reshape_117 = ttnn.reshape(
+        ttnn_to_layout_423,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_423, False)
+    ttnn_typecast_91 = ttnn.typecast(
+        ttnn_reshape_117,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_117, False)
+    ttnn_reshape_118 = ttnn.reshape(
+        ttnn_typecast_91,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_91, False)
+    return [ttnn_reshape_118]
+
+
+def main_const_eval_164(device, arg):
+    ttnn_to_device_424 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_424 = ttnn.to_layout(
+        ttnn_to_device_424,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_424, False)
+    ttnn_to_device_425 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_425 = ttnn.to_layout(
+        ttnn_to_device_425,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_425, False)
+    ttnn_to_device_426 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_426 = ttnn.to_layout(
+        ttnn_to_device_426,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_426, False)
+    ttnn_to_device_427 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_427 = ttnn.to_layout(
+        ttnn_to_device_427,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_427, False)
+    ttnn_concat_79 = ttnn.concat(
+        [
+            ttnn_to_layout_424,
+            ttnn_to_layout_425,
+            ttnn_to_layout_426,
+            ttnn_to_layout_427,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_427, False)
+    ttnn.deallocate(ttnn_to_layout_426, False)
+    ttnn.deallocate(ttnn_to_layout_425, False)
+    ttnn.deallocate(ttnn_to_layout_424, False)
+    return [ttnn_concat_79]
+
+
+def main_const_eval_165(device, arg):
+    ttnn_to_device_428 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_428 = ttnn.to_layout(
+        ttnn_to_device_428,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_428, False)
+    ttnn_to_device_429 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_429 = ttnn.to_layout(
+        ttnn_to_device_429,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_429, False)
+    ttnn_to_device_430 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_430 = ttnn.to_layout(
+        ttnn_to_device_430,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_430, False)
+    ttnn_to_device_431 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_431 = ttnn.to_layout(
+        ttnn_to_device_431,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_431, False)
+    ttnn_permute_197 = ttnn.permute(
+        ttnn_to_layout_429,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_429, False)
+    ttnn_permute_198 = ttnn.permute(
+        ttnn_to_layout_430,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_430, False)
+    ttnn_permute_199 = ttnn.permute(
+        ttnn_to_layout_431,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_431, False)
+    ttnn_permute_200 = ttnn.permute(
+        ttnn_to_layout_428,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_428, False)
+    ttnn_concat_80 = ttnn.concat(
+        [ttnn_permute_200, ttnn_permute_197, ttnn_permute_198, ttnn_permute_199],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_200, False)
+    ttnn.deallocate(ttnn_permute_199, False)
+    ttnn.deallocate(ttnn_permute_198, False)
+    ttnn.deallocate(ttnn_permute_197, False)
+    return [ttnn_concat_80]
+
+
+def main_const_eval_166(device, arg):
+    ttnn_to_device_432 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_432 = ttnn.to_layout(
+        ttnn_to_device_432,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_432, False)
+    ttnn_to_device_433 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_433 = ttnn.to_layout(
+        ttnn_to_device_433,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_433, False)
+    ttnn_to_device_434 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_434 = ttnn.to_layout(
+        ttnn_to_device_434,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_434, False)
+    ttnn_to_device_435 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_435 = ttnn.to_layout(
+        ttnn_to_device_435,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_435, False)
+    ttnn_concat_81 = ttnn.concat(
+        [
+            ttnn_to_layout_432,
+            ttnn_to_layout_433,
+            ttnn_to_layout_434,
+            ttnn_to_layout_435,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_435, False)
+    ttnn.deallocate(ttnn_to_layout_434, False)
+    ttnn.deallocate(ttnn_to_layout_433, False)
+    ttnn.deallocate(ttnn_to_layout_432, False)
+    return [ttnn_concat_81]
+
+
+def main_const_eval_167(device, arg):
+    ttnn_to_device_436 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_436 = ttnn.to_layout(
+        ttnn_to_device_436,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_436, False)
+    ttnn_reshape_119 = ttnn.reshape(
+        ttnn_to_layout_436,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_436, False)
+    ttnn_typecast_92 = ttnn.typecast(
+        ttnn_reshape_119,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_119, False)
+    ttnn_reshape_120 = ttnn.reshape(
+        ttnn_typecast_92,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_92, False)
+    return [ttnn_reshape_120]
+
+
+def main_const_eval_168(device, arg):
+    ttnn_to_device_437 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_437 = ttnn.to_layout(
+        ttnn_to_device_437,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_437, False)
+    ttnn_permute_201 = ttnn.permute(
+        ttnn_to_layout_437,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_437, False)
+    ttnn_typecast_93 = ttnn.typecast(
+        ttnn_permute_201,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_201, False)
+    return [ttnn_typecast_93]
+
+
+def main_const_eval_169(device, arg):
+    ttnn_to_device_438 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_438 = ttnn.to_layout(
+        ttnn_to_device_438,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_438, False)
+    ttnn_reshape_121 = ttnn.reshape(
+        ttnn_to_layout_438,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_438, False)
+    return [ttnn_reshape_121]
+
+
+def main_const_eval_170(device, arg):
+    ttnn_to_device_439 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_439 = ttnn.to_layout(
+        ttnn_to_device_439,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_439, False)
+    ttnn_to_device_440 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_440 = ttnn.to_layout(
+        ttnn_to_device_440,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_440, False)
+    ttnn_to_device_441 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_441 = ttnn.to_layout(
+        ttnn_to_device_441,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_441, False)
+    ttnn_to_device_442 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_442 = ttnn.to_layout(
+        ttnn_to_device_442,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_442, False)
+    ttnn_concat_82 = ttnn.concat(
+        [
+            ttnn_to_layout_439,
+            ttnn_to_layout_440,
+            ttnn_to_layout_441,
+            ttnn_to_layout_442,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_442, False)
+    ttnn.deallocate(ttnn_to_layout_441, False)
+    ttnn.deallocate(ttnn_to_layout_440, False)
+    ttnn.deallocate(ttnn_to_layout_439, False)
+    return [ttnn_concat_82]
+
+
+def main_const_eval_171(device, arg):
+    ttnn_to_device_443 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_443 = ttnn.to_layout(
+        ttnn_to_device_443,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_443, False)
+    ttnn_reshape_122 = ttnn.reshape(
+        ttnn_to_layout_443,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_443, False)
+    ttnn_typecast_94 = ttnn.typecast(
+        ttnn_reshape_122,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_122, False)
+    ttnn_reshape_123 = ttnn.reshape(
+        ttnn_typecast_94,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_94, False)
+    return [ttnn_reshape_123]
+
+
+def main_const_eval_172(device, arg):
+    ttnn_to_device_444 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_444 = ttnn.to_layout(
+        ttnn_to_device_444,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_444, False)
+    ttnn_reshape_124 = ttnn.reshape(
+        ttnn_to_layout_444,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_444, False)
+    return [ttnn_reshape_124]
+
+
+def main_const_eval_173(device, arg):
+    ttnn_to_device_445 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_445 = ttnn.to_layout(
+        ttnn_to_device_445,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_445, False)
+    ttnn_reshape_125 = ttnn.reshape(
+        ttnn_to_layout_445,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_445, False)
+    return [ttnn_reshape_125]
+
+
+def main_const_eval_174(device, arg):
+    ttnn_to_device_446 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_446 = ttnn.to_layout(
+        ttnn_to_device_446,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_446, False)
+    ttnn_to_device_447 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_447 = ttnn.to_layout(
+        ttnn_to_device_447,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_447, False)
+    ttnn_to_device_448 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_448 = ttnn.to_layout(
+        ttnn_to_device_448,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_448, False)
+    ttnn_to_device_449 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_449 = ttnn.to_layout(
+        ttnn_to_device_449,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_449, False)
+    ttnn_permute_202 = ttnn.permute(
+        ttnn_to_layout_447,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_447, False)
+    ttnn_permute_203 = ttnn.permute(
+        ttnn_to_layout_448,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_448, False)
+    ttnn_permute_204 = ttnn.permute(
+        ttnn_to_layout_449,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_449, False)
+    ttnn_permute_205 = ttnn.permute(
+        ttnn_to_layout_446,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_446, False)
+    ttnn_concat_83 = ttnn.concat(
+        [ttnn_permute_205, ttnn_permute_202, ttnn_permute_203, ttnn_permute_204],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_205, False)
+    ttnn.deallocate(ttnn_permute_204, False)
+    ttnn.deallocate(ttnn_permute_203, False)
+    ttnn.deallocate(ttnn_permute_202, False)
+    return [ttnn_concat_83]
+
+
+def main_const_eval_175(device, arg):
+    ttnn_to_device_450 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_450 = ttnn.to_layout(
+        ttnn_to_device_450,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_450, False)
+    ttnn_to_device_451 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_451 = ttnn.to_layout(
+        ttnn_to_device_451,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_451, False)
+    ttnn_to_device_452 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_452 = ttnn.to_layout(
+        ttnn_to_device_452,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_452, False)
+    ttnn_to_device_453 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_453 = ttnn.to_layout(
+        ttnn_to_device_453,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_453, False)
+    ttnn_concat_84 = ttnn.concat(
+        [
+            ttnn_to_layout_450,
+            ttnn_to_layout_451,
+            ttnn_to_layout_452,
+            ttnn_to_layout_453,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_453, False)
+    ttnn.deallocate(ttnn_to_layout_452, False)
+    ttnn.deallocate(ttnn_to_layout_451, False)
+    ttnn.deallocate(ttnn_to_layout_450, False)
+    return [ttnn_concat_84]
+
+
+def main_const_eval_176(device):
+    ttnn_Tensor_1 = ttnn.Tensor(
+        [
+            1.0,
+            0.31622776389122009,
+            0.10000000149011612,
+            0.031622778624296188,
+            0.0099999997764825821,
+            0.0031622778624296188,
+            0.0010000000474974513,
+            0.00031622778624296188,
+        ],
+        [1, 8],
+        ttnn.DataType.FLOAT32,
+        ttnn.Layout.TILE,
+        device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    return [ttnn_Tensor_1]
+
+
+def main_const_eval_177(device, arg):
+    ttnn_to_device_454 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_454 = ttnn.to_layout(
+        ttnn_to_device_454,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_454, False)
+    ttnn_reshape_126 = ttnn.reshape(
+        ttnn_to_layout_454,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_454, False)
+    ttnn_typecast_95 = ttnn.typecast(
+        ttnn_reshape_126,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_126, False)
+    ttnn_reshape_127 = ttnn.reshape(
+        ttnn_typecast_95,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_95, False)
+    return [ttnn_reshape_127]
+
+
+def main_const_eval_178(device, arg):
+    ttnn_to_device_455 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_455 = ttnn.to_layout(
+        ttnn_to_device_455,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_455, False)
+    ttnn_reshape_128 = ttnn.reshape(
+        ttnn_to_layout_455,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_455, False)
+    return [ttnn_reshape_128]
+
+
+def main_const_eval_179(device, arg):
+    ttnn_to_device_456 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_456 = ttnn.to_layout(
+        ttnn_to_device_456,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_456, False)
+    ttnn_reshape_129 = ttnn.reshape(
+        ttnn_to_layout_456,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_456, False)
+    return [ttnn_reshape_129]
+
+
+def main_const_eval_180(device, arg):
+    ttnn_to_device_457 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_457 = ttnn.to_layout(
+        ttnn_to_device_457,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_457, False)
+    ttnn_reshape_130 = ttnn.reshape(
+        ttnn_to_layout_457,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_457, False)
+    return [ttnn_reshape_130]
+
+
+def main_const_eval_181(device, arg):
+    ttnn_to_device_458 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_458 = ttnn.to_layout(
+        ttnn_to_device_458,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_458, False)
+    ttnn_reshape_131 = ttnn.reshape(
+        ttnn_to_layout_458,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_458, False)
+    ttnn_typecast_96 = ttnn.typecast(
+        ttnn_reshape_131,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_131, False)
+    ttnn_reshape_132 = ttnn.reshape(
+        ttnn_typecast_96,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_96, False)
+    return [ttnn_reshape_132]
+
+
+def main_const_eval_182(device, arg):
+    ttnn_to_device_459 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_459 = ttnn.to_layout(
+        ttnn_to_device_459,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_459, False)
+    ttnn_reshape_133 = ttnn.reshape(
+        ttnn_to_layout_459,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_459, False)
+    ttnn_typecast_97 = ttnn.typecast(
+        ttnn_reshape_133,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_133, False)
+    ttnn_reshape_134 = ttnn.reshape(
+        ttnn_typecast_97,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_97, False)
+    return [ttnn_reshape_134]
+
+
+def main_const_eval_183(device, arg):
+    ttnn_to_device_460 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_460 = ttnn.to_layout(
+        ttnn_to_device_460,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_460, False)
+    ttnn_reshape_135 = ttnn.reshape(
+        ttnn_to_layout_460,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_460, False)
+    return [ttnn_reshape_135]
+
+
+def main_const_eval_184(device, arg):
+    ttnn_to_device_461 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_461 = ttnn.to_layout(
+        ttnn_to_device_461,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_461, False)
+    ttnn_reshape_136 = ttnn.reshape(
+        ttnn_to_layout_461,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_461, False)
+    ttnn_typecast_98 = ttnn.typecast(
+        ttnn_reshape_136,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_136, False)
+    ttnn_reshape_137 = ttnn.reshape(
+        ttnn_typecast_98,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_98, False)
+    return [ttnn_reshape_137]
+
+
+def main_const_eval_185(device, arg):
+    ttnn_to_device_462 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_462 = ttnn.to_layout(
+        ttnn_to_device_462,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_462, False)
+    ttnn_reshape_138 = ttnn.reshape(
+        ttnn_to_layout_462,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_462, False)
+    ttnn_typecast_99 = ttnn.typecast(
+        ttnn_reshape_138,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_138, False)
+    ttnn_reshape_139 = ttnn.reshape(
+        ttnn_typecast_99,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_99, False)
+    return [ttnn_reshape_139]
+
+
+def main_const_eval_186(device, arg):
+    ttnn_to_device_463 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_463 = ttnn.to_layout(
+        ttnn_to_device_463,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_463, False)
+    ttnn_reshape_140 = ttnn.reshape(
+        ttnn_to_layout_463,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_463, False)
+    return [ttnn_reshape_140]
+
+
+def main_const_eval_187(device, arg):
+    ttnn_to_device_464 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_mesh_partition_0 = ttnn.mesh_partition(
+        input_tensor=ttnn_to_device_464,
+        dim=0,
+        cluster_axis=1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_464, False)
+    ttnn_to_layout_464 = ttnn.to_layout(
+        ttnn_mesh_partition_0,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_mesh_partition_0, False)
+    ttnn_permute_206 = ttnn.permute(
+        ttnn_to_layout_464,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_464, False)
+    ttnn_typecast_100 = ttnn.typecast(
+        ttnn_permute_206,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_206, False)
+    return [ttnn_typecast_100]
+
+
+def main_const_eval_188(device, arg):
+    ttnn_to_device_465 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_465 = ttnn.to_layout(
+        ttnn_to_device_465,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_465, False)
+    ttnn_reshape_141 = ttnn.reshape(
+        ttnn_to_layout_465,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_465, False)
+    return [ttnn_reshape_141]
+
+
+def main_const_eval_189(device, arg):
+    ttnn_to_device_466 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_466 = ttnn.to_layout(
+        ttnn_to_device_466,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_466, False)
+    ttnn_to_device_467 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_467 = ttnn.to_layout(
+        ttnn_to_device_467,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_467, False)
+    ttnn_to_device_468 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_468 = ttnn.to_layout(
+        ttnn_to_device_468,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_468, False)
+    ttnn_to_device_469 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_469 = ttnn.to_layout(
+        ttnn_to_device_469,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_469, False)
+    ttnn_concat_85 = ttnn.concat(
+        [
+            ttnn_to_layout_466,
+            ttnn_to_layout_467,
+            ttnn_to_layout_468,
+            ttnn_to_layout_469,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_469, False)
+    ttnn.deallocate(ttnn_to_layout_468, False)
+    ttnn.deallocate(ttnn_to_layout_467, False)
+    ttnn.deallocate(ttnn_to_layout_466, False)
+    return [ttnn_concat_85]
+
+
+def main_const_eval_190(device, arg):
+    ttnn_to_device_470 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_470 = ttnn.to_layout(
+        ttnn_to_device_470,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_470, False)
+    ttnn_to_device_471 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_471 = ttnn.to_layout(
+        ttnn_to_device_471,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_471, False)
+    ttnn_to_device_472 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_472 = ttnn.to_layout(
+        ttnn_to_device_472,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_472, False)
+    ttnn_to_device_473 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_473 = ttnn.to_layout(
+        ttnn_to_device_473,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_473, False)
+    ttnn_permute_207 = ttnn.permute(
+        ttnn_to_layout_471,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_471, False)
+    ttnn_permute_208 = ttnn.permute(
+        ttnn_to_layout_472,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_472, False)
+    ttnn_permute_209 = ttnn.permute(
+        ttnn_to_layout_473,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_473, False)
+    ttnn_permute_210 = ttnn.permute(
+        ttnn_to_layout_470,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_470, False)
+    ttnn_concat_86 = ttnn.concat(
+        [ttnn_permute_210, ttnn_permute_207, ttnn_permute_208, ttnn_permute_209],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_210, False)
+    ttnn.deallocate(ttnn_permute_209, False)
+    ttnn.deallocate(ttnn_permute_208, False)
+    ttnn.deallocate(ttnn_permute_207, False)
+    return [ttnn_concat_86]
+
+
+def main_const_eval_191(device, arg):
+    ttnn_to_device_474 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_474 = ttnn.to_layout(
+        ttnn_to_device_474,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_474, False)
+    ttnn_to_device_475 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_475 = ttnn.to_layout(
+        ttnn_to_device_475,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_475, False)
+    ttnn_to_device_476 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_476 = ttnn.to_layout(
+        ttnn_to_device_476,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_476, False)
+    ttnn_concat_87 = ttnn.concat(
+        [ttnn_to_layout_474, ttnn_to_layout_475, ttnn_to_layout_476],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_476, False)
+    ttnn.deallocate(ttnn_to_layout_475, False)
+    ttnn.deallocate(ttnn_to_layout_474, False)
+    return [ttnn_concat_87]
+
+
+def main_const_eval_192(device, arg):
+    ttnn_to_device_477 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_477 = ttnn.to_layout(
+        ttnn_to_device_477,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_477, False)
+    ttnn_reshape_142 = ttnn.reshape(
+        ttnn_to_layout_477,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_477, False)
+    ttnn_typecast_101 = ttnn.typecast(
+        ttnn_reshape_142,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_142, False)
+    ttnn_reshape_143 = ttnn.reshape(
+        ttnn_typecast_101,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_101, False)
+    return [ttnn_reshape_143]
+
+
+def main_const_eval_193(device, arg):
+    ttnn_to_device_478 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_478 = ttnn.to_layout(
+        ttnn_to_device_478,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_478, False)
+    ttnn_to_device_479 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_479 = ttnn.to_layout(
+        ttnn_to_device_479,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_479, False)
+    ttnn_to_device_480 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_480 = ttnn.to_layout(
+        ttnn_to_device_480,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_480, False)
+    ttnn_to_device_481 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_481 = ttnn.to_layout(
+        ttnn_to_device_481,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_481, False)
+    ttnn_concat_88 = ttnn.concat(
+        [
+            ttnn_to_layout_478,
+            ttnn_to_layout_479,
+            ttnn_to_layout_480,
+            ttnn_to_layout_481,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_481, False)
+    ttnn.deallocate(ttnn_to_layout_480, False)
+    ttnn.deallocate(ttnn_to_layout_479, False)
+    ttnn.deallocate(ttnn_to_layout_478, False)
+    return [ttnn_concat_88]
+
+
+def main_const_eval_194(device, arg):
+    ttnn_to_device_482 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_482 = ttnn.to_layout(
+        ttnn_to_device_482,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_482, False)
+    ttnn_reshape_144 = ttnn.reshape(
+        ttnn_to_layout_482,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_482, False)
+    return [ttnn_reshape_144]
+
+
+def main_const_eval_195(device, arg):
+    ttnn_to_device_483 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_483 = ttnn.to_layout(
+        ttnn_to_device_483,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_483, False)
+    ttnn_reshape_145 = ttnn.reshape(
+        ttnn_to_layout_483,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_483, False)
+    return [ttnn_reshape_145]
+
+
+def main_const_eval_196(device, arg):
+    ttnn_to_device_484 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_484 = ttnn.to_layout(
+        ttnn_to_device_484,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_484, False)
+    ttnn_reshape_146 = ttnn.reshape(
+        ttnn_to_layout_484,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_484, False)
+    return [ttnn_reshape_146]
+
+
+def main_const_eval_197(device, arg):
+    ttnn_to_device_485 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_485 = ttnn.to_layout(
+        ttnn_to_device_485,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_485, False)
+    ttnn_reshape_147 = ttnn.reshape(
+        ttnn_to_layout_485,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_485, False)
+    ttnn_typecast_102 = ttnn.typecast(
+        ttnn_reshape_147,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_147, False)
+    ttnn_reshape_148 = ttnn.reshape(
+        ttnn_typecast_102,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_102, False)
+    return [ttnn_reshape_148]
+
+
+def main_const_eval_198(device, arg):
+    ttnn_to_device_486 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_486 = ttnn.to_layout(
+        ttnn_to_device_486,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_486, False)
+    ttnn_reshape_149 = ttnn.reshape(
+        ttnn_to_layout_486,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_486, False)
+    return [ttnn_reshape_149]
+
+
+def main_const_eval_199(device, arg):
+    ttnn_to_device_487 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_mesh_partition_1 = ttnn.mesh_partition(
+        input_tensor=ttnn_to_device_487,
+        dim=0,
+        cluster_axis=1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_487, False)
+    ttnn_to_layout_487 = ttnn.to_layout(
+        ttnn_mesh_partition_1,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_mesh_partition_1, False)
+    ttnn_typecast_103 = ttnn.typecast(
+        ttnn_to_layout_487,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_487, False)
+    return [ttnn_typecast_103]
+
+
+def main_const_eval_200(device, arg):
+    ttnn_to_device_488 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_488 = ttnn.to_layout(
+        ttnn_to_device_488,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_488, False)
+    ttnn_reshape_150 = ttnn.reshape(
+        ttnn_to_layout_488,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_488, False)
+    return [ttnn_reshape_150]
+
+
+def main_const_eval_201(device, arg):
+    ttnn_to_device_489 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_489 = ttnn.to_layout(
+        ttnn_to_device_489,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_489, False)
+    ttnn_to_device_490 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_490 = ttnn.to_layout(
+        ttnn_to_device_490,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_490, False)
+    ttnn_to_device_491 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_491 = ttnn.to_layout(
+        ttnn_to_device_491,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_491, False)
+    ttnn_to_device_492 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_492 = ttnn.to_layout(
+        ttnn_to_device_492,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_492, False)
+    ttnn_concat_89 = ttnn.concat(
+        [
+            ttnn_to_layout_489,
+            ttnn_to_layout_490,
+            ttnn_to_layout_491,
+            ttnn_to_layout_492,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_492, False)
+    ttnn.deallocate(ttnn_to_layout_491, False)
+    ttnn.deallocate(ttnn_to_layout_490, False)
+    ttnn.deallocate(ttnn_to_layout_489, False)
+    return [ttnn_concat_89]
+
+
+def main_const_eval_202(device, arg):
+    ttnn_to_device_493 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_493 = ttnn.to_layout(
+        ttnn_to_device_493,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_493, False)
+    ttnn_to_device_494 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_494 = ttnn.to_layout(
+        ttnn_to_device_494,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_494, False)
+    ttnn_to_device_495 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_495 = ttnn.to_layout(
+        ttnn_to_device_495,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_495, False)
+    ttnn_concat_90 = ttnn.concat(
+        [ttnn_to_layout_493, ttnn_to_layout_494, ttnn_to_layout_495],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_495, False)
+    ttnn.deallocate(ttnn_to_layout_494, False)
+    ttnn.deallocate(ttnn_to_layout_493, False)
+    return [ttnn_concat_90]
+
+
+def main_const_eval_203(device, arg):
+    ttnn_to_device_496 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_496 = ttnn.to_layout(
+        ttnn_to_device_496,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_496, False)
+    ttnn_reshape_151 = ttnn.reshape(
+        ttnn_to_layout_496,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_496, False)
+    ttnn_typecast_104 = ttnn.typecast(
+        ttnn_reshape_151,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_151, False)
+    ttnn_reshape_152 = ttnn.reshape(
+        ttnn_typecast_104,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_104, False)
+    return [ttnn_reshape_152]
+
+
+def main_const_eval_204(device, arg):
+    ttnn_to_device_497 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_497 = ttnn.to_layout(
+        ttnn_to_device_497,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_497, False)
+    ttnn_to_device_498 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_498 = ttnn.to_layout(
+        ttnn_to_device_498,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_498, False)
+    ttnn_to_device_499 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_499 = ttnn.to_layout(
+        ttnn_to_device_499,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_499, False)
+    ttnn_to_device_500 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_500 = ttnn.to_layout(
+        ttnn_to_device_500,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_500, False)
+    ttnn_concat_91 = ttnn.concat(
+        [
+            ttnn_to_layout_497,
+            ttnn_to_layout_498,
+            ttnn_to_layout_499,
+            ttnn_to_layout_500,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_500, False)
+    ttnn.deallocate(ttnn_to_layout_499, False)
+    ttnn.deallocate(ttnn_to_layout_498, False)
+    ttnn.deallocate(ttnn_to_layout_497, False)
+    return [ttnn_concat_91]
+
+
+def main_const_eval_205(device, arg):
+    ttnn_to_device_501 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_501 = ttnn.to_layout(
+        ttnn_to_device_501,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_501, False)
+    ttnn_to_device_502 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_502 = ttnn.to_layout(
+        ttnn_to_device_502,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_502, False)
+    ttnn_to_device_503 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_503 = ttnn.to_layout(
+        ttnn_to_device_503,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_503, False)
+    ttnn_to_device_504 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_504 = ttnn.to_layout(
+        ttnn_to_device_504,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_504, False)
+    ttnn_permute_211 = ttnn.permute(
+        ttnn_to_layout_502,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_502, False)
+    ttnn_permute_212 = ttnn.permute(
+        ttnn_to_layout_503,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_503, False)
+    ttnn_permute_213 = ttnn.permute(
+        ttnn_to_layout_504,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_504, False)
+    ttnn_permute_214 = ttnn.permute(
+        ttnn_to_layout_501,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_501, False)
+    ttnn_concat_92 = ttnn.concat(
+        [ttnn_permute_214, ttnn_permute_211, ttnn_permute_212, ttnn_permute_213],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_214, False)
+    ttnn.deallocate(ttnn_permute_213, False)
+    ttnn.deallocate(ttnn_permute_212, False)
+    ttnn.deallocate(ttnn_permute_211, False)
+    return [ttnn_concat_92]
+
+
+def main_const_eval_206(device, arg):
+    ttnn_to_device_505 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_505 = ttnn.to_layout(
+        ttnn_to_device_505,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_505, False)
+    ttnn_reshape_153 = ttnn.reshape(
+        ttnn_to_layout_505,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_505, False)
+    ttnn_typecast_105 = ttnn.typecast(
+        ttnn_reshape_153,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_153, False)
+    ttnn_reshape_154 = ttnn.reshape(
+        ttnn_typecast_105,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_105, False)
+    return [ttnn_reshape_154]
+
+
+def main_const_eval_207(device, arg):
+    ttnn_to_device_506 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_506 = ttnn.to_layout(
+        ttnn_to_device_506,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_506, False)
+    ttnn_to_device_507 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_507 = ttnn.to_layout(
+        ttnn_to_device_507,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_507, False)
+    ttnn_to_device_508 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_508 = ttnn.to_layout(
+        ttnn_to_device_508,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_508, False)
+    ttnn_to_device_509 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_509 = ttnn.to_layout(
+        ttnn_to_device_509,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_509, False)
+    ttnn_permute_215 = ttnn.permute(
+        ttnn_to_layout_507,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_507, False)
+    ttnn_permute_216 = ttnn.permute(
+        ttnn_to_layout_508,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_508, False)
+    ttnn_permute_217 = ttnn.permute(
+        ttnn_to_layout_509,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_509, False)
+    ttnn_permute_218 = ttnn.permute(
+        ttnn_to_layout_506,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_506, False)
+    ttnn_concat_93 = ttnn.concat(
+        [ttnn_permute_218, ttnn_permute_215, ttnn_permute_216, ttnn_permute_217],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_218, False)
+    ttnn.deallocate(ttnn_permute_217, False)
+    ttnn.deallocate(ttnn_permute_216, False)
+    ttnn.deallocate(ttnn_permute_215, False)
+    return [ttnn_concat_93]
+
+
+def main_const_eval_208(device, arg):
+    ttnn_to_device_510 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_510 = ttnn.to_layout(
+        ttnn_to_device_510,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_510, False)
+    ttnn_reshape_155 = ttnn.reshape(
+        ttnn_to_layout_510,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_510, False)
+    ttnn_typecast_106 = ttnn.typecast(
+        ttnn_reshape_155,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_155, False)
+    ttnn_reshape_156 = ttnn.reshape(
+        ttnn_typecast_106,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_106, False)
+    return [ttnn_reshape_156]
+
+
+def main_const_eval_209(device, arg):
+    ttnn_to_device_511 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_511 = ttnn.to_layout(
+        ttnn_to_device_511,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_511, False)
+    ttnn_reshape_157 = ttnn.reshape(
+        ttnn_to_layout_511,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_511, False)
+    return [ttnn_reshape_157]
+
+
+def main_const_eval_210(device, arg):
+    ttnn_to_device_512 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_512 = ttnn.to_layout(
+        ttnn_to_device_512,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_512, False)
+    ttnn_reshape_158 = ttnn.reshape(
+        ttnn_to_layout_512,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_512, False)
+    return [ttnn_reshape_158]
+
+
+def main_const_eval_211(device, arg):
+    ttnn_to_device_513 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_513 = ttnn.to_layout(
+        ttnn_to_device_513,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_513, False)
+    ttnn_reshape_159 = ttnn.reshape(
+        ttnn_to_layout_513,
+        [1, 1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_513, False)
+    ttnn_typecast_107 = ttnn.typecast(
+        ttnn_reshape_159,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_159, False)
+    ttnn_reshape_160 = ttnn.reshape(
+        ttnn_typecast_107,
+        [1, 18432],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_107, False)
+    return [ttnn_reshape_160]
+
+
+def main_const_eval_212(device, arg):
+    ttnn_to_device_514 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_514 = ttnn.to_layout(
+        ttnn_to_device_514,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_514, False)
+    ttnn_reshape_161 = ttnn.reshape(
+        ttnn_to_layout_514,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_514, False)
+    return [ttnn_reshape_161]
+
+
+def main_const_eval_213(device, arg):
+    ttnn_to_device_515 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_515 = ttnn.to_layout(
+        ttnn_to_device_515,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_515, False)
+    ttnn_to_device_516 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_516 = ttnn.to_layout(
+        ttnn_to_device_516,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_516, False)
+    ttnn_to_device_517 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_517 = ttnn.to_layout(
+        ttnn_to_device_517,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_517, False)
+    ttnn_to_device_518 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_518 = ttnn.to_layout(
+        ttnn_to_device_518,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_518, False)
+    ttnn_permute_219 = ttnn.permute(
+        ttnn_to_layout_516,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_516, False)
+    ttnn_permute_220 = ttnn.permute(
+        ttnn_to_layout_517,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_517, False)
+    ttnn_permute_221 = ttnn.permute(
+        ttnn_to_layout_518,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_518, False)
+    ttnn_permute_222 = ttnn.permute(
+        ttnn_to_layout_515,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_515, False)
+    ttnn_concat_94 = ttnn.concat(
+        [ttnn_permute_222, ttnn_permute_219, ttnn_permute_220, ttnn_permute_221],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_222, False)
+    ttnn.deallocate(ttnn_permute_221, False)
+    ttnn.deallocate(ttnn_permute_220, False)
+    ttnn.deallocate(ttnn_permute_219, False)
+    return [ttnn_concat_94]
+
+
+def main_const_eval_214(device, arg):
+    ttnn_to_device_519 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_519 = ttnn.to_layout(
+        ttnn_to_device_519,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_519, False)
+    ttnn_reshape_162 = ttnn.reshape(
+        ttnn_to_layout_519,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_519, False)
+    ttnn_typecast_108 = ttnn.typecast(
+        ttnn_reshape_162,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_162, False)
+    ttnn_reshape_163 = ttnn.reshape(
+        ttnn_typecast_108,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_108, False)
+    return [ttnn_reshape_163]
+
+
+def main_const_eval_215(device, arg):
+    ttnn_to_device_520 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_520 = ttnn.to_layout(
+        ttnn_to_device_520,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_520, False)
+    ttnn_to_device_521 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_521 = ttnn.to_layout(
+        ttnn_to_device_521,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_521, False)
+    ttnn_to_device_522 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_522 = ttnn.to_layout(
+        ttnn_to_device_522,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_522, False)
+    ttnn_to_device_523 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_523 = ttnn.to_layout(
+        ttnn_to_device_523,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_523, False)
+    ttnn_permute_223 = ttnn.permute(
+        ttnn_to_layout_521,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_521, False)
+    ttnn_permute_224 = ttnn.permute(
+        ttnn_to_layout_522,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_522, False)
+    ttnn_permute_225 = ttnn.permute(
+        ttnn_to_layout_523,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_523, False)
+    ttnn_permute_226 = ttnn.permute(
+        ttnn_to_layout_520,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_520, False)
+    ttnn_concat_95 = ttnn.concat(
+        [ttnn_permute_226, ttnn_permute_223, ttnn_permute_224, ttnn_permute_225],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_226, False)
+    ttnn.deallocate(ttnn_permute_225, False)
+    ttnn.deallocate(ttnn_permute_224, False)
+    ttnn.deallocate(ttnn_permute_223, False)
+    return [ttnn_concat_95]
+
+
+def main_const_eval_216(device, arg):
+    ttnn_to_device_524 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_524 = ttnn.to_layout(
+        ttnn_to_device_524,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_524, False)
+    ttnn_to_device_525 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_525 = ttnn.to_layout(
+        ttnn_to_device_525,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_525, False)
+    ttnn_to_device_526 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_526 = ttnn.to_layout(
+        ttnn_to_device_526,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_526, False)
+    ttnn_to_device_527 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_527 = ttnn.to_layout(
+        ttnn_to_device_527,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_527, False)
+    ttnn_permute_227 = ttnn.permute(
+        ttnn_to_layout_525,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_525, False)
+    ttnn_permute_228 = ttnn.permute(
+        ttnn_to_layout_526,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_526, False)
+    ttnn_permute_229 = ttnn.permute(
+        ttnn_to_layout_527,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_527, False)
+    ttnn_permute_230 = ttnn.permute(
+        ttnn_to_layout_524,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_524, False)
+    ttnn_concat_96 = ttnn.concat(
+        [ttnn_permute_230, ttnn_permute_227, ttnn_permute_228, ttnn_permute_229],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_230, False)
+    ttnn.deallocate(ttnn_permute_229, False)
+    ttnn.deallocate(ttnn_permute_228, False)
+    ttnn.deallocate(ttnn_permute_227, False)
+    return [ttnn_concat_96]
+
+
+def main_const_eval_217(device, arg):
+    ttnn_to_device_528 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_528 = ttnn.to_layout(
+        ttnn_to_device_528,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_528, False)
+    ttnn_to_device_529 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_529 = ttnn.to_layout(
+        ttnn_to_device_529,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_529, False)
+    ttnn_to_device_530 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_530 = ttnn.to_layout(
+        ttnn_to_device_530,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_530, False)
+    ttnn_to_device_531 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_531 = ttnn.to_layout(
+        ttnn_to_device_531,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_531, False)
+    ttnn_concat_97 = ttnn.concat(
+        [
+            ttnn_to_layout_528,
+            ttnn_to_layout_529,
+            ttnn_to_layout_530,
+            ttnn_to_layout_531,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_531, False)
+    ttnn.deallocate(ttnn_to_layout_530, False)
+    ttnn.deallocate(ttnn_to_layout_529, False)
+    ttnn.deallocate(ttnn_to_layout_528, False)
+    return [ttnn_concat_97]
+
+
+def main_const_eval_218(device, arg):
+    ttnn_to_device_532 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_532 = ttnn.to_layout(
+        ttnn_to_device_532,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_532, False)
+    ttnn_to_device_533 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_533 = ttnn.to_layout(
+        ttnn_to_device_533,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_533, False)
+    ttnn_to_device_534 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_534 = ttnn.to_layout(
+        ttnn_to_device_534,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_534, False)
+    ttnn_to_device_535 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_535 = ttnn.to_layout(
+        ttnn_to_device_535,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_535, False)
+    ttnn_permute_231 = ttnn.permute(
+        ttnn_to_layout_533,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_533, False)
+    ttnn_permute_232 = ttnn.permute(
+        ttnn_to_layout_534,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_534, False)
+    ttnn_permute_233 = ttnn.permute(
+        ttnn_to_layout_535,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_535, False)
+    ttnn_permute_234 = ttnn.permute(
+        ttnn_to_layout_532,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_532, False)
+    ttnn_concat_98 = ttnn.concat(
+        [ttnn_permute_234, ttnn_permute_231, ttnn_permute_232, ttnn_permute_233],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_234, False)
+    ttnn.deallocate(ttnn_permute_233, False)
+    ttnn.deallocate(ttnn_permute_232, False)
+    ttnn.deallocate(ttnn_permute_231, False)
+    return [ttnn_concat_98]
+
+
+def main_const_eval_219(device, arg):
+    ttnn_to_device_536 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_536 = ttnn.to_layout(
+        ttnn_to_device_536,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_536, False)
+    ttnn_to_device_537 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_537 = ttnn.to_layout(
+        ttnn_to_device_537,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_537, False)
+    ttnn_to_device_538 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_538 = ttnn.to_layout(
+        ttnn_to_device_538,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_538, False)
+    ttnn_to_device_539 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_539 = ttnn.to_layout(
+        ttnn_to_device_539,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_539, False)
+    ttnn_concat_99 = ttnn.concat(
+        [
+            ttnn_to_layout_536,
+            ttnn_to_layout_537,
+            ttnn_to_layout_538,
+            ttnn_to_layout_539,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_539, False)
+    ttnn.deallocate(ttnn_to_layout_538, False)
+    ttnn.deallocate(ttnn_to_layout_537, False)
+    ttnn.deallocate(ttnn_to_layout_536, False)
+    return [ttnn_concat_99]
+
+
+def main_const_eval_220(device, arg):
+    ttnn_to_device_540 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_540 = ttnn.to_layout(
+        ttnn_to_device_540,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_540, False)
+    ttnn_reshape_164 = ttnn.reshape(
+        ttnn_to_layout_540,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_540, False)
+    return [ttnn_reshape_164]
+
+
+def main_const_eval_221(device, arg):
+    ttnn_to_device_541 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_541 = ttnn.to_layout(
+        ttnn_to_device_541,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_541, False)
+    ttnn_reshape_165 = ttnn.reshape(
+        ttnn_to_layout_541,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_541, False)
+    ttnn_typecast_109 = ttnn.typecast(
+        ttnn_reshape_165,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_165, False)
+    ttnn_reshape_166 = ttnn.reshape(
+        ttnn_typecast_109,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_109, False)
+    return [ttnn_reshape_166]
+
+
+def main_const_eval_222(device, arg):
+    ttnn_to_device_542 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_542 = ttnn.to_layout(
+        ttnn_to_device_542,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_542, False)
+    ttnn_to_device_543 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_543 = ttnn.to_layout(
+        ttnn_to_device_543,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_543, False)
+    ttnn_to_device_544 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_544 = ttnn.to_layout(
+        ttnn_to_device_544,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_544, False)
+    ttnn_to_device_545 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_545 = ttnn.to_layout(
+        ttnn_to_device_545,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_545, False)
+    ttnn_permute_235 = ttnn.permute(
+        ttnn_to_layout_543,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_543, False)
+    ttnn_permute_236 = ttnn.permute(
+        ttnn_to_layout_544,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_544, False)
+    ttnn_permute_237 = ttnn.permute(
+        ttnn_to_layout_545,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_545, False)
+    ttnn_permute_238 = ttnn.permute(
+        ttnn_to_layout_542,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_542, False)
+    ttnn_concat_100 = ttnn.concat(
+        [ttnn_permute_238, ttnn_permute_235, ttnn_permute_236, ttnn_permute_237],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_238, False)
+    ttnn.deallocate(ttnn_permute_237, False)
+    ttnn.deallocate(ttnn_permute_236, False)
+    ttnn.deallocate(ttnn_permute_235, False)
+    return [ttnn_concat_100]
+
+
+def main_const_eval_223(device, arg):
+    ttnn_to_device_546 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_546 = ttnn.to_layout(
+        ttnn_to_device_546,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_546, False)
+    ttnn_reshape_167 = ttnn.reshape(
+        ttnn_to_layout_546,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_546, False)
+    return [ttnn_reshape_167]
+
+
+def main_const_eval_224(device, arg):
+    ttnn_to_device_547 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_547 = ttnn.to_layout(
+        ttnn_to_device_547,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_547, False)
+    ttnn_to_device_548 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_548 = ttnn.to_layout(
+        ttnn_to_device_548,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_548, False)
+    ttnn_to_device_549 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_549 = ttnn.to_layout(
+        ttnn_to_device_549,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_549, False)
+    ttnn_permute_239 = ttnn.permute(
+        ttnn_to_layout_548,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_548, False)
+    ttnn_permute_240 = ttnn.permute(
+        ttnn_to_layout_549,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_549, False)
+    ttnn_permute_241 = ttnn.permute(
+        ttnn_to_layout_547,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_547, False)
+    ttnn_concat_101 = ttnn.concat(
+        [ttnn_permute_241, ttnn_permute_239, ttnn_permute_240],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_241, False)
+    ttnn.deallocate(ttnn_permute_240, False)
+    ttnn.deallocate(ttnn_permute_239, False)
+    return [ttnn_concat_101]
+
+
+def main_const_eval_225(device, arg):
+    ttnn_to_device_550 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_550 = ttnn.to_layout(
+        ttnn_to_device_550,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_550, False)
+    ttnn_reshape_168 = ttnn.reshape(
+        ttnn_to_layout_550,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_550, False)
+    return [ttnn_reshape_168]
+
+
+def main_const_eval_226(device, arg):
+    ttnn_to_device_551 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_551 = ttnn.to_layout(
+        ttnn_to_device_551,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_551, False)
+    ttnn_reshape_169 = ttnn.reshape(
+        ttnn_to_layout_551,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_551, False)
+    ttnn_typecast_110 = ttnn.typecast(
+        ttnn_reshape_169,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_169, False)
+    ttnn_reshape_170 = ttnn.reshape(
+        ttnn_typecast_110,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_110, False)
+    return [ttnn_reshape_170]
+
+
+def main_const_eval_227(device, arg):
+    ttnn_to_device_552 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_552 = ttnn.to_layout(
+        ttnn_to_device_552,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_552, False)
+    ttnn_reshape_171 = ttnn.reshape(
+        ttnn_to_layout_552,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_552, False)
+    ttnn_typecast_111 = ttnn.typecast(
+        ttnn_reshape_171,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_171, False)
+    ttnn_reshape_172 = ttnn.reshape(
+        ttnn_typecast_111,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_111, False)
+    return [ttnn_reshape_172]
+
+
+def main_const_eval_228(device, arg):
+    ttnn_to_device_553 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_553 = ttnn.to_layout(
+        ttnn_to_device_553,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_553, False)
+    ttnn_reshape_173 = ttnn.reshape(
+        ttnn_to_layout_553,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_553, False)
+    return [ttnn_reshape_173]
+
+
+def main_const_eval_229(device, arg):
+    ttnn_to_device_554 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_554 = ttnn.to_layout(
+        ttnn_to_device_554,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_554, False)
+    ttnn_to_device_555 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_555 = ttnn.to_layout(
+        ttnn_to_device_555,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_555, False)
+    ttnn_to_device_556 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_556 = ttnn.to_layout(
+        ttnn_to_device_556,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_556, False)
+    ttnn_concat_102 = ttnn.concat(
+        [ttnn_to_layout_554, ttnn_to_layout_555, ttnn_to_layout_556],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_556, False)
+    ttnn.deallocate(ttnn_to_layout_555, False)
+    ttnn.deallocate(ttnn_to_layout_554, False)
+    return [ttnn_concat_102]
+
+
+def main_const_eval_230(device, arg):
+    ttnn_to_device_557 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_557 = ttnn.to_layout(
+        ttnn_to_device_557,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_557, False)
+    ttnn_to_device_558 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_558 = ttnn.to_layout(
+        ttnn_to_device_558,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_558, False)
+    ttnn_to_device_559 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_559 = ttnn.to_layout(
+        ttnn_to_device_559,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_559, False)
+    ttnn_to_device_560 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_560 = ttnn.to_layout(
+        ttnn_to_device_560,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_560, False)
+    ttnn_concat_103 = ttnn.concat(
+        [
+            ttnn_to_layout_557,
+            ttnn_to_layout_558,
+            ttnn_to_layout_559,
+            ttnn_to_layout_560,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_560, False)
+    ttnn.deallocate(ttnn_to_layout_559, False)
+    ttnn.deallocate(ttnn_to_layout_558, False)
+    ttnn.deallocate(ttnn_to_layout_557, False)
+    return [ttnn_concat_103]
+
+
+def main_const_eval_231(device, arg):
+    ttnn_to_device_561 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_561 = ttnn.to_layout(
+        ttnn_to_device_561,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_561, False)
+    ttnn_to_device_562 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_562 = ttnn.to_layout(
+        ttnn_to_device_562,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_562, False)
+    ttnn_to_device_563 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_563 = ttnn.to_layout(
+        ttnn_to_device_563,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_563, False)
+    ttnn_to_device_564 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_564 = ttnn.to_layout(
+        ttnn_to_device_564,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_564, False)
+    ttnn_permute_242 = ttnn.permute(
+        ttnn_to_layout_562,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_562, False)
+    ttnn_permute_243 = ttnn.permute(
+        ttnn_to_layout_563,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_563, False)
+    ttnn_permute_244 = ttnn.permute(
+        ttnn_to_layout_564,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_564, False)
+    ttnn_permute_245 = ttnn.permute(
+        ttnn_to_layout_561,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_561, False)
+    ttnn_concat_104 = ttnn.concat(
+        [ttnn_permute_245, ttnn_permute_242, ttnn_permute_243, ttnn_permute_244],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_245, False)
+    ttnn.deallocate(ttnn_permute_244, False)
+    ttnn.deallocate(ttnn_permute_243, False)
+    ttnn.deallocate(ttnn_permute_242, False)
+    return [ttnn_concat_104]
+
+
+def main_const_eval_232(device, arg):
+    ttnn_to_device_565 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_565 = ttnn.to_layout(
+        ttnn_to_device_565,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_565, False)
+    ttnn_reshape_174 = ttnn.reshape(
+        ttnn_to_layout_565,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_565, False)
+    return [ttnn_reshape_174]
+
+
+def main_const_eval_233(device):
+    ttnn_Tensor_2 = ttnn.Tensor(
+        [
+            1.0,
+            0.71968567371368408,
+            0.51794743537902832,
+            0.3727593719959259,
+            0.26826956868171692,
+            0.19306977093219757,
+            0.13894954323768616,
+            0.10000000149011612,
+            0.071968555450439453,
+            0.05179474875330925,
+            0.037275936454534531,
+            0.026826959103345871,
+            0.019306976348161697,
+            0.013894956558942795,
+            0.0099999997764825821,
+            0.0071968580596148968,
+            0.0051794731989502907,
+            0.0037275934591889381,
+            0.002682696096599102,
+            0.001930698286741972,
+            0.0013894952135160565,
+            0.0010000000474974513,
+            0.00071968580596148968,
+            0.00051794730825349689,
+            0.00037275932845659554,
+            0.00026826959219761193,
+            0.00019306980539113283,
+            0.00013894953008275479,
+        ],
+        [1, 28],
+        ttnn.DataType.FLOAT32,
+        ttnn.Layout.TILE,
+        device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    return [ttnn_Tensor_2]
+
+
+def main_const_eval_234(device, arg):
+    ttnn_to_device_566 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_566 = ttnn.to_layout(
+        ttnn_to_device_566,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_566, False)
+    ttnn_to_device_567 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_567 = ttnn.to_layout(
+        ttnn_to_device_567,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_567, False)
+    ttnn_to_device_568 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_568 = ttnn.to_layout(
+        ttnn_to_device_568,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_568, False)
+    ttnn_to_device_569 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_569 = ttnn.to_layout(
+        ttnn_to_device_569,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_569, False)
+    ttnn_concat_105 = ttnn.concat(
+        [
+            ttnn_to_layout_566,
+            ttnn_to_layout_567,
+            ttnn_to_layout_568,
+            ttnn_to_layout_569,
+        ],
+        0,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_569, False)
+    ttnn.deallocate(ttnn_to_layout_568, False)
+    ttnn.deallocate(ttnn_to_layout_567, False)
+    ttnn.deallocate(ttnn_to_layout_566, False)
+    return [ttnn_concat_105]
+
+
+def main_const_eval_235(device, arg):
+    ttnn_to_device_570 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_570 = ttnn.to_layout(
+        ttnn_to_device_570,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_570, False)
+    ttnn_to_device_571 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_571 = ttnn.to_layout(
+        ttnn_to_device_571,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_571, False)
+    ttnn_to_device_572 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_572 = ttnn.to_layout(
+        ttnn_to_device_572,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_572, False)
+    ttnn_to_device_573 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_573 = ttnn.to_layout(
+        ttnn_to_device_573,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_573, False)
+    ttnn_permute_246 = ttnn.permute(
+        ttnn_to_layout_571,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_571, False)
+    ttnn_permute_247 = ttnn.permute(
+        ttnn_to_layout_572,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_572, False)
+    ttnn_permute_248 = ttnn.permute(
+        ttnn_to_layout_573,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_573, False)
+    ttnn_permute_249 = ttnn.permute(
+        ttnn_to_layout_570,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_570, False)
+    ttnn_concat_106 = ttnn.concat(
+        [ttnn_permute_249, ttnn_permute_246, ttnn_permute_247, ttnn_permute_248],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_249, False)
+    ttnn.deallocate(ttnn_permute_248, False)
+    ttnn.deallocate(ttnn_permute_247, False)
+    ttnn.deallocate(ttnn_permute_246, False)
+    return [ttnn_concat_106]
+
+
+def main_const_eval_236(device, arg):
+    ttnn_to_device_574 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_574 = ttnn.to_layout(
+        ttnn_to_device_574,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_574, False)
+    ttnn_reshape_175 = ttnn.reshape(
+        ttnn_to_layout_574,
+        [1, 3072],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_574, False)
+    return [ttnn_reshape_175]
+
+
+def main_const_eval_237(device, arg):
+    ttnn_to_device_575 = ttnn.to_device(
+        arg[3],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_575 = ttnn.to_layout(
+        ttnn_to_device_575,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_575, False)
+    ttnn_to_device_576 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_576 = ttnn.to_layout(
+        ttnn_to_device_576,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_576, False)
+    ttnn_to_device_577 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_577 = ttnn.to_layout(
+        ttnn_to_device_577,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_577, False)
+    ttnn_to_device_578 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_578 = ttnn.to_layout(
+        ttnn_to_device_578,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_578, False)
+    ttnn_permute_250 = ttnn.permute(
+        ttnn_to_layout_576,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_576, False)
+    ttnn_permute_251 = ttnn.permute(
+        ttnn_to_layout_577,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_577, False)
+    ttnn_permute_252 = ttnn.permute(
+        ttnn_to_layout_578,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_578, False)
+    ttnn_permute_253 = ttnn.permute(
+        ttnn_to_layout_575,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_575, False)
+    ttnn_concat_107 = ttnn.concat(
+        [ttnn_permute_253, ttnn_permute_250, ttnn_permute_251, ttnn_permute_252],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_253, False)
+    ttnn.deallocate(ttnn_permute_252, False)
+    ttnn.deallocate(ttnn_permute_251, False)
+    ttnn.deallocate(ttnn_permute_250, False)
+    return [ttnn_concat_107]
+
+
+def main_const_eval_238(device):
+    ttnn_ones_0 = ttnn.ones(
+        shape=ttnn.Shape([1, 1, 1]),
+        dtype=ttnn.DataType.BFLOAT16,
+        layout=ttnn.Layout.TILE,
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    return [ttnn_ones_0]
+
+
+def main_const_eval_239(device, arg):
+    ttnn_to_device_579 = ttnn.to_device(
+        arg[2],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_579 = ttnn.to_layout(
+        ttnn_to_device_579,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_579, False)
+    ttnn_to_device_580 = ttnn.to_device(
+        arg[1],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_580 = ttnn.to_layout(
+        ttnn_to_device_580,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_580, False)
+    ttnn_to_device_581 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_581 = ttnn.to_layout(
+        ttnn_to_device_581,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_581, False)
+    ttnn_permute_254 = ttnn.permute(
+        ttnn_to_layout_580,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_580, False)
+    ttnn_permute_255 = ttnn.permute(
+        ttnn_to_layout_581,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_581, False)
+    ttnn_permute_256 = ttnn.permute(
+        ttnn_to_layout_579,
+        [1, 0],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+        pad_value=0.0,
+    )
+    ttnn.deallocate(ttnn_to_layout_579, False)
+    ttnn_concat_108 = ttnn.concat(
+        [ttnn_permute_256, ttnn_permute_254, ttnn_permute_255],
+        1,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_permute_256, False)
+    ttnn.deallocate(ttnn_permute_255, False)
+    ttnn.deallocate(ttnn_permute_254, False)
+    return [ttnn_concat_108]
+
+
+def main_const_eval_240(device, arg):
+    ttnn_to_device_582 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_582 = ttnn.to_layout(
+        ttnn_to_device_582,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_582, False)
+    ttnn_reshape_176 = ttnn.reshape(
+        ttnn_to_layout_582,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_582, False)
+    ttnn_typecast_112 = ttnn.typecast(
+        ttnn_reshape_176,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_176, False)
+    ttnn_reshape_177 = ttnn.reshape(
+        ttnn_typecast_112,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_112, False)
+    return [ttnn_reshape_177]
+
+
+def main_const_eval_241(device, arg):
+    ttnn_to_device_583 = ttnn.to_device(
+        arg[0],
+        device=device,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn_to_layout_583 = ttnn.to_layout(
+        ttnn_to_device_583,
+        ttnn.Layout.TILE,
+        None,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_device_583, False)
+    ttnn_reshape_178 = ttnn.reshape(
+        ttnn_to_layout_583,
+        [1, 1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_to_layout_583, False)
+    ttnn_typecast_113 = ttnn.typecast(
+        ttnn_reshape_178,
+        ttnn.DataType.FLOAT32,
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_reshape_178, False)
+    ttnn_reshape_179 = ttnn.reshape(
+        ttnn_typecast_113,
+        [1, 9216],
+        memory_config=ttnn.MemoryConfig(
+            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+        ),
+    )
+    ttnn.deallocate(ttnn_typecast_113, False)
+    return [ttnn_reshape_179]
+
+
+ce_cache__main = {}
+
 
 class ModelTTNN(LightweightModule):
     def __init__(self, device):
         self.device = device
         self.weights = params.load_weights_for__main(device)
-        self.weights = consteval.run_consteval(self.weights, device)
 
     def forward(self, activations):
+        global ce_cache__main
+        ce_cache__main = consteval__main(self.device, ce_cache__main, self.weights)
         args_1 = activations[0]
         args_0 = activations[1]
         args_5 = activations[2]
@@ -68,8 +16705,8 @@ class ModelTTNN(LightweightModule):
         args_48 = activations[49]
         args_49 = activations[50]
         args_50 = activations[51]
-        var_0 = self.weights["transformer.time_embed.timestep_frequencies_28"]
-        var_1 = self.weights["transformer.ones_constant"]
+        var_0 = ce_cache__main["main_const_eval_233"]
+        var_1 = ce_cache__main["main_const_eval_238"]
         ttnn_to_layout_584 = ttnn.to_layout(
             args_2,
             ttnn.Layout.TILE,
@@ -206,7 +16843,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_typecast_114, False)
         ttnn_multiply_0 = ttnn.multiply(
             ttnn_reshape_184,
-            self.weights["transformer.time_embed.timestep_frequencies_128"],
+            ce_cache__main["main_const_eval_0"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -237,8 +16874,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_sin_0, False)
         ttnn_linear_1 = ttnn.linear(
             ttnn_concat_110,
-            self.weights["transformer.permuted.time_embed.timestep_embedder.linear_1.weight"],
-            bias=self.weights["transformer.typecast.time_embed.timestep_embedder.linear_1.bias"],
+            ce_cache__main["main_const_eval_168"],
+            bias=ce_cache__main["main_const_eval_95"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -252,8 +16889,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_concat_110, False)
         ttnn_linear_2 = ttnn.linear(
             ttnn_linear_1,
-            self.weights["transformer.partitioned.time_embed.timestep_embedder.linear_2.weight"],
-            bias=self.weights["transformer.partitioned.time_embed.timestep_embedder.linear_2.bias"],
+            ce_cache__main["main_const_eval_187"],
+            bias=ce_cache__main["main_const_eval_199"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -267,7 +16904,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_linear_1, False)
         ttnn_matmul_1 = ttnn.matmul(
             ttnn_linear_2,
-            self.weights["transformer.fused_norm_weight"],
+            ce_cache__main["main_const_eval_107"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -823,7 +17460,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_186, False)
         ttnn_add_0 = ttnn.add(
             ttnn_all_gather_0,
-            self.weights["transformer.reshaped.transformer_blocks.0.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_157"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -928,8 +17565,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_2, False)
         ttnn_linear_3 = ttnn.linear(
             ttnn_reshape_190,
-            self.weights["transformer.transformer_blocks.0.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.0.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_132"],
+            bias=ce_cache__main["main_const_eval_19"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -1094,7 +17731,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_195, False)
         ttnn_add_3 = ttnn.add(
             ttnn_all_gather_1,
-            self.weights["transformer.reshaped.transformer_blocks.0.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_208"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -1182,8 +17819,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_5, False)
         ttnn_linear_5 = ttnn.linear(
             ttnn_reshape_198,
-            self.weights["transformer.transformer_blocks.0.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.0.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_71"],
+            bias=ce_cache__main["main_const_eval_191"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -1320,7 +17957,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn_multiply_3 = ttnn.multiply(
             ttnn_slice_67,
-            self.weights["transformer.time_embed.timestep_frequencies_8"],
+            ce_cache__main["main_const_eval_176"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -1975,7 +18612,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_218, False)
         ttnn_add_8 = ttnn.add(
             ttnn_all_gather_2,
-            self.weights["transformer.reshaped.transformer_blocks.0.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_134"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2187,7 +18824,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_225, False)
         ttnn_add_12 = ttnn.add(
             ttnn_all_gather_3,
-            self.weights["transformer.reshaped.transformer_blocks.0.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_23"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2339,7 +18976,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_230, False)
         ttnn_add_14 = ttnn.add(
             ttnn_all_gather_4,
-            self.weights["transformer.reshaped.transformer_blocks.1.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_147"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2444,8 +19081,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_16, False)
         ttnn_linear_7 = ttnn.linear(
             ttnn_reshape_234,
-            self.weights["transformer.transformer_blocks.1.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.1.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_39"],
+            bias=ce_cache__main["main_const_eval_65"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -2608,7 +19245,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_239, False)
         ttnn_add_17 = ttnn.add(
             ttnn_all_gather_5,
-            self.weights["transformer.reshaped.transformer_blocks.0.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_179"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2820,7 +19457,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_246, False)
         ttnn_add_21 = ttnn.add(
             ttnn_all_gather_6,
-            self.weights["transformer.reshaped.transformer_blocks.0.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_212"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2914,7 +19551,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_249, False)
         ttnn_add_23 = ttnn.add(
             ttnn_all_gather_7,
-            self.weights["transformer.reshaped.transformer_blocks.1.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_140"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3002,8 +19639,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_25, False)
         ttnn_linear_9 = ttnn.linear(
             ttnn_reshape_252,
-            self.weights["transformer.transformer_blocks.1.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.1.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_2"],
+            bias=ce_cache__main["main_const_eval_142"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -3519,7 +20156,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_264, False)
         ttnn_add_28 = ttnn.add(
             ttnn_all_gather_8,
-            self.weights["transformer.reshaped.transformer_blocks.1.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_42"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3731,7 +20368,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_271, False)
         ttnn_add_32 = ttnn.add(
             ttnn_all_gather_9,
-            self.weights["transformer.reshaped.transformer_blocks.1.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_109"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3883,7 +20520,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_276, False)
         ttnn_add_34 = ttnn.add(
             ttnn_all_gather_10,
-            self.weights["transformer.reshaped.transformer_blocks.2.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_184"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3988,8 +20625,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_36, False)
         ttnn_linear_11 = ttnn.linear(
             ttnn_reshape_280,
-            self.weights["transformer.transformer_blocks.2.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.2.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_224"],
+            bias=ce_cache__main["main_const_eval_159"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -4152,7 +20789,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_285, False)
         ttnn_add_37 = ttnn.add(
             ttnn_all_gather_11,
-            self.weights["transformer.reshaped.transformer_blocks.1.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_29"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4364,7 +21001,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_292, False)
         ttnn_add_41 = ttnn.add(
             ttnn_all_gather_12,
-            self.weights["transformer.reshaped.transformer_blocks.1.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_126"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4458,7 +21095,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_295, False)
         ttnn_add_43 = ttnn.add(
             ttnn_all_gather_13,
-            self.weights["transformer.reshaped.transformer_blocks.2.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_49"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4546,8 +21183,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_45, False)
         ttnn_linear_13 = ttnn.linear(
             ttnn_reshape_298,
-            self.weights["transformer.transformer_blocks.2.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.2.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_119"],
+            bias=ce_cache__main["main_const_eval_51"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -5063,7 +21700,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_310, False)
         ttnn_add_48 = ttnn.add(
             ttnn_all_gather_14,
-            self.weights["transformer.reshaped.transformer_blocks.2.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_195"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5275,7 +21912,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_317, False)
         ttnn_add_52 = ttnn.add(
             ttnn_all_gather_15,
-            self.weights["transformer.reshaped.transformer_blocks.2.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_85"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5427,7 +22064,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_322, False)
         ttnn_add_54 = ttnn.add(
             ttnn_all_gather_16,
-            self.weights["transformer.reshaped.transformer_blocks.3.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_24"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5532,8 +22169,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_56, False)
         ttnn_linear_15 = ttnn.linear(
             ttnn_reshape_326,
-            self.weights["transformer.transformer_blocks.3.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.3.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_129"],
+            bias=ce_cache__main["main_const_eval_9"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -5696,7 +22333,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_331, False)
         ttnn_add_57 = ttnn.add(
             ttnn_all_gather_17,
-            self.weights["transformer.reshaped.transformer_blocks.2.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_116"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5908,7 +22545,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_338, False)
         ttnn_add_61 = ttnn.add(
             ttnn_all_gather_18,
-            self.weights["transformer.reshaped.transformer_blocks.2.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_35"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6002,7 +22639,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_341, False)
         ttnn_add_63 = ttnn.add(
             ttnn_all_gather_19,
-            self.weights["transformer.reshaped.transformer_blocks.3.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_192"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6090,8 +22727,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_65, False)
         ttnn_linear_17 = ttnn.linear(
             ttnn_reshape_344,
-            self.weights["transformer.transformer_blocks.3.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.3.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_86"],
+            bias=ce_cache__main["main_const_eval_34"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -6607,7 +23244,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_356, False)
         ttnn_add_68 = ttnn.add(
             ttnn_all_gather_20,
-            self.weights["transformer.reshaped.transformer_blocks.3.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_220"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6819,7 +23456,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_363, False)
         ttnn_add_72 = ttnn.add(
             ttnn_all_gather_21,
-            self.weights["transformer.reshaped.transformer_blocks.3.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_3"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -6971,7 +23608,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_368, False)
         ttnn_add_74 = ttnn.add(
             ttnn_all_gather_22,
-            self.weights["transformer.reshaped.transformer_blocks.4.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_111"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7076,8 +23713,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_76, False)
         ttnn_linear_19 = ttnn.linear(
             ttnn_reshape_372,
-            self.weights["transformer.transformer_blocks.4.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.4.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_40"],
+            bias=ce_cache__main["main_const_eval_202"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -7240,7 +23877,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_377, False)
         ttnn_add_77 = ttnn.add(
             ttnn_all_gather_23,
-            self.weights["transformer.reshaped.transformer_blocks.3.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_91"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7452,7 +24089,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_384, False)
         ttnn_add_81 = ttnn.add(
             ttnn_all_gather_24,
-            self.weights["transformer.reshaped.transformer_blocks.3.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_76"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7546,7 +24183,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_387, False)
         ttnn_add_83 = ttnn.add(
             ttnn_all_gather_25,
-            self.weights["transformer.reshaped.transformer_blocks.4.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_211"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -7634,8 +24271,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_85, False)
         ttnn_linear_21 = ttnn.linear(
             ttnn_reshape_390,
-            self.weights["transformer.transformer_blocks.4.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.4.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_44"],
+            bias=ce_cache__main["main_const_eval_127"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -8151,7 +24788,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_402, False)
         ttnn_add_88 = ttnn.add(
             ttnn_all_gather_26,
-            self.weights["transformer.reshaped.transformer_blocks.4.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_41"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8363,7 +25000,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_409, False)
         ttnn_add_92 = ttnn.add(
             ttnn_all_gather_27,
-            self.weights["transformer.reshaped.transformer_blocks.4.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_209"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8515,7 +25152,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_414, False)
         ttnn_add_94 = ttnn.add(
             ttnn_all_gather_28,
-            self.weights["transformer.reshaped.transformer_blocks.5.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_80"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8620,8 +25257,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_96, False)
         ttnn_linear_23 = ttnn.linear(
             ttnn_reshape_418,
-            self.weights["transformer.transformer_blocks.5.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.5.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_73"],
+            bias=ce_cache__main["main_const_eval_229"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -8784,7 +25421,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_423, False)
         ttnn_add_97 = ttnn.add(
             ttnn_all_gather_29,
-            self.weights["transformer.reshaped.transformer_blocks.4.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_58"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -8996,7 +25633,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_430, False)
         ttnn_add_101 = ttnn.add(
             ttnn_all_gather_30,
-            self.weights["transformer.reshaped.transformer_blocks.4.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_113"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -9090,7 +25727,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_433, False)
         ttnn_add_103 = ttnn.add(
             ttnn_all_gather_31,
-            self.weights["transformer.reshaped.transformer_blocks.5.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_10"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -9178,8 +25815,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_105, False)
         ttnn_linear_25 = ttnn.linear(
             ttnn_reshape_436,
-            self.weights["transformer.transformer_blocks.5.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.5.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_146"],
+            bias=ce_cache__main["main_const_eval_100"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -9695,7 +26332,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_448, False)
         ttnn_add_108 = ttnn.add(
             ttnn_all_gather_32,
-            self.weights["transformer.reshaped.transformer_blocks.5.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_70"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -9907,7 +26544,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_455, False)
         ttnn_add_112 = ttnn.add(
             ttnn_all_gather_33,
-            self.weights["transformer.reshaped.transformer_blocks.5.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_232"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10059,7 +26696,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_460, False)
         ttnn_add_114 = ttnn.add(
             ttnn_all_gather_34,
-            self.weights["transformer.reshaped.transformer_blocks.6.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_56"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10164,8 +26801,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_116, False)
         ttnn_linear_27 = ttnn.linear(
             ttnn_reshape_464,
-            self.weights["transformer.transformer_blocks.6.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.6.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_103"],
+            bias=ce_cache__main["main_const_eval_5"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -10328,7 +26965,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_469, False)
         ttnn_add_117 = ttnn.add(
             ttnn_all_gather_35,
-            self.weights["transformer.reshaped.transformer_blocks.5.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_151"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10540,7 +27177,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_476, False)
         ttnn_add_121 = ttnn.add(
             ttnn_all_gather_36,
-            self.weights["transformer.reshaped.transformer_blocks.5.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_96"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10634,7 +27271,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_479, False)
         ttnn_add_123 = ttnn.add(
             ttnn_all_gather_37,
-            self.weights["transformer.reshaped.transformer_blocks.6.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_171"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -10722,8 +27359,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_125, False)
         ttnn_linear_29 = ttnn.linear(
             ttnn_reshape_482,
-            self.weights["transformer.transformer_blocks.6.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.6.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_239"],
+            bias=ce_cache__main["main_const_eval_53"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -11239,7 +27876,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_494, False)
         ttnn_add_128 = ttnn.add(
             ttnn_all_gather_38,
-            self.weights["transformer.reshaped.transformer_blocks.6.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_106"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -11451,7 +28088,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_501, False)
         ttnn_add_132 = ttnn.add(
             ttnn_all_gather_39,
-            self.weights["transformer.reshaped.transformer_blocks.6.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_18"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -11603,7 +28240,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_506, False)
         ttnn_add_134 = ttnn.add(
             ttnn_all_gather_40,
-            self.weights["transformer.reshaped.transformer_blocks.7.norm1_context.linear.bias"],
+            ce_cache__main["main_const_eval_124"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -11708,8 +28345,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_136, False)
         ttnn_linear_31 = ttnn.linear(
             ttnn_reshape_510,
-            self.weights["transformer.transformer_blocks.7.attn.fused_add_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.7.attn.fused_add_qkv_bias"],
+            ce_cache__main["main_const_eval_17"],
+            bias=ce_cache__main["main_const_eval_152"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -11872,7 +28509,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_515, False)
         ttnn_add_137 = ttnn.add(
             ttnn_all_gather_41,
-            self.weights["transformer.reshaped.transformer_blocks.6.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_225"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12084,7 +28721,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_522, False)
         ttnn_add_141 = ttnn.add(
             ttnn_all_gather_42,
-            self.weights["transformer.reshaped.transformer_blocks.6.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_63"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12178,7 +28815,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_525, False)
         ttnn_add_143 = ttnn.add(
             ttnn_all_gather_43,
-            self.weights["transformer.reshaped.transformer_blocks.7.norm1.linear.bias"],
+            ce_cache__main["main_const_eval_78"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12266,8 +28903,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_145, False)
         ttnn_linear_33 = ttnn.linear(
             ttnn_reshape_528,
-            self.weights["transformer.transformer_blocks.7.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.transformer_blocks.7.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_28"],
+            bias=ce_cache__main["main_const_eval_143"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -12783,7 +29420,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_540, False)
         ttnn_add_148 = ttnn.add(
             ttnn_all_gather_44,
-            self.weights["transformer.reshaped.transformer_blocks.7.attn.to_add_out.bias"],
+            ce_cache__main["main_const_eval_11"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -12995,7 +29632,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_547, False)
         ttnn_add_152 = ttnn.add(
             ttnn_all_gather_45,
-            self.weights["transformer.reshaped.transformer_blocks.7.ff_context.net.2.bias"],
+            ce_cache__main["main_const_eval_172"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13185,7 +29822,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_554, False)
         ttnn_add_154 = ttnn.add(
             ttnn_all_gather_46,
-            self.weights["transformer.reshaped.transformer_blocks.7.attn.to_out.0.bias"],
+            ce_cache__main["main_const_eval_236"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13397,7 +30034,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_561, False)
         ttnn_add_158 = ttnn.add(
             ttnn_all_gather_47,
-            self.weights["transformer.reshaped.transformer_blocks.7.ff.net.2.bias"],
+            ce_cache__main["main_const_eval_74"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13500,7 +30137,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_564, False)
         ttnn_add_160 = ttnn.add(
             ttnn_all_gather_48,
-            self.weights["transformer.reshaped.single_transformer_blocks.0.norm.linear.bias"],
+            ce_cache__main["main_const_eval_69"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -13606,8 +30243,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_162, False)
         ttnn_linear_36 = ttnn.linear(
             ttnn_reshape_568,
-            self.weights["transformer.single_transformer_blocks.0.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.0.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_205"],
+            bias=ce_cache__main["main_const_eval_162"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -14138,7 +30775,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_579, False)
         ttnn_add_165 = ttnn.add(
             ttnn_all_gather_51,
-            self.weights["transformer.reshaped.single_transformer_blocks.0.proj_out.bias"],
+            ce_cache__main["main_const_eval_8"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -14308,7 +30945,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_584, False)
         ttnn_add_167 = ttnn.add(
             ttnn_all_gather_52,
-            self.weights["transformer.reshaped.single_transformer_blocks.1.norm.linear.bias"],
+            ce_cache__main["main_const_eval_177"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -14414,8 +31051,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_169, False)
         ttnn_linear_37 = ttnn.linear(
             ttnn_reshape_588,
-            self.weights["transformer.single_transformer_blocks.1.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.1.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_215"],
+            bias=ce_cache__main["main_const_eval_166"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -14946,7 +31583,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_599, False)
         ttnn_add_172 = ttnn.add(
             ttnn_all_gather_55,
-            self.weights["transformer.reshaped.single_transformer_blocks.1.proj_out.bias"],
+            ce_cache__main["main_const_eval_87"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -15116,7 +31753,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_604, False)
         ttnn_add_174 = ttnn.add(
             ttnn_all_gather_56,
-            self.weights["transformer.reshaped.single_transformer_blocks.2.norm.linear.bias"],
+            ce_cache__main["main_const_eval_206"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -15222,8 +31859,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_176, False)
         ttnn_linear_38 = ttnn.linear(
             ttnn_reshape_608,
-            self.weights["transformer.single_transformer_blocks.2.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.2.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_165"],
+            bias=ce_cache__main["main_const_eval_115"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -15754,7 +32391,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_619, False)
         ttnn_add_179 = ttnn.add(
             ttnn_all_gather_59,
-            self.weights["transformer.reshaped.single_transformer_blocks.2.proj_out.bias"],
+            ce_cache__main["main_const_eval_180"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -15924,7 +32561,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_624, False)
         ttnn_add_181 = ttnn.add(
             ttnn_all_gather_60,
-            self.weights["transformer.reshaped.single_transformer_blocks.3.norm.linear.bias"],
+            ce_cache__main["main_const_eval_226"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -16030,8 +32667,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_183, False)
         ttnn_linear_39 = ttnn.linear(
             ttnn_reshape_628,
-            self.weights["transformer.single_transformer_blocks.3.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.3.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_154"],
+            bias=ce_cache__main["main_const_eval_77"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -16562,7 +33199,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_639, False)
         ttnn_add_186 = ttnn.add(
             ttnn_all_gather_63,
-            self.weights["transformer.reshaped.single_transformer_blocks.3.proj_out.bias"],
+            ce_cache__main["main_const_eval_188"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -16732,7 +33369,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_644, False)
         ttnn_add_188 = ttnn.add(
             ttnn_all_gather_64,
-            self.weights["transformer.reshaped.single_transformer_blocks.4.norm.linear.bias"],
+            ce_cache__main["main_const_eval_167"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -16838,8 +33475,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_190, False)
         ttnn_linear_40 = ttnn.linear(
             ttnn_reshape_648,
-            self.weights["transformer.single_transformer_blocks.4.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.4.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_93"],
+            bias=ce_cache__main["main_const_eval_170"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -17370,7 +34007,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_659, False)
         ttnn_add_193 = ttnn.add(
             ttnn_all_gather_67,
-            self.weights["transformer.reshaped.single_transformer_blocks.4.proj_out.bias"],
+            ce_cache__main["main_const_eval_13"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -17540,7 +34177,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_664, False)
         ttnn_add_195 = ttnn.add(
             ttnn_all_gather_68,
-            self.weights["transformer.reshaped.single_transformer_blocks.5.norm.linear.bias"],
+            ce_cache__main["main_const_eval_144"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -17646,8 +34283,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_197, False)
         ttnn_linear_41 = ttnn.linear(
             ttnn_reshape_668,
-            self.weights["transformer.single_transformer_blocks.5.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.5.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_90"],
+            bias=ce_cache__main["main_const_eval_201"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -18178,7 +34815,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_679, False)
         ttnn_add_200 = ttnn.add(
             ttnn_all_gather_71,
-            self.weights["transformer.reshaped.single_transformer_blocks.5.proj_out.bias"],
+            ce_cache__main["main_const_eval_186"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -18348,7 +34985,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_684, False)
         ttnn_add_202 = ttnn.add(
             ttnn_all_gather_72,
-            self.weights["transformer.reshaped.single_transformer_blocks.6.norm.linear.bias"],
+            ce_cache__main["main_const_eval_120"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -18454,8 +35091,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_204, False)
         ttnn_linear_42 = ttnn.linear(
             ttnn_reshape_688,
-            self.weights["transformer.single_transformer_blocks.6.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.6.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_160"],
+            bias=ce_cache__main["main_const_eval_14"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -18986,7 +35623,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_699, False)
         ttnn_add_207 = ttnn.add(
             ttnn_all_gather_75,
-            self.weights["transformer.reshaped.single_transformer_blocks.6.proj_out.bias"],
+            ce_cache__main["main_const_eval_148"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -19156,7 +35793,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_704, False)
         ttnn_add_209 = ttnn.add(
             ttnn_all_gather_76,
-            self.weights["transformer.reshaped.single_transformer_blocks.7.norm.linear.bias"],
+            ce_cache__main["main_const_eval_22"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -19262,8 +35899,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_211, False)
         ttnn_linear_43 = ttnn.linear(
             ttnn_reshape_708,
-            self.weights["transformer.single_transformer_blocks.7.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.7.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_216"],
+            bias=ce_cache__main["main_const_eval_189"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -19794,7 +36431,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_719, False)
         ttnn_add_214 = ttnn.add(
             ttnn_all_gather_79,
-            self.weights["transformer.reshaped.single_transformer_blocks.7.proj_out.bias"],
+            ce_cache__main["main_const_eval_117"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -19964,7 +36601,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_724, False)
         ttnn_add_216 = ttnn.add(
             ttnn_all_gather_80,
-            self.weights["transformer.reshaped.single_transformer_blocks.8.norm.linear.bias"],
+            ce_cache__main["main_const_eval_163"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -20070,8 +36707,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_218, False)
         ttnn_linear_44 = ttnn.linear(
             ttnn_reshape_728,
-            self.weights["transformer.single_transformer_blocks.8.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.8.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_218"],
+            bias=ce_cache__main["main_const_eval_150"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -20602,7 +37239,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_739, False)
         ttnn_add_221 = ttnn.add(
             ttnn_all_gather_83,
-            self.weights["transformer.reshaped.single_transformer_blocks.8.proj_out.bias"],
+            ce_cache__main["main_const_eval_20"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -20772,7 +37409,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_744, False)
         ttnn_add_223 = ttnn.add(
             ttnn_all_gather_84,
-            self.weights["transformer.reshaped.single_transformer_blocks.9.norm.linear.bias"],
+            ce_cache__main["main_const_eval_221"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -20878,8 +37515,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_225, False)
         ttnn_linear_45 = ttnn.linear(
             ttnn_reshape_748,
-            self.weights["transformer.single_transformer_blocks.9.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.9.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_48"],
+            bias=ce_cache__main["main_const_eval_64"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -21410,7 +38047,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_759, False)
         ttnn_add_228 = ttnn.add(
             ttnn_all_gather_87,
-            self.weights["transformer.reshaped.single_transformer_blocks.9.proj_out.bias"],
+            ce_cache__main["main_const_eval_194"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -21580,7 +38217,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_764, False)
         ttnn_add_230 = ttnn.add(
             ttnn_all_gather_88,
-            self.weights["transformer.reshaped.single_transformer_blocks.10.norm.linear.bias"],
+            ce_cache__main["main_const_eval_214"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -21686,8 +38323,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_232, False)
         ttnn_linear_46 = ttnn.linear(
             ttnn_reshape_768,
-            self.weights["transformer.single_transformer_blocks.10.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.10.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_138"],
+            bias=ce_cache__main["main_const_eval_1"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -22218,7 +38855,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_779, False)
         ttnn_add_235 = ttnn.add(
             ttnn_all_gather_91,
-            self.weights["transformer.reshaped.single_transformer_blocks.10.proj_out.bias"],
+            ce_cache__main["main_const_eval_223"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -22388,7 +39025,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_784, False)
         ttnn_add_237 = ttnn.add(
             ttnn_all_gather_92,
-            self.weights["transformer.reshaped.single_transformer_blocks.11.norm.linear.bias"],
+            ce_cache__main["main_const_eval_60"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -22494,8 +39131,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_239, False)
         ttnn_linear_47 = ttnn.linear(
             ttnn_reshape_788,
-            self.weights["transformer.single_transformer_blocks.11.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.11.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_114"],
+            bias=ce_cache__main["main_const_eval_193"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -23026,7 +39663,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_799, False)
         ttnn_add_242 = ttnn.add(
             ttnn_all_gather_95,
-            self.weights["transformer.reshaped.single_transformer_blocks.11.proj_out.bias"],
+            ce_cache__main["main_const_eval_200"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -23196,7 +39833,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_804, False)
         ttnn_add_244 = ttnn.add(
             ttnn_all_gather_96,
-            self.weights["transformer.reshaped.single_transformer_blocks.12.norm.linear.bias"],
+            ce_cache__main["main_const_eval_97"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -23302,8 +39939,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_246, False)
         ttnn_linear_48 = ttnn.linear(
             ttnn_reshape_808,
-            self.weights["transformer.single_transformer_blocks.12.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.12.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_12"],
+            bias=ce_cache__main["main_const_eval_128"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -23834,7 +40471,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_819, False)
         ttnn_add_249 = ttnn.add(
             ttnn_all_gather_99,
-            self.weights["transformer.reshaped.single_transformer_blocks.12.proj_out.bias"],
+            ce_cache__main["main_const_eval_59"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24004,7 +40641,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_824, False)
         ttnn_add_251 = ttnn.add(
             ttnn_all_gather_100,
-            self.weights["transformer.reshaped.single_transformer_blocks.13.norm.linear.bias"],
+            ce_cache__main["main_const_eval_104"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24110,8 +40747,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_253, False)
         ttnn_linear_49 = ttnn.linear(
             ttnn_reshape_828,
-            self.weights["transformer.single_transformer_blocks.13.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.13.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_190"],
+            bias=ce_cache__main["main_const_eval_204"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -24642,7 +41279,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_839, False)
         ttnn_add_256 = ttnn.add(
             ttnn_all_gather_103,
-            self.weights["transformer.reshaped.single_transformer_blocks.13.proj_out.bias"],
+            ce_cache__main["main_const_eval_101"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24812,7 +41449,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_844, False)
         ttnn_add_258 = ttnn.add(
             ttnn_all_gather_104,
-            self.weights["transformer.reshaped.single_transformer_blocks.14.norm.linear.bias"],
+            ce_cache__main["main_const_eval_36"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -24918,8 +41555,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_260, False)
         ttnn_linear_50 = ttnn.linear(
             ttnn_reshape_848,
-            self.weights["transformer.single_transformer_blocks.14.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.14.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_237"],
+            bias=ce_cache__main["main_const_eval_55"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -25450,7 +42087,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_859, False)
         ttnn_add_263 = ttnn.add(
             ttnn_all_gather_107,
-            self.weights["transformer.reshaped.single_transformer_blocks.14.proj_out.bias"],
+            ce_cache__main["main_const_eval_108"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -25620,7 +42257,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_864, False)
         ttnn_add_265 = ttnn.add(
             ttnn_all_gather_108,
-            self.weights["transformer.reshaped.single_transformer_blocks.15.norm.linear.bias"],
+            ce_cache__main["main_const_eval_203"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -25726,8 +42363,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_267, False)
         ttnn_linear_51 = ttnn.linear(
             ttnn_reshape_868,
-            self.weights["transformer.single_transformer_blocks.15.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.15.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_207"],
+            bias=ce_cache__main["main_const_eval_81"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -26258,7 +42895,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_879, False)
         ttnn_add_270 = ttnn.add(
             ttnn_all_gather_111,
-            self.weights["transformer.reshaped.single_transformer_blocks.15.proj_out.bias"],
+            ce_cache__main["main_const_eval_33"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -26428,7 +43065,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_884, False)
         ttnn_add_272 = ttnn.add(
             ttnn_all_gather_112,
-            self.weights["transformer.reshaped.single_transformer_blocks.16.norm.linear.bias"],
+            ce_cache__main["main_const_eval_240"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -26534,8 +43171,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_274, False)
         ttnn_linear_52 = ttnn.linear(
             ttnn_reshape_888,
-            self.weights["transformer.single_transformer_blocks.16.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.16.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_6"],
+            bias=ce_cache__main["main_const_eval_139"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -27066,7 +43703,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_899, False)
         ttnn_add_277 = ttnn.add(
             ttnn_all_gather_115,
-            self.weights["transformer.reshaped.single_transformer_blocks.16.proj_out.bias"],
+            ce_cache__main["main_const_eval_32"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -27236,7 +43873,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_904, False)
         ttnn_add_279 = ttnn.add(
             ttnn_all_gather_116,
-            self.weights["transformer.reshaped.single_transformer_blocks.17.norm.linear.bias"],
+            ce_cache__main["main_const_eval_197"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -27342,8 +43979,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_281, False)
         ttnn_linear_53 = ttnn.linear(
             ttnn_reshape_908,
-            self.weights["transformer.single_transformer_blocks.17.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.17.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_62"],
+            bias=ce_cache__main["main_const_eval_54"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -27874,7 +44511,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_919, False)
         ttnn_add_284 = ttnn.add(
             ttnn_all_gather_119,
-            self.weights["transformer.reshaped.single_transformer_blocks.17.proj_out.bias"],
+            ce_cache__main["main_const_eval_210"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28044,7 +44681,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_924, False)
         ttnn_add_286 = ttnn.add(
             ttnn_all_gather_120,
-            self.weights["transformer.reshaped.single_transformer_blocks.18.norm.linear.bias"],
+            ce_cache__main["main_const_eval_50"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28150,8 +44787,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_288, False)
         ttnn_linear_54 = ttnn.linear(
             ttnn_reshape_928,
-            self.weights["transformer.single_transformer_blocks.18.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.18.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_125"],
+            bias=ce_cache__main["main_const_eval_26"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -28682,7 +45319,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_939, False)
         ttnn_add_291 = ttnn.add(
             ttnn_all_gather_123,
-            self.weights["transformer.reshaped.single_transformer_blocks.18.proj_out.bias"],
+            ce_cache__main["main_const_eval_156"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28852,7 +45489,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_944, False)
         ttnn_add_293 = ttnn.add(
             ttnn_all_gather_124,
-            self.weights["transformer.reshaped.single_transformer_blocks.19.norm.linear.bias"],
+            ce_cache__main["main_const_eval_72"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -28958,8 +45595,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_295, False)
         ttnn_linear_55 = ttnn.linear(
             ttnn_reshape_948,
-            self.weights["transformer.single_transformer_blocks.19.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.19.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_57"],
+            bias=ce_cache__main["main_const_eval_234"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -29490,7 +46127,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_959, False)
         ttnn_add_298 = ttnn.add(
             ttnn_all_gather_127,
-            self.weights["transformer.reshaped.single_transformer_blocks.19.proj_out.bias"],
+            ce_cache__main["main_const_eval_46"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -29660,7 +46297,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_964, False)
         ttnn_add_300 = ttnn.add(
             ttnn_all_gather_128,
-            self.weights["transformer.reshaped.single_transformer_blocks.20.norm.linear.bias"],
+            ce_cache__main["main_const_eval_145"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -29766,8 +46403,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_302, False)
         ttnn_linear_56 = ttnn.linear(
             ttnn_reshape_968,
-            self.weights["transformer.single_transformer_blocks.20.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.20.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_21"],
+            bias=ce_cache__main["main_const_eval_164"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -30298,7 +46935,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_979, False)
         ttnn_add_305 = ttnn.add(
             ttnn_all_gather_131,
-            self.weights["transformer.reshaped.single_transformer_blocks.20.proj_out.bias"],
+            ce_cache__main["main_const_eval_102"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -30468,7 +47105,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_984, False)
         ttnn_add_307 = ttnn.add(
             ttnn_all_gather_132,
-            self.weights["transformer.reshaped.single_transformer_blocks.21.norm.linear.bias"],
+            ce_cache__main["main_const_eval_181"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -30574,8 +47211,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_309, False)
         ttnn_linear_57 = ttnn.linear(
             ttnn_reshape_988,
-            self.weights["transformer.single_transformer_blocks.21.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.21.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_231"],
+            bias=ce_cache__main["main_const_eval_47"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -31106,7 +47743,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_999, False)
         ttnn_add_312 = ttnn.add(
             ttnn_all_gather_135,
-            self.weights["transformer.reshaped.single_transformer_blocks.21.proj_out.bias"],
+            ce_cache__main["main_const_eval_149"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -31276,7 +47913,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1004, False)
         ttnn_add_314 = ttnn.add(
             ttnn_all_gather_136,
-            self.weights["transformer.reshaped.single_transformer_blocks.22.norm.linear.bias"],
+            ce_cache__main["main_const_eval_4"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -31382,8 +48019,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_316, False)
         ttnn_linear_58 = ttnn.linear(
             ttnn_reshape_1008,
-            self.weights["transformer.single_transformer_blocks.22.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.22.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_135"],
+            bias=ce_cache__main["main_const_eval_99"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -31914,7 +48551,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1019, False)
         ttnn_add_319 = ttnn.add(
             ttnn_all_gather_139,
-            self.weights["transformer.reshaped.single_transformer_blocks.22.proj_out.bias"],
+            ce_cache__main["main_const_eval_169"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32084,7 +48721,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1024, False)
         ttnn_add_321 = ttnn.add(
             ttnn_all_gather_140,
-            self.weights["transformer.reshaped.single_transformer_blocks.23.norm.linear.bias"],
+            ce_cache__main["main_const_eval_185"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32190,8 +48827,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_323, False)
         ttnn_linear_59 = ttnn.linear(
             ttnn_reshape_1028,
-            self.weights["transformer.single_transformer_blocks.23.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.23.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_79"],
+            bias=ce_cache__main["main_const_eval_92"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -32722,7 +49359,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1039, False)
         ttnn_add_326 = ttnn.add(
             ttnn_all_gather_143,
-            self.weights["transformer.reshaped.single_transformer_blocks.23.proj_out.bias"],
+            ce_cache__main["main_const_eval_16"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32892,7 +49529,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1044, False)
         ttnn_add_328 = ttnn.add(
             ttnn_all_gather_144,
-            self.weights["transformer.reshaped.single_transformer_blocks.24.norm.linear.bias"],
+            ce_cache__main["main_const_eval_122"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -32998,8 +49635,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_330, False)
         ttnn_linear_60 = ttnn.linear(
             ttnn_reshape_1048,
-            self.weights["transformer.single_transformer_blocks.24.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.24.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_112"],
+            bias=ce_cache__main["main_const_eval_158"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -33530,7 +50167,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1059, False)
         ttnn_add_333 = ttnn.add(
             ttnn_all_gather_147,
-            self.weights["transformer.reshaped.single_transformer_blocks.24.proj_out.bias"],
+            ce_cache__main["main_const_eval_196"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -33700,7 +50337,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1064, False)
         ttnn_add_335 = ttnn.add(
             ttnn_all_gather_148,
-            self.weights["transformer.reshaped.single_transformer_blocks.25.norm.linear.bias"],
+            ce_cache__main["main_const_eval_66"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -33806,8 +50443,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_337, False)
         ttnn_linear_61 = ttnn.linear(
             ttnn_reshape_1068,
-            self.weights["transformer.single_transformer_blocks.25.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.25.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_88"],
+            bias=ce_cache__main["main_const_eval_219"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -34338,7 +50975,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1079, False)
         ttnn_add_340 = ttnn.add(
             ttnn_all_gather_151,
-            self.weights["transformer.reshaped.single_transformer_blocks.25.proj_out.bias"],
+            ce_cache__main["main_const_eval_173"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -34508,7 +51145,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1084, False)
         ttnn_add_342 = ttnn.add(
             ttnn_all_gather_152,
-            self.weights["transformer.reshaped.single_transformer_blocks.26.norm.linear.bias"],
+            ce_cache__main["main_const_eval_121"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -34614,8 +51251,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_344, False)
         ttnn_linear_62 = ttnn.linear(
             ttnn_reshape_1088,
-            self.weights["transformer.single_transformer_blocks.26.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.26.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_174"],
+            bias=ce_cache__main["main_const_eval_217"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -35146,7 +51783,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1099, False)
         ttnn_add_347 = ttnn.add(
             ttnn_all_gather_155,
-            self.weights["transformer.reshaped.single_transformer_blocks.26.proj_out.bias"],
+            ce_cache__main["main_const_eval_83"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -35316,7 +51953,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1104, False)
         ttnn_add_349 = ttnn.add(
             ttnn_all_gather_156,
-            self.weights["transformer.reshaped.single_transformer_blocks.27.norm.linear.bias"],
+            ce_cache__main["main_const_eval_84"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -35422,8 +52059,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_351, False)
         ttnn_linear_63 = ttnn.linear(
             ttnn_reshape_1108,
-            self.weights["transformer.single_transformer_blocks.27.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.27.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_222"],
+            bias=ce_cache__main["main_const_eval_175"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -35954,7 +52591,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1119, False)
         ttnn_add_354 = ttnn.add(
             ttnn_all_gather_159,
-            self.weights["transformer.reshaped.single_transformer_blocks.27.proj_out.bias"],
+            ce_cache__main["main_const_eval_118"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -36124,7 +52761,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1124, False)
         ttnn_add_356 = ttnn.add(
             ttnn_all_gather_160,
-            self.weights["transformer.reshaped.single_transformer_blocks.28.norm.linear.bias"],
+            ce_cache__main["main_const_eval_131"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -36230,8 +52867,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_358, False)
         ttnn_linear_64 = ttnn.linear(
             ttnn_reshape_1128,
-            self.weights["transformer.single_transformer_blocks.28.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.28.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_213"],
+            bias=ce_cache__main["main_const_eval_89"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -36762,7 +53399,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1139, False)
         ttnn_add_361 = ttnn.add(
             ttnn_all_gather_163,
-            self.weights["transformer.reshaped.single_transformer_blocks.28.proj_out.bias"],
+            ce_cache__main["main_const_eval_67"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -36932,7 +53569,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1144, False)
         ttnn_add_363 = ttnn.add(
             ttnn_all_gather_164,
-            self.weights["transformer.reshaped.single_transformer_blocks.29.norm.linear.bias"],
+            ce_cache__main["main_const_eval_227"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -37038,8 +53675,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_365, False)
         ttnn_linear_65 = ttnn.linear(
             ttnn_reshape_1148,
-            self.weights["transformer.single_transformer_blocks.29.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.29.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_153"],
+            bias=ce_cache__main["main_const_eval_110"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -37570,7 +54207,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1159, False)
         ttnn_add_368 = ttnn.add(
             ttnn_all_gather_167,
-            self.weights["transformer.reshaped.single_transformer_blocks.29.proj_out.bias"],
+            ce_cache__main["main_const_eval_137"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -37740,7 +54377,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1164, False)
         ttnn_add_370 = ttnn.add(
             ttnn_all_gather_168,
-            self.weights["transformer.reshaped.single_transformer_blocks.30.norm.linear.bias"],
+            ce_cache__main["main_const_eval_15"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -37846,8 +54483,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_372, False)
         ttnn_linear_66 = ttnn.linear(
             ttnn_reshape_1168,
-            self.weights["transformer.single_transformer_blocks.30.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.30.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_94"],
+            bias=ce_cache__main["main_const_eval_82"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -38378,7 +55015,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1179, False)
         ttnn_add_375 = ttnn.add(
             ttnn_all_gather_171,
-            self.weights["transformer.reshaped.single_transformer_blocks.30.proj_out.bias"],
+            ce_cache__main["main_const_eval_183"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -38548,7 +55185,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1184, False)
         ttnn_add_377 = ttnn.add(
             ttnn_all_gather_172,
-            self.weights["transformer.reshaped.single_transformer_blocks.31.norm.linear.bias"],
+            ce_cache__main["main_const_eval_182"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -38654,8 +55291,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_379, False)
         ttnn_linear_67 = ttnn.linear(
             ttnn_reshape_1188,
-            self.weights["transformer.single_transformer_blocks.31.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.31.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_98"],
+            bias=ce_cache__main["main_const_eval_133"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -39186,7 +55823,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1199, False)
         ttnn_add_382 = ttnn.add(
             ttnn_all_gather_175,
-            self.weights["transformer.reshaped.single_transformer_blocks.31.proj_out.bias"],
+            ce_cache__main["main_const_eval_25"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -39356,7 +55993,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1204, False)
         ttnn_add_384 = ttnn.add(
             ttnn_all_gather_176,
-            self.weights["transformer.reshaped.single_transformer_blocks.32.norm.linear.bias"],
+            ce_cache__main["main_const_eval_141"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -39462,8 +56099,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_386, False)
         ttnn_linear_68 = ttnn.linear(
             ttnn_reshape_1208,
-            self.weights["transformer.single_transformer_blocks.32.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.32.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_43"],
+            bias=ce_cache__main["main_const_eval_230"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -39994,7 +56631,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1219, False)
         ttnn_add_389 = ttnn.add(
             ttnn_all_gather_179,
-            self.weights["transformer.reshaped.single_transformer_blocks.32.proj_out.bias"],
+            ce_cache__main["main_const_eval_178"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -40164,7 +56801,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1224, False)
         ttnn_add_391 = ttnn.add(
             ttnn_all_gather_180,
-            self.weights["transformer.reshaped.single_transformer_blocks.33.norm.linear.bias"],
+            ce_cache__main["main_const_eval_105"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -40270,8 +56907,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_393, False)
         ttnn_linear_69 = ttnn.linear(
             ttnn_reshape_1228,
-            self.weights["transformer.single_transformer_blocks.33.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.33.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_161"],
+            bias=ce_cache__main["main_const_eval_30"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -40802,7 +57439,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1239, False)
         ttnn_add_396 = ttnn.add(
             ttnn_all_gather_183,
-            self.weights["transformer.reshaped.single_transformer_blocks.33.proj_out.bias"],
+            ce_cache__main["main_const_eval_130"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -40972,7 +57609,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1244, False)
         ttnn_add_398 = ttnn.add(
             ttnn_all_gather_184,
-            self.weights["transformer.reshaped.single_transformer_blocks.34.norm.linear.bias"],
+            ce_cache__main["main_const_eval_37"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -41078,8 +57715,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_400, False)
         ttnn_linear_70 = ttnn.linear(
             ttnn_reshape_1248,
-            self.weights["transformer.single_transformer_blocks.34.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.34.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_235"],
+            bias=ce_cache__main["main_const_eval_68"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -41610,7 +58247,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1259, False)
         ttnn_add_403 = ttnn.add(
             ttnn_all_gather_187,
-            self.weights["transformer.reshaped.single_transformer_blocks.34.proj_out.bias"],
+            ce_cache__main["main_const_eval_75"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -41780,7 +58417,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1264, False)
         ttnn_add_405 = ttnn.add(
             ttnn_all_gather_188,
-            self.weights["transformer.reshaped.single_transformer_blocks.35.norm.linear.bias"],
+            ce_cache__main["main_const_eval_155"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -41886,8 +58523,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_407, False)
         ttnn_linear_71 = ttnn.linear(
             ttnn_reshape_1268,
-            self.weights["transformer.single_transformer_blocks.35.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.35.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_27"],
+            bias=ce_cache__main["main_const_eval_123"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -42418,7 +59055,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1279, False)
         ttnn_add_410 = ttnn.add(
             ttnn_all_gather_191,
-            self.weights["transformer.reshaped.single_transformer_blocks.35.proj_out.bias"],
+            ce_cache__main["main_const_eval_52"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -42588,7 +59225,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1284, False)
         ttnn_add_412 = ttnn.add(
             ttnn_all_gather_192,
-            self.weights["transformer.reshaped.single_transformer_blocks.36.norm.linear.bias"],
+            ce_cache__main["main_const_eval_241"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -42694,8 +59331,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_414, False)
         ttnn_linear_72 = ttnn.linear(
             ttnn_reshape_1288,
-            self.weights["transformer.single_transformer_blocks.36.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.36.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_45"],
+            bias=ce_cache__main["main_const_eval_61"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -43226,7 +59863,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1299, False)
         ttnn_add_417 = ttnn.add(
             ttnn_all_gather_195,
-            self.weights["transformer.reshaped.single_transformer_blocks.36.proj_out.bias"],
+            ce_cache__main["main_const_eval_198"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -43396,7 +60033,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1304, False)
         ttnn_add_419 = ttnn.add(
             ttnn_all_gather_196,
-            self.weights["transformer.reshaped.single_transformer_blocks.37.norm.linear.bias"],
+            ce_cache__main["main_const_eval_31"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -43502,8 +60139,8 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_add_421, False)
         ttnn_linear_73 = ttnn.linear(
             ttnn_reshape_1308,
-            self.weights["transformer.single_transformer_blocks.37.attn.fused_qkv_weight"],
-            bias=self.weights["transformer.single_transformer_blocks.37.attn.fused_qkv_bias"],
+            ce_cache__main["main_const_eval_136"],
+            bias=ce_cache__main["main_const_eval_7"],
             transpose_a=False,
             transpose_b=False,
             memory_config=ttnn.MemoryConfig(
@@ -44037,7 +60674,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1319, False)
         ttnn_add_424 = ttnn.add(
             ttnn_all_gather_199,
-            self.weights["transformer.reshaped.single_transformer_blocks.37.proj_out.bias"],
+            ce_cache__main["main_const_eval_228"],
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -44142,7 +60779,7 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1322, False)
         ttnn_add_426 = ttnn.add(
             ttnn_all_gather_200,
-            self.weights["transformer.reshaped.norm_out.linear.bias"],
+            ce_cache__main["main_const_eval_38"],
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -44255,5 +60892,1534 @@ class ModelTTNN(LightweightModule):
         return [ttnn_reshape_1326]
 
 
+
+
+def consteval__main(device, ce_cache, weights):
+    if not ce_cache:
+        main_const_eval_0_0 = main_const_eval_0(device)
+        ce_cache["main_const_eval_0"] = main_const_eval_0_0[0]
+        main_const_eval_1_0 = main_const_eval_1(device,
+            [
+                weights["transformer.single_transformer_blocks.10.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.10.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.10.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.10.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_1"] = main_const_eval_1_0[0]
+        main_const_eval_2_0 = main_const_eval_2(device,
+            [
+                weights["transformer.transformer_blocks.1.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.1.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.1.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_2"] = main_const_eval_2_0[0]
+        main_const_eval_3_0 = main_const_eval_3(device,
+            [weights["transformer.transformer_blocks.3.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_3"] = main_const_eval_3_0[0]
+        main_const_eval_4_0 = main_const_eval_4(device,
+            [weights["transformer.single_transformer_blocks.22.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_4"] = main_const_eval_4_0[0]
+        main_const_eval_5_0 = main_const_eval_5(device,
+            [
+                weights["transformer.transformer_blocks.6.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.6.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.6.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_5"] = main_const_eval_5_0[0]
+        main_const_eval_6_0 = main_const_eval_6(device,
+            [
+                weights["transformer.single_transformer_blocks.16.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.16.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.16.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.16.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_6"] = main_const_eval_6_0[0]
+        main_const_eval_7_0 = main_const_eval_7(device,
+            [
+                weights["transformer.single_transformer_blocks.37.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.37.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.37.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.37.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_7"] = main_const_eval_7_0[0]
+        main_const_eval_8_0 = main_const_eval_8(device,
+            [weights["transformer.single_transformer_blocks.0.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_8"] = main_const_eval_8_0[0]
+        main_const_eval_9_0 = main_const_eval_9(device,
+            [
+                weights["transformer.transformer_blocks.3.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.3.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.3.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_9"] = main_const_eval_9_0[0]
+        main_const_eval_10_0 = main_const_eval_10(device,
+            [weights["transformer.transformer_blocks.5.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_10"] = main_const_eval_10_0[0]
+        main_const_eval_11_0 = main_const_eval_11(device,
+            [weights["transformer.transformer_blocks.7.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_11"] = main_const_eval_11_0[0]
+        main_const_eval_12_0 = main_const_eval_12(device,
+            [
+                weights["transformer.single_transformer_blocks.12.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.12.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.12.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.12.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_12"] = main_const_eval_12_0[0]
+        main_const_eval_13_0 = main_const_eval_13(device,
+            [weights["transformer.single_transformer_blocks.4.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_13"] = main_const_eval_13_0[0]
+        main_const_eval_14_0 = main_const_eval_14(device,
+            [
+                weights["transformer.single_transformer_blocks.6.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.6.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.6.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.6.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_14"] = main_const_eval_14_0[0]
+        main_const_eval_15_0 = main_const_eval_15(device,
+            [weights["transformer.single_transformer_blocks.30.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_15"] = main_const_eval_15_0[0]
+        main_const_eval_16_0 = main_const_eval_16(device,
+            [weights["transformer.single_transformer_blocks.23.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_16"] = main_const_eval_16_0[0]
+        main_const_eval_17_0 = main_const_eval_17(device,
+            [
+                weights["transformer.transformer_blocks.7.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.7.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.7.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_17"] = main_const_eval_17_0[0]
+        main_const_eval_18_0 = main_const_eval_18(device,
+            [weights["transformer.transformer_blocks.6.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_18"] = main_const_eval_18_0[0]
+        main_const_eval_19_0 = main_const_eval_19(device,
+            [
+                weights["transformer.transformer_blocks.0.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.0.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.0.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_19"] = main_const_eval_19_0[0]
+        main_const_eval_20_0 = main_const_eval_20(device,
+            [weights["transformer.single_transformer_blocks.8.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_20"] = main_const_eval_20_0[0]
+        main_const_eval_21_0 = main_const_eval_21(device,
+            [
+                weights["transformer.single_transformer_blocks.20.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.20.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.20.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.20.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_21"] = main_const_eval_21_0[0]
+        main_const_eval_22_0 = main_const_eval_22(device,
+            [weights["transformer.single_transformer_blocks.7.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_22"] = main_const_eval_22_0[0]
+        main_const_eval_23_0 = main_const_eval_23(device,
+            [weights["transformer.transformer_blocks.0.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_23"] = main_const_eval_23_0[0]
+        main_const_eval_24_0 = main_const_eval_24(device,
+            [weights["transformer.transformer_blocks.3.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_24"] = main_const_eval_24_0[0]
+        main_const_eval_25_0 = main_const_eval_25(device,
+            [weights["transformer.single_transformer_blocks.31.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_25"] = main_const_eval_25_0[0]
+        main_const_eval_26_0 = main_const_eval_26(device,
+            [
+                weights["transformer.single_transformer_blocks.18.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.18.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.18.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.18.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_26"] = main_const_eval_26_0[0]
+        main_const_eval_27_0 = main_const_eval_27(device,
+            [
+                weights["transformer.single_transformer_blocks.35.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.35.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.35.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.35.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_27"] = main_const_eval_27_0[0]
+        main_const_eval_28_0 = main_const_eval_28(device,
+            [
+                weights["transformer.transformer_blocks.7.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.7.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.7.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_28"] = main_const_eval_28_0[0]
+        main_const_eval_29_0 = main_const_eval_29(device,
+            [weights["transformer.transformer_blocks.1.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_29"] = main_const_eval_29_0[0]
+        main_const_eval_30_0 = main_const_eval_30(device,
+            [
+                weights["transformer.single_transformer_blocks.33.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.33.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.33.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.33.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_30"] = main_const_eval_30_0[0]
+        main_const_eval_31_0 = main_const_eval_31(device,
+            [weights["transformer.single_transformer_blocks.37.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_31"] = main_const_eval_31_0[0]
+        main_const_eval_32_0 = main_const_eval_32(device,
+            [weights["transformer.single_transformer_blocks.16.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_32"] = main_const_eval_32_0[0]
+        main_const_eval_33_0 = main_const_eval_33(device,
+            [weights["transformer.single_transformer_blocks.15.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_33"] = main_const_eval_33_0[0]
+        main_const_eval_34_0 = main_const_eval_34(device,
+            [
+                weights["transformer.transformer_blocks.3.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.3.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.3.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_34"] = main_const_eval_34_0[0]
+        main_const_eval_35_0 = main_const_eval_35(device,
+            [weights["transformer.transformer_blocks.2.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_35"] = main_const_eval_35_0[0]
+        main_const_eval_36_0 = main_const_eval_36(device,
+            [weights["transformer.single_transformer_blocks.14.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_36"] = main_const_eval_36_0[0]
+        main_const_eval_37_0 = main_const_eval_37(device,
+            [weights["transformer.single_transformer_blocks.34.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_37"] = main_const_eval_37_0[0]
+        main_const_eval_38_0 = main_const_eval_38(device,
+            [weights["transformer.norm_out.linear.bias"]]
+        )
+        ce_cache["main_const_eval_38"] = main_const_eval_38_0[0]
+        main_const_eval_39_0 = main_const_eval_39(device,
+            [
+                weights["transformer.transformer_blocks.1.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.1.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.1.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_39"] = main_const_eval_39_0[0]
+        main_const_eval_40_0 = main_const_eval_40(device,
+            [
+                weights["transformer.transformer_blocks.4.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.4.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.4.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_40"] = main_const_eval_40_0[0]
+        main_const_eval_41_0 = main_const_eval_41(device,
+            [weights["transformer.transformer_blocks.4.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_41"] = main_const_eval_41_0[0]
+        main_const_eval_42_0 = main_const_eval_42(device,
+            [weights["transformer.transformer_blocks.1.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_42"] = main_const_eval_42_0[0]
+        main_const_eval_43_0 = main_const_eval_43(device,
+            [
+                weights["transformer.single_transformer_blocks.32.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.32.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.32.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.32.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_43"] = main_const_eval_43_0[0]
+        main_const_eval_44_0 = main_const_eval_44(device,
+            [
+                weights["transformer.transformer_blocks.4.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.4.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.4.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_44"] = main_const_eval_44_0[0]
+        main_const_eval_45_0 = main_const_eval_45(device,
+            [
+                weights["transformer.single_transformer_blocks.36.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.36.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.36.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.36.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_45"] = main_const_eval_45_0[0]
+        main_const_eval_46_0 = main_const_eval_46(device,
+            [weights["transformer.single_transformer_blocks.19.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_46"] = main_const_eval_46_0[0]
+        main_const_eval_47_0 = main_const_eval_47(device,
+            [
+                weights["transformer.single_transformer_blocks.21.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.21.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.21.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.21.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_47"] = main_const_eval_47_0[0]
+        main_const_eval_48_0 = main_const_eval_48(device,
+            [
+                weights["transformer.single_transformer_blocks.9.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.9.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.9.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.9.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_48"] = main_const_eval_48_0[0]
+        main_const_eval_49_0 = main_const_eval_49(device,
+            [weights["transformer.transformer_blocks.2.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_49"] = main_const_eval_49_0[0]
+        main_const_eval_50_0 = main_const_eval_50(device,
+            [weights["transformer.single_transformer_blocks.18.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_50"] = main_const_eval_50_0[0]
+        main_const_eval_51_0 = main_const_eval_51(device,
+            [
+                weights["transformer.transformer_blocks.2.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.2.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.2.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_51"] = main_const_eval_51_0[0]
+        main_const_eval_52_0 = main_const_eval_52(device,
+            [weights["transformer.single_transformer_blocks.35.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_52"] = main_const_eval_52_0[0]
+        main_const_eval_53_0 = main_const_eval_53(device,
+            [
+                weights["transformer.transformer_blocks.6.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.6.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.6.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_53"] = main_const_eval_53_0[0]
+        main_const_eval_54_0 = main_const_eval_54(device,
+            [
+                weights["transformer.single_transformer_blocks.17.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.17.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.17.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.17.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_54"] = main_const_eval_54_0[0]
+        main_const_eval_55_0 = main_const_eval_55(device,
+            [
+                weights["transformer.single_transformer_blocks.14.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.14.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.14.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.14.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_55"] = main_const_eval_55_0[0]
+        main_const_eval_56_0 = main_const_eval_56(device,
+            [weights["transformer.transformer_blocks.6.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_56"] = main_const_eval_56_0[0]
+        main_const_eval_57_0 = main_const_eval_57(device,
+            [
+                weights["transformer.single_transformer_blocks.19.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.19.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.19.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.19.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_57"] = main_const_eval_57_0[0]
+        main_const_eval_58_0 = main_const_eval_58(device,
+            [weights["transformer.transformer_blocks.4.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_58"] = main_const_eval_58_0[0]
+        main_const_eval_59_0 = main_const_eval_59(device,
+            [weights["transformer.single_transformer_blocks.12.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_59"] = main_const_eval_59_0[0]
+        main_const_eval_60_0 = main_const_eval_60(device,
+            [weights["transformer.single_transformer_blocks.11.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_60"] = main_const_eval_60_0[0]
+        main_const_eval_61_0 = main_const_eval_61(device,
+            [
+                weights["transformer.single_transformer_blocks.36.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.36.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.36.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.36.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_61"] = main_const_eval_61_0[0]
+        main_const_eval_62_0 = main_const_eval_62(device,
+            [
+                weights["transformer.single_transformer_blocks.17.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.17.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.17.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.17.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_62"] = main_const_eval_62_0[0]
+        main_const_eval_63_0 = main_const_eval_63(device,
+            [weights["transformer.transformer_blocks.6.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_63"] = main_const_eval_63_0[0]
+        main_const_eval_64_0 = main_const_eval_64(device,
+            [
+                weights["transformer.single_transformer_blocks.9.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.9.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.9.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.9.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_64"] = main_const_eval_64_0[0]
+        main_const_eval_65_0 = main_const_eval_65(device,
+            [
+                weights["transformer.transformer_blocks.1.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.1.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.1.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_65"] = main_const_eval_65_0[0]
+        main_const_eval_66_0 = main_const_eval_66(device,
+            [weights["transformer.single_transformer_blocks.25.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_66"] = main_const_eval_66_0[0]
+        main_const_eval_67_0 = main_const_eval_67(device,
+            [weights["transformer.single_transformer_blocks.28.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_67"] = main_const_eval_67_0[0]
+        main_const_eval_68_0 = main_const_eval_68(device,
+            [
+                weights["transformer.single_transformer_blocks.34.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.34.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.34.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.34.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_68"] = main_const_eval_68_0[0]
+        main_const_eval_69_0 = main_const_eval_69(device,
+            [weights["transformer.single_transformer_blocks.0.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_69"] = main_const_eval_69_0[0]
+        main_const_eval_70_0 = main_const_eval_70(device,
+            [weights["transformer.transformer_blocks.5.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_70"] = main_const_eval_70_0[0]
+        main_const_eval_71_0 = main_const_eval_71(device,
+            [
+                weights["transformer.transformer_blocks.0.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.0.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.0.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_71"] = main_const_eval_71_0[0]
+        main_const_eval_72_0 = main_const_eval_72(device,
+            [weights["transformer.single_transformer_blocks.19.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_72"] = main_const_eval_72_0[0]
+        main_const_eval_73_0 = main_const_eval_73(device,
+            [
+                weights["transformer.transformer_blocks.5.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.5.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.5.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_73"] = main_const_eval_73_0[0]
+        main_const_eval_74_0 = main_const_eval_74(device,
+            [weights["transformer.transformer_blocks.7.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_74"] = main_const_eval_74_0[0]
+        main_const_eval_75_0 = main_const_eval_75(device,
+            [weights["transformer.single_transformer_blocks.34.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_75"] = main_const_eval_75_0[0]
+        main_const_eval_76_0 = main_const_eval_76(device,
+            [weights["transformer.transformer_blocks.3.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_76"] = main_const_eval_76_0[0]
+        main_const_eval_77_0 = main_const_eval_77(device,
+            [
+                weights["transformer.single_transformer_blocks.3.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.3.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.3.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.3.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_77"] = main_const_eval_77_0[0]
+        main_const_eval_78_0 = main_const_eval_78(device,
+            [weights["transformer.transformer_blocks.7.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_78"] = main_const_eval_78_0[0]
+        main_const_eval_79_0 = main_const_eval_79(device,
+            [
+                weights["transformer.single_transformer_blocks.23.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.23.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.23.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.23.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_79"] = main_const_eval_79_0[0]
+        main_const_eval_80_0 = main_const_eval_80(device,
+            [weights["transformer.transformer_blocks.5.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_80"] = main_const_eval_80_0[0]
+        main_const_eval_81_0 = main_const_eval_81(device,
+            [
+                weights["transformer.single_transformer_blocks.15.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.15.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.15.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.15.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_81"] = main_const_eval_81_0[0]
+        main_const_eval_82_0 = main_const_eval_82(device,
+            [
+                weights["transformer.single_transformer_blocks.30.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.30.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.30.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.30.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_82"] = main_const_eval_82_0[0]
+        main_const_eval_83_0 = main_const_eval_83(device,
+            [weights["transformer.single_transformer_blocks.26.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_83"] = main_const_eval_83_0[0]
+        main_const_eval_84_0 = main_const_eval_84(device,
+            [weights["transformer.single_transformer_blocks.27.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_84"] = main_const_eval_84_0[0]
+        main_const_eval_85_0 = main_const_eval_85(device,
+            [weights["transformer.transformer_blocks.2.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_85"] = main_const_eval_85_0[0]
+        main_const_eval_86_0 = main_const_eval_86(device,
+            [
+                weights["transformer.transformer_blocks.3.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.3.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.3.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_86"] = main_const_eval_86_0[0]
+        main_const_eval_87_0 = main_const_eval_87(device,
+            [weights["transformer.single_transformer_blocks.1.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_87"] = main_const_eval_87_0[0]
+        main_const_eval_88_0 = main_const_eval_88(device,
+            [
+                weights["transformer.single_transformer_blocks.25.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.25.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.25.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.25.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_88"] = main_const_eval_88_0[0]
+        main_const_eval_89_0 = main_const_eval_89(device,
+            [
+                weights["transformer.single_transformer_blocks.28.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.28.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.28.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.28.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_89"] = main_const_eval_89_0[0]
+        main_const_eval_90_0 = main_const_eval_90(device,
+            [
+                weights["transformer.single_transformer_blocks.5.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.5.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.5.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.5.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_90"] = main_const_eval_90_0[0]
+        main_const_eval_91_0 = main_const_eval_91(device,
+            [weights["transformer.transformer_blocks.3.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_91"] = main_const_eval_91_0[0]
+        main_const_eval_92_0 = main_const_eval_92(device,
+            [
+                weights["transformer.single_transformer_blocks.23.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.23.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.23.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.23.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_92"] = main_const_eval_92_0[0]
+        main_const_eval_93_0 = main_const_eval_93(device,
+            [
+                weights["transformer.single_transformer_blocks.4.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.4.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.4.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.4.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_93"] = main_const_eval_93_0[0]
+        main_const_eval_94_0 = main_const_eval_94(device,
+            [
+                weights["transformer.single_transformer_blocks.30.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.30.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.30.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.30.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_94"] = main_const_eval_94_0[0]
+        main_const_eval_95_0 = main_const_eval_95(device,
+            [weights["transformer.time_embed.timestep_embedder.linear_1.bias"]]
+        )
+        ce_cache["main_const_eval_95"] = main_const_eval_95_0[0]
+        main_const_eval_96_0 = main_const_eval_96(device,
+            [weights["transformer.transformer_blocks.5.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_96"] = main_const_eval_96_0[0]
+        main_const_eval_97_0 = main_const_eval_97(device,
+            [weights["transformer.single_transformer_blocks.12.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_97"] = main_const_eval_97_0[0]
+        main_const_eval_98_0 = main_const_eval_98(device,
+            [
+                weights["transformer.single_transformer_blocks.31.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.31.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.31.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.31.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_98"] = main_const_eval_98_0[0]
+        main_const_eval_99_0 = main_const_eval_99(device,
+            [
+                weights["transformer.single_transformer_blocks.22.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.22.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.22.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.22.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_99"] = main_const_eval_99_0[0]
+        main_const_eval_100_0 = main_const_eval_100(device,
+            [
+                weights["transformer.transformer_blocks.5.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.5.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.5.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_100"] = main_const_eval_100_0[0]
+        main_const_eval_101_0 = main_const_eval_101(device,
+            [weights["transformer.single_transformer_blocks.13.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_101"] = main_const_eval_101_0[0]
+        main_const_eval_102_0 = main_const_eval_102(device,
+            [weights["transformer.single_transformer_blocks.20.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_102"] = main_const_eval_102_0[0]
+        main_const_eval_103_0 = main_const_eval_103(device,
+            [
+                weights["transformer.transformer_blocks.6.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.6.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.6.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_103"] = main_const_eval_103_0[0]
+        main_const_eval_104_0 = main_const_eval_104(device,
+            [weights["transformer.single_transformer_blocks.13.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_104"] = main_const_eval_104_0[0]
+        main_const_eval_105_0 = main_const_eval_105(device,
+            [weights["transformer.single_transformer_blocks.33.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_105"] = main_const_eval_105_0[0]
+        main_const_eval_106_0 = main_const_eval_106(device,
+            [weights["transformer.transformer_blocks.6.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_106"] = main_const_eval_106_0[0]
+        main_const_eval_107_0 = main_const_eval_107(device,
+            [
+                weights["transformer.norm_out.linear.weight"],
+                weights["transformer.single_transformer_blocks.37.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.36.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.35.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.34.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.33.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.32.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.31.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.30.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.29.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.28.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.27.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.26.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.25.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.24.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.23.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.22.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.21.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.20.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.19.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.18.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.17.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.16.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.15.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.14.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.13.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.12.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.11.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.10.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.9.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.8.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.7.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.6.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.5.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.4.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.3.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.2.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.1.norm.linear.weight"],
+                weights["transformer.single_transformer_blocks.0.norm.linear.weight"],
+                weights["transformer.transformer_blocks.7.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.6.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.5.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.4.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.3.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.2.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.1.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.0.norm1.linear.weight"],
+                weights["transformer.transformer_blocks.0.norm1_context.linear.weight"],
+                weights["transformer.transformer_blocks.1.norm1_context.linear.weight"],
+                weights["transformer.transformer_blocks.2.norm1_context.linear.weight"],
+                weights["transformer.transformer_blocks.3.norm1_context.linear.weight"],
+                weights["transformer.transformer_blocks.4.norm1_context.linear.weight"],
+                weights["transformer.transformer_blocks.5.norm1_context.linear.weight"],
+                weights["transformer.transformer_blocks.6.norm1_context.linear.weight"],
+                weights["transformer.transformer_blocks.7.norm1_context.linear.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_107"] = main_const_eval_107_0[0]
+        main_const_eval_108_0 = main_const_eval_108(device,
+            [weights["transformer.single_transformer_blocks.14.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_108"] = main_const_eval_108_0[0]
+        main_const_eval_109_0 = main_const_eval_109(device,
+            [weights["transformer.transformer_blocks.1.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_109"] = main_const_eval_109_0[0]
+        main_const_eval_110_0 = main_const_eval_110(device,
+            [
+                weights["transformer.single_transformer_blocks.29.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.29.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.29.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.29.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_110"] = main_const_eval_110_0[0]
+        main_const_eval_111_0 = main_const_eval_111(device,
+            [weights["transformer.transformer_blocks.4.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_111"] = main_const_eval_111_0[0]
+        main_const_eval_112_0 = main_const_eval_112(device,
+            [
+                weights["transformer.single_transformer_blocks.24.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.24.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.24.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.24.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_112"] = main_const_eval_112_0[0]
+        main_const_eval_113_0 = main_const_eval_113(device,
+            [weights["transformer.transformer_blocks.4.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_113"] = main_const_eval_113_0[0]
+        main_const_eval_114_0 = main_const_eval_114(device,
+            [
+                weights["transformer.single_transformer_blocks.11.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.11.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.11.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.11.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_114"] = main_const_eval_114_0[0]
+        main_const_eval_115_0 = main_const_eval_115(device,
+            [
+                weights["transformer.single_transformer_blocks.2.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.2.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.2.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.2.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_115"] = main_const_eval_115_0[0]
+        main_const_eval_116_0 = main_const_eval_116(device,
+            [weights["transformer.transformer_blocks.2.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_116"] = main_const_eval_116_0[0]
+        main_const_eval_117_0 = main_const_eval_117(device,
+            [weights["transformer.single_transformer_blocks.7.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_117"] = main_const_eval_117_0[0]
+        main_const_eval_118_0 = main_const_eval_118(device,
+            [weights["transformer.single_transformer_blocks.27.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_118"] = main_const_eval_118_0[0]
+        main_const_eval_119_0 = main_const_eval_119(device,
+            [
+                weights["transformer.transformer_blocks.2.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.2.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.2.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_119"] = main_const_eval_119_0[0]
+        main_const_eval_120_0 = main_const_eval_120(device,
+            [weights["transformer.single_transformer_blocks.6.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_120"] = main_const_eval_120_0[0]
+        main_const_eval_121_0 = main_const_eval_121(device,
+            [weights["transformer.single_transformer_blocks.26.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_121"] = main_const_eval_121_0[0]
+        main_const_eval_122_0 = main_const_eval_122(device,
+            [weights["transformer.single_transformer_blocks.24.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_122"] = main_const_eval_122_0[0]
+        main_const_eval_123_0 = main_const_eval_123(device,
+            [
+                weights["transformer.single_transformer_blocks.35.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.35.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.35.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.35.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_123"] = main_const_eval_123_0[0]
+        main_const_eval_124_0 = main_const_eval_124(device,
+            [weights["transformer.transformer_blocks.7.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_124"] = main_const_eval_124_0[0]
+        main_const_eval_125_0 = main_const_eval_125(device,
+            [
+                weights["transformer.single_transformer_blocks.18.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.18.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.18.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.18.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_125"] = main_const_eval_125_0[0]
+        main_const_eval_126_0 = main_const_eval_126(device,
+            [weights["transformer.transformer_blocks.1.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_126"] = main_const_eval_126_0[0]
+        main_const_eval_127_0 = main_const_eval_127(device,
+            [
+                weights["transformer.transformer_blocks.4.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.4.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.4.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_127"] = main_const_eval_127_0[0]
+        main_const_eval_128_0 = main_const_eval_128(device,
+            [
+                weights["transformer.single_transformer_blocks.12.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.12.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.12.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.12.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_128"] = main_const_eval_128_0[0]
+        main_const_eval_129_0 = main_const_eval_129(device,
+            [
+                weights["transformer.transformer_blocks.3.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.3.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.3.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_129"] = main_const_eval_129_0[0]
+        main_const_eval_130_0 = main_const_eval_130(device,
+            [weights["transformer.single_transformer_blocks.33.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_130"] = main_const_eval_130_0[0]
+        main_const_eval_131_0 = main_const_eval_131(device,
+            [weights["transformer.single_transformer_blocks.28.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_131"] = main_const_eval_131_0[0]
+        main_const_eval_132_0 = main_const_eval_132(device,
+            [
+                weights["transformer.transformer_blocks.0.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.0.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.0.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_132"] = main_const_eval_132_0[0]
+        main_const_eval_133_0 = main_const_eval_133(device,
+            [
+                weights["transformer.single_transformer_blocks.31.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.31.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.31.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.31.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_133"] = main_const_eval_133_0[0]
+        main_const_eval_134_0 = main_const_eval_134(device,
+            [weights["transformer.transformer_blocks.0.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_134"] = main_const_eval_134_0[0]
+        main_const_eval_135_0 = main_const_eval_135(device,
+            [
+                weights["transformer.single_transformer_blocks.22.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.22.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.22.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.22.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_135"] = main_const_eval_135_0[0]
+        main_const_eval_136_0 = main_const_eval_136(device,
+            [
+                weights["transformer.single_transformer_blocks.37.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.37.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.37.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.37.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_136"] = main_const_eval_136_0[0]
+        main_const_eval_137_0 = main_const_eval_137(device,
+            [weights["transformer.single_transformer_blocks.29.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_137"] = main_const_eval_137_0[0]
+        main_const_eval_138_0 = main_const_eval_138(device,
+            [
+                weights["transformer.single_transformer_blocks.10.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.10.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.10.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.10.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_138"] = main_const_eval_138_0[0]
+        main_const_eval_139_0 = main_const_eval_139(device,
+            [
+                weights["transformer.single_transformer_blocks.16.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.16.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.16.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.16.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_139"] = main_const_eval_139_0[0]
+        main_const_eval_140_0 = main_const_eval_140(device,
+            [weights["transformer.transformer_blocks.1.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_140"] = main_const_eval_140_0[0]
+        main_const_eval_141_0 = main_const_eval_141(device,
+            [weights["transformer.single_transformer_blocks.32.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_141"] = main_const_eval_141_0[0]
+        main_const_eval_142_0 = main_const_eval_142(device,
+            [
+                weights["transformer.transformer_blocks.1.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.1.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.1.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_142"] = main_const_eval_142_0[0]
+        main_const_eval_143_0 = main_const_eval_143(device,
+            [
+                weights["transformer.transformer_blocks.7.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.7.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.7.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_143"] = main_const_eval_143_0[0]
+        main_const_eval_144_0 = main_const_eval_144(device,
+            [weights["transformer.single_transformer_blocks.5.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_144"] = main_const_eval_144_0[0]
+        main_const_eval_145_0 = main_const_eval_145(device,
+            [weights["transformer.single_transformer_blocks.20.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_145"] = main_const_eval_145_0[0]
+        main_const_eval_146_0 = main_const_eval_146(device,
+            [
+                weights["transformer.transformer_blocks.5.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.5.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.5.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_146"] = main_const_eval_146_0[0]
+        main_const_eval_147_0 = main_const_eval_147(device,
+            [weights["transformer.transformer_blocks.1.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_147"] = main_const_eval_147_0[0]
+        main_const_eval_148_0 = main_const_eval_148(device,
+            [weights["transformer.single_transformer_blocks.6.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_148"] = main_const_eval_148_0[0]
+        main_const_eval_149_0 = main_const_eval_149(device,
+            [weights["transformer.single_transformer_blocks.21.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_149"] = main_const_eval_149_0[0]
+        main_const_eval_150_0 = main_const_eval_150(device,
+            [
+                weights["transformer.single_transformer_blocks.8.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.8.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.8.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.8.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_150"] = main_const_eval_150_0[0]
+        main_const_eval_151_0 = main_const_eval_151(device,
+            [weights["transformer.transformer_blocks.5.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_151"] = main_const_eval_151_0[0]
+        main_const_eval_152_0 = main_const_eval_152(device,
+            [
+                weights["transformer.transformer_blocks.7.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.7.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.7.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_152"] = main_const_eval_152_0[0]
+        main_const_eval_153_0 = main_const_eval_153(device,
+            [
+                weights["transformer.single_transformer_blocks.29.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.29.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.29.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.29.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_153"] = main_const_eval_153_0[0]
+        main_const_eval_154_0 = main_const_eval_154(device,
+            [
+                weights["transformer.single_transformer_blocks.3.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.3.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.3.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.3.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_154"] = main_const_eval_154_0[0]
+        main_const_eval_155_0 = main_const_eval_155(device,
+            [weights["transformer.single_transformer_blocks.35.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_155"] = main_const_eval_155_0[0]
+        main_const_eval_156_0 = main_const_eval_156(device,
+            [weights["transformer.single_transformer_blocks.18.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_156"] = main_const_eval_156_0[0]
+        main_const_eval_157_0 = main_const_eval_157(device,
+            [weights["transformer.transformer_blocks.0.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_157"] = main_const_eval_157_0[0]
+        main_const_eval_158_0 = main_const_eval_158(device,
+            [
+                weights["transformer.single_transformer_blocks.24.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.24.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.24.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.24.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_158"] = main_const_eval_158_0[0]
+        main_const_eval_159_0 = main_const_eval_159(device,
+            [
+                weights["transformer.transformer_blocks.2.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.2.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.2.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_159"] = main_const_eval_159_0[0]
+        main_const_eval_160_0 = main_const_eval_160(device,
+            [
+                weights["transformer.single_transformer_blocks.6.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.6.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.6.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.6.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_160"] = main_const_eval_160_0[0]
+        main_const_eval_161_0 = main_const_eval_161(device,
+            [
+                weights["transformer.single_transformer_blocks.33.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.33.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.33.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.33.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_161"] = main_const_eval_161_0[0]
+        main_const_eval_162_0 = main_const_eval_162(device,
+            [
+                weights["transformer.single_transformer_blocks.0.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.0.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.0.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.0.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_162"] = main_const_eval_162_0[0]
+        main_const_eval_163_0 = main_const_eval_163(device,
+            [weights["transformer.single_transformer_blocks.8.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_163"] = main_const_eval_163_0[0]
+        main_const_eval_164_0 = main_const_eval_164(device,
+            [
+                weights["transformer.single_transformer_blocks.20.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.20.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.20.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.20.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_164"] = main_const_eval_164_0[0]
+        main_const_eval_165_0 = main_const_eval_165(device,
+            [
+                weights["transformer.single_transformer_blocks.2.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.2.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.2.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.2.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_165"] = main_const_eval_165_0[0]
+        main_const_eval_166_0 = main_const_eval_166(device,
+            [
+                weights["transformer.single_transformer_blocks.1.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.1.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.1.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.1.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_166"] = main_const_eval_166_0[0]
+        main_const_eval_167_0 = main_const_eval_167(device,
+            [weights["transformer.single_transformer_blocks.4.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_167"] = main_const_eval_167_0[0]
+        main_const_eval_168_0 = main_const_eval_168(device,
+            [weights["transformer.time_embed.timestep_embedder.linear_1.weight"]]
+        )
+        ce_cache["main_const_eval_168"] = main_const_eval_168_0[0]
+        main_const_eval_169_0 = main_const_eval_169(device,
+            [weights["transformer.single_transformer_blocks.22.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_169"] = main_const_eval_169_0[0]
+        main_const_eval_170_0 = main_const_eval_170(device,
+            [
+                weights["transformer.single_transformer_blocks.4.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.4.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.4.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.4.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_170"] = main_const_eval_170_0[0]
+        main_const_eval_171_0 = main_const_eval_171(device,
+            [weights["transformer.transformer_blocks.6.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_171"] = main_const_eval_171_0[0]
+        main_const_eval_172_0 = main_const_eval_172(device,
+            [weights["transformer.transformer_blocks.7.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_172"] = main_const_eval_172_0[0]
+        main_const_eval_173_0 = main_const_eval_173(device,
+            [weights["transformer.single_transformer_blocks.25.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_173"] = main_const_eval_173_0[0]
+        main_const_eval_174_0 = main_const_eval_174(device,
+            [
+                weights["transformer.single_transformer_blocks.26.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.26.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.26.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.26.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_174"] = main_const_eval_174_0[0]
+        main_const_eval_175_0 = main_const_eval_175(device,
+            [
+                weights["transformer.single_transformer_blocks.27.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.27.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.27.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.27.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_175"] = main_const_eval_175_0[0]
+        main_const_eval_176_0 = main_const_eval_176(device)
+        ce_cache["main_const_eval_176"] = main_const_eval_176_0[0]
+        main_const_eval_177_0 = main_const_eval_177(device,
+            [weights["transformer.single_transformer_blocks.1.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_177"] = main_const_eval_177_0[0]
+        main_const_eval_178_0 = main_const_eval_178(device,
+            [weights["transformer.single_transformer_blocks.32.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_178"] = main_const_eval_178_0[0]
+        main_const_eval_179_0 = main_const_eval_179(device,
+            [weights["transformer.transformer_blocks.0.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_179"] = main_const_eval_179_0[0]
+        main_const_eval_180_0 = main_const_eval_180(device,
+            [weights["transformer.single_transformer_blocks.2.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_180"] = main_const_eval_180_0[0]
+        main_const_eval_181_0 = main_const_eval_181(device,
+            [weights["transformer.single_transformer_blocks.21.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_181"] = main_const_eval_181_0[0]
+        main_const_eval_182_0 = main_const_eval_182(device,
+            [weights["transformer.single_transformer_blocks.31.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_182"] = main_const_eval_182_0[0]
+        main_const_eval_183_0 = main_const_eval_183(device,
+            [weights["transformer.single_transformer_blocks.30.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_183"] = main_const_eval_183_0[0]
+        main_const_eval_184_0 = main_const_eval_184(device,
+            [weights["transformer.transformer_blocks.2.norm1_context.linear.bias"]]
+        )
+        ce_cache["main_const_eval_184"] = main_const_eval_184_0[0]
+        main_const_eval_185_0 = main_const_eval_185(device,
+            [weights["transformer.single_transformer_blocks.23.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_185"] = main_const_eval_185_0[0]
+        main_const_eval_186_0 = main_const_eval_186(device,
+            [weights["transformer.single_transformer_blocks.5.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_186"] = main_const_eval_186_0[0]
+        main_const_eval_187_0 = main_const_eval_187(device,
+            [weights["transformer.time_embed.timestep_embedder.linear_2.weight"]]
+        )
+        ce_cache["main_const_eval_187"] = main_const_eval_187_0[0]
+        main_const_eval_188_0 = main_const_eval_188(device,
+            [weights["transformer.single_transformer_blocks.3.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_188"] = main_const_eval_188_0[0]
+        main_const_eval_189_0 = main_const_eval_189(device,
+            [
+                weights["transformer.single_transformer_blocks.7.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.7.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.7.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.7.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_189"] = main_const_eval_189_0[0]
+        main_const_eval_190_0 = main_const_eval_190(device,
+            [
+                weights["transformer.single_transformer_blocks.13.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.13.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.13.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.13.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_190"] = main_const_eval_190_0[0]
+        main_const_eval_191_0 = main_const_eval_191(device,
+            [
+                weights["transformer.transformer_blocks.0.attn.to_v.bias"],
+                weights["transformer.transformer_blocks.0.attn.to_k.bias"],
+                weights["transformer.transformer_blocks.0.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_191"] = main_const_eval_191_0[0]
+        main_const_eval_192_0 = main_const_eval_192(device,
+            [weights["transformer.transformer_blocks.3.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_192"] = main_const_eval_192_0[0]
+        main_const_eval_193_0 = main_const_eval_193(device,
+            [
+                weights["transformer.single_transformer_blocks.11.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.11.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.11.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.11.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_193"] = main_const_eval_193_0[0]
+        main_const_eval_194_0 = main_const_eval_194(device,
+            [weights["transformer.single_transformer_blocks.9.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_194"] = main_const_eval_194_0[0]
+        main_const_eval_195_0 = main_const_eval_195(device,
+            [weights["transformer.transformer_blocks.2.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_195"] = main_const_eval_195_0[0]
+        main_const_eval_196_0 = main_const_eval_196(device,
+            [weights["transformer.single_transformer_blocks.24.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_196"] = main_const_eval_196_0[0]
+        main_const_eval_197_0 = main_const_eval_197(device,
+            [weights["transformer.single_transformer_blocks.17.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_197"] = main_const_eval_197_0[0]
+        main_const_eval_198_0 = main_const_eval_198(device,
+            [weights["transformer.single_transformer_blocks.36.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_198"] = main_const_eval_198_0[0]
+        main_const_eval_199_0 = main_const_eval_199(device,
+            [weights["transformer.time_embed.timestep_embedder.linear_2.bias"]]
+        )
+        ce_cache["main_const_eval_199"] = main_const_eval_199_0[0]
+        main_const_eval_200_0 = main_const_eval_200(device,
+            [weights["transformer.single_transformer_blocks.11.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_200"] = main_const_eval_200_0[0]
+        main_const_eval_201_0 = main_const_eval_201(device,
+            [
+                weights["transformer.single_transformer_blocks.5.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.5.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.5.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.5.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_201"] = main_const_eval_201_0[0]
+        main_const_eval_202_0 = main_const_eval_202(device,
+            [
+                weights["transformer.transformer_blocks.4.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.4.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.4.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_202"] = main_const_eval_202_0[0]
+        main_const_eval_203_0 = main_const_eval_203(device,
+            [weights["transformer.single_transformer_blocks.15.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_203"] = main_const_eval_203_0[0]
+        main_const_eval_204_0 = main_const_eval_204(device,
+            [
+                weights["transformer.single_transformer_blocks.13.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.13.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.13.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.13.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_204"] = main_const_eval_204_0[0]
+        main_const_eval_205_0 = main_const_eval_205(device,
+            [
+                weights["transformer.single_transformer_blocks.0.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.0.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.0.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.0.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_205"] = main_const_eval_205_0[0]
+        main_const_eval_206_0 = main_const_eval_206(device,
+            [weights["transformer.single_transformer_blocks.2.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_206"] = main_const_eval_206_0[0]
+        main_const_eval_207_0 = main_const_eval_207(device,
+            [
+                weights["transformer.single_transformer_blocks.15.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.15.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.15.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.15.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_207"] = main_const_eval_207_0[0]
+        main_const_eval_208_0 = main_const_eval_208(device,
+            [weights["transformer.transformer_blocks.0.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_208"] = main_const_eval_208_0[0]
+        main_const_eval_209_0 = main_const_eval_209(device,
+            [weights["transformer.transformer_blocks.4.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_209"] = main_const_eval_209_0[0]
+        main_const_eval_210_0 = main_const_eval_210(device,
+            [weights["transformer.single_transformer_blocks.17.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_210"] = main_const_eval_210_0[0]
+        main_const_eval_211_0 = main_const_eval_211(device,
+            [weights["transformer.transformer_blocks.4.norm1.linear.bias"]]
+        )
+        ce_cache["main_const_eval_211"] = main_const_eval_211_0[0]
+        main_const_eval_212_0 = main_const_eval_212(device,
+            [weights["transformer.transformer_blocks.0.ff.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_212"] = main_const_eval_212_0[0]
+        main_const_eval_213_0 = main_const_eval_213(device,
+            [
+                weights["transformer.single_transformer_blocks.28.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.28.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.28.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.28.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_213"] = main_const_eval_213_0[0]
+        main_const_eval_214_0 = main_const_eval_214(device,
+            [weights["transformer.single_transformer_blocks.10.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_214"] = main_const_eval_214_0[0]
+        main_const_eval_215_0 = main_const_eval_215(device,
+            [
+                weights["transformer.single_transformer_blocks.1.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.1.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.1.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.1.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_215"] = main_const_eval_215_0[0]
+        main_const_eval_216_0 = main_const_eval_216(device,
+            [
+                weights["transformer.single_transformer_blocks.7.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.7.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.7.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.7.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_216"] = main_const_eval_216_0[0]
+        main_const_eval_217_0 = main_const_eval_217(device,
+            [
+                weights["transformer.single_transformer_blocks.26.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.26.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.26.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.26.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_217"] = main_const_eval_217_0[0]
+        main_const_eval_218_0 = main_const_eval_218(device,
+            [
+                weights["transformer.single_transformer_blocks.8.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.8.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.8.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.8.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_218"] = main_const_eval_218_0[0]
+        main_const_eval_219_0 = main_const_eval_219(device,
+            [
+                weights["transformer.single_transformer_blocks.25.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.25.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.25.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.25.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_219"] = main_const_eval_219_0[0]
+        main_const_eval_220_0 = main_const_eval_220(device,
+            [weights["transformer.transformer_blocks.3.attn.to_add_out.bias"]]
+        )
+        ce_cache["main_const_eval_220"] = main_const_eval_220_0[0]
+        main_const_eval_221_0 = main_const_eval_221(device,
+            [weights["transformer.single_transformer_blocks.9.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_221"] = main_const_eval_221_0[0]
+        main_const_eval_222_0 = main_const_eval_222(device,
+            [
+                weights["transformer.single_transformer_blocks.27.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.27.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.27.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.27.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_222"] = main_const_eval_222_0[0]
+        main_const_eval_223_0 = main_const_eval_223(device,
+            [weights["transformer.single_transformer_blocks.10.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_223"] = main_const_eval_223_0[0]
+        main_const_eval_224_0 = main_const_eval_224(device,
+            [
+                weights["transformer.transformer_blocks.2.attn.add_v_proj.weight"],
+                weights["transformer.transformer_blocks.2.attn.add_k_proj.weight"],
+                weights["transformer.transformer_blocks.2.attn.add_q_proj.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_224"] = main_const_eval_224_0[0]
+        main_const_eval_225_0 = main_const_eval_225(device,
+            [weights["transformer.transformer_blocks.6.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_225"] = main_const_eval_225_0[0]
+        main_const_eval_226_0 = main_const_eval_226(device,
+            [weights["transformer.single_transformer_blocks.3.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_226"] = main_const_eval_226_0[0]
+        main_const_eval_227_0 = main_const_eval_227(device,
+            [weights["transformer.single_transformer_blocks.29.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_227"] = main_const_eval_227_0[0]
+        main_const_eval_228_0 = main_const_eval_228(device,
+            [weights["transformer.single_transformer_blocks.37.proj_out.bias"]]
+        )
+        ce_cache["main_const_eval_228"] = main_const_eval_228_0[0]
+        main_const_eval_229_0 = main_const_eval_229(device,
+            [
+                weights["transformer.transformer_blocks.5.attn.add_v_proj.bias"],
+                weights["transformer.transformer_blocks.5.attn.add_k_proj.bias"],
+                weights["transformer.transformer_blocks.5.attn.add_q_proj.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_229"] = main_const_eval_229_0[0]
+        main_const_eval_230_0 = main_const_eval_230(device,
+            [
+                weights["transformer.single_transformer_blocks.32.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.32.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.32.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.32.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_230"] = main_const_eval_230_0[0]
+        main_const_eval_231_0 = main_const_eval_231(device,
+            [
+                weights["transformer.single_transformer_blocks.21.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.21.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.21.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.21.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_231"] = main_const_eval_231_0[0]
+        main_const_eval_232_0 = main_const_eval_232(device,
+            [weights["transformer.transformer_blocks.5.ff_context.net.2.bias"]]
+        )
+        ce_cache["main_const_eval_232"] = main_const_eval_232_0[0]
+        main_const_eval_233_0 = main_const_eval_233(device)
+        ce_cache["main_const_eval_233"] = main_const_eval_233_0[0]
+        main_const_eval_234_0 = main_const_eval_234(device,
+            [
+                weights["transformer.single_transformer_blocks.19.proj_mlp.bias"],
+                weights["transformer.single_transformer_blocks.19.attn.to_v.bias"],
+                weights["transformer.single_transformer_blocks.19.attn.to_k.bias"],
+                weights["transformer.single_transformer_blocks.19.attn.to_q.bias"],
+            ]
+        )
+        ce_cache["main_const_eval_234"] = main_const_eval_234_0[0]
+        main_const_eval_235_0 = main_const_eval_235(device,
+            [
+                weights["transformer.single_transformer_blocks.34.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.34.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.34.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.34.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_235"] = main_const_eval_235_0[0]
+        main_const_eval_236_0 = main_const_eval_236(device,
+            [weights["transformer.transformer_blocks.7.attn.to_out.0.bias"]]
+        )
+        ce_cache["main_const_eval_236"] = main_const_eval_236_0[0]
+        main_const_eval_237_0 = main_const_eval_237(device,
+            [
+                weights["transformer.single_transformer_blocks.14.proj_mlp.weight"],
+                weights["transformer.single_transformer_blocks.14.attn.to_v.weight"],
+                weights["transformer.single_transformer_blocks.14.attn.to_k.weight"],
+                weights["transformer.single_transformer_blocks.14.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_237"] = main_const_eval_237_0[0]
+        main_const_eval_238_0 = main_const_eval_238(device)
+        ce_cache["main_const_eval_238"] = main_const_eval_238_0[0]
+        main_const_eval_239_0 = main_const_eval_239(device,
+            [
+                weights["transformer.transformer_blocks.6.attn.to_v.weight"],
+                weights["transformer.transformer_blocks.6.attn.to_k.weight"],
+                weights["transformer.transformer_blocks.6.attn.to_q.weight"],
+            ]
+        )
+        ce_cache["main_const_eval_239"] = main_const_eval_239_0[0]
+        main_const_eval_240_0 = main_const_eval_240(device,
+            [weights["transformer.single_transformer_blocks.16.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_240"] = main_const_eval_240_0[0]
+        main_const_eval_241_0 = main_const_eval_241(device,
+            [weights["transformer.single_transformer_blocks.36.norm.linear.bias"]]
+        )
+        ce_cache["main_const_eval_241"] = main_const_eval_241_0[0]
+    return ce_cache
 
 
