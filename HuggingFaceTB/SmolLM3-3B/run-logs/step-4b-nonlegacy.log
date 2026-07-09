@@ -1,9 +1,0 @@
-2026-07-09 11:55:15.562 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
-2026-07-09 11:55:18.833237: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
-/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/HuggingFaceTB__SmolLM3-3B/HuggingFaceTB/SmolLM3-3B/xla.py:238: DeprecationWarning: Use torch_xla.device instead
-  device = xm.xla_device()
-Created device mesh: (1, 4) with 4 devices.
-Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1317.51it/s]
-Loading weights:   0%|          | 0/326 [00:00<?, ?it/s]Loading weights: 100%|██████████| 326/326 [00:00<00:00, 24425.13it/s]
-Python codegen successful. Check /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/HuggingFaceTB__SmolLM3-3B/HuggingFaceTB/SmolLM3-3B/model/graph_0 for the results.
-Sharded 252 SmolLM3Model params (Megatron-1D).

@@ -1,18 +1,0 @@
-2026-07-09 12:14:05.305 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
-Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 3756.65it/s]
-Loading weights:   0%|          | 0/326 [00:00<?, ?it/s]Loading weights: 100%|██████████| 326/326 [00:00<00:00, 33594.83it/s]
-2026-07-09 12:14:25.421032: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
-/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/HuggingFaceTB__SmolLM3-3B/HuggingFaceTB/SmolLM3-3B/xla.py:195: DeprecationWarning: Use torch_xla.device instead
-  device = xm.xla_device()
-Created device mesh: (1, 4) with 4 devices.
-Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 6594.82it/s]
-Loading weights:   0%|          | 0/326 [00:00<?, ?it/s]Loading weights: 100%|██████████| 326/326 [00:00<00:00, 23995.21it/s]
-Sharded 252 SmolLM3Model params (Megatron-1D).
-PCC: 0.984375
-Traceback (most recent call last):
-  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/HuggingFaceTB__SmolLM3-3B/HuggingFaceTB/SmolLM3-3B/xla.py", line 301, in <module>
-    compare_pytorch_and_tt_runs()
-  File "/localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models-worktrees/HuggingFaceTB__SmolLM3-3B/HuggingFaceTB/SmolLM3-3B/xla.py", line 274, in compare_pytorch_and_tt_runs
-    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
-           ^^^^^^^^^^^^^^^^
-AssertionError: PCC 0.984375 does not match expected 1.0
