@@ -1,0 +1,30 @@
+The modularization is complete. Here's a summary of what was done:
+
+**Structure:**
+- 4 classes: `LightweightModule`, `ModelTTNN`, `BriaFiboTransformerBlock`, `BriaFiboSingleTransformerBlock`
+- `ModelTTNN` is at the top of the file (as required)
+- Each class extends `LightweightModule` and has `__init__` and `forward`
+
+**ModelTTNN.__init__:**
+- Loads weights and runs consteval (unchanged)
+- Creates 8 `BriaFiboTransformerBlock` instances and 38 `BriaFiboSingleTransformerBlock` instances
+
+**ModelTTNN.forward():**
+- Prologue: activation unpacking, context embedder, caption_projection.0, pos_embed, time_embed, fused norm matmul + 55 slices (~760 lines)
+- 8 sequential calls to `self.transformer_blocks[i](...)` with explicit variable passing
+- 38 sequential calls to `self.single_transformer_blocks[i](...)` with explicit variable passing
+- Epilogue: norm_out + proj_out (~160 lines)
+
+**Block forward dispatch:**
+- Each block class uses a dispatch table (`_TB_FORWARDS` / `_STB_FORWARDS`) mapping `block_idx` to the block-specific forward function
+- 8 transformer block forward functions (`_tb_forward_0` through `_tb_forward_7`), each ~1500 lines
+- 38 single transformer block forward functions (`_stb_forward_0` through `_stb_forward_37`), each ~800 lines
+
+**Semantic equivalence preserved:**
+- All 504 weight references preserved
+- All TTNN operations preserved (exact counts match for all op types)
+- All 4617 variable assignments preserved
+- Execution order unchanged (variables flow correctly between modules)
+- Every variable used in block calls is properly defined before use
+
+--- Time taken: 1327.6s | session: cd5291fa-5b8e-45db-8847-d8e78a26b601 ---
