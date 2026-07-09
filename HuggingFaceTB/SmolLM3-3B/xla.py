@@ -37,7 +37,6 @@ import torch_xla.distributed.spmd as xs
 import torch_xla.runtime as xr
 from torch_xla.distributed.spmd import Mesh
 from transformers import AutoTokenizer, SmolLM3Model
-from tt_torch import codegen_py
 
 MODEL_ID = "HuggingFaceTB/SmolLM3-3B"
 DATA_FORMAT = torch.bfloat16     # test loads with dtype_override=torch.bfloat16
@@ -219,23 +218,38 @@ def codegen_model():
     # TP sharding must be applied for codegen too, or the graph is single-chip.
     mesh = _build_mesh()
     _enable_spmd()
+
+    # NOTE: we do NOT use tt_torch.codegen_py here. codegen_py hardcodes
+    # model.compile(backend="tt", options={"tt_legacy_compile": True}) — the
+    # legacy compile path — and that option is not overridable through its
+    # compiler_options arg. The legacy path materializes the full fp32 Q@K^T
+    # score matrix (tensor<1x4x24576x24576xf32> = 9.66 GB/chip) and OOMs, even
+    # though the graph is correctly tp=4. To make codegen use the SAME compile
+    # as run_tt_model, we inline codegen_py's logic but compile via the
+    # non-legacy torch.compile(backend="tt") path, only setting the codegen_py
+    # backend + export options globally so the compiler still emits code.
+    real_compile_options = {
+        **COMPILE_OPTIONS,
+        "backend": "codegen_py",
+        "export_path": OUTPUT_DIR,
+        "export_tensors": True,
+    }
+    torch_xla.set_custom_compile_options(real_compile_options)
     device = xm.xla_device()
 
     wrapper = load_pytorch_model()
     wrapper = wrapper.to(device)
     _apply_tp_sharding(wrapper.model, mesh)
 
-    # Inputs stay on CPU here — codegen_py moves positional tensor args to device.
-    input_ids, attention_mask = load_input()
+    compiled = torch.compile(wrapper, backend="tt")
 
-    codegen_py(
-        wrapper,
-        input_ids,
-        attention_mask,
-        export_path=OUTPUT_DIR,
-        export_tensors=True,
-        compiler_options=COMPILE_OPTIONS,
-    )
+    input_ids, attention_mask = load_input()
+    input_ids = input_ids.to(device)
+    attention_mask = attention_mask.to(device)
+
+    with torch.no_grad():
+        compiled(input_ids, attention_mask)
+    xm.wait_device_ops()
 
 
 def compare_pytorch_and_tt_runs():
