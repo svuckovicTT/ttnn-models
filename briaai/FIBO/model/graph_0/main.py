@@ -2,11 +2,8 @@ import torch
 import ttnn
 import utils
 import model_pt
-import params
-from utils import calculate_pcc
-
-
 import model_ttnn
+from utils import calculate_pcc
 
 def load_activations_for__main(device):
     utils_load_tensor_0 = utils.load_tensor(
@@ -533,14 +530,11 @@ def load_activations_for__main(device):
     ]
 
 
-load_weights_for__main = params.load_weights_for__main
-
-
 def main():
     device = utils.open_device()
-    load_activations_for__main_0 = load_activations_for__main(device)
-    load_weights_for__main_0 = load_weights_for__main(device)
-    _main_0 = model_ttnn._main(device, load_activations_for__main_0, load_weights_for__main_0)
+    model = model_ttnn.ModelTTNN(device)
+    activations = load_activations_for__main(device)
+    outputs = model(activations)
     return 0
 
 
@@ -548,14 +542,14 @@ def test_main():
     exact_pcc = 0.999389111995697
 
     device = utils.open_device()
+    model = model_ttnn.ModelTTNN(device)
 
     # Use the codegen's own activation loader: it deserializes the captured
-    # input tensors already in the exact order `_main` unpacks them
+    # input tensors already in the exact order the forward method unpacks them
     # (`activations[0..51]`), applying the same layout/dtype/device transforms
     # as any `load_activations_for_*()` helper.
     activations = load_activations_for__main(device)
-    weights = load_weights_for__main(device)
-    outputs = model_ttnn._main(device, activations, weights)
+    outputs = model(activations)
 
     # The DiT runs tensor-parallel on a 1x4 mesh, but `transformer.proj_out` is
     # not sharded (see xla.py's shard spec), so the output is replicated across
