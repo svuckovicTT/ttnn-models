@@ -2278,10 +2278,7 @@ SHARD_DIMS = {
     "transformer.transformer_blocks.7.norm1_context.linear.weight": 1,
 }
 
-def load_weights_for__main():
-    device = utils.DeviceGetter.get_device(
-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
-    )
+def load_weights_for__main(device):
     model = model_pt.load_pytorch_model()
     sd = dict(model.state_dict())
     for name, buf in model.named_buffers():
