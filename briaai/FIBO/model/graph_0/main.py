@@ -545,17 +545,25 @@ def test_main():
     device = utils.open_device()
     model = model_ttnn.ModelTTNN(device)
 
-    # Use the codegen's own activation loader: it deserializes the captured
-    # input tensors already in the exact order the forward method unpacks them
-    # (`activations[0..51]`), applying the same layout/dtype/device transforms
-    # as any `load_activations_for_*()` helper.
     activations = load_activations_for__main(device)
-    outputs = model(activations)
 
-    # The DiT runs tensor-parallel on a 1x4 mesh, but `transformer.proj_out` is
-    # not sharded (see xla.py's shard spec), so the output is replicated across
-    # all 4 devices. Pull a single shard back to host to convert it to torch;
-    # `ttnn.to_torch` on the whole multi-device tensor would need a composer.
+    host_activations = [ttnn.from_device(act) for act in activations]
+
+    dram_mem_config = ttnn.MemoryConfig(
+        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+    )
+    input_dram_tensors = [
+        ttnn.allocate_tensor_on_device(
+            act.shape, act.dtype, act.layout, device, dram_mem_config
+        )
+        for act in activations
+    ]
+
+    for host_act, dram_tensor in zip(host_activations, input_dram_tensors):
+        ttnn.copy_host_to_device_tensor(host_act, dram_tensor, cq_id=0)
+    outputs = model(input_dram_tensors)
+    ttnn.synchronize_device(device)
+
     output_host = ttnn.from_device(outputs[0])
     output_shard = ttnn.get_device_tensors(output_host)[0]
     ttnn_output = ttnn.to_torch(output_shard).to(torch.float32)
@@ -566,14 +574,20 @@ def test_main():
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
 
-    # `forward` deallocates its input activations as it runs, so each model call
-    # consumes them - rebuild fresh activations (outside the timed region) before
-    # every run. FIBO is an image model, so report FPS (batch images / second).
+    for host_act, dram_tensor in zip(host_activations, input_dram_tensors):
+        ttnn.copy_host_to_device_tensor(host_act, dram_tensor, cq_id=0)
+    tid = ttnn.begin_trace_capture(device, cq_id=0)
+    output_tensor = model(input_dram_tensors)
+    ttnn.end_trace_capture(device, tid, cq_id=0)
+    ttnn.synchronize_device(device)
+
     print("\nPerformance:")
-    for i in range(3):
-        activations = load_activations_for__main(device)
+    for i in range(5):
         start = time.perf_counter()
-        model(activations)
+        for host_act, dram_tensor in zip(host_activations, input_dram_tensors):
+            ttnn.copy_host_to_device_tensor(host_act, dram_tensor, cq_id=0)
+        ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
+        host_output_tensor = output_tensor[0].cpu(blocking=False)
         ttnn.synchronize_device(device)
         end = time.perf_counter()
         elapsed = end - start
