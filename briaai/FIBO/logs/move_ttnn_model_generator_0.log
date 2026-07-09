@@ -1,0 +1,7 @@
+Everything looks correct:
+
+- **`model_ttnn.py`** (62,412 lines): Contains `import ttnn`, all 242 `main_const_eval_*` functions, `ce_cache__main = {}`, `_main(device, activations, weights)` (the forward function), and `consteval__main(device, ce_cache, weights)`.
+
+- **`main.py`** (576 lines): Kept all original imports plus `import model_ttnn`. Contains `load_activations_for__main`, `load_weights_for__main` alias, `main()`, and `test_main()`. Both call sites now use `model_ttnn._main(...)`.
+
+--- Time taken: 108.0s | session: 05e09e73-7b0e-4483-a08e-a9cc84525326 ---
