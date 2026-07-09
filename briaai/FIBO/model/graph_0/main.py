@@ -1,3 +1,4 @@
+import time
 import torch
 import ttnn
 import utils
@@ -564,6 +565,20 @@ def test_main():
     pcc = calculate_pcc(ttnn_output, golden_output)
     print(f"\nPCC: {pcc:.6f}")
     assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+
+    # `forward` deallocates its input activations as it runs, so each model call
+    # consumes them - rebuild fresh activations (outside the timed region) before
+    # every run. FIBO is an image model, so report FPS (batch images / second).
+    print("\nPerformance:")
+    for i in range(3):
+        activations = load_activations_for__main(device)
+        start = time.perf_counter()
+        model(activations)
+        ttnn.synchronize_device(device)
+        end = time.perf_counter()
+        elapsed = end - start
+        fps = model_pt.BATCH_SIZE / elapsed
+        print(f"  Run {i}: {elapsed:.4f}s, FPS: {fps:.2f}")
 
 
 if __name__ == "__main__":
