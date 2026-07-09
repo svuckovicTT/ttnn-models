@@ -1717,31 +1717,6 @@ def load_weights_for__main():
     device = utils.DeviceGetter.get_device(
         (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
     )
-    weights = {}
-    for key, path in WEIGHT_FILE_MAP.items():
-        if key in TILE_ON_DEVICE_WEIGHTS:
-            weights[key] = utils.load_tensor(
-                path,
-                ttnn.Layout.TILE,
-                ttnn.DataType.BFLOAT16,
-                device,
-                ttnn.DRAM_MEMORY_CONFIG,
-            )
-        else:
-            weights[key] = utils.load_tensor(
-                path,
-                ttnn.Layout.ROW_MAJOR,
-                ttnn.DataType.BFLOAT16,
-                None,
-                None,
-            )
-    return weights
-
-
-def load_weights_for__main_from_state_dict():
-    device = utils.DeviceGetter.get_device(
-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
-    )
     model = model_pt.load_pytorch_model()
     sd = dict(model.state_dict())
     for name, buf in model.named_buffers():
