@@ -1,0 +1,14 @@
+Everything is clean. Here's a summary of what was done:
+
+**Created `consteval.py`** (475 lines, down from ~16,600 lines of consteval functions + 1,528 lines of orchestrator):
+- Defined reusable helper functions: `concat_biases`, `permute_and_concat_weights`, `reshape_bias`, `reshape_and_typecast_norm_bias`, `typecast_to_float32`, `permute_and_typecast_to_float32`, `mesh_partition_and_typecast`, `mesh_partition_permute_and_typecast`, `typecast_concat_norm_weights`
+- Defined constant-creation functions: `create_timestep_embedding_frequencies`, `create_rope_frequencies`, `create_context_rope_frequencies`, `create_ones_scalar`
+- `run_consteval(weights, device)` replaces 242 individual functions + orchestrator with loops over the 38 single_transformer_blocks and 8 transformer_blocks, producing named weight keys
+
+**Updated `model_ttnn.py`**:
+- Removed all 242 `main_const_eval_*` functions, `ce_cache__main` global, and `consteval__main` function (~17,000+ lines removed)
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` after loading weights
+- Replaced all 242 `ce_cache__main["main_const_eval_N"]` references in `forward` with descriptive `self.weights["..."]` keys (e.g., `self.weights["transformer.single_transformer_blocks.10.fused_qkv_proj_mlp.bias"]`)
+- Each weight key maps to a single tensor (no multi-tensor keys)
+
+--- Time taken: 1435.2s | session: eacc8e32-afa3-4321-874b-f4450dfdd8c8 ---
