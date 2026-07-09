@@ -1,0 +1,14 @@
+All changes are complete. Here's a summary:
+
+**`utils.py`**: Removed the `DeviceGetter` singleton class and its `math` import. Added `open_device()` — a simple function that calls `ttnn.set_fabric_config(FABRIC_1D_RING)` and `ttnn.open_mesh_device(mesh_shape=(1,4), l1_small_size=32768)`, matching the original parameters.
+
+**`main.py`**: 
+- All 243 `utils_DeviceGetter_get_device_N = utils.DeviceGetter.get_device(...)` 3-line blocks removed
+- All `utils_DeviceGetter_get_device_N` references replaced with `device`
+- All `main_const_eval_N` functions now accept `device` as first parameter
+- `consteval__main`, `_main`, `load_activations_for__main` all accept `device` as first parameter
+- `main()` and `test_main()` each call `utils.open_device()` and pipe the device to all callees
+
+**`params.py`**: `load_weights_for__main(device)` now accepts device as a parameter instead of calling `DeviceGetter.get_device()` internally.
+
+--- Time taken: 282.7s | session: 5c0f8bd3-5118-4917-b206-84f88b772c99 ---
