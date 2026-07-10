@@ -1,0 +1,95 @@
+# SPDX-FileCopyrightText: (c) 2026 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
+
+### CPU PyTorch reference for HuggingFaceTB/SmolLM3-3B (FIBO text encoder).
+###
+### Mirrors the PyTorch model construction, input build and forward run from
+### xla.py. FIBO (briaai/FIBO) is an 8B DiT text-to-image model; this ports ONLY
+### its text encoder, which is a base ``SmolLM3Model`` (the SmolLM3-3B causal LM
+### with the vocab head discarded). It runs as a single forward returning
+### ``last_hidden_state`` — the conditioning embedding FIBO's DiT consumes.
+
+import os
+
+import torch
+from transformers import AutoTokenizer, SmolLM3Model
+
+MODEL_ID = "HuggingFaceTB/SmolLM3-3B"
+DATA_FORMAT = torch.bfloat16     # test loads with dtype_override=torch.bfloat16
+BATCH_SIZE = 1                   # test: loader.load_inputs(batch_size=1)
+
+# Sequence length the model runs. The benchmark pins MAX_TP4_CONTEXT_LENGTH =
+# 24576 (largest context validated under TP-4 during model-bringup), but that
+# materializes a per-chip fp32 Q@K^T score matrix (tensor<1x4x24576x24576xf32> =
+# 9.66 GB/chip) that OOMs the codegen ./run — so this script defaults to 4096,
+# which passes the whole pipeline (run-pt/run-tt/golden/codegen/./run) end-to-end
+# on the tp=4 (1,4) mesh. The real loader reads FIBO_TE_CONTEXT_LENGTH, so honor
+# the same env var here to reproduce the benchmark length:
+# FIBO_TE_CONTEXT_LENGTH=24576 python xla.py --golden.
+CONTEXT_LENGTH = int(os.environ.get("FIBO_TE_CONTEXT_LENGTH", "4096"))
+
+# Stub structured-JSON prompt (fibo/pytorch/src/model_utils.py:BRINGUP_PROMPT).
+# FIBO is trained on structured JSON captions; the exact text only affects the
+# absolute PCC value (CPU and TT see identical inputs), not the port's validity.
+BRINGUP_PROMPT = (
+    '{"subject":"a hyper-detailed, ultra-fluffy owl in moonlit trees",'
+    '"style_medium":"photograph","camera":"85mm prime, shallow depth of field",'
+    '"lighting":"cool moonlight with subtle silver highlights"}'
+)
+
+
+class FiboTextEncoderWrapper(torch.nn.Module):
+    """Adapts SmolLM3Model to the ``wrapper(input_ids, attention_mask) -> tensor``
+    harness contract, extracting ``last_hidden_state`` from the model output —
+    the conditioning embedding FIBO's DiT consumes."""
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, input_ids, attention_mask):
+        return self.model(
+            input_ids=input_ids, attention_mask=attention_mask
+        ).last_hidden_state
+
+
+def load_pytorch_model():
+    # FIBO's text encoder is the base SmolLM3Model (no LM head); load the stock
+    # public SmolLM3-3B weights with the benchmark's bf16 dtype_override.
+    model = SmolLM3Model.from_pretrained(MODEL_ID, torch_dtype=DATA_FORMAT)
+    wrapper = FiboTextEncoderWrapper(model)
+    wrapper.eval()
+    return wrapper
+
+
+def load_input():
+    """Build ``(input_ids, attention_mask)`` of shape [1, 24576].
+
+    Mirrors the loader's ``load_inputs(batch_size=1)`` at the pinned TP-4 context
+    length. The text-encoder loader is not committed, so we tokenize the FIBO
+    bringup prompt with the stock SmolLM3 tokenizer and pad to the full context
+    length — reproducing the [1, 1, seq, seq] causal-mask / O(seq^2) attention
+    memory profile that makes this a TP-4 (not single-chip) workload.
+    """
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    encoded = tokenizer(
+        [BRINGUP_PROMPT] * BATCH_SIZE,
+        return_tensors="pt",
+        padding="max_length",
+        max_length=CONTEXT_LENGTH,
+        truncation=True,
+    )
+    return encoded["input_ids"], encoded["attention_mask"]
+
+
+def run_pytorch_model():
+    wrapper = load_pytorch_model()
+    input_ids, attention_mask = load_input()
+
+    with torch.no_grad():
+        output = wrapper(input_ids, attention_mask)
+
+    return output
