@@ -1,0 +1,110 @@
+diff --git a/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py b/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
+index 59dfcd9..f016e25 100644
+--- a/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
++++ b/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
+@@ -1,5 +1,6 @@
+ import ttnn
+ import utils
++from utils import calculate_pcc
+ 
+ 
+ def main_const_eval_0(arg):
+diff --git a/HuggingFaceTB/SmolLM3-3B/model/graph_0/model_pt.py b/HuggingFaceTB/SmolLM3-3B/model/graph_0/model_pt.py
+new file mode 100644
+index 0000000..f052ce4
+--- /dev/null
++++ b/HuggingFaceTB/SmolLM3-3B/model/graph_0/model_pt.py
+@@ -0,0 +1,57 @@
++import os
++
++import torch
++from transformers import AutoTokenizer, SmolLM3Model
++
++MODEL_ID = "HuggingFaceTB/SmolLM3-3B"
++DATA_FORMAT = torch.bfloat16
++BATCH_SIZE = 1
++CONTEXT_LENGTH = int(os.environ.get("FIBO_TE_CONTEXT_LENGTH", "4096"))
++
++BRINGUP_PROMPT = (
++    '{"subject":"a hyper-detailed, ultra-fluffy owl in moonlit trees",'
++    '"style_medium":"photograph","camera":"85mm prime, shallow depth of field",'
++    '"lighting":"cool moonlight with subtle silver highlights"}'
++)
++
++
++class FiboTextEncoderWrapper(torch.nn.Module):
++    def __init__(self, model):
++        super().__init__()
++        self.model = model
++
++    def forward(self, input_ids, attention_mask):
++        return self.model(
++            input_ids=input_ids, attention_mask=attention_mask
++        ).last_hidden_state
++
++
++def load_pytorch_model():
++    model = SmolLM3Model.from_pretrained(MODEL_ID, torch_dtype=DATA_FORMAT)
++    wrapper = FiboTextEncoderWrapper(model)
++    wrapper.eval()
++    return wrapper
++
++
++def load_input():
++    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
++    if tokenizer.pad_token is None:
++        tokenizer.pad_token = tokenizer.eos_token
++    encoded = tokenizer(
++        [BRINGUP_PROMPT] * BATCH_SIZE,
++        return_tensors="pt",
++        padding="max_length",
++        max_length=CONTEXT_LENGTH,
++        truncation=True,
++    )
++    return encoded["input_ids"], encoded["attention_mask"]
++
++
++def run_pytorch_model():
++    wrapper = load_pytorch_model()
++    input_ids, attention_mask = load_input()
++
++    with torch.no_grad():
++        output = wrapper(input_ids, attention_mask)
++
++    return output
+diff --git a/HuggingFaceTB/SmolLM3-3B/model/graph_0/utils.py b/HuggingFaceTB/SmolLM3-3B/model/graph_0/utils.py
+index 8f82916..61db363 100644
+--- a/HuggingFaceTB/SmolLM3-3B/model/graph_0/utils.py
++++ b/HuggingFaceTB/SmolLM3-3B/model/graph_0/utils.py
+@@ -1,6 +1,7 @@
+ # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+ #
+ # SPDX-License-Identifier: Apache-2.0
++import torch
+ import ttnn
+ import math
+ 
+@@ -98,3 +99,23 @@ def create_global_semaphore(input_tensor):
+     mesh_device = input_tensor.device()
+     shard_spec = input_tensor.memory_config().shard_spec
+     return ttnn.create_global_semaphore(mesh_device, shard_spec.grid, 0)
++
++
++def calculate_pcc(x, y):
++    # This function calculates the PCC between two torch tensors
++
++    # Assert both are torch tensors
++    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
++    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
++
++    if x.shape != y.shape:
++        raise ValueError(
++            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
++        )
++
++    # Calculate PCC
++    x_flat, y_flat = x.flatten(), y.flatten()
++    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
++    denom = vx.norm() * vy.norm()
++
++    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()

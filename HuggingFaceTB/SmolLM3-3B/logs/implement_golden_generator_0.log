@@ -1,0 +1,7 @@
+Done. Three changes made:
+
+1. **`model_pt.py`** — created with `load_pytorch_model()`, `load_input()`, and `run_pytorch_model()` mirroring the CPU-only logic from `xla.py` (same constants, wrapper class, tokenizer setup).
+2. **`utils.py`** — added `import torch` and the `calculate_pcc()` function at the bottom.
+3. **`main.py`** — added `from utils import calculate_pcc` import.
+
+--- Time taken: 33.3s | session: be3c1577-b880-493b-82b7-044d07f218ae ---
