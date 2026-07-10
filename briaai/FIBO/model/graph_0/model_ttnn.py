@@ -160,6 +160,46 @@ class TimeEmbed(LightweightModule):
         return ttnn_linear_2
 
 
+class ProjOut(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states):
+        ttnn_reshape_1325 = ttnn.reshape(
+            hidden_states,
+            [8192, 3072],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(hidden_states, False)
+        ttnn_linear_74 = ttnn.linear(
+            ttnn_reshape_1325,
+            self.weights["transformer.proj_out.weight"],
+            bias=self.weights["transformer.proj_out.bias"],
+            transpose_a=False,
+            transpose_b=True,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None,
+            activation=None,
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_reshape_1325, False)
+        ttnn_reshape_1326 = ttnn.reshape(
+            ttnn_linear_74,
+            [2, 4096, 48],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_linear_74, False)
+        return ttnn_reshape_1326
+
+
 class ModelTTNN(LightweightModule):
     def __init__(self, device):
         self.device = device
@@ -167,6 +207,7 @@ class ModelTTNN(LightweightModule):
         self.weights = consteval.run_consteval(self.weights, device)
         self.context_embedder = ContextEmbedder(device, self.weights)
         self.time_embed = TimeEmbed(device, self.weights)
+        self.proj_out = ProjOut(device, self.weights)
         self.transformer_blocks = [BriaFiboTransformerBlock0(device, self.weights, 0)] + [
             BriaFiboTransformerBlock(device, self.weights, i) for i in range(1, 8)
         ]
@@ -428,38 +469,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_reshape_1324, False)
         ttnn.deallocate(ttnn_multiply_328, False)
-        ttnn_reshape_1325 = ttnn.reshape(
-            ttnn_add_428,
-            [8192, 3072],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_428, False)
-        ttnn_linear_74 = ttnn.linear(
-            ttnn_reshape_1325,
-            self.weights["transformer.proj_out.weight"],
-            bias=self.weights["transformer.proj_out.bias"],
-            transpose_a=False,
-            transpose_b=True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_1325, False)
-        ttnn_reshape_1326 = ttnn.reshape(
-            ttnn_linear_74,
-            [2, 4096, 48],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_linear_74, False)
-        return [ttnn_reshape_1326]
+        return [self.proj_out(ttnn_add_428)]
 
 
 class BriaFiboTransformerBlock(LightweightModule):
