@@ -17,62 +17,62 @@ class ModelTTNN(LightweightModule):
         self.single_transformer_blocks = [BriaFiboSingleTransformerBlock(device, self.weights, i) for i in range(38)]
 
     def forward(self, activations):
-        args_1 = activations[0]
-        args_0 = activations[1]
-        args_5 = activations[2]
-        args_2 = activations[3]
-        args_51 = activations[4]
-        args_4 = activations[5]
-        args_3 = activations[6]
-        args_6 = activations[7]
-        args_7 = activations[8]
-        args_8 = activations[9]
-        args_9 = activations[10]
-        args_10 = activations[11]
-        args_11 = activations[12]
-        args_12 = activations[13]
-        args_13 = activations[14]
-        args_14 = activations[15]
-        args_15 = activations[16]
-        args_16 = activations[17]
-        args_17 = activations[18]
-        args_18 = activations[19]
-        args_19 = activations[20]
-        args_20 = activations[21]
-        args_21 = activations[22]
-        args_22 = activations[23]
-        args_23 = activations[24]
-        args_24 = activations[25]
-        args_25 = activations[26]
-        args_26 = activations[27]
-        args_27 = activations[28]
-        args_28 = activations[29]
-        args_29 = activations[30]
-        args_30 = activations[31]
-        args_31 = activations[32]
-        args_32 = activations[33]
-        args_33 = activations[34]
-        args_34 = activations[35]
-        args_35 = activations[36]
-        args_36 = activations[37]
-        args_37 = activations[38]
-        args_38 = activations[39]
-        args_39 = activations[40]
-        args_40 = activations[41]
-        args_41 = activations[42]
-        args_42 = activations[43]
-        args_43 = activations[44]
-        args_44 = activations[45]
-        args_45 = activations[46]
-        args_46 = activations[47]
-        args_47 = activations[48]
-        args_48 = activations[49]
-        args_49 = activations[50]
-        args_50 = activations[51]
+        timestep = activations[0]
+        hidden_states = activations[1]
+        text_encoder_layer_0 = activations[2]
+        encoder_hidden_states = activations[3]
+        attention_mask = activations[4]
+        img_ids = activations[5]
+        txt_ids = activations[6]
+        text_encoder_layer_1 = activations[7]
+        text_encoder_layer_2 = activations[8]
+        text_encoder_layer_3 = activations[9]
+        text_encoder_layer_4 = activations[10]
+        text_encoder_layer_5 = activations[11]
+        text_encoder_layer_6 = activations[12]
+        text_encoder_layer_7 = activations[13]
+        text_encoder_layer_8 = activations[14]
+        text_encoder_layer_9 = activations[15]
+        text_encoder_layer_10 = activations[16]
+        text_encoder_layer_11 = activations[17]
+        text_encoder_layer_12 = activations[18]
+        text_encoder_layer_13 = activations[19]
+        text_encoder_layer_14 = activations[20]
+        text_encoder_layer_15 = activations[21]
+        text_encoder_layer_16 = activations[22]
+        text_encoder_layer_17 = activations[23]
+        text_encoder_layer_18 = activations[24]
+        text_encoder_layer_19 = activations[25]
+        text_encoder_layer_20 = activations[26]
+        text_encoder_layer_21 = activations[27]
+        text_encoder_layer_22 = activations[28]
+        text_encoder_layer_23 = activations[29]
+        text_encoder_layer_24 = activations[30]
+        text_encoder_layer_25 = activations[31]
+        text_encoder_layer_26 = activations[32]
+        text_encoder_layer_27 = activations[33]
+        text_encoder_layer_28 = activations[34]
+        text_encoder_layer_29 = activations[35]
+        text_encoder_layer_30 = activations[36]
+        text_encoder_layer_31 = activations[37]
+        text_encoder_layer_32 = activations[38]
+        text_encoder_layer_33 = activations[39]
+        text_encoder_layer_34 = activations[40]
+        text_encoder_layer_35 = activations[41]
+        text_encoder_layer_36 = activations[42]
+        text_encoder_layer_37 = activations[43]
+        text_encoder_layer_38 = activations[44]
+        text_encoder_layer_39 = activations[45]
+        text_encoder_layer_40 = activations[46]
+        text_encoder_layer_41 = activations[47]
+        text_encoder_layer_42 = activations[48]
+        text_encoder_layer_43 = activations[49]
+        text_encoder_layer_44 = activations[50]
+        text_encoder_layer_45 = activations[51]
         var_0 = self.weights["consteval.const_233"]
         var_1 = self.weights["consteval.const_238"]
         ttnn_to_layout_584 = ttnn.to_layout(
-            args_2,
+            encoder_hidden_states,
             ttnn.Layout.TILE,
             None,
             memory_config=ttnn.MemoryConfig(
@@ -121,7 +121,7 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_slice_0, False)
         ttnn_to_layout_585 = ttnn.to_layout(
-            args_5,
+            text_encoder_layer_0,
             ttnn.Layout.TILE,
             None,
             memory_config=ttnn.MemoryConfig(
@@ -179,7 +179,7 @@ class ModelTTNN(LightweightModule):
             program_config=None,
         )
         ttnn_to_layout_586 = ttnn.to_layout(
-            args_1,
+            timestep,
             ttnn.Layout.TILE,
             None,
             memory_config=ttnn.MemoryConfig(
@@ -773,51 +773,51 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_matmul_1, False)
-        ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116 = self.transformer_blocks[0](args_0, args_3, args_4, args_51, args_6, ttnn_concat_109, ttnn_layer_norm_0, ttnn_slice_54, ttnn_slice_55, var_0, var_1)
-        ttnn_add_22, ttnn_reshape_273, ttnn_slice_103, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125 = self.transformer_blocks[1](args_7, ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_52, ttnn_slice_53, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116, var_1)
-        ttnn_add_42, ttnn_reshape_319, ttnn_slice_128, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133 = self.transformer_blocks[2](args_8, ttnn_add_22, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_273, ttnn_slice_103, ttnn_slice_50, ttnn_slice_51, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125, var_1)
-        ttnn_add_62, ttnn_reshape_365, ttnn_slice_153, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141 = self.transformer_blocks[3](args_9, ttnn_add_42, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_319, ttnn_slice_128, ttnn_slice_48, ttnn_slice_49, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133, var_1)
-        ttnn_add_82, ttnn_reshape_411, ttnn_slice_178, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149 = self.transformer_blocks[4](args_10, ttnn_add_62, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_365, ttnn_slice_153, ttnn_slice_46, ttnn_slice_47, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141, var_1)
-        ttnn_add_102, ttnn_reshape_457, ttnn_slice_203, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157 = self.transformer_blocks[5](args_11, ttnn_add_82, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_411, ttnn_slice_178, ttnn_slice_44, ttnn_slice_45, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149, var_1)
-        ttnn_add_122, ttnn_reshape_503, ttnn_slice_228, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165 = self.transformer_blocks[6](args_12, ttnn_add_102, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_457, ttnn_slice_203, ttnn_slice_42, ttnn_slice_43, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157, var_1)
-        ttnn_add_142, ttnn_reshape_549, ttnn_slice_253, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173 = self.transformer_blocks[7](args_13, ttnn_add_122, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_503, ttnn_slice_228, ttnn_slice_40, ttnn_slice_41, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165, var_1)
-        ttnn_add_166, ttnn_reshape_581, ttnn_slice_270 = self.single_transformer_blocks[0](args_14, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_549, ttnn_slice_253, ttnn_slice_39, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173, var_1)
-        ttnn_add_173, ttnn_reshape_601, ttnn_slice_283 = self.single_transformer_blocks[1](args_15, ttnn_add_166, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_581, ttnn_slice_270, ttnn_slice_38, ttnn_to_layout_590, var_1)
-        ttnn_add_180, ttnn_reshape_621, ttnn_slice_296 = self.single_transformer_blocks[2](args_16, ttnn_add_173, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_601, ttnn_slice_283, ttnn_slice_37, ttnn_to_layout_590, var_1)
-        ttnn_add_187, ttnn_reshape_641, ttnn_slice_309 = self.single_transformer_blocks[3](args_17, ttnn_add_180, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_621, ttnn_slice_296, ttnn_slice_36, ttnn_to_layout_590, var_1)
-        ttnn_add_194, ttnn_reshape_661, ttnn_slice_322 = self.single_transformer_blocks[4](args_18, ttnn_add_187, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_641, ttnn_slice_309, ttnn_slice_35, ttnn_to_layout_590, var_1)
-        ttnn_add_201, ttnn_reshape_681, ttnn_slice_335 = self.single_transformer_blocks[5](args_19, ttnn_add_194, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_661, ttnn_slice_322, ttnn_slice_34, ttnn_to_layout_590, var_1)
-        ttnn_add_208, ttnn_reshape_701, ttnn_slice_348 = self.single_transformer_blocks[6](args_20, ttnn_add_201, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_681, ttnn_slice_33, ttnn_slice_335, ttnn_to_layout_590, var_1)
-        ttnn_add_215, ttnn_reshape_721, ttnn_slice_361 = self.single_transformer_blocks[7](args_21, ttnn_add_208, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_701, ttnn_slice_32, ttnn_slice_348, ttnn_to_layout_590, var_1)
-        ttnn_add_222, ttnn_reshape_741, ttnn_slice_374 = self.single_transformer_blocks[8](args_22, ttnn_add_215, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_721, ttnn_slice_31, ttnn_slice_361, ttnn_to_layout_590, var_1)
-        ttnn_add_229, ttnn_reshape_761, ttnn_slice_387 = self.single_transformer_blocks[9](args_23, ttnn_add_222, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_741, ttnn_slice_30, ttnn_slice_374, ttnn_to_layout_590, var_1)
-        ttnn_add_236, ttnn_reshape_781, ttnn_slice_400 = self.single_transformer_blocks[10](args_24, ttnn_add_229, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_761, ttnn_slice_29, ttnn_slice_387, ttnn_to_layout_590, var_1)
-        ttnn_add_243, ttnn_reshape_801, ttnn_slice_413 = self.single_transformer_blocks[11](args_25, ttnn_add_236, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_781, ttnn_slice_28, ttnn_slice_400, ttnn_to_layout_590, var_1)
-        ttnn_add_250, ttnn_reshape_821, ttnn_slice_426 = self.single_transformer_blocks[12](args_26, ttnn_add_243, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_801, ttnn_slice_27, ttnn_slice_413, ttnn_to_layout_590, var_1)
-        ttnn_add_257, ttnn_reshape_841, ttnn_slice_439 = self.single_transformer_blocks[13](args_27, ttnn_add_250, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_821, ttnn_slice_26, ttnn_slice_426, ttnn_to_layout_590, var_1)
-        ttnn_add_264, ttnn_reshape_861, ttnn_slice_452 = self.single_transformer_blocks[14](args_28, ttnn_add_257, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_841, ttnn_slice_25, ttnn_slice_439, ttnn_to_layout_590, var_1)
-        ttnn_add_271, ttnn_reshape_881, ttnn_slice_465 = self.single_transformer_blocks[15](args_29, ttnn_add_264, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_861, ttnn_slice_24, ttnn_slice_452, ttnn_to_layout_590, var_1)
-        ttnn_add_278, ttnn_reshape_901, ttnn_slice_478 = self.single_transformer_blocks[16](args_30, ttnn_add_271, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_881, ttnn_slice_23, ttnn_slice_465, ttnn_to_layout_590, var_1)
-        ttnn_add_285, ttnn_reshape_921, ttnn_slice_491 = self.single_transformer_blocks[17](args_31, ttnn_add_278, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_901, ttnn_slice_22, ttnn_slice_478, ttnn_to_layout_590, var_1)
-        ttnn_add_292, ttnn_reshape_941, ttnn_slice_504 = self.single_transformer_blocks[18](args_32, ttnn_add_285, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_921, ttnn_slice_21, ttnn_slice_491, ttnn_to_layout_590, var_1)
-        ttnn_add_299, ttnn_reshape_961, ttnn_slice_517 = self.single_transformer_blocks[19](args_33, ttnn_add_292, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_941, ttnn_slice_20, ttnn_slice_504, ttnn_to_layout_590, var_1)
-        ttnn_add_306, ttnn_reshape_981, ttnn_slice_530 = self.single_transformer_blocks[20](args_34, ttnn_add_299, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_961, ttnn_slice_19, ttnn_slice_517, ttnn_to_layout_590, var_1)
-        ttnn_add_313, ttnn_reshape_1001, ttnn_slice_543 = self.single_transformer_blocks[21](args_35, ttnn_add_306, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_981, ttnn_slice_18, ttnn_slice_530, ttnn_to_layout_590, var_1)
-        ttnn_add_320, ttnn_reshape_1021, ttnn_slice_556 = self.single_transformer_blocks[22](args_36, ttnn_add_313, ttnn_reshape_1001, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_17, ttnn_slice_543, ttnn_to_layout_590, var_1)
-        ttnn_add_327, ttnn_reshape_1041, ttnn_slice_569 = self.single_transformer_blocks[23](args_37, ttnn_add_320, ttnn_reshape_1021, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_16, ttnn_slice_556, ttnn_to_layout_590, var_1)
-        ttnn_add_334, ttnn_reshape_1061, ttnn_slice_582 = self.single_transformer_blocks[24](args_38, ttnn_add_327, ttnn_reshape_1041, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_15, ttnn_slice_569, ttnn_to_layout_590, var_1)
-        ttnn_add_341, ttnn_reshape_1081, ttnn_slice_595 = self.single_transformer_blocks[25](args_39, ttnn_add_334, ttnn_reshape_1061, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_14, ttnn_slice_582, ttnn_to_layout_590, var_1)
-        ttnn_add_348, ttnn_reshape_1101, ttnn_slice_608 = self.single_transformer_blocks[26](args_40, ttnn_add_341, ttnn_reshape_1081, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_13, ttnn_slice_595, ttnn_to_layout_590, var_1)
-        ttnn_add_355, ttnn_reshape_1121, ttnn_slice_621 = self.single_transformer_blocks[27](args_41, ttnn_add_348, ttnn_reshape_1101, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_12, ttnn_slice_608, ttnn_to_layout_590, var_1)
-        ttnn_add_362, ttnn_reshape_1141, ttnn_slice_634 = self.single_transformer_blocks[28](args_42, ttnn_add_355, ttnn_reshape_1121, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_11, ttnn_slice_621, ttnn_to_layout_590, var_1)
-        ttnn_add_369, ttnn_reshape_1161, ttnn_slice_647 = self.single_transformer_blocks[29](args_43, ttnn_add_362, ttnn_reshape_1141, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_10, ttnn_slice_634, ttnn_to_layout_590, var_1)
-        ttnn_add_376, ttnn_reshape_1181, ttnn_slice_660 = self.single_transformer_blocks[30](args_44, ttnn_add_369, ttnn_reshape_1161, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_647, ttnn_slice_9, ttnn_to_layout_590, var_1)
-        ttnn_add_383, ttnn_reshape_1201, ttnn_slice_673 = self.single_transformer_blocks[31](args_45, ttnn_add_376, ttnn_reshape_1181, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_660, ttnn_slice_8, ttnn_to_layout_590, var_1)
-        ttnn_add_390, ttnn_reshape_1221, ttnn_slice_686 = self.single_transformer_blocks[32](args_46, ttnn_add_383, ttnn_reshape_1201, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_673, ttnn_slice_7, ttnn_to_layout_590, var_1)
-        ttnn_add_397, ttnn_reshape_1241, ttnn_slice_699 = self.single_transformer_blocks[33](args_47, ttnn_add_390, ttnn_reshape_1221, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_6, ttnn_slice_686, ttnn_to_layout_590, var_1)
-        ttnn_add_404, ttnn_reshape_1261, ttnn_slice_712 = self.single_transformer_blocks[34](args_48, ttnn_add_397, ttnn_reshape_1241, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_5, ttnn_slice_699, ttnn_to_layout_590, var_1)
-        ttnn_add_411, ttnn_reshape_1281, ttnn_slice_725 = self.single_transformer_blocks[35](args_49, ttnn_add_404, ttnn_reshape_1261, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_4, ttnn_slice_712, ttnn_to_layout_590, var_1)
-        ttnn_add_418, ttnn_reshape_1301, ttnn_slice_738 = self.single_transformer_blocks[36](args_50, ttnn_add_411, ttnn_reshape_1281, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_3, ttnn_slice_725, ttnn_to_layout_590, var_1)
+        ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116 = self.transformer_blocks[0](hidden_states, txt_ids, img_ids, attention_mask, text_encoder_layer_1, ttnn_concat_109, ttnn_layer_norm_0, ttnn_slice_54, ttnn_slice_55, var_0, var_1)
+        ttnn_add_22, ttnn_reshape_273, ttnn_slice_103, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125 = self.transformer_blocks[1](text_encoder_layer_2, ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_52, ttnn_slice_53, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116, var_1)
+        ttnn_add_42, ttnn_reshape_319, ttnn_slice_128, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133 = self.transformer_blocks[2](text_encoder_layer_3, ttnn_add_22, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_273, ttnn_slice_103, ttnn_slice_50, ttnn_slice_51, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125, var_1)
+        ttnn_add_62, ttnn_reshape_365, ttnn_slice_153, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141 = self.transformer_blocks[3](text_encoder_layer_4, ttnn_add_42, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_319, ttnn_slice_128, ttnn_slice_48, ttnn_slice_49, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133, var_1)
+        ttnn_add_82, ttnn_reshape_411, ttnn_slice_178, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149 = self.transformer_blocks[4](text_encoder_layer_5, ttnn_add_62, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_365, ttnn_slice_153, ttnn_slice_46, ttnn_slice_47, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141, var_1)
+        ttnn_add_102, ttnn_reshape_457, ttnn_slice_203, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157 = self.transformer_blocks[5](text_encoder_layer_6, ttnn_add_82, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_411, ttnn_slice_178, ttnn_slice_44, ttnn_slice_45, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149, var_1)
+        ttnn_add_122, ttnn_reshape_503, ttnn_slice_228, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165 = self.transformer_blocks[6](text_encoder_layer_7, ttnn_add_102, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_457, ttnn_slice_203, ttnn_slice_42, ttnn_slice_43, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157, var_1)
+        ttnn_add_142, ttnn_reshape_549, ttnn_slice_253, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173 = self.transformer_blocks[7](text_encoder_layer_8, ttnn_add_122, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_503, ttnn_slice_228, ttnn_slice_40, ttnn_slice_41, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165, var_1)
+        ttnn_add_166, ttnn_reshape_581, ttnn_slice_270 = self.single_transformer_blocks[0](text_encoder_layer_9, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_549, ttnn_slice_253, ttnn_slice_39, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173, var_1)
+        ttnn_add_173, ttnn_reshape_601, ttnn_slice_283 = self.single_transformer_blocks[1](text_encoder_layer_10, ttnn_add_166, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_581, ttnn_slice_270, ttnn_slice_38, ttnn_to_layout_590, var_1)
+        ttnn_add_180, ttnn_reshape_621, ttnn_slice_296 = self.single_transformer_blocks[2](text_encoder_layer_11, ttnn_add_173, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_601, ttnn_slice_283, ttnn_slice_37, ttnn_to_layout_590, var_1)
+        ttnn_add_187, ttnn_reshape_641, ttnn_slice_309 = self.single_transformer_blocks[3](text_encoder_layer_12, ttnn_add_180, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_621, ttnn_slice_296, ttnn_slice_36, ttnn_to_layout_590, var_1)
+        ttnn_add_194, ttnn_reshape_661, ttnn_slice_322 = self.single_transformer_blocks[4](text_encoder_layer_13, ttnn_add_187, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_641, ttnn_slice_309, ttnn_slice_35, ttnn_to_layout_590, var_1)
+        ttnn_add_201, ttnn_reshape_681, ttnn_slice_335 = self.single_transformer_blocks[5](text_encoder_layer_14, ttnn_add_194, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_661, ttnn_slice_322, ttnn_slice_34, ttnn_to_layout_590, var_1)
+        ttnn_add_208, ttnn_reshape_701, ttnn_slice_348 = self.single_transformer_blocks[6](text_encoder_layer_15, ttnn_add_201, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_681, ttnn_slice_33, ttnn_slice_335, ttnn_to_layout_590, var_1)
+        ttnn_add_215, ttnn_reshape_721, ttnn_slice_361 = self.single_transformer_blocks[7](text_encoder_layer_16, ttnn_add_208, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_701, ttnn_slice_32, ttnn_slice_348, ttnn_to_layout_590, var_1)
+        ttnn_add_222, ttnn_reshape_741, ttnn_slice_374 = self.single_transformer_blocks[8](text_encoder_layer_17, ttnn_add_215, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_721, ttnn_slice_31, ttnn_slice_361, ttnn_to_layout_590, var_1)
+        ttnn_add_229, ttnn_reshape_761, ttnn_slice_387 = self.single_transformer_blocks[9](text_encoder_layer_18, ttnn_add_222, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_741, ttnn_slice_30, ttnn_slice_374, ttnn_to_layout_590, var_1)
+        ttnn_add_236, ttnn_reshape_781, ttnn_slice_400 = self.single_transformer_blocks[10](text_encoder_layer_19, ttnn_add_229, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_761, ttnn_slice_29, ttnn_slice_387, ttnn_to_layout_590, var_1)
+        ttnn_add_243, ttnn_reshape_801, ttnn_slice_413 = self.single_transformer_blocks[11](text_encoder_layer_20, ttnn_add_236, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_781, ttnn_slice_28, ttnn_slice_400, ttnn_to_layout_590, var_1)
+        ttnn_add_250, ttnn_reshape_821, ttnn_slice_426 = self.single_transformer_blocks[12](text_encoder_layer_21, ttnn_add_243, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_801, ttnn_slice_27, ttnn_slice_413, ttnn_to_layout_590, var_1)
+        ttnn_add_257, ttnn_reshape_841, ttnn_slice_439 = self.single_transformer_blocks[13](text_encoder_layer_22, ttnn_add_250, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_821, ttnn_slice_26, ttnn_slice_426, ttnn_to_layout_590, var_1)
+        ttnn_add_264, ttnn_reshape_861, ttnn_slice_452 = self.single_transformer_blocks[14](text_encoder_layer_23, ttnn_add_257, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_841, ttnn_slice_25, ttnn_slice_439, ttnn_to_layout_590, var_1)
+        ttnn_add_271, ttnn_reshape_881, ttnn_slice_465 = self.single_transformer_blocks[15](text_encoder_layer_24, ttnn_add_264, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_861, ttnn_slice_24, ttnn_slice_452, ttnn_to_layout_590, var_1)
+        ttnn_add_278, ttnn_reshape_901, ttnn_slice_478 = self.single_transformer_blocks[16](text_encoder_layer_25, ttnn_add_271, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_881, ttnn_slice_23, ttnn_slice_465, ttnn_to_layout_590, var_1)
+        ttnn_add_285, ttnn_reshape_921, ttnn_slice_491 = self.single_transformer_blocks[17](text_encoder_layer_26, ttnn_add_278, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_901, ttnn_slice_22, ttnn_slice_478, ttnn_to_layout_590, var_1)
+        ttnn_add_292, ttnn_reshape_941, ttnn_slice_504 = self.single_transformer_blocks[18](text_encoder_layer_27, ttnn_add_285, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_921, ttnn_slice_21, ttnn_slice_491, ttnn_to_layout_590, var_1)
+        ttnn_add_299, ttnn_reshape_961, ttnn_slice_517 = self.single_transformer_blocks[19](text_encoder_layer_28, ttnn_add_292, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_941, ttnn_slice_20, ttnn_slice_504, ttnn_to_layout_590, var_1)
+        ttnn_add_306, ttnn_reshape_981, ttnn_slice_530 = self.single_transformer_blocks[20](text_encoder_layer_29, ttnn_add_299, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_961, ttnn_slice_19, ttnn_slice_517, ttnn_to_layout_590, var_1)
+        ttnn_add_313, ttnn_reshape_1001, ttnn_slice_543 = self.single_transformer_blocks[21](text_encoder_layer_30, ttnn_add_306, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_981, ttnn_slice_18, ttnn_slice_530, ttnn_to_layout_590, var_1)
+        ttnn_add_320, ttnn_reshape_1021, ttnn_slice_556 = self.single_transformer_blocks[22](text_encoder_layer_31, ttnn_add_313, ttnn_reshape_1001, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_17, ttnn_slice_543, ttnn_to_layout_590, var_1)
+        ttnn_add_327, ttnn_reshape_1041, ttnn_slice_569 = self.single_transformer_blocks[23](text_encoder_layer_32, ttnn_add_320, ttnn_reshape_1021, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_16, ttnn_slice_556, ttnn_to_layout_590, var_1)
+        ttnn_add_334, ttnn_reshape_1061, ttnn_slice_582 = self.single_transformer_blocks[24](text_encoder_layer_33, ttnn_add_327, ttnn_reshape_1041, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_15, ttnn_slice_569, ttnn_to_layout_590, var_1)
+        ttnn_add_341, ttnn_reshape_1081, ttnn_slice_595 = self.single_transformer_blocks[25](text_encoder_layer_34, ttnn_add_334, ttnn_reshape_1061, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_14, ttnn_slice_582, ttnn_to_layout_590, var_1)
+        ttnn_add_348, ttnn_reshape_1101, ttnn_slice_608 = self.single_transformer_blocks[26](text_encoder_layer_35, ttnn_add_341, ttnn_reshape_1081, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_13, ttnn_slice_595, ttnn_to_layout_590, var_1)
+        ttnn_add_355, ttnn_reshape_1121, ttnn_slice_621 = self.single_transformer_blocks[27](text_encoder_layer_36, ttnn_add_348, ttnn_reshape_1101, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_12, ttnn_slice_608, ttnn_to_layout_590, var_1)
+        ttnn_add_362, ttnn_reshape_1141, ttnn_slice_634 = self.single_transformer_blocks[28](text_encoder_layer_37, ttnn_add_355, ttnn_reshape_1121, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_11, ttnn_slice_621, ttnn_to_layout_590, var_1)
+        ttnn_add_369, ttnn_reshape_1161, ttnn_slice_647 = self.single_transformer_blocks[29](text_encoder_layer_38, ttnn_add_362, ttnn_reshape_1141, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_10, ttnn_slice_634, ttnn_to_layout_590, var_1)
+        ttnn_add_376, ttnn_reshape_1181, ttnn_slice_660 = self.single_transformer_blocks[30](text_encoder_layer_39, ttnn_add_369, ttnn_reshape_1161, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_647, ttnn_slice_9, ttnn_to_layout_590, var_1)
+        ttnn_add_383, ttnn_reshape_1201, ttnn_slice_673 = self.single_transformer_blocks[31](text_encoder_layer_40, ttnn_add_376, ttnn_reshape_1181, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_660, ttnn_slice_8, ttnn_to_layout_590, var_1)
+        ttnn_add_390, ttnn_reshape_1221, ttnn_slice_686 = self.single_transformer_blocks[32](text_encoder_layer_41, ttnn_add_383, ttnn_reshape_1201, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_673, ttnn_slice_7, ttnn_to_layout_590, var_1)
+        ttnn_add_397, ttnn_reshape_1241, ttnn_slice_699 = self.single_transformer_blocks[33](text_encoder_layer_42, ttnn_add_390, ttnn_reshape_1221, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_6, ttnn_slice_686, ttnn_to_layout_590, var_1)
+        ttnn_add_404, ttnn_reshape_1261, ttnn_slice_712 = self.single_transformer_blocks[34](text_encoder_layer_43, ttnn_add_397, ttnn_reshape_1241, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_5, ttnn_slice_699, ttnn_to_layout_590, var_1)
+        ttnn_add_411, ttnn_reshape_1281, ttnn_slice_725 = self.single_transformer_blocks[35](text_encoder_layer_44, ttnn_add_404, ttnn_reshape_1261, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_4, ttnn_slice_712, ttnn_to_layout_590, var_1)
+        ttnn_add_418, ttnn_reshape_1301, ttnn_slice_738 = self.single_transformer_blocks[36](text_encoder_layer_45, ttnn_add_411, ttnn_reshape_1281, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_3, ttnn_slice_725, ttnn_to_layout_590, var_1)
         ttnn_layer_norm_70 = self.single_transformer_blocks[37](ttnn_add_418, ttnn_reshape_1301, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_2, ttnn_slice_738, ttnn_to_layout_590, var_1)
         ttnn_reshape_1321 = ttnn.reshape(
             ttnn_slice_1,
@@ -990,7 +990,7 @@ class BriaFiboTransformerBlock(LightweightModule):
         return _TB_FORWARDS[self.block_idx](self, *args)
 
 
-def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109, ttnn_layer_norm_0, ttnn_slice_54, ttnn_slice_55, var_0, var_1):
+def _tb_forward_0(self, hidden_states, txt_ids, img_ids, attention_mask, text_encoder_layer_1, ttnn_concat_109, ttnn_layer_norm_0, ttnn_slice_54, ttnn_slice_55, var_0, var_1):
     ttnn_reshape_185 = ttnn.reshape(
         ttnn_slice_55,
         [1, 1, 2, 18432],
@@ -1212,7 +1212,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
     )
     ttnn.deallocate(ttnn_reshape_191, False)
     ttnn_to_layout_587 = ttnn.to_layout(
-        args_0,
+        hidden_states,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -1490,7 +1490,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
     )
     ttnn.deallocate(ttnn_typecast_117, False)
     ttnn_to_layout_588 = ttnn.to_layout(
-        args_3,
+        txt_ids,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -1498,7 +1498,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
         ),
     )
     ttnn_to_layout_589 = ttnn.to_layout(
-        args_4,
+        img_ids,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -2074,7 +2074,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
     )
     ttnn.deallocate(ttnn_concat_118, False)
     ttnn_to_layout_590 = ttnn.to_layout(
-        args_51,
+        attention_mask,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -2445,7 +2445,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
     )
     ttnn.deallocate(ttnn_add_13, False)
     ttnn_to_layout_591 = ttnn.to_layout(
-        args_6,
+        text_encoder_layer_1,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -2463,7 +2463,7 @@ def _tb_forward_0(self, args_0, args_3, args_4, args_51, args_6, ttnn_concat_109
     return ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116
 
 
-def _tb_forward_1(self, args_7, ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_52, ttnn_slice_53, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116, var_1):
+def _tb_forward_1(self, text_encoder_layer_2, ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_52, ttnn_slice_53, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116, var_1):
     ttnn_matmul_4 = ttnn.matmul(
         ttnn_reshape_227,
         self.weights["transformer.caption_projection.1.linear.weight"],
@@ -3992,7 +3992,7 @@ def _tb_forward_1(self, args_7, ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape
     )
     ttnn.deallocate(ttnn_add_33, False)
     ttnn_to_layout_592 = ttnn.to_layout(
-        args_7,
+        text_encoder_layer_2,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -4010,7 +4010,7 @@ def _tb_forward_1(self, args_7, ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape
     return ttnn_add_22, ttnn_reshape_273, ttnn_slice_103, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125
 
 
-def _tb_forward_2(self, args_8, ttnn_add_22, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_273, ttnn_slice_103, ttnn_slice_50, ttnn_slice_51, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125, var_1):
+def _tb_forward_2(self, text_encoder_layer_3, ttnn_add_22, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_273, ttnn_slice_103, ttnn_slice_50, ttnn_slice_51, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125, var_1):
     ttnn_matmul_9 = ttnn.matmul(
         ttnn_reshape_273,
         self.weights["transformer.caption_projection.2.linear.weight"],
@@ -5539,7 +5539,7 @@ def _tb_forward_2(self, args_8, ttnn_add_22, ttnn_reshape_203, ttnn_reshape_209,
     )
     ttnn.deallocate(ttnn_add_53, False)
     ttnn_to_layout_593 = ttnn.to_layout(
-        args_8,
+        text_encoder_layer_3,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -5557,7 +5557,7 @@ def _tb_forward_2(self, args_8, ttnn_add_22, ttnn_reshape_203, ttnn_reshape_209,
     return ttnn_add_42, ttnn_reshape_319, ttnn_slice_128, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133
 
 
-def _tb_forward_3(self, args_9, ttnn_add_42, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_319, ttnn_slice_128, ttnn_slice_48, ttnn_slice_49, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133, var_1):
+def _tb_forward_3(self, text_encoder_layer_4, ttnn_add_42, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_319, ttnn_slice_128, ttnn_slice_48, ttnn_slice_49, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133, var_1):
     ttnn_matmul_14 = ttnn.matmul(
         ttnn_reshape_319,
         self.weights["transformer.caption_projection.3.linear.weight"],
@@ -7086,7 +7086,7 @@ def _tb_forward_3(self, args_9, ttnn_add_42, ttnn_reshape_203, ttnn_reshape_209,
     )
     ttnn.deallocate(ttnn_add_73, False)
     ttnn_to_layout_594 = ttnn.to_layout(
-        args_9,
+        text_encoder_layer_4,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -7104,7 +7104,7 @@ def _tb_forward_3(self, args_9, ttnn_add_42, ttnn_reshape_203, ttnn_reshape_209,
     return ttnn_add_62, ttnn_reshape_365, ttnn_slice_153, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141
 
 
-def _tb_forward_4(self, args_10, ttnn_add_62, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_365, ttnn_slice_153, ttnn_slice_46, ttnn_slice_47, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141, var_1):
+def _tb_forward_4(self, text_encoder_layer_5, ttnn_add_62, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_365, ttnn_slice_153, ttnn_slice_46, ttnn_slice_47, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141, var_1):
     ttnn_matmul_19 = ttnn.matmul(
         ttnn_reshape_365,
         self.weights["transformer.caption_projection.4.linear.weight"],
@@ -8633,7 +8633,7 @@ def _tb_forward_4(self, args_10, ttnn_add_62, ttnn_reshape_203, ttnn_reshape_209
     )
     ttnn.deallocate(ttnn_add_93, False)
     ttnn_to_layout_595 = ttnn.to_layout(
-        args_10,
+        text_encoder_layer_5,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -8651,7 +8651,7 @@ def _tb_forward_4(self, args_10, ttnn_add_62, ttnn_reshape_203, ttnn_reshape_209
     return ttnn_add_82, ttnn_reshape_411, ttnn_slice_178, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149
 
 
-def _tb_forward_5(self, args_11, ttnn_add_82, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_411, ttnn_slice_178, ttnn_slice_44, ttnn_slice_45, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149, var_1):
+def _tb_forward_5(self, text_encoder_layer_6, ttnn_add_82, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_411, ttnn_slice_178, ttnn_slice_44, ttnn_slice_45, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149, var_1):
     ttnn_matmul_24 = ttnn.matmul(
         ttnn_reshape_411,
         self.weights["transformer.caption_projection.5.linear.weight"],
@@ -10180,7 +10180,7 @@ def _tb_forward_5(self, args_11, ttnn_add_82, ttnn_reshape_203, ttnn_reshape_209
     )
     ttnn.deallocate(ttnn_add_113, False)
     ttnn_to_layout_596 = ttnn.to_layout(
-        args_11,
+        text_encoder_layer_6,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -10198,7 +10198,7 @@ def _tb_forward_5(self, args_11, ttnn_add_82, ttnn_reshape_203, ttnn_reshape_209
     return ttnn_add_102, ttnn_reshape_457, ttnn_slice_203, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157
 
 
-def _tb_forward_6(self, args_12, ttnn_add_102, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_457, ttnn_slice_203, ttnn_slice_42, ttnn_slice_43, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157, var_1):
+def _tb_forward_6(self, text_encoder_layer_7, ttnn_add_102, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_457, ttnn_slice_203, ttnn_slice_42, ttnn_slice_43, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157, var_1):
     ttnn_matmul_29 = ttnn.matmul(
         ttnn_reshape_457,
         self.weights["transformer.caption_projection.6.linear.weight"],
@@ -11727,7 +11727,7 @@ def _tb_forward_6(self, args_12, ttnn_add_102, ttnn_reshape_203, ttnn_reshape_20
     )
     ttnn.deallocate(ttnn_add_133, False)
     ttnn_to_layout_597 = ttnn.to_layout(
-        args_12,
+        text_encoder_layer_7,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -11745,7 +11745,7 @@ def _tb_forward_6(self, args_12, ttnn_add_102, ttnn_reshape_203, ttnn_reshape_20
     return ttnn_add_122, ttnn_reshape_503, ttnn_slice_228, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165
 
 
-def _tb_forward_7(self, args_13, ttnn_add_122, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_503, ttnn_slice_228, ttnn_slice_40, ttnn_slice_41, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165, var_1):
+def _tb_forward_7(self, text_encoder_layer_8, ttnn_add_122, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_503, ttnn_slice_228, ttnn_slice_40, ttnn_slice_41, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165, var_1):
     ttnn_matmul_34 = ttnn.matmul(
         ttnn_reshape_503,
         self.weights["transformer.caption_projection.7.linear.weight"],
@@ -13274,7 +13274,7 @@ def _tb_forward_7(self, args_13, ttnn_add_122, ttnn_reshape_203, ttnn_reshape_20
     )
     ttnn.deallocate(ttnn_add_153, False)
     ttnn_to_layout_598 = ttnn.to_layout(
-        args_13,
+        text_encoder_layer_8,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -13314,7 +13314,7 @@ class BriaFiboSingleTransformerBlock(LightweightModule):
         return _STB_FORWARDS[self.block_idx](self, *args)
 
 
-def _stb_forward_0(self, args_14, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_549, ttnn_slice_253, ttnn_slice_39, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173, var_1):
+def _stb_forward_0(self, text_encoder_layer_9, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_549, ttnn_slice_253, ttnn_slice_39, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173, var_1):
     ttnn_matmul_39 = ttnn.matmul(
         ttnn_reshape_549,
         self.weights["transformer.caption_projection.8.linear.weight"],
@@ -14441,7 +14441,7 @@ def _stb_forward_0(self, args_14, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_601 = ttnn.to_layout(
-        args_14,
+        text_encoder_layer_9,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -14459,7 +14459,7 @@ def _stb_forward_0(self, args_14, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_166, ttnn_reshape_581, ttnn_slice_270
 
 
-def _stb_forward_1(self, args_15, ttnn_add_166, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_581, ttnn_slice_270, ttnn_slice_38, ttnn_to_layout_590, var_1):
+def _stb_forward_1(self, text_encoder_layer_10, ttnn_add_166, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_581, ttnn_slice_270, ttnn_slice_38, ttnn_to_layout_590, var_1):
     ttnn_matmul_43 = ttnn.matmul(
         ttnn_reshape_581,
         self.weights["transformer.caption_projection.9.linear.weight"],
@@ -15252,7 +15252,7 @@ def _stb_forward_1(self, args_15, ttnn_add_166, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_604 = ttnn.to_layout(
-        args_15,
+        text_encoder_layer_10,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -15270,7 +15270,7 @@ def _stb_forward_1(self, args_15, ttnn_add_166, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_173, ttnn_reshape_601, ttnn_slice_283
 
 
-def _stb_forward_2(self, args_16, ttnn_add_173, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_601, ttnn_slice_283, ttnn_slice_37, ttnn_to_layout_590, var_1):
+def _stb_forward_2(self, text_encoder_layer_11, ttnn_add_173, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_601, ttnn_slice_283, ttnn_slice_37, ttnn_to_layout_590, var_1):
     ttnn_matmul_45 = ttnn.matmul(
         ttnn_reshape_601,
         self.weights["transformer.caption_projection.10.linear.weight"],
@@ -16063,7 +16063,7 @@ def _stb_forward_2(self, args_16, ttnn_add_173, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_607 = ttnn.to_layout(
-        args_16,
+        text_encoder_layer_11,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -16081,7 +16081,7 @@ def _stb_forward_2(self, args_16, ttnn_add_173, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_180, ttnn_reshape_621, ttnn_slice_296
 
 
-def _stb_forward_3(self, args_17, ttnn_add_180, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_621, ttnn_slice_296, ttnn_slice_36, ttnn_to_layout_590, var_1):
+def _stb_forward_3(self, text_encoder_layer_12, ttnn_add_180, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_621, ttnn_slice_296, ttnn_slice_36, ttnn_to_layout_590, var_1):
     ttnn_matmul_47 = ttnn.matmul(
         ttnn_reshape_621,
         self.weights["transformer.caption_projection.11.linear.weight"],
@@ -16874,7 +16874,7 @@ def _stb_forward_3(self, args_17, ttnn_add_180, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_610 = ttnn.to_layout(
-        args_17,
+        text_encoder_layer_12,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -16892,7 +16892,7 @@ def _stb_forward_3(self, args_17, ttnn_add_180, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_187, ttnn_reshape_641, ttnn_slice_309
 
 
-def _stb_forward_4(self, args_18, ttnn_add_187, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_641, ttnn_slice_309, ttnn_slice_35, ttnn_to_layout_590, var_1):
+def _stb_forward_4(self, text_encoder_layer_13, ttnn_add_187, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_641, ttnn_slice_309, ttnn_slice_35, ttnn_to_layout_590, var_1):
     ttnn_matmul_49 = ttnn.matmul(
         ttnn_reshape_641,
         self.weights["transformer.caption_projection.12.linear.weight"],
@@ -17685,7 +17685,7 @@ def _stb_forward_4(self, args_18, ttnn_add_187, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_613 = ttnn.to_layout(
-        args_18,
+        text_encoder_layer_13,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -17703,7 +17703,7 @@ def _stb_forward_4(self, args_18, ttnn_add_187, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_194, ttnn_reshape_661, ttnn_slice_322
 
 
-def _stb_forward_5(self, args_19, ttnn_add_194, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_661, ttnn_slice_322, ttnn_slice_34, ttnn_to_layout_590, var_1):
+def _stb_forward_5(self, text_encoder_layer_14, ttnn_add_194, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_661, ttnn_slice_322, ttnn_slice_34, ttnn_to_layout_590, var_1):
     ttnn_matmul_51 = ttnn.matmul(
         ttnn_reshape_661,
         self.weights["transformer.caption_projection.13.linear.weight"],
@@ -18496,7 +18496,7 @@ def _stb_forward_5(self, args_19, ttnn_add_194, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_616 = ttnn.to_layout(
-        args_19,
+        text_encoder_layer_14,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -18514,7 +18514,7 @@ def _stb_forward_5(self, args_19, ttnn_add_194, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_201, ttnn_reshape_681, ttnn_slice_335
 
 
-def _stb_forward_6(self, args_20, ttnn_add_201, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_681, ttnn_slice_33, ttnn_slice_335, ttnn_to_layout_590, var_1):
+def _stb_forward_6(self, text_encoder_layer_15, ttnn_add_201, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_681, ttnn_slice_33, ttnn_slice_335, ttnn_to_layout_590, var_1):
     ttnn_matmul_53 = ttnn.matmul(
         ttnn_reshape_681,
         self.weights["transformer.caption_projection.14.linear.weight"],
@@ -19307,7 +19307,7 @@ def _stb_forward_6(self, args_20, ttnn_add_201, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_619 = ttnn.to_layout(
-        args_20,
+        text_encoder_layer_15,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -19325,7 +19325,7 @@ def _stb_forward_6(self, args_20, ttnn_add_201, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_208, ttnn_reshape_701, ttnn_slice_348
 
 
-def _stb_forward_7(self, args_21, ttnn_add_208, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_701, ttnn_slice_32, ttnn_slice_348, ttnn_to_layout_590, var_1):
+def _stb_forward_7(self, text_encoder_layer_16, ttnn_add_208, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_701, ttnn_slice_32, ttnn_slice_348, ttnn_to_layout_590, var_1):
     ttnn_matmul_55 = ttnn.matmul(
         ttnn_reshape_701,
         self.weights["transformer.caption_projection.15.linear.weight"],
@@ -20118,7 +20118,7 @@ def _stb_forward_7(self, args_21, ttnn_add_208, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_622 = ttnn.to_layout(
-        args_21,
+        text_encoder_layer_16,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -20136,7 +20136,7 @@ def _stb_forward_7(self, args_21, ttnn_add_208, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_215, ttnn_reshape_721, ttnn_slice_361
 
 
-def _stb_forward_8(self, args_22, ttnn_add_215, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_721, ttnn_slice_31, ttnn_slice_361, ttnn_to_layout_590, var_1):
+def _stb_forward_8(self, text_encoder_layer_17, ttnn_add_215, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_721, ttnn_slice_31, ttnn_slice_361, ttnn_to_layout_590, var_1):
     ttnn_matmul_57 = ttnn.matmul(
         ttnn_reshape_721,
         self.weights["transformer.caption_projection.16.linear.weight"],
@@ -20929,7 +20929,7 @@ def _stb_forward_8(self, args_22, ttnn_add_215, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_625 = ttnn.to_layout(
-        args_22,
+        text_encoder_layer_17,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -20947,7 +20947,7 @@ def _stb_forward_8(self, args_22, ttnn_add_215, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_222, ttnn_reshape_741, ttnn_slice_374
 
 
-def _stb_forward_9(self, args_23, ttnn_add_222, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_741, ttnn_slice_30, ttnn_slice_374, ttnn_to_layout_590, var_1):
+def _stb_forward_9(self, text_encoder_layer_18, ttnn_add_222, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_741, ttnn_slice_30, ttnn_slice_374, ttnn_to_layout_590, var_1):
     ttnn_matmul_59 = ttnn.matmul(
         ttnn_reshape_741,
         self.weights["transformer.caption_projection.17.linear.weight"],
@@ -21740,7 +21740,7 @@ def _stb_forward_9(self, args_23, ttnn_add_222, ttnn_reshape_203, ttnn_reshape_2
         ),
     )
     ttnn_to_layout_628 = ttnn.to_layout(
-        args_23,
+        text_encoder_layer_18,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -21758,7 +21758,7 @@ def _stb_forward_9(self, args_23, ttnn_add_222, ttnn_reshape_203, ttnn_reshape_2
     return ttnn_add_229, ttnn_reshape_761, ttnn_slice_387
 
 
-def _stb_forward_10(self, args_24, ttnn_add_229, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_761, ttnn_slice_29, ttnn_slice_387, ttnn_to_layout_590, var_1):
+def _stb_forward_10(self, text_encoder_layer_19, ttnn_add_229, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_761, ttnn_slice_29, ttnn_slice_387, ttnn_to_layout_590, var_1):
     ttnn_matmul_61 = ttnn.matmul(
         ttnn_reshape_761,
         self.weights["transformer.caption_projection.18.linear.weight"],
@@ -22551,7 +22551,7 @@ def _stb_forward_10(self, args_24, ttnn_add_229, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_631 = ttnn.to_layout(
-        args_24,
+        text_encoder_layer_19,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -22569,7 +22569,7 @@ def _stb_forward_10(self, args_24, ttnn_add_229, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_236, ttnn_reshape_781, ttnn_slice_400
 
 
-def _stb_forward_11(self, args_25, ttnn_add_236, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_781, ttnn_slice_28, ttnn_slice_400, ttnn_to_layout_590, var_1):
+def _stb_forward_11(self, text_encoder_layer_20, ttnn_add_236, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_781, ttnn_slice_28, ttnn_slice_400, ttnn_to_layout_590, var_1):
     ttnn_matmul_63 = ttnn.matmul(
         ttnn_reshape_781,
         self.weights["transformer.caption_projection.19.linear.weight"],
@@ -23362,7 +23362,7 @@ def _stb_forward_11(self, args_25, ttnn_add_236, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_634 = ttnn.to_layout(
-        args_25,
+        text_encoder_layer_20,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -23380,7 +23380,7 @@ def _stb_forward_11(self, args_25, ttnn_add_236, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_243, ttnn_reshape_801, ttnn_slice_413
 
 
-def _stb_forward_12(self, args_26, ttnn_add_243, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_801, ttnn_slice_27, ttnn_slice_413, ttnn_to_layout_590, var_1):
+def _stb_forward_12(self, text_encoder_layer_21, ttnn_add_243, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_801, ttnn_slice_27, ttnn_slice_413, ttnn_to_layout_590, var_1):
     ttnn_matmul_65 = ttnn.matmul(
         ttnn_reshape_801,
         self.weights["transformer.caption_projection.20.linear.weight"],
@@ -24173,7 +24173,7 @@ def _stb_forward_12(self, args_26, ttnn_add_243, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_637 = ttnn.to_layout(
-        args_26,
+        text_encoder_layer_21,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -24191,7 +24191,7 @@ def _stb_forward_12(self, args_26, ttnn_add_243, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_250, ttnn_reshape_821, ttnn_slice_426
 
 
-def _stb_forward_13(self, args_27, ttnn_add_250, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_821, ttnn_slice_26, ttnn_slice_426, ttnn_to_layout_590, var_1):
+def _stb_forward_13(self, text_encoder_layer_22, ttnn_add_250, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_821, ttnn_slice_26, ttnn_slice_426, ttnn_to_layout_590, var_1):
     ttnn_matmul_67 = ttnn.matmul(
         ttnn_reshape_821,
         self.weights["transformer.caption_projection.21.linear.weight"],
@@ -24984,7 +24984,7 @@ def _stb_forward_13(self, args_27, ttnn_add_250, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_640 = ttnn.to_layout(
-        args_27,
+        text_encoder_layer_22,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -25002,7 +25002,7 @@ def _stb_forward_13(self, args_27, ttnn_add_250, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_257, ttnn_reshape_841, ttnn_slice_439
 
 
-def _stb_forward_14(self, args_28, ttnn_add_257, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_841, ttnn_slice_25, ttnn_slice_439, ttnn_to_layout_590, var_1):
+def _stb_forward_14(self, text_encoder_layer_23, ttnn_add_257, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_841, ttnn_slice_25, ttnn_slice_439, ttnn_to_layout_590, var_1):
     ttnn_matmul_69 = ttnn.matmul(
         ttnn_reshape_841,
         self.weights["transformer.caption_projection.22.linear.weight"],
@@ -25795,7 +25795,7 @@ def _stb_forward_14(self, args_28, ttnn_add_257, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_643 = ttnn.to_layout(
-        args_28,
+        text_encoder_layer_23,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -25813,7 +25813,7 @@ def _stb_forward_14(self, args_28, ttnn_add_257, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_264, ttnn_reshape_861, ttnn_slice_452
 
 
-def _stb_forward_15(self, args_29, ttnn_add_264, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_861, ttnn_slice_24, ttnn_slice_452, ttnn_to_layout_590, var_1):
+def _stb_forward_15(self, text_encoder_layer_24, ttnn_add_264, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_861, ttnn_slice_24, ttnn_slice_452, ttnn_to_layout_590, var_1):
     ttnn_matmul_71 = ttnn.matmul(
         ttnn_reshape_861,
         self.weights["transformer.caption_projection.23.linear.weight"],
@@ -26606,7 +26606,7 @@ def _stb_forward_15(self, args_29, ttnn_add_264, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_646 = ttnn.to_layout(
-        args_29,
+        text_encoder_layer_24,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -26624,7 +26624,7 @@ def _stb_forward_15(self, args_29, ttnn_add_264, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_271, ttnn_reshape_881, ttnn_slice_465
 
 
-def _stb_forward_16(self, args_30, ttnn_add_271, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_881, ttnn_slice_23, ttnn_slice_465, ttnn_to_layout_590, var_1):
+def _stb_forward_16(self, text_encoder_layer_25, ttnn_add_271, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_881, ttnn_slice_23, ttnn_slice_465, ttnn_to_layout_590, var_1):
     ttnn_matmul_73 = ttnn.matmul(
         ttnn_reshape_881,
         self.weights["transformer.caption_projection.24.linear.weight"],
@@ -27417,7 +27417,7 @@ def _stb_forward_16(self, args_30, ttnn_add_271, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_649 = ttnn.to_layout(
-        args_30,
+        text_encoder_layer_25,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -27435,7 +27435,7 @@ def _stb_forward_16(self, args_30, ttnn_add_271, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_278, ttnn_reshape_901, ttnn_slice_478
 
 
-def _stb_forward_17(self, args_31, ttnn_add_278, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_901, ttnn_slice_22, ttnn_slice_478, ttnn_to_layout_590, var_1):
+def _stb_forward_17(self, text_encoder_layer_26, ttnn_add_278, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_901, ttnn_slice_22, ttnn_slice_478, ttnn_to_layout_590, var_1):
     ttnn_matmul_75 = ttnn.matmul(
         ttnn_reshape_901,
         self.weights["transformer.caption_projection.25.linear.weight"],
@@ -28228,7 +28228,7 @@ def _stb_forward_17(self, args_31, ttnn_add_278, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_652 = ttnn.to_layout(
-        args_31,
+        text_encoder_layer_26,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -28246,7 +28246,7 @@ def _stb_forward_17(self, args_31, ttnn_add_278, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_285, ttnn_reshape_921, ttnn_slice_491
 
 
-def _stb_forward_18(self, args_32, ttnn_add_285, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_921, ttnn_slice_21, ttnn_slice_491, ttnn_to_layout_590, var_1):
+def _stb_forward_18(self, text_encoder_layer_27, ttnn_add_285, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_921, ttnn_slice_21, ttnn_slice_491, ttnn_to_layout_590, var_1):
     ttnn_matmul_77 = ttnn.matmul(
         ttnn_reshape_921,
         self.weights["transformer.caption_projection.26.linear.weight"],
@@ -29039,7 +29039,7 @@ def _stb_forward_18(self, args_32, ttnn_add_285, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_655 = ttnn.to_layout(
-        args_32,
+        text_encoder_layer_27,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -29057,7 +29057,7 @@ def _stb_forward_18(self, args_32, ttnn_add_285, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_292, ttnn_reshape_941, ttnn_slice_504
 
 
-def _stb_forward_19(self, args_33, ttnn_add_292, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_941, ttnn_slice_20, ttnn_slice_504, ttnn_to_layout_590, var_1):
+def _stb_forward_19(self, text_encoder_layer_28, ttnn_add_292, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_941, ttnn_slice_20, ttnn_slice_504, ttnn_to_layout_590, var_1):
     ttnn_matmul_79 = ttnn.matmul(
         ttnn_reshape_941,
         self.weights["transformer.caption_projection.27.linear.weight"],
@@ -29850,7 +29850,7 @@ def _stb_forward_19(self, args_33, ttnn_add_292, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_658 = ttnn.to_layout(
-        args_33,
+        text_encoder_layer_28,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -29868,7 +29868,7 @@ def _stb_forward_19(self, args_33, ttnn_add_292, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_299, ttnn_reshape_961, ttnn_slice_517
 
 
-def _stb_forward_20(self, args_34, ttnn_add_299, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_961, ttnn_slice_19, ttnn_slice_517, ttnn_to_layout_590, var_1):
+def _stb_forward_20(self, text_encoder_layer_29, ttnn_add_299, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_961, ttnn_slice_19, ttnn_slice_517, ttnn_to_layout_590, var_1):
     ttnn_matmul_81 = ttnn.matmul(
         ttnn_reshape_961,
         self.weights["transformer.caption_projection.28.linear.weight"],
@@ -30661,7 +30661,7 @@ def _stb_forward_20(self, args_34, ttnn_add_299, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_661 = ttnn.to_layout(
-        args_34,
+        text_encoder_layer_29,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -30679,7 +30679,7 @@ def _stb_forward_20(self, args_34, ttnn_add_299, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_306, ttnn_reshape_981, ttnn_slice_530
 
 
-def _stb_forward_21(self, args_35, ttnn_add_306, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_981, ttnn_slice_18, ttnn_slice_530, ttnn_to_layout_590, var_1):
+def _stb_forward_21(self, text_encoder_layer_30, ttnn_add_306, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_981, ttnn_slice_18, ttnn_slice_530, ttnn_to_layout_590, var_1):
     ttnn_matmul_83 = ttnn.matmul(
         ttnn_reshape_981,
         self.weights["transformer.caption_projection.29.linear.weight"],
@@ -31472,7 +31472,7 @@ def _stb_forward_21(self, args_35, ttnn_add_306, ttnn_reshape_203, ttnn_reshape_
         ),
     )
     ttnn_to_layout_664 = ttnn.to_layout(
-        args_35,
+        text_encoder_layer_30,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -31490,7 +31490,7 @@ def _stb_forward_21(self, args_35, ttnn_add_306, ttnn_reshape_203, ttnn_reshape_
     return ttnn_add_313, ttnn_reshape_1001, ttnn_slice_543
 
 
-def _stb_forward_22(self, args_36, ttnn_add_313, ttnn_reshape_1001, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_17, ttnn_slice_543, ttnn_to_layout_590, var_1):
+def _stb_forward_22(self, text_encoder_layer_31, ttnn_add_313, ttnn_reshape_1001, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_17, ttnn_slice_543, ttnn_to_layout_590, var_1):
     ttnn_matmul_85 = ttnn.matmul(
         ttnn_reshape_1001,
         self.weights["transformer.caption_projection.30.linear.weight"],
@@ -32283,7 +32283,7 @@ def _stb_forward_22(self, args_36, ttnn_add_313, ttnn_reshape_1001, ttnn_reshape
         ),
     )
     ttnn_to_layout_667 = ttnn.to_layout(
-        args_36,
+        text_encoder_layer_31,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -32301,7 +32301,7 @@ def _stb_forward_22(self, args_36, ttnn_add_313, ttnn_reshape_1001, ttnn_reshape
     return ttnn_add_320, ttnn_reshape_1021, ttnn_slice_556
 
 
-def _stb_forward_23(self, args_37, ttnn_add_320, ttnn_reshape_1021, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_16, ttnn_slice_556, ttnn_to_layout_590, var_1):
+def _stb_forward_23(self, text_encoder_layer_32, ttnn_add_320, ttnn_reshape_1021, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_16, ttnn_slice_556, ttnn_to_layout_590, var_1):
     ttnn_matmul_87 = ttnn.matmul(
         ttnn_reshape_1021,
         self.weights["transformer.caption_projection.31.linear.weight"],
@@ -33094,7 +33094,7 @@ def _stb_forward_23(self, args_37, ttnn_add_320, ttnn_reshape_1021, ttnn_reshape
         ),
     )
     ttnn_to_layout_670 = ttnn.to_layout(
-        args_37,
+        text_encoder_layer_32,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -33112,7 +33112,7 @@ def _stb_forward_23(self, args_37, ttnn_add_320, ttnn_reshape_1021, ttnn_reshape
     return ttnn_add_327, ttnn_reshape_1041, ttnn_slice_569
 
 
-def _stb_forward_24(self, args_38, ttnn_add_327, ttnn_reshape_1041, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_15, ttnn_slice_569, ttnn_to_layout_590, var_1):
+def _stb_forward_24(self, text_encoder_layer_33, ttnn_add_327, ttnn_reshape_1041, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_15, ttnn_slice_569, ttnn_to_layout_590, var_1):
     ttnn_matmul_89 = ttnn.matmul(
         ttnn_reshape_1041,
         self.weights["transformer.caption_projection.32.linear.weight"],
@@ -33905,7 +33905,7 @@ def _stb_forward_24(self, args_38, ttnn_add_327, ttnn_reshape_1041, ttnn_reshape
         ),
     )
     ttnn_to_layout_673 = ttnn.to_layout(
-        args_38,
+        text_encoder_layer_33,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -33923,7 +33923,7 @@ def _stb_forward_24(self, args_38, ttnn_add_327, ttnn_reshape_1041, ttnn_reshape
     return ttnn_add_334, ttnn_reshape_1061, ttnn_slice_582
 
 
-def _stb_forward_25(self, args_39, ttnn_add_334, ttnn_reshape_1061, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_14, ttnn_slice_582, ttnn_to_layout_590, var_1):
+def _stb_forward_25(self, text_encoder_layer_34, ttnn_add_334, ttnn_reshape_1061, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_14, ttnn_slice_582, ttnn_to_layout_590, var_1):
     ttnn_matmul_91 = ttnn.matmul(
         ttnn_reshape_1061,
         self.weights["transformer.caption_projection.33.linear.weight"],
@@ -34716,7 +34716,7 @@ def _stb_forward_25(self, args_39, ttnn_add_334, ttnn_reshape_1061, ttnn_reshape
         ),
     )
     ttnn_to_layout_676 = ttnn.to_layout(
-        args_39,
+        text_encoder_layer_34,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -34734,7 +34734,7 @@ def _stb_forward_25(self, args_39, ttnn_add_334, ttnn_reshape_1061, ttnn_reshape
     return ttnn_add_341, ttnn_reshape_1081, ttnn_slice_595
 
 
-def _stb_forward_26(self, args_40, ttnn_add_341, ttnn_reshape_1081, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_13, ttnn_slice_595, ttnn_to_layout_590, var_1):
+def _stb_forward_26(self, text_encoder_layer_35, ttnn_add_341, ttnn_reshape_1081, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_13, ttnn_slice_595, ttnn_to_layout_590, var_1):
     ttnn_matmul_93 = ttnn.matmul(
         ttnn_reshape_1081,
         self.weights["transformer.caption_projection.34.linear.weight"],
@@ -35527,7 +35527,7 @@ def _stb_forward_26(self, args_40, ttnn_add_341, ttnn_reshape_1081, ttnn_reshape
         ),
     )
     ttnn_to_layout_679 = ttnn.to_layout(
-        args_40,
+        text_encoder_layer_35,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -35545,7 +35545,7 @@ def _stb_forward_26(self, args_40, ttnn_add_341, ttnn_reshape_1081, ttnn_reshape
     return ttnn_add_348, ttnn_reshape_1101, ttnn_slice_608
 
 
-def _stb_forward_27(self, args_41, ttnn_add_348, ttnn_reshape_1101, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_12, ttnn_slice_608, ttnn_to_layout_590, var_1):
+def _stb_forward_27(self, text_encoder_layer_36, ttnn_add_348, ttnn_reshape_1101, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_12, ttnn_slice_608, ttnn_to_layout_590, var_1):
     ttnn_matmul_95 = ttnn.matmul(
         ttnn_reshape_1101,
         self.weights["transformer.caption_projection.35.linear.weight"],
@@ -36338,7 +36338,7 @@ def _stb_forward_27(self, args_41, ttnn_add_348, ttnn_reshape_1101, ttnn_reshape
         ),
     )
     ttnn_to_layout_682 = ttnn.to_layout(
-        args_41,
+        text_encoder_layer_36,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -36356,7 +36356,7 @@ def _stb_forward_27(self, args_41, ttnn_add_348, ttnn_reshape_1101, ttnn_reshape
     return ttnn_add_355, ttnn_reshape_1121, ttnn_slice_621
 
 
-def _stb_forward_28(self, args_42, ttnn_add_355, ttnn_reshape_1121, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_11, ttnn_slice_621, ttnn_to_layout_590, var_1):
+def _stb_forward_28(self, text_encoder_layer_37, ttnn_add_355, ttnn_reshape_1121, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_11, ttnn_slice_621, ttnn_to_layout_590, var_1):
     ttnn_matmul_97 = ttnn.matmul(
         ttnn_reshape_1121,
         self.weights["transformer.caption_projection.36.linear.weight"],
@@ -37149,7 +37149,7 @@ def _stb_forward_28(self, args_42, ttnn_add_355, ttnn_reshape_1121, ttnn_reshape
         ),
     )
     ttnn_to_layout_685 = ttnn.to_layout(
-        args_42,
+        text_encoder_layer_37,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -37167,7 +37167,7 @@ def _stb_forward_28(self, args_42, ttnn_add_355, ttnn_reshape_1121, ttnn_reshape
     return ttnn_add_362, ttnn_reshape_1141, ttnn_slice_634
 
 
-def _stb_forward_29(self, args_43, ttnn_add_362, ttnn_reshape_1141, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_10, ttnn_slice_634, ttnn_to_layout_590, var_1):
+def _stb_forward_29(self, text_encoder_layer_38, ttnn_add_362, ttnn_reshape_1141, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_10, ttnn_slice_634, ttnn_to_layout_590, var_1):
     ttnn_matmul_99 = ttnn.matmul(
         ttnn_reshape_1141,
         self.weights["transformer.caption_projection.37.linear.weight"],
@@ -37960,7 +37960,7 @@ def _stb_forward_29(self, args_43, ttnn_add_362, ttnn_reshape_1141, ttnn_reshape
         ),
     )
     ttnn_to_layout_688 = ttnn.to_layout(
-        args_43,
+        text_encoder_layer_38,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -37978,7 +37978,7 @@ def _stb_forward_29(self, args_43, ttnn_add_362, ttnn_reshape_1141, ttnn_reshape
     return ttnn_add_369, ttnn_reshape_1161, ttnn_slice_647
 
 
-def _stb_forward_30(self, args_44, ttnn_add_369, ttnn_reshape_1161, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_647, ttnn_slice_9, ttnn_to_layout_590, var_1):
+def _stb_forward_30(self, text_encoder_layer_39, ttnn_add_369, ttnn_reshape_1161, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_647, ttnn_slice_9, ttnn_to_layout_590, var_1):
     ttnn_matmul_101 = ttnn.matmul(
         ttnn_reshape_1161,
         self.weights["transformer.caption_projection.38.linear.weight"],
@@ -38771,7 +38771,7 @@ def _stb_forward_30(self, args_44, ttnn_add_369, ttnn_reshape_1161, ttnn_reshape
         ),
     )
     ttnn_to_layout_691 = ttnn.to_layout(
-        args_44,
+        text_encoder_layer_39,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -38789,7 +38789,7 @@ def _stb_forward_30(self, args_44, ttnn_add_369, ttnn_reshape_1161, ttnn_reshape
     return ttnn_add_376, ttnn_reshape_1181, ttnn_slice_660
 
 
-def _stb_forward_31(self, args_45, ttnn_add_376, ttnn_reshape_1181, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_660, ttnn_slice_8, ttnn_to_layout_590, var_1):
+def _stb_forward_31(self, text_encoder_layer_40, ttnn_add_376, ttnn_reshape_1181, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_660, ttnn_slice_8, ttnn_to_layout_590, var_1):
     ttnn_matmul_103 = ttnn.matmul(
         ttnn_reshape_1181,
         self.weights["transformer.caption_projection.39.linear.weight"],
@@ -39582,7 +39582,7 @@ def _stb_forward_31(self, args_45, ttnn_add_376, ttnn_reshape_1181, ttnn_reshape
         ),
     )
     ttnn_to_layout_694 = ttnn.to_layout(
-        args_45,
+        text_encoder_layer_40,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -39600,7 +39600,7 @@ def _stb_forward_31(self, args_45, ttnn_add_376, ttnn_reshape_1181, ttnn_reshape
     return ttnn_add_383, ttnn_reshape_1201, ttnn_slice_673
 
 
-def _stb_forward_32(self, args_46, ttnn_add_383, ttnn_reshape_1201, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_673, ttnn_slice_7, ttnn_to_layout_590, var_1):
+def _stb_forward_32(self, text_encoder_layer_41, ttnn_add_383, ttnn_reshape_1201, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_673, ttnn_slice_7, ttnn_to_layout_590, var_1):
     ttnn_matmul_105 = ttnn.matmul(
         ttnn_reshape_1201,
         self.weights["transformer.caption_projection.40.linear.weight"],
@@ -40393,7 +40393,7 @@ def _stb_forward_32(self, args_46, ttnn_add_383, ttnn_reshape_1201, ttnn_reshape
         ),
     )
     ttnn_to_layout_697 = ttnn.to_layout(
-        args_46,
+        text_encoder_layer_41,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -40411,7 +40411,7 @@ def _stb_forward_32(self, args_46, ttnn_add_383, ttnn_reshape_1201, ttnn_reshape
     return ttnn_add_390, ttnn_reshape_1221, ttnn_slice_686
 
 
-def _stb_forward_33(self, args_47, ttnn_add_390, ttnn_reshape_1221, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_6, ttnn_slice_686, ttnn_to_layout_590, var_1):
+def _stb_forward_33(self, text_encoder_layer_42, ttnn_add_390, ttnn_reshape_1221, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_6, ttnn_slice_686, ttnn_to_layout_590, var_1):
     ttnn_matmul_107 = ttnn.matmul(
         ttnn_reshape_1221,
         self.weights["transformer.caption_projection.41.linear.weight"],
@@ -41204,7 +41204,7 @@ def _stb_forward_33(self, args_47, ttnn_add_390, ttnn_reshape_1221, ttnn_reshape
         ),
     )
     ttnn_to_layout_700 = ttnn.to_layout(
-        args_47,
+        text_encoder_layer_42,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -41222,7 +41222,7 @@ def _stb_forward_33(self, args_47, ttnn_add_390, ttnn_reshape_1221, ttnn_reshape
     return ttnn_add_397, ttnn_reshape_1241, ttnn_slice_699
 
 
-def _stb_forward_34(self, args_48, ttnn_add_397, ttnn_reshape_1241, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_5, ttnn_slice_699, ttnn_to_layout_590, var_1):
+def _stb_forward_34(self, text_encoder_layer_43, ttnn_add_397, ttnn_reshape_1241, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_5, ttnn_slice_699, ttnn_to_layout_590, var_1):
     ttnn_matmul_109 = ttnn.matmul(
         ttnn_reshape_1241,
         self.weights["transformer.caption_projection.42.linear.weight"],
@@ -42015,7 +42015,7 @@ def _stb_forward_34(self, args_48, ttnn_add_397, ttnn_reshape_1241, ttnn_reshape
         ),
     )
     ttnn_to_layout_703 = ttnn.to_layout(
-        args_48,
+        text_encoder_layer_43,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -42033,7 +42033,7 @@ def _stb_forward_34(self, args_48, ttnn_add_397, ttnn_reshape_1241, ttnn_reshape
     return ttnn_add_404, ttnn_reshape_1261, ttnn_slice_712
 
 
-def _stb_forward_35(self, args_49, ttnn_add_404, ttnn_reshape_1261, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_4, ttnn_slice_712, ttnn_to_layout_590, var_1):
+def _stb_forward_35(self, text_encoder_layer_44, ttnn_add_404, ttnn_reshape_1261, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_4, ttnn_slice_712, ttnn_to_layout_590, var_1):
     ttnn_matmul_111 = ttnn.matmul(
         ttnn_reshape_1261,
         self.weights["transformer.caption_projection.43.linear.weight"],
@@ -42826,7 +42826,7 @@ def _stb_forward_35(self, args_49, ttnn_add_404, ttnn_reshape_1261, ttnn_reshape
         ),
     )
     ttnn_to_layout_706 = ttnn.to_layout(
-        args_49,
+        text_encoder_layer_44,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
@@ -42844,7 +42844,7 @@ def _stb_forward_35(self, args_49, ttnn_add_404, ttnn_reshape_1261, ttnn_reshape
     return ttnn_add_411, ttnn_reshape_1281, ttnn_slice_725
 
 
-def _stb_forward_36(self, args_50, ttnn_add_411, ttnn_reshape_1281, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_3, ttnn_slice_725, ttnn_to_layout_590, var_1):
+def _stb_forward_36(self, text_encoder_layer_45, ttnn_add_411, ttnn_reshape_1281, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_3, ttnn_slice_725, ttnn_to_layout_590, var_1):
     ttnn_matmul_113 = ttnn.matmul(
         ttnn_reshape_1281,
         self.weights["transformer.caption_projection.44.linear.weight"],
@@ -43637,7 +43637,7 @@ def _stb_forward_36(self, args_50, ttnn_add_411, ttnn_reshape_1281, ttnn_reshape
         ),
     )
     ttnn_to_layout_709 = ttnn.to_layout(
-        args_50,
+        text_encoder_layer_45,
         ttnn.Layout.TILE,
         None,
         memory_config=ttnn.MemoryConfig(
