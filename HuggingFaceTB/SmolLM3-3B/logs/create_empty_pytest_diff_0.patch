@@ -1,0 +1,14 @@
+diff --git a/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py b/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
+index 6f138bd..59dfcd9 100644
+--- a/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
++++ b/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
+@@ -39681,5 +39681,9 @@ def main():
+     return 0
+ 
+ 
++def test_main():
++    return 0
++
++
+ if __name__ == "__main__":
+     main()

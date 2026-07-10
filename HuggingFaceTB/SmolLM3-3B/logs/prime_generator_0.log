@@ -1,0 +1,58 @@
+Now I have a thorough understanding of the codebase. Here's the summary:
+
+---
+
+## Codegen Summary: SmolLM3-3B (FIBO Text Encoder)
+
+### Overall Structure
+
+The codegen dir (`HuggingFaceTB/SmolLM3-3B/model/graph_0/`) contains 4 files:
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| `main.py` | 39,685 | The entire TTNN graph — auto-generated, monolithic |
+| `utils.py` | 101 | Shared helpers: `DeviceGetter` singleton, `load_tensor`, `get_scalar_from_tensor`, `create_global_semaphore` |
+| `ttir_cpu.py` | 908 | CPU reference implementations of TTIR ops (torch-based); not called from `main.py` |
+| `__init__.py` | 3 | License header only |
+| `../../xla.py` | 305 | The XLA reference script (loads SmolLM3-3B as FIBO text encoder, TP-4 on (1,4) mesh) |
+
+### Entry Points
+
+`main()` (line 39677) is the top-level entry:
+1. `load_activations_for__main()` — loads 3 activation tensors from `.tensorbin` files (input_ids INT32, attention_mask INT32, one bf16 activation)
+2. `load_weights_for__main()` — loads ~217 weight tensors into `_main_weights` dict, keyed by HF-style names like `"model.layers.X.self_attn.q_proj.weight"`
+3. `_main(activations, weights)` — the ~16,000-line forward function (lines 20033–36182)
+
+### The Forward Function (`_main`)
+
+`_main` implements a 36-layer SmolLM3 transformer (layers 0–35) with:
+- **Embedding** → `ttnn.embedding`
+- **Per-layer attention block**: `rms_norm` → `matmul` (fused QKV via pre-concatenated weight) → `split_query_key_value_and_split_heads` → `rotary_embedding` → `repeat_interleave` (GQA K expansion, 4 heads / 1 KV head) → scaled dot-product attention (typecast→multiply→matmul→add mask→softmax→where→matmul V) → `concatenate_heads` → `matmul` (O projection) → `reduce_scatter` + `all_gather` (TP ring) → residual `add`
+- **Per-layer MLP block**: `rms_norm` → `matmul` gate (with `activation="silu"`) → `matmul` up → `multiply` → `matmul` down → `reduce_scatter` + `all_gather` → residual `add`
+- **Final**: `reshape` → `rms_norm` with `model.norm.weight`
+
+All ops use DRAM-interleaved memory config. The model uses (1,4) mesh with `FABRIC_1D_RING`, TP via `reduce_scatter`/`all_gather` on Ring topology.
+
+### Constant Evaluation (`consteval__main` + `main_const_eval_*`)
+
+48 `main_const_eval_*` functions (lines 5–20032) pre-compute device-side constants, cached in `ce_cache`:
+- **`main_const_eval_0`**: Moves embedding weights to device
+- **`main_const_eval_1`–`5`, `7`–`8`, `10`–`11`, `14`, `16`, `18`–`25`, `28`–`33`, `35`–`47`**: Each concatenates Q/K/V projection weights for one transformer layer (permute + concat pattern), creating the fused QKV weight matrix. There are 36 of these (one per layer), but they are numbered arbitrarily (not in layer order).
+- **`main_const_eval_6`**: Creates a literal 0..4095 integer tensor (position indices) — ~8K lines of inline literal values
+- **`main_const_eval_9`, `12`, `13`, `15`, `17`, `24`, `34`, `45`**: Small scalar/constant tensors (zero, neg-inf, scalar multipliers, etc.)
+- **`main_const_eval_26`**: Computes rotary embedding cos/sin tables from `inv_freq`
+- **`main_const_eval_27`**: Builds causal attention mask constants
+
+### Auto-Generated Messiness / Refactoring Targets
+
+1. **Extreme verbosity**: Every single `ttnn.*` call has a fully-spelled-out `memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None)` — the same config repeated ~2,126 times.
+2. **No abstractions**: The 36 transformer layers are fully unrolled inline (~450 lines each) with no loop or helper function. The attention and MLP blocks are copy-paste identical across layers, differing only in weight names and variable suffixes.
+3. **Numbered variable names**: Every intermediate is `ttnn_matmul_0`, `ttnn_matmul_1`, …, `ttnn_matmul_251`. No semantic names.
+4. **`main_const_eval_6`** burns ~8,200 lines to spell out `list(range(4096))` one integer per line.
+5. **48 nearly-identical consteval functions**: The QKV-concat functions (36 of them) are structurally identical, varying only by the layer's weight keys. These could be a single parameterized function.
+6. **`consteval__main`** is a massive flat dispatcher that calls all 48 consteval functions sequentially with no structure.
+7. **`load_weights_for__main`** repeats the same `utils.load_tensor(...)` pattern ~217 times with identical layout/dtype/memory_config args.
+8. **Redundant `DeviceGetter.get_device` calls**: The device is fetched anew in every function, despite being a cached singleton.
+9. **`ttnn.deallocate(..., False)`** appears after nearly every intermediate — the `False` (force=False) is always the same.
+
+--- Time taken: 92.0s | session: 192c623b-a488-4c87-b632-30aca44405f4 ---
