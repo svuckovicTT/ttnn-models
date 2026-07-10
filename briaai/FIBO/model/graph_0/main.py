@@ -7,32 +7,47 @@ import model_ttnn
 from utils import calculate_pcc
 
 def build_activations(device):
-    # Build the 52 graph inputs from the golden inputs (model_pt.load_input(), the
-    # same inputs xla.py feeds the model) instead of reading serialized tensorbins.
-    # The codegen flattened load_input()'s nested structure into 52 tensors
-    # args_0..args_51; the forward consumes them in the permuted `order` below
-    # (from the input ttir.name attributes in ttnn.mlir). Every input is *replicated*
-    # across the (1, 4) mesh - verified value-exact against the on-disk tensors - so
-    # each is placed with ReplicateTensorToMesh (ROW_MAJOR, BFLOAT16, DRAM interleaved).
+    # Build the graph inputs from the golden inputs (model_pt.load_input(), the same
+    # inputs xla.py feeds the model) instead of reading serialized tensorbins. The
+    # FIBO transformer (BriaFiboTransformer2DModel) was captured with these keyword
+    # inputs; load_input() returns them flattened in kwargs order, with return_dict
+    # (a bool) dropped as a non-tensor.
     raw = model_pt.load_input()
-    direct = [t for t in raw if torch.is_tensor(t)]
-    nested = []
-    for value in raw:
-        if isinstance(value, (list, tuple)):
-            nested += [t for t in value if torch.is_tensor(t)]
-        elif isinstance(value, dict):
-            nested += [t for t in value.values() if torch.is_tensor(t)]
-    flat = direct + nested  # args_0 .. args_51
-    assert len(flat) == 52, f"expected 52 input tensors, got {len(flat)}"
+    hidden_states = raw[0]                        # (2, 4096, 48)   noisy latent image
+    timestep = raw[1]                             # (2,)            diffusion timestep
+    encoder_hidden_states = raw[2]                # (2, 45, 4096)   text prompt embedding
+    text_encoder_layers = raw[3]                  # list[46] of (2, 45, 2048): one
+                                                  # per-layer text feature per block
+    attention_mask = raw[4]["attention_mask"]     # (2, 1, 4141, 4141) joint attn mask
+    # raw[5] = return_dict (bool, dropped)
+    txt_ids = raw[6]                              # (45, 3)    text RoPE ids
+    img_ids = raw[7]                              # (4096, 3)  image RoPE ids
 
-    order = [1, 0, 5, 2, 51, 4, 3, 6, 7] + list(range(8, 51))
+    # The 46 text_encoder_layers flatten into the graph inputs alongside the 6 core
+    # tensors (52 total). The compiled forward consumes them in this order (from the
+    # input ttir.name attributes in ttnn.mlir):
+    inputs = [
+        timestep,
+        hidden_states,
+        text_encoder_layers[0],
+        encoder_hidden_states,
+        attention_mask,
+        img_ids,
+        txt_ids,
+        *text_encoder_layers[1:],
+    ]
+    assert len(inputs) == 52, f"expected 52 input tensors, got {len(inputs)}"
+
+    # Every input is *replicated* across the (1, 4) mesh - verified value-exact
+    # against the on-disk tensors - so each is placed with ReplicateTensorToMesh
+    # (ROW_MAJOR, BFLOAT16, DRAM interleaved), matching the old tensorbin loader.
     memory_config = ttnn.MemoryConfig(
         ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
     )
     activations = []
-    for i in order:
+    for pt_tensor in inputs:
         t = ttnn.from_torch(
-            flat[i].to(torch.bfloat16),
+            pt_tensor.to(torch.bfloat16),
             dtype=ttnn.DataType.BFLOAT16,
             layout=ttnn.Layout.ROW_MAJOR,
             mesh_mapper=ttnn.ReplicateTensorToMesh(device),
