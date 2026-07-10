@@ -1,0 +1,9 @@
+Done. The `test_main()` function now:
+
+1. Runs the TTNN graph via existing `load_activations_for__main()`, `load_weights_for__main()`, and `_main()`
+2. Converts the multi-device output to a single torch tensor using `ConcatMeshToTensor(dim=0)` and slices `[0:1]` to get one replica from the (1,4) mesh
+3. Runs the PyTorch reference model via `model_pt.run_pytorch_model()`
+4. Computes PCC using `calculate_pcc()` (both tensors cast to float32 for numerical stability)
+5. Asserts PCC equals the exact value `0.984375` from xla.py
+
+--- Time taken: 105.4s | session: 22071468-decc-4f5f-8e37-d004fc5ba5b9 ---
