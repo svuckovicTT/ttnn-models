@@ -729,52 +729,38 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_matmul_1, False)
-        ttnn_reshape_193, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_227, ttnn_slice_78, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_0, ttnn_typecast_116 = self.transformer_blocks[0](hidden_states, txt_ids, img_ids, attention_mask, text_encoder_layers[1], ttnn_concat_109, ttnn_layer_norm_0, ttnn_slice_54, ttnn_slice_55, var_0, var_1)
-        ttnn_add_22, ttnn_reshape_273, ttnn_slice_103, ttnn_transformer_concatenate_heads_1, ttnn_typecast_125 = self.transformer_blocks[1](ttnn_reshape_227, ttnn_slice_78, ttnn_slice_53, var_1, ttnn_typecast_116, ttnn_transformer_concatenate_heads_0, ttnn_reshape_193, ttnn_slice_52, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[2])
-        ttnn_add_42, ttnn_reshape_319, ttnn_slice_128, ttnn_transformer_concatenate_heads_2, ttnn_typecast_133 = self.transformer_blocks[2](ttnn_reshape_273, ttnn_slice_103, ttnn_slice_51, var_1, ttnn_typecast_125, ttnn_transformer_concatenate_heads_1, ttnn_add_22, ttnn_slice_50, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[3])
-        ttnn_add_62, ttnn_reshape_365, ttnn_slice_153, ttnn_transformer_concatenate_heads_3, ttnn_typecast_141 = self.transformer_blocks[3](ttnn_reshape_319, ttnn_slice_128, ttnn_slice_49, var_1, ttnn_typecast_133, ttnn_transformer_concatenate_heads_2, ttnn_add_42, ttnn_slice_48, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[4])
-        ttnn_add_82, ttnn_reshape_411, ttnn_slice_178, ttnn_transformer_concatenate_heads_4, ttnn_typecast_149 = self.transformer_blocks[4](ttnn_reshape_365, ttnn_slice_153, ttnn_slice_47, var_1, ttnn_typecast_141, ttnn_transformer_concatenate_heads_3, ttnn_add_62, ttnn_slice_46, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[5])
-        ttnn_add_102, ttnn_reshape_457, ttnn_slice_203, ttnn_transformer_concatenate_heads_5, ttnn_typecast_157 = self.transformer_blocks[5](ttnn_reshape_411, ttnn_slice_178, ttnn_slice_45, var_1, ttnn_typecast_149, ttnn_transformer_concatenate_heads_4, ttnn_add_82, ttnn_slice_44, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[6])
-        ttnn_add_122, ttnn_reshape_503, ttnn_slice_228, ttnn_transformer_concatenate_heads_6, ttnn_typecast_165 = self.transformer_blocks[6](ttnn_reshape_457, ttnn_slice_203, ttnn_slice_43, var_1, ttnn_typecast_157, ttnn_transformer_concatenate_heads_5, ttnn_add_102, ttnn_slice_42, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[7])
-        ttnn_add_142, ttnn_reshape_549, ttnn_slice_253, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173 = self.transformer_blocks[7](ttnn_reshape_503, ttnn_slice_228, ttnn_slice_41, var_1, ttnn_typecast_165, ttnn_transformer_concatenate_heads_6, ttnn_add_122, ttnn_slice_40, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[8])
-        ttnn_add_166, ttnn_reshape_581, ttnn_slice_270 = self.single_transformer_blocks[0](text_encoder_layers[9], ttnn_add_142, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_549, ttnn_slice_253, ttnn_slice_39, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173, var_1)
-        ttnn_add_173, ttnn_reshape_601, ttnn_slice_283 = self.single_transformer_blocks[1](ttnn_reshape_581, ttnn_slice_270, ttnn_add_166, ttnn_slice_38, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[10])
-        ttnn_add_180, ttnn_reshape_621, ttnn_slice_296 = self.single_transformer_blocks[2](ttnn_reshape_601, ttnn_slice_283, ttnn_add_173, ttnn_slice_37, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[11])
-        ttnn_add_187, ttnn_reshape_641, ttnn_slice_309 = self.single_transformer_blocks[3](ttnn_reshape_621, ttnn_slice_296, ttnn_add_180, ttnn_slice_36, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[12])
-        ttnn_add_194, ttnn_reshape_661, ttnn_slice_322 = self.single_transformer_blocks[4](ttnn_reshape_641, ttnn_slice_309, ttnn_add_187, ttnn_slice_35, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[13])
-        ttnn_add_201, ttnn_reshape_681, ttnn_slice_335 = self.single_transformer_blocks[5](ttnn_reshape_661, ttnn_slice_322, ttnn_add_194, ttnn_slice_34, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[14])
-        ttnn_add_208, ttnn_reshape_701, ttnn_slice_348 = self.single_transformer_blocks[6](ttnn_reshape_681, ttnn_slice_335, ttnn_add_201, ttnn_slice_33, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[15])
-        ttnn_add_215, ttnn_reshape_721, ttnn_slice_361 = self.single_transformer_blocks[7](ttnn_reshape_701, ttnn_slice_348, ttnn_add_208, ttnn_slice_32, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[16])
-        ttnn_add_222, ttnn_reshape_741, ttnn_slice_374 = self.single_transformer_blocks[8](ttnn_reshape_721, ttnn_slice_361, ttnn_add_215, ttnn_slice_31, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[17])
-        ttnn_add_229, ttnn_reshape_761, ttnn_slice_387 = self.single_transformer_blocks[9](ttnn_reshape_741, ttnn_slice_374, ttnn_add_222, ttnn_slice_30, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[18])
-        ttnn_add_236, ttnn_reshape_781, ttnn_slice_400 = self.single_transformer_blocks[10](ttnn_reshape_761, ttnn_slice_387, ttnn_add_229, ttnn_slice_29, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[19])
-        ttnn_add_243, ttnn_reshape_801, ttnn_slice_413 = self.single_transformer_blocks[11](ttnn_reshape_781, ttnn_slice_400, ttnn_add_236, ttnn_slice_28, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[20])
-        ttnn_add_250, ttnn_reshape_821, ttnn_slice_426 = self.single_transformer_blocks[12](ttnn_reshape_801, ttnn_slice_413, ttnn_add_243, ttnn_slice_27, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[21])
-        ttnn_add_257, ttnn_reshape_841, ttnn_slice_439 = self.single_transformer_blocks[13](ttnn_reshape_821, ttnn_slice_426, ttnn_add_250, ttnn_slice_26, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[22])
-        ttnn_add_264, ttnn_reshape_861, ttnn_slice_452 = self.single_transformer_blocks[14](ttnn_reshape_841, ttnn_slice_439, ttnn_add_257, ttnn_slice_25, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[23])
-        ttnn_add_271, ttnn_reshape_881, ttnn_slice_465 = self.single_transformer_blocks[15](ttnn_reshape_861, ttnn_slice_452, ttnn_add_264, ttnn_slice_24, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[24])
-        ttnn_add_278, ttnn_reshape_901, ttnn_slice_478 = self.single_transformer_blocks[16](ttnn_reshape_881, ttnn_slice_465, ttnn_add_271, ttnn_slice_23, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[25])
-        ttnn_add_285, ttnn_reshape_921, ttnn_slice_491 = self.single_transformer_blocks[17](ttnn_reshape_901, ttnn_slice_478, ttnn_add_278, ttnn_slice_22, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[26])
-        ttnn_add_292, ttnn_reshape_941, ttnn_slice_504 = self.single_transformer_blocks[18](ttnn_reshape_921, ttnn_slice_491, ttnn_add_285, ttnn_slice_21, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[27])
-        ttnn_add_299, ttnn_reshape_961, ttnn_slice_517 = self.single_transformer_blocks[19](ttnn_reshape_941, ttnn_slice_504, ttnn_add_292, ttnn_slice_20, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[28])
-        ttnn_add_306, ttnn_reshape_981, ttnn_slice_530 = self.single_transformer_blocks[20](ttnn_reshape_961, ttnn_slice_517, ttnn_add_299, ttnn_slice_19, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[29])
-        ttnn_add_313, ttnn_reshape_1001, ttnn_slice_543 = self.single_transformer_blocks[21](ttnn_reshape_981, ttnn_slice_530, ttnn_add_306, ttnn_slice_18, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[30])
-        ttnn_add_320, ttnn_reshape_1021, ttnn_slice_556 = self.single_transformer_blocks[22](ttnn_reshape_1001, ttnn_slice_543, ttnn_add_313, ttnn_slice_17, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[31])
-        ttnn_add_327, ttnn_reshape_1041, ttnn_slice_569 = self.single_transformer_blocks[23](ttnn_reshape_1021, ttnn_slice_556, ttnn_add_320, ttnn_slice_16, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[32])
-        ttnn_add_334, ttnn_reshape_1061, ttnn_slice_582 = self.single_transformer_blocks[24](ttnn_reshape_1041, ttnn_slice_569, ttnn_add_327, ttnn_slice_15, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[33])
-        ttnn_add_341, ttnn_reshape_1081, ttnn_slice_595 = self.single_transformer_blocks[25](ttnn_reshape_1061, ttnn_slice_582, ttnn_add_334, ttnn_slice_14, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[34])
-        ttnn_add_348, ttnn_reshape_1101, ttnn_slice_608 = self.single_transformer_blocks[26](ttnn_reshape_1081, ttnn_slice_595, ttnn_add_341, ttnn_slice_13, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[35])
-        ttnn_add_355, ttnn_reshape_1121, ttnn_slice_621 = self.single_transformer_blocks[27](ttnn_reshape_1101, ttnn_slice_608, ttnn_add_348, ttnn_slice_12, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[36])
-        ttnn_add_362, ttnn_reshape_1141, ttnn_slice_634 = self.single_transformer_blocks[28](ttnn_reshape_1121, ttnn_slice_621, ttnn_add_355, ttnn_slice_11, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[37])
-        ttnn_add_369, ttnn_reshape_1161, ttnn_slice_647 = self.single_transformer_blocks[29](ttnn_reshape_1141, ttnn_slice_634, ttnn_add_362, ttnn_slice_10, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[38])
-        ttnn_add_376, ttnn_reshape_1181, ttnn_slice_660 = self.single_transformer_blocks[30](ttnn_reshape_1161, ttnn_slice_647, ttnn_add_369, ttnn_slice_9, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[39])
-        ttnn_add_383, ttnn_reshape_1201, ttnn_slice_673 = self.single_transformer_blocks[31](ttnn_reshape_1181, ttnn_slice_660, ttnn_add_376, ttnn_slice_8, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[40])
-        ttnn_add_390, ttnn_reshape_1221, ttnn_slice_686 = self.single_transformer_blocks[32](ttnn_reshape_1201, ttnn_slice_673, ttnn_add_383, ttnn_slice_7, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[41])
-        ttnn_add_397, ttnn_reshape_1241, ttnn_slice_699 = self.single_transformer_blocks[33](ttnn_reshape_1221, ttnn_slice_686, ttnn_add_390, ttnn_slice_6, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[42])
-        ttnn_add_404, ttnn_reshape_1261, ttnn_slice_712 = self.single_transformer_blocks[34](ttnn_reshape_1241, ttnn_slice_699, ttnn_add_397, ttnn_slice_5, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[43])
-        ttnn_add_411, ttnn_reshape_1281, ttnn_slice_725 = self.single_transformer_blocks[35](ttnn_reshape_1261, ttnn_slice_712, ttnn_add_404, ttnn_slice_4, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[44])
-        ttnn_add_418, ttnn_reshape_1301, ttnn_slice_738 = self.single_transformer_blocks[36](ttnn_reshape_1281, ttnn_slice_725, ttnn_add_411, ttnn_slice_3, var_1, ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590, text_encoder_layers[45])
-        ttnn_layer_norm_70 = self.single_transformer_blocks[37](ttnn_add_418, ttnn_reshape_1301, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_2, ttnn_slice_738, ttnn_to_layout_590, var_1)
+        # --- 8 double transformer blocks ---
+        # Block 0 is the first block; it also emits the shared rope tensors
+        # (ttnn_reshape_203/209, ttnn_to_layout_590) used by every later block. Blocks
+        # 1..7 share one implementation; each returns (add, reshape, slice, concat_heads,
+        # typecast) threaded into the next. Per-block modulation slices are indexed below.
+        (d_add, ttnn_reshape_203, ttnn_reshape_209, d_reshape, d_slice,
+         ttnn_to_layout_590, d_ch, d_tc) = self.transformer_blocks[0](
+            hidden_states, txt_ids, img_ids, attention_mask, text_encoder_layers[1],
+            ttnn_concat_109, ttnn_layer_norm_0, ttnn_slice_54, ttnn_slice_55, var_0, var_1)
+        dbl_mod_hi = [ttnn_slice_53, ttnn_slice_51, ttnn_slice_49, ttnn_slice_47, ttnn_slice_45, ttnn_slice_43, ttnn_slice_41]
+        dbl_mod_lo = [ttnn_slice_52, ttnn_slice_50, ttnn_slice_48, ttnn_slice_46, ttnn_slice_44, ttnn_slice_42, ttnn_slice_40]
+        for i in range(1, 8):
+            d_add, d_reshape, d_slice, d_ch, d_tc = self.transformer_blocks[i](
+                d_reshape, d_slice, dbl_mod_hi[i - 1], var_1, d_tc, d_ch, d_add,
+                dbl_mod_lo[i - 1], ttnn_reshape_203, ttnn_reshape_209,
+                ttnn_to_layout_590, text_encoder_layers[1 + i])
+
+        # --- 38 single transformer blocks ---
+        # Block 0 finishes the double->single transition; block 37 is the output block.
+        # Blocks 1..36 share one implementation; each returns (add, reshape, slice).
+        single_mod = [ttnn_slice_38, ttnn_slice_37, ttnn_slice_36, ttnn_slice_35, ttnn_slice_34, ttnn_slice_33, ttnn_slice_32, ttnn_slice_31, ttnn_slice_30, ttnn_slice_29, ttnn_slice_28, ttnn_slice_27, ttnn_slice_26, ttnn_slice_25, ttnn_slice_24, ttnn_slice_23, ttnn_slice_22, ttnn_slice_21, ttnn_slice_20, ttnn_slice_19, ttnn_slice_18, ttnn_slice_17, ttnn_slice_16, ttnn_slice_15, ttnn_slice_14, ttnn_slice_13, ttnn_slice_12, ttnn_slice_11, ttnn_slice_10, ttnn_slice_9, ttnn_slice_8, ttnn_slice_7, ttnn_slice_6, ttnn_slice_5, ttnn_slice_4, ttnn_slice_3]
+        s_add, s_reshape, s_slice = self.single_transformer_blocks[0](
+            text_encoder_layers[9], d_add, ttnn_reshape_203, ttnn_reshape_209,
+            d_reshape, d_slice, ttnn_slice_39, ttnn_to_layout_590, d_ch, d_tc, var_1)
+        for i in range(1, 37):
+            s_add, s_reshape, s_slice = self.single_transformer_blocks[i](
+                s_reshape, s_slice, s_add, single_mod[i - 1], var_1,
+                ttnn_reshape_203, ttnn_reshape_209, ttnn_to_layout_590,
+                text_encoder_layers[9 + i])
+        ttnn_layer_norm_70 = self.single_transformer_blocks[37](
+            s_add, s_reshape, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_2,
+            s_slice, ttnn_to_layout_590, var_1)
         ttnn_reshape_1321 = ttnn.reshape(
             ttnn_slice_1,
             [1, 1, 2, 6144],
