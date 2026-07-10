@@ -8,198 +8,6 @@ class LightweightModule:
         return self.forward(*args, **kwargs)
 
 
-class ContextEmbedder(LightweightModule):
-    def __init__(self, device, weights):
-        self.device = device
-        self.weights = weights
-
-    def forward(self, encoder_hidden_states):
-        ttnn_to_layout_584 = ttnn.to_layout(
-            encoder_hidden_states,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_reshape_180 = ttnn.reshape(
-            ttnn_to_layout_584,
-            [90, 4096],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_to_layout_584, False)
-        ttnn_linear_0 = ttnn.linear(
-            ttnn_reshape_180,
-            self.weights["transformer.context_embedder.weight"],
-            bias=self.weights["transformer.context_embedder.bias"],
-            transpose_a=False,
-            transpose_b=True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_180, False)
-        ttnn_slice_0 = ttnn.slice(
-            ttnn_linear_0,
-            [0, 0],
-            [90, 1536],
-            [1, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_linear_0, False)
-        ttnn_reshape_181 = ttnn.reshape(
-            ttnn_slice_0,
-            [2, 45, 1536],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_slice_0, False)
-        return ttnn_reshape_181
-
-
-class TimeEmbed(LightweightModule):
-    def __init__(self, device, weights):
-        self.device = device
-        self.weights = weights
-
-    def forward(self, timestep):
-        ttnn_to_layout_586 = ttnn.to_layout(
-            timestep,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_typecast_114 = ttnn.typecast(
-            ttnn_to_layout_586,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_to_layout_586, False)
-        ttnn_reshape_184 = ttnn.reshape(
-            ttnn_typecast_114,
-            [2, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_114, False)
-        ttnn_multiply_0 = ttnn.multiply(
-            ttnn_reshape_184,
-            self.weights["consteval.const_0"],
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_184, False)
-        ttnn_sin_0 = ttnn.sin(
-            ttnn_multiply_0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_cos_0 = ttnn.cos(
-            ttnn_multiply_0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_multiply_0, False)
-        ttnn_concat_110 = ttnn.concat(
-            [ttnn_cos_0, ttnn_sin_0],
-            1,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_cos_0, False)
-        ttnn.deallocate(ttnn_sin_0, False)
-        ttnn_linear_1 = ttnn.linear(
-            ttnn_concat_110,
-            self.weights["transformer.time_embed.timestep_embedder.linear_1.weight.fused.transformer.time_embed.timestep_embedder.linear_1.weight"],
-            bias=self.weights["transformer.time_embed.timestep_embedder.linear_1.bias.fused.transformer.time_embed.timestep_embedder.linear_1.bias"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.FLOAT32,
-            program_config=None,
-            activation="silu",
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_concat_110, False)
-        ttnn_linear_2 = ttnn.linear(
-            ttnn_linear_1,
-            self.weights["transformer.time_embed.timestep_embedder.linear_2.weight.fused.transformer.time_embed.timestep_embedder.linear_2.weight"],
-            bias=self.weights["transformer.time_embed.timestep_embedder.linear_2.bias.fused.transformer.time_embed.timestep_embedder.linear_2.bias"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.FLOAT32,
-            program_config=None,
-            activation="silu",
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_linear_1, False)
-        return ttnn_linear_2
-
-
-class ProjOut(LightweightModule):
-    def __init__(self, device, weights):
-        self.device = device
-        self.weights = weights
-
-    def forward(self, hidden_states):
-        ttnn_reshape_1325 = ttnn.reshape(
-            hidden_states,
-            [8192, 3072],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(hidden_states, False)
-        ttnn_linear_74 = ttnn.linear(
-            ttnn_reshape_1325,
-            self.weights["transformer.proj_out.weight"],
-            bias=self.weights["transformer.proj_out.bias"],
-            transpose_a=False,
-            transpose_b=True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_1325, False)
-        ttnn_reshape_1326 = ttnn.reshape(
-            ttnn_linear_74,
-            [2, 4096, 48],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_linear_74, False)
-        return ttnn_reshape_1326
-
-
 class ModelTTNN(LightweightModule):
     def __init__(self, device):
         self.device = device
@@ -470,6 +278,198 @@ class ModelTTNN(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1324, False)
         ttnn.deallocate(ttnn_multiply_328, False)
         return [self.proj_out(ttnn_add_428)]
+
+
+class ContextEmbedder(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, encoder_hidden_states):
+        ttnn_to_layout_584 = ttnn.to_layout(
+            encoder_hidden_states,
+            ttnn.Layout.TILE,
+            None,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn_reshape_180 = ttnn.reshape(
+            ttnn_to_layout_584,
+            [90, 4096],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_to_layout_584, False)
+        ttnn_linear_0 = ttnn.linear(
+            ttnn_reshape_180,
+            self.weights["transformer.context_embedder.weight"],
+            bias=self.weights["transformer.context_embedder.bias"],
+            transpose_a=False,
+            transpose_b=True,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None,
+            activation=None,
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_reshape_180, False)
+        ttnn_slice_0 = ttnn.slice(
+            ttnn_linear_0,
+            [0, 0],
+            [90, 1536],
+            [1, 1],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_linear_0, False)
+        ttnn_reshape_181 = ttnn.reshape(
+            ttnn_slice_0,
+            [2, 45, 1536],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_slice_0, False)
+        return ttnn_reshape_181
+
+
+class TimeEmbed(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, timestep):
+        ttnn_to_layout_586 = ttnn.to_layout(
+            timestep,
+            ttnn.Layout.TILE,
+            None,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn_typecast_114 = ttnn.typecast(
+            ttnn_to_layout_586,
+            ttnn.DataType.FLOAT32,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_to_layout_586, False)
+        ttnn_reshape_184 = ttnn.reshape(
+            ttnn_typecast_114,
+            [2, 1],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_typecast_114, False)
+        ttnn_multiply_0 = ttnn.multiply(
+            ttnn_reshape_184,
+            self.weights["consteval.const_0"],
+            dtype=ttnn.DataType.FLOAT32,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_reshape_184, False)
+        ttnn_sin_0 = ttnn.sin(
+            ttnn_multiply_0,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn_cos_0 = ttnn.cos(
+            ttnn_multiply_0,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_multiply_0, False)
+        ttnn_concat_110 = ttnn.concat(
+            [ttnn_cos_0, ttnn_sin_0],
+            1,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_cos_0, False)
+        ttnn.deallocate(ttnn_sin_0, False)
+        ttnn_linear_1 = ttnn.linear(
+            ttnn_concat_110,
+            self.weights["transformer.time_embed.timestep_embedder.linear_1.weight.fused.transformer.time_embed.timestep_embedder.linear_1.weight"],
+            bias=self.weights["transformer.time_embed.timestep_embedder.linear_1.bias.fused.transformer.time_embed.timestep_embedder.linear_1.bias"],
+            transpose_a=False,
+            transpose_b=False,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            dtype=ttnn.DataType.FLOAT32,
+            program_config=None,
+            activation="silu",
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_concat_110, False)
+        ttnn_linear_2 = ttnn.linear(
+            ttnn_linear_1,
+            self.weights["transformer.time_embed.timestep_embedder.linear_2.weight.fused.transformer.time_embed.timestep_embedder.linear_2.weight"],
+            bias=self.weights["transformer.time_embed.timestep_embedder.linear_2.bias.fused.transformer.time_embed.timestep_embedder.linear_2.bias"],
+            transpose_a=False,
+            transpose_b=False,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            dtype=ttnn.DataType.FLOAT32,
+            program_config=None,
+            activation="silu",
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_linear_1, False)
+        return ttnn_linear_2
+
+
+class ProjOut(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weights = weights
+
+    def forward(self, hidden_states):
+        ttnn_reshape_1325 = ttnn.reshape(
+            hidden_states,
+            [8192, 3072],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(hidden_states, False)
+        ttnn_linear_74 = ttnn.linear(
+            ttnn_reshape_1325,
+            self.weights["transformer.proj_out.weight"],
+            bias=self.weights["transformer.proj_out.bias"],
+            transpose_a=False,
+            transpose_b=True,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None,
+            activation=None,
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_reshape_1325, False)
+        ttnn_reshape_1326 = ttnn.reshape(
+            ttnn_linear_74,
+            [2, 4096, 48],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_linear_74, False)
+        return ttnn_reshape_1326
 
 
 class BriaFiboTransformerBlock(LightweightModule):
