@@ -2042,15 +2042,15 @@ class BriaFiboTransformerBlock0(LightweightModule):
         self.weights = weights
         self.block_idx = block_idx
 
-    def forward(self, hidden_states, txt_ids, img_ids, attention_mask, text_encoder_layer_1, ttnn_concat_109, ttnn_layer_norm_0, ttnn_slice_54, ttnn_slice_55, var_0, var_1):
+    def forward(self, hidden_states, txt_ids, img_ids, attention_mask, text_layer, embed_concat, embed_layernorm, modulation_a, modulation_b, const_0, const_1):
         ttnn_reshape_185 = ttnn.reshape(
-            ttnn_slice_55,
+            modulation_b,
             [1, 1, 2, 18432],
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(ttnn_slice_55, False)
+        ttnn.deallocate(modulation_b, False)
         ttnn_reduce_scatter_0 = ttnn.reduce_scatter(
             input_tensor=ttnn_reshape_185,
             dim=3,
@@ -2142,7 +2142,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_slice_57, False)
         ttnn_add_1 = ttnn.add(
             ttnn_reshape_188,
-            var_1,
+            const_1,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2150,7 +2150,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         )
         ttnn.deallocate(ttnn_reshape_188, False)
         ttnn_multiply_1 = ttnn.multiply(
-            ttnn_layer_norm_0,
+            embed_layernorm,
             ttnn_add_1,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
@@ -2158,7 +2158,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_add_1, False)
-        ttnn.deallocate(ttnn_layer_norm_0, False)
+        ttnn.deallocate(embed_layernorm, False)
         ttnn_slice_58 = ttnn.slice(
             ttnn_typecast_115,
             [0, 0],
@@ -2314,13 +2314,13 @@ class BriaFiboTransformerBlock0(LightweightModule):
             program_config=None,
         )
         ttnn_reshape_194 = ttnn.reshape(
-            ttnn_slice_54,
+            modulation_a,
             [1, 1, 2, 18432],
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(ttnn_slice_54, False)
+        ttnn.deallocate(modulation_a, False)
         ttnn_reduce_scatter_1 = ttnn.reduce_scatter(
             input_tensor=ttnn_reshape_194,
             dim=3,
@@ -2395,7 +2395,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_slice_62, False)
         ttnn_add_4 = ttnn.add(
             ttnn_reshape_196,
-            var_1,
+            const_1,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2618,7 +2618,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         )
         ttnn_multiply_4 = ttnn.multiply(
             ttnn_slice_68,
-            var_0,
+            const_0,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -2652,7 +2652,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_typecast_118, False)
         ttnn_multiply_5 = ttnn.multiply(
             ttnn_slice_69,
-            var_0,
+            const_0,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3265,7 +3265,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_reshape_219, False)
         ttnn.deallocate(ttnn_reshape_187, False)
         ttnn_add_9 = ttnn.add(
-            ttnn_concat_109,
+            embed_concat,
             ttnn_multiply_10,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
@@ -3273,7 +3273,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_multiply_10, False)
-        ttnn.deallocate(ttnn_concat_109, False)
+        ttnn.deallocate(embed_concat, False)
         ttnn_layer_norm_2 = ttnn.layer_norm(
             ttnn_add_9,
             epsilon=9.9999999747524271e-07,
@@ -3321,7 +3321,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_slice_76, False)
         ttnn_add_10 = ttnn.add(
             ttnn_reshape_221,
-            var_1,
+            const_1,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -3497,7 +3497,7 @@ class BriaFiboTransformerBlock0(LightweightModule):
         )
         ttnn.deallocate(ttnn_add_13, False)
         ttnn_to_layout_591 = ttnn.to_layout(
-            text_encoder_layer_1,
+            text_layer,
             ttnn.Layout.TILE,
             None,
             memory_config=ttnn.MemoryConfig(
@@ -4349,9 +4349,9 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         self.weights = weights
         self.block_idx = block_idx
 
-    def forward(self, text_encoder_layer_9, ttnn_add_142, ttnn_reshape_203, ttnn_reshape_209, ttnn_reshape_549, ttnn_slice_253, ttnn_slice_39, ttnn_to_layout_590, ttnn_transformer_concatenate_heads_7, ttnn_typecast_173, var_1):
+    def forward(self, text_layer, hidden_states, rope_cos, rope_sin, carry_reshape, carry_slice, modulation, attn_mask, carry_ch, carry_tc, const_1):
         ttnn_matmul_39 = ttnn.matmul(
-            ttnn_reshape_549,
+            carry_reshape,
             self.weights["transformer.caption_projection.8.linear.weight"],
             transpose_a=False,
             transpose_b=True,
@@ -4363,7 +4363,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
             activation=None,
             compute_kernel_config=None,
         )
-        ttnn.deallocate(ttnn_reshape_549, False)
+        ttnn.deallocate(carry_reshape, False)
         ttnn_reshape_550 = ttnn.reshape(
             ttnn_matmul_39,
             [2, 45, 1536],
@@ -4373,16 +4373,16 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_39, False)
         ttnn_concat_161 = ttnn.concat(
-            [ttnn_slice_253, ttnn_reshape_550],
+            [carry_slice, ttnn_reshape_550],
             2,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
         ttnn.deallocate(ttnn_reshape_550, False)
-        ttnn.deallocate(ttnn_slice_253, False)
+        ttnn.deallocate(carry_slice, False)
         ttnn_slice_254 = ttnn.slice(
-            ttnn_typecast_173,
+            carry_tc,
             [0, 6144],
             [2, 9216],
             [1, 1],
@@ -4399,7 +4399,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         )
         ttnn.deallocate(ttnn_slice_254, False)
         ttnn_slice_255 = ttnn.slice(
-            ttnn_transformer_concatenate_heads_7,
+            carry_ch,
             [0, 45, 0],
             [2, 4141, 768],
             [1, 1, 1],
@@ -4407,7 +4407,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(ttnn_transformer_concatenate_heads_7, False)
+        ttnn.deallocate(carry_ch, False)
         ttnn_reshape_552 = ttnn.reshape(
             ttnn_slice_255,
             [8192, 768],
@@ -4504,7 +4504,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_reshape_555, False)
         ttnn.deallocate(ttnn_reshape_551, False)
         ttnn_add_155 = ttnn.add(
-            ttnn_add_142,
+            hidden_states,
             ttnn_multiply_97,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
@@ -4512,7 +4512,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_multiply_97, False)
-        ttnn.deallocate(ttnn_add_142, False)
+        ttnn.deallocate(hidden_states, False)
         ttnn_layer_norm_31 = ttnn.layer_norm(
             ttnn_add_155,
             epsilon=9.9999999747524271e-07,
@@ -4525,7 +4525,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
             program_config=None,
         )
         ttnn_slice_256 = ttnn.slice(
-            ttnn_typecast_173,
+            carry_tc,
             [0, 15360],
             [2, 18432],
             [1, 1],
@@ -4542,7 +4542,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         )
         ttnn.deallocate(ttnn_slice_256, False)
         ttnn_slice_257 = ttnn.slice(
-            ttnn_typecast_173,
+            carry_tc,
             [0, 12288],
             [2, 15360],
             [1, 1],
@@ -4560,7 +4560,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_slice_257, False)
         ttnn_add_156 = ttnn.add(
             ttnn_reshape_557,
-            var_1,
+            const_1,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4578,7 +4578,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_add_156, False)
         ttnn.deallocate(ttnn_layer_norm_31, False)
         ttnn_slice_258 = ttnn.slice(
-            ttnn_typecast_173,
+            carry_tc,
             [0, 9216],
             [2, 12288],
             [1, 1],
@@ -4586,7 +4586,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(ttnn_typecast_173, False)
+        ttnn.deallocate(carry_tc, False)
         ttnn_reshape_558 = ttnn.reshape(
             ttnn_slice_258,
             [2, 1, 3072],
@@ -4746,13 +4746,13 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
             program_config=None,
         )
         ttnn_reshape_563 = ttnn.reshape(
-            ttnn_slice_39,
+            modulation,
             [1, 1, 2, 9216],
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(ttnn_slice_39, False)
+        ttnn.deallocate(modulation, False)
         ttnn_reduce_scatter_48 = ttnn.reduce_scatter(
             input_tensor=ttnn_reshape_563,
             dim=3,
@@ -4844,7 +4844,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_slice_260, False)
         ttnn_add_161 = ttnn.add(
             ttnn_reshape_566,
-            var_1,
+            const_1,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -4993,7 +4993,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_typecast_181, False)
         ttnn_multiply_101 = ttnn.multiply(
             ttnn_permute_297,
-            ttnn_reshape_203,
+            rope_cos,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5070,7 +5070,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_reshape_571, False)
         ttnn_multiply_102 = ttnn.multiply(
             ttnn_permute_298,
-            ttnn_reshape_209,
+            rope_sin,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5139,7 +5139,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_typecast_184, False)
         ttnn_multiply_103 = ttnn.multiply(
             ttnn_permute_299,
-            ttnn_reshape_203,
+            rope_cos,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5216,7 +5216,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
         ttnn.deallocate(ttnn_reshape_574, False)
         ttnn_multiply_104 = ttnn.multiply(
             ttnn_permute_300,
-            ttnn_reshape_209,
+            rope_sin,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5263,7 +5263,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
                 ttnn_typecast_183,
                 ttnn_typecast_186,
                 ttnn_permute_301,
-                attn_mask=ttnn_to_layout_590,
+                attn_mask=attn_mask,
                 is_causal=False,
                 scale=None,
                 sliding_window_size=None,
@@ -5476,7 +5476,7 @@ class BriaFiboSingleTransformerBlock0(LightweightModule):
             ),
         )
         ttnn_to_layout_601 = ttnn.to_layout(
-            text_encoder_layer_9,
+            text_layer,
             ttnn.Layout.TILE,
             None,
             memory_config=ttnn.MemoryConfig(
@@ -5499,9 +5499,9 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         self.weights = weights
         self.block_idx = block_idx
 
-    def forward(self, ttnn_add_418, ttnn_reshape_1301, ttnn_reshape_203, ttnn_reshape_209, ttnn_slice_2, ttnn_slice_738, ttnn_to_layout_590, var_1):
+    def forward(self, hidden_states, carry_reshape, rope_cos, rope_sin, modulation, carry_slice, attn_mask, const_1):
         ttnn_matmul_115 = ttnn.matmul(
-            ttnn_reshape_1301,
+            carry_reshape,
             self.weights["transformer.caption_projection.45.linear.weight"],
             transpose_a=False,
             transpose_b=True,
@@ -5513,7 +5513,7 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
             activation=None,
             compute_kernel_config=None,
         )
-        ttnn.deallocate(ttnn_reshape_1301, False)
+        ttnn.deallocate(carry_reshape, False)
         ttnn_reshape_1302 = ttnn.reshape(
             ttnn_matmul_115,
             [2, 45, 1536],
@@ -5523,16 +5523,16 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_115, False)
         ttnn_concat_346 = ttnn.concat(
-            [ttnn_slice_738, ttnn_reshape_1302],
+            [carry_slice, ttnn_reshape_1302],
             2,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
         ttnn.deallocate(ttnn_reshape_1302, False)
-        ttnn.deallocate(ttnn_slice_738, False)
+        ttnn.deallocate(carry_slice, False)
         ttnn_slice_739 = ttnn.slice(
-            ttnn_add_418,
+            hidden_states,
             [0, 45, 0],
             [2, 4141, 3072],
             [1, 1, 1],
@@ -5540,7 +5540,7 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(ttnn_add_418, False)
+        ttnn.deallocate(hidden_states, False)
         ttnn_concat_347 = ttnn.concat(
             [ttnn_concat_346, ttnn_slice_739],
             1,
@@ -5562,13 +5562,13 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
             program_config=None,
         )
         ttnn_reshape_1303 = ttnn.reshape(
-            ttnn_slice_2,
+            modulation,
             [1, 1, 2, 9216],
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
-        ttnn.deallocate(ttnn_slice_2, False)
+        ttnn.deallocate(modulation, False)
         ttnn_reduce_scatter_122 = ttnn.reduce_scatter(
             input_tensor=ttnn_reshape_1303,
             dim=3,
@@ -5660,7 +5660,7 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         ttnn.deallocate(ttnn_slice_741, False)
         ttnn_add_420 = ttnn.add(
             ttnn_reshape_1306,
-            var_1,
+            const_1,
             dtype=ttnn.DataType.BFLOAT16,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5809,7 +5809,7 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         ttnn.deallocate(ttnn_typecast_440, False)
         ttnn_multiply_323 = ttnn.multiply(
             ttnn_permute_482,
-            ttnn_reshape_203,
+            rope_cos,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5886,7 +5886,7 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1311, False)
         ttnn_multiply_324 = ttnn.multiply(
             ttnn_permute_483,
-            ttnn_reshape_209,
+            rope_sin,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
@@ -5955,14 +5955,14 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         ttnn.deallocate(ttnn_typecast_443, False)
         ttnn_multiply_325 = ttnn.multiply(
             ttnn_permute_484,
-            ttnn_reshape_203,
+            rope_cos,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
         ttnn.deallocate(ttnn_permute_484, False)
-        ttnn.deallocate(ttnn_reshape_203, False)
+        ttnn.deallocate(rope_cos, False)
         ttnn_reshape_1313 = ttnn.reshape(
             ttnn_rms_norm_107,
             [2, 4141, 6, 64, 2],
@@ -6033,14 +6033,14 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         ttnn.deallocate(ttnn_reshape_1314, False)
         ttnn_multiply_326 = ttnn.multiply(
             ttnn_permute_485,
-            ttnn_reshape_209,
+            rope_sin,
             dtype=ttnn.DataType.FLOAT32,
             memory_config=ttnn.MemoryConfig(
                 ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
             ),
         )
         ttnn.deallocate(ttnn_permute_485, False)
-        ttnn.deallocate(ttnn_reshape_209, False)
+        ttnn.deallocate(rope_sin, False)
         ttnn_add_423 = ttnn.add(
             ttnn_multiply_325,
             ttnn_multiply_326,
@@ -6081,7 +6081,7 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
                 ttnn_typecast_442,
                 ttnn_typecast_445,
                 ttnn_permute_486,
-                attn_mask=ttnn_to_layout_590,
+                attn_mask=attn_mask,
                 is_causal=False,
                 scale=None,
                 sliding_window_size=None,
@@ -6096,7 +6096,7 @@ class BriaFiboSingleTransformerBlock37(LightweightModule):
         ttnn.deallocate(ttnn_permute_486, False)
         ttnn.deallocate(ttnn_typecast_445, False)
         ttnn.deallocate(ttnn_typecast_442, False)
-        ttnn.deallocate(ttnn_to_layout_590, False)
+        ttnn.deallocate(attn_mask, False)
         ttnn_transformer_concatenate_heads_45 = ttnn.transformer.concatenate_heads(
             ttnn_transformer_scaled_dot_product_attention_45,
             memory_config=ttnn.MemoryConfig(
