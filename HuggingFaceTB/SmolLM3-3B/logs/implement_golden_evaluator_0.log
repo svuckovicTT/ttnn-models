@@ -1,0 +1,7 @@
+{
+  "is_approved": true,
+  "failed_criteria": [],
+  "reasoning": "All three criteria pass. TASK COMPLETION: model_pt.py was created with the required load_pytorch_model(), load_input(), and run_pytorch_model() functions faithfully derived from xla.py (tt-xla code excluded); calculate_pcc() was added verbatim to utils.py; and calculate_pcc was imported in main.py. SCOPE CONTAINMENT: only the three permitted files were touched, with utils.py receiving only the necessary `import torch` and the new function, and main.py receiving only the single import line. SEMANTIC EQUIVALENCE: all changes are purely additive \u2014 no existing code was altered, no TTNN ops replaced, no memory configs dropped."
+}
+
+--- Time taken: 85.9s ---
