@@ -1,0 +1,10 @@
+Done. The `test_main()` in `main.py` now:
+
+1. Sets `exact_pcc = 0.984375` (matching `xla.py`)
+2. Runs the TTNN graph via `load_activations_for__main()` / `load_weights_for__main()` / `_main()`
+3. Converts the mesh-distributed TTNN output to a single torch tensor using `ConcatMeshToTensor(dim=0)` then slicing `[:1]` to get one replica from the (1,4) mesh
+4. Runs the PyTorch reference via `model_pt.run_pytorch_model()`
+5. Casts both to float32 for numerically stable PCC comparison
+6. Uses `calculate_pcc()` from `utils.py` and asserts exact PCC match
+
+--- Time taken: 68.3s | session: a7f2fadf-3522-4f31-8153-f675f3495fa4 ---
