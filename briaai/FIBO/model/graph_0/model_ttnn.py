@@ -66,91 +66,12 @@ class ContextEmbedder(LightweightModule):
         return ttnn_reshape_181
 
 
-class ModelTTNN(LightweightModule):
-    def __init__(self, device):
+class TimeEmbed(LightweightModule):
+    def __init__(self, device, weights):
         self.device = device
-        self.weights = params.load_weights_for__main(device)
-        self.weights = consteval.run_consteval(self.weights, device)
-        self.context_embedder = ContextEmbedder(device, self.weights)
-        self.transformer_blocks = [BriaFiboTransformerBlock0(device, self.weights, 0)] + [
-            BriaFiboTransformerBlock(device, self.weights, i) for i in range(1, 8)
-        ]
-        self.single_transformer_blocks = (
-            [BriaFiboSingleTransformerBlock0(device, self.weights, 0)]
-            + [BriaFiboSingleTransformerBlock(device, self.weights, i) for i in range(1, 37)]
-            + [BriaFiboSingleTransformerBlock37(device, self.weights, 37)]
-        )
+        self.weights = weights
 
-    def forward(self, activations):
-        timestep = activations[0]
-        hidden_states = activations[1]
-        encoder_hidden_states = activations[3]
-        attention_mask = activations[4]
-        img_ids = activations[5]
-        txt_ids = activations[6]
-        # 46 per-layer text-encoder features (one per transformer block)
-        text_encoder_layers = [activations[2]] + [activations[i] for i in range(7, 52)]
-        var_0 = self.weights["consteval.const_233"]
-        var_1 = self.weights["consteval.const_238"]
-        ttnn_reshape_181 = self.context_embedder(encoder_hidden_states)
-        ttnn_to_layout_585 = ttnn.to_layout(
-            text_encoder_layers[0],
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_reshape_182 = ttnn.reshape(
-            ttnn_to_layout_585,
-            [90, 2048],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_to_layout_585, False)
-        ttnn_matmul_0 = ttnn.matmul(
-            ttnn_reshape_182,
-            self.weights["transformer.caption_projection.0.linear.weight"],
-            transpose_a=False,
-            transpose_b=True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_182, False)
-        ttnn_reshape_183 = ttnn.reshape(
-            ttnn_matmul_0,
-            [2, 45, 1536],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_0, False)
-        ttnn_concat_109 = ttnn.concat(
-            [ttnn_reshape_181, ttnn_reshape_183],
-            2,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_183, False)
-        ttnn.deallocate(ttnn_reshape_181, False)
-        ttnn_layer_norm_0 = ttnn.layer_norm(
-            ttnn_concat_109,
-            epsilon=9.9999999747524271e-07,
-            weight=None,
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            program_config=None,
-        )
+    def forward(self, timestep):
         ttnn_to_layout_586 = ttnn.to_layout(
             timestep,
             ttnn.Layout.TILE,
@@ -236,6 +157,96 @@ class ModelTTNN(LightweightModule):
             compute_kernel_config=None,
         )
         ttnn.deallocate(ttnn_linear_1, False)
+        return ttnn_linear_2
+
+
+class ModelTTNN(LightweightModule):
+    def __init__(self, device):
+        self.device = device
+        self.weights = params.load_weights_for__main(device)
+        self.weights = consteval.run_consteval(self.weights, device)
+        self.context_embedder = ContextEmbedder(device, self.weights)
+        self.time_embed = TimeEmbed(device, self.weights)
+        self.transformer_blocks = [BriaFiboTransformerBlock0(device, self.weights, 0)] + [
+            BriaFiboTransformerBlock(device, self.weights, i) for i in range(1, 8)
+        ]
+        self.single_transformer_blocks = (
+            [BriaFiboSingleTransformerBlock0(device, self.weights, 0)]
+            + [BriaFiboSingleTransformerBlock(device, self.weights, i) for i in range(1, 37)]
+            + [BriaFiboSingleTransformerBlock37(device, self.weights, 37)]
+        )
+
+    def forward(self, activations):
+        timestep = activations[0]
+        hidden_states = activations[1]
+        encoder_hidden_states = activations[3]
+        attention_mask = activations[4]
+        img_ids = activations[5]
+        txt_ids = activations[6]
+        # 46 per-layer text-encoder features (one per transformer block)
+        text_encoder_layers = [activations[2]] + [activations[i] for i in range(7, 52)]
+        var_0 = self.weights["consteval.const_233"]
+        var_1 = self.weights["consteval.const_238"]
+        ttnn_reshape_181 = self.context_embedder(encoder_hidden_states)
+        ttnn_to_layout_585 = ttnn.to_layout(
+            text_encoder_layers[0],
+            ttnn.Layout.TILE,
+            None,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn_reshape_182 = ttnn.reshape(
+            ttnn_to_layout_585,
+            [90, 2048],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_to_layout_585, False)
+        ttnn_matmul_0 = ttnn.matmul(
+            ttnn_reshape_182,
+            self.weights["transformer.caption_projection.0.linear.weight"],
+            transpose_a=False,
+            transpose_b=True,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None,
+            activation=None,
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_reshape_182, False)
+        ttnn_reshape_183 = ttnn.reshape(
+            ttnn_matmul_0,
+            [2, 45, 1536],
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_matmul_0, False)
+        ttnn_concat_109 = ttnn.concat(
+            [ttnn_reshape_181, ttnn_reshape_183],
+            2,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+        ttnn.deallocate(ttnn_reshape_183, False)
+        ttnn.deallocate(ttnn_reshape_181, False)
+        ttnn_layer_norm_0 = ttnn.layer_norm(
+            ttnn_concat_109,
+            epsilon=9.9999999747524271e-07,
+            weight=None,
+            bias=None,
+            residual_input_tensor=None,
+            memory_config=ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+            program_config=None,
+        )
+        ttnn_linear_2 = self.time_embed(timestep)
         ttnn_matmul_1 = ttnn.matmul(
             ttnn_linear_2,
             self.weights["transformer.fused_norm_out_single_transformer_blocks_37_norm_36_35_34_33_32_31_30_29_28_27_26_25_24_23_22_21_20_19_18_17_16_15_14_13_12_11_10_9_8_7_6_5_4_3_2_1_0_transformer_blocks_norm1_norm1_context.linear.weight"],
