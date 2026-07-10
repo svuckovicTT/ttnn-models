@@ -1,0 +1,35 @@
+I now have a complete understanding of the codegen. Here is my summary.
+
+## Codegen Summary: `HuggingFaceTB/SmolLM3-3B/model/graph_0/`
+
+### What the model is
+Per `../../xla.py` (at `HuggingFaceTB/SmolLM3-3B/xla.py`), this is the **FIBO text encoder = stock `SmolLM3Model`** (SmolLM3-3B with the LM head discarded), producing `last_hidden_state`. It runs **tensor-parallel Megatron-1D over a (1, 4) mesh** (4× Blackhole), at `CONTEXT_LENGTH=4096` (the passing default; 24576 OOMs). Q/K/V + MLP gate/up are column-parallel; O + MLP down are row-parallel → all-gather/reduce-scatter collectives per layer.
+
+### Files
+- **`main.py`** — the codegen (39,685 lines, ~1 MB). The whole model.
+- **`utils.py`** — hand-written helpers: `DeviceGetter` singleton (opens the (1,4) mesh + fabric config), `get_scalar_from_tensor`, `load_tensor` (load → to_layout → to_dtype → to_device), `create_global_semaphore`. Clean; likely not the refactor target.
+- **`__init__.py`** — just a license header.
+- **`run`** — bash launcher (sets env, `python3 main.py`, optional Tracy).
+- **`ttir_cpu.py`, `ttnn.mlir`, `irs/`, `generated/`, `tensors/`** — reference/support artifacts. `tensors/` holds 330 `argN.tensorbin` weight+activation files. No `model_ttnn.py`.
+
+### Structure & entry points of `main.py`
+Bottom-up call chain:
+- `main()` (39677) → `load_activations_for__main()` + `load_weights_for__main()` → `_main(activations, weights)`.
+- **`load_activations_for__main()`** (36510) — loads 3 activation tensors (`arg217/219/220`: input_ids int32, attention stuff, bf16).
+- **`load_weights_for__main()`** (36547) — loads all 330 weights from `./tensors/argN.tensorbin` into the global dict `_main_weights`, keyed by HF names like `model.layers.35.mlp.gate_proj.weight`.
+- **`consteval__main(ce_cache, weights)`** (36185) — one-time const-eval: calls `main_const_eval_0..47` on weight subsets, caches results in `ce_cache__main`.
+- **`_main(activations, weights)`** (20033) — **the forward function.** Runs consteval, then the full 36-layer transformer as one flat straight-line sequence of `ttnn.*` ops, returning `[ttnn_rms_norm_72]` (final norm).
+
+### Where the `ttnn.*` ops live
+The forward body (`_main`, lines 20033–36182, ~16k lines) is the op-dense region. Op counts across the file: matmul (252), reshape (240), typecast (185), permute (126), to_layout/to_device (110 each), multiply/add (~110), rms_norm (73), reduce_scatter/all_gather/logical_not (72 each), softmax/sum/eq (36 each), where (38), plus split_query_key_value_and_split_heads, embedding, rotary sin/cos, repeat_interleave. **1,912 `ttnn.deallocate` calls** — nearly every intermediate is explicitly freed.
+
+### Auto-generated / messy characteristics (for later refactoring)
+- **SSA-style flat naming**: every value is `ttnn_<op>_<N>` (e.g. `ttnn_reshape_239`, `ttnn_add_107`), globally counted, never reused — no loops, no layer abstraction. The 36 transformer layers are fully unrolled into repeated near-identical blocks.
+- **Massively repeated boilerplate**: the same `memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None)` and the same `WormholeComputeKernelConfig(HiFi4, ...)` literal appear hundreds of times.
+- **48 near-duplicate `main_const_eval_N` functions** — each does `get_device → to_device → to_layout(TILE) → permute → concat` on a layer's Q/K/V weights (the column-parallel fusion), differing only in indices/names.
+- **Three giant const-eval functions are almost entirely inline numeric literals**: `main_const_eval_6` (~8200 lines), `_26` (~4200), `_27` (~4200) are huge `ttnn.Tensor([...])` constants (rotary/mask/position tables) with one integer per line — they dominate the file size but have only a handful of real ops.
+- **`get_device((1,4), FABRIC_1D_RING)` is re-called** in essentially every function rather than passed in.
+
+This understanding is now available for the refactoring steps that follow. I made no edits and ran no tests.
+
+--- Time taken: 123.8s | session: e80a5218-ba50-4d51-a40a-42af16cefa31 ---
