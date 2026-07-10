@@ -3,6 +3,19 @@ import utils
 import model_pt
 from utils import calculate_pcc
 
+# ttnn registers a top-level module also named "activations", which shadows the
+# sibling activations.py in this directory on sys.path. Load our file directly by
+# path so the correct module is used without disturbing ttnn's.
+import importlib.util as _importlib_util
+from pathlib import Path as _Path
+
+_activations_spec = _importlib_util.spec_from_file_location(
+    "graph_activations", _Path(__file__).resolve().parent / "activations.py"
+)
+_activations = _importlib_util.module_from_spec(_activations_spec)
+_activations_spec.loader.exec_module(_activations)
+load_activations_for__main = _activations.load_activations_for__main
+
 
 def main_const_eval_0(arg):
     utils_DeviceGetter_get_device_0 = utils.DeviceGetter.get_device(
@@ -36507,40 +36520,6 @@ def consteval__main(ce_cache, weights):
         )
         ce_cache["main_const_eval_47"] = main_const_eval_47_0[0]
     return ce_cache
-
-
-def load_activations_for__main():
-    utils_DeviceGetter_get_device_48 = utils.DeviceGetter.get_device(
-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
-    )
-    utils_load_tensor_0 = utils.load_tensor(
-        "./tensors/arg217.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_48,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_1 = utils.load_tensor(
-        "./tensors/arg219.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_48,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_2 = utils.load_tensor(
-        "./tensors/arg220.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_48,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    return [utils_load_tensor_0, utils_load_tensor_1, utils_load_tensor_2]
 
 
 _main_weights = {}
