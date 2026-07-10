@@ -1,0 +1,38 @@
+diff --git a/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py b/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
+index f016e25..2a82dca 100644
+--- a/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
++++ b/HuggingFaceTB/SmolLM3-3B/model/graph_0/main.py
+@@ -1,5 +1,6 @@
+ import ttnn
+ import utils
++import model_pt
+ from utils import calculate_pcc
+ 
+ 
+@@ -39683,7 +39684,25 @@ def main():
+ 
+ 
+ def test_main():
+-    return 0
++    exact_pcc = 0.984375
++
++    input = load_activations_for__main()
++    weights = load_weights_for__main()
++    outputs = _main(input, weights)
++
++    # The graph runs tensor-parallel on a (1, 4) mesh. Its single output (the
++    # final hidden state) is replicated across the mesh -- the last collective
++    # feeding it is an all_gather -- so bare ttnn.to_torch would abort without a
++    # mesh composer. For a replicated tensor any one device shard is the full
++    # tensor, so select a single replica to compose it back to torch.
++    ttnn_output = ttnn.to_torch(
++        ttnn.get_device_tensors(ttnn.from_device(outputs[0]))[0]
++    )
++    golden_output = model_pt.run_pytorch_model()
++
++    pcc = calculate_pcc(ttnn_output, golden_output)
++    print(f"\nPCC: {pcc:.6f}")
++    assert pcc == exact_pcc, f"PCC {pcc} does not match expected {exact_pcc}"
+ 
+ 
+ if __name__ == "__main__":

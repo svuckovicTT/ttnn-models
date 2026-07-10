@@ -1,0 +1,11 @@
+Done. I implemented `test_main()` in `main.py`:
+
+- **`exact_pcc = 0.984375`** — copied from `xla.py`'s `compare_pytorch_and_tt_runs()`.
+- Runs the TTNN graph via the codegen's existing `load_activations_for__main()` / `load_weights_for__main()` / `_main(...)` (inputs are not reconstructed).
+- Composes the distributed output: since the final output is **replicated** across the (1,4) mesh (last collective is an `all_gather`), a single device replica via `ttnn.get_device_tensors(ttnn.from_device(outputs[0]))[0]` is the full tensor — avoiding the no-composer abort described in the mesh reference.
+- Runs the PyTorch golden via `model_pt.run_pytorch_model()` (unmodified).
+- Computes PCC with `calculate_pcc()` from `utils.py`, prints it to 6 decimals, and asserts `pcc == exact_pcc` (threshold and conditional left exactly as specified).
+
+Only `main.py` was modified.
+
+--- Time taken: 155.7s | session: f0b9a846-2e92-49f0-b1cf-cc4735183763 ---
