@@ -8,31 +8,12 @@ class LightweightModule:
         return self.forward(*args, **kwargs)
 
 
-class ModelTTNN(LightweightModule):
-    def __init__(self, device):
+class ContextEmbedder(LightweightModule):
+    def __init__(self, device, weights):
         self.device = device
-        self.weights = params.load_weights_for__main(device)
-        self.weights = consteval.run_consteval(self.weights, device)
-        self.transformer_blocks = [BriaFiboTransformerBlock0(device, self.weights, 0)] + [
-            BriaFiboTransformerBlock(device, self.weights, i) for i in range(1, 8)
-        ]
-        self.single_transformer_blocks = (
-            [BriaFiboSingleTransformerBlock0(device, self.weights, 0)]
-            + [BriaFiboSingleTransformerBlock(device, self.weights, i) for i in range(1, 37)]
-            + [BriaFiboSingleTransformerBlock37(device, self.weights, 37)]
-        )
+        self.weights = weights
 
-    def forward(self, activations):
-        timestep = activations[0]
-        hidden_states = activations[1]
-        encoder_hidden_states = activations[3]
-        attention_mask = activations[4]
-        img_ids = activations[5]
-        txt_ids = activations[6]
-        # 46 per-layer text-encoder features (one per transformer block)
-        text_encoder_layers = [activations[2]] + [activations[i] for i in range(7, 52)]
-        var_0 = self.weights["consteval.const_233"]
-        var_1 = self.weights["consteval.const_238"]
+    def forward(self, encoder_hidden_states):
         ttnn_to_layout_584 = ttnn.to_layout(
             encoder_hidden_states,
             ttnn.Layout.TILE,
@@ -82,6 +63,36 @@ class ModelTTNN(LightweightModule):
             ),
         )
         ttnn.deallocate(ttnn_slice_0, False)
+        return ttnn_reshape_181
+
+
+class ModelTTNN(LightweightModule):
+    def __init__(self, device):
+        self.device = device
+        self.weights = params.load_weights_for__main(device)
+        self.weights = consteval.run_consteval(self.weights, device)
+        self.context_embedder = ContextEmbedder(device, self.weights)
+        self.transformer_blocks = [BriaFiboTransformerBlock0(device, self.weights, 0)] + [
+            BriaFiboTransformerBlock(device, self.weights, i) for i in range(1, 8)
+        ]
+        self.single_transformer_blocks = (
+            [BriaFiboSingleTransformerBlock0(device, self.weights, 0)]
+            + [BriaFiboSingleTransformerBlock(device, self.weights, i) for i in range(1, 37)]
+            + [BriaFiboSingleTransformerBlock37(device, self.weights, 37)]
+        )
+
+    def forward(self, activations):
+        timestep = activations[0]
+        hidden_states = activations[1]
+        encoder_hidden_states = activations[3]
+        attention_mask = activations[4]
+        img_ids = activations[5]
+        txt_ids = activations[6]
+        # 46 per-layer text-encoder features (one per transformer block)
+        text_encoder_layers = [activations[2]] + [activations[i] for i in range(7, 52)]
+        var_0 = self.weights["consteval.const_233"]
+        var_1 = self.weights["consteval.const_238"]
+        ttnn_reshape_181 = self.context_embedder(encoder_hidden_states)
         ttnn_to_layout_585 = ttnn.to_layout(
             text_encoder_layers[0],
             ttnn.Layout.TILE,
