@@ -1,0 +1,7 @@
+Done. Summary of changes:
+
+1. **`model_pt.py`** (new) — CPU PyTorch reference ported from `xla.py`, with the tt-xla/SPMD/mesh code omitted. Contains `FiboTextEncoderWrapper`, the constants/prompt, and the three required functions: `load_pytorch_model()`, `load_input()`, `run_pytorch_model()`.
+2. **`utils.py`** — added the `calculate_pcc(x, y)` function verbatim (plus the required `import torch`).
+3. **`main.py`** — added `from utils import calculate_pcc` (imported but unused, as instructed).
+
+--- Time taken: 41.5s | session: bb626e8f-ef96-417a-b516-d5e6efa6db0a ---
