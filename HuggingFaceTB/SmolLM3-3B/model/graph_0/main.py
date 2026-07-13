@@ -14,7 +14,7 @@ _activations_spec = _importlib_util.spec_from_file_location(
 )
 _activations = _importlib_util.module_from_spec(_activations_spec)
 _activations_spec.loader.exec_module(_activations)
-load_activations_for__main = _activations.load_activations_for__main
+load_inputs = _activations.load_inputs
 
 
 def main_const_eval_0(arg):
@@ -39656,16 +39656,16 @@ def load_weights_for__main():
 
 
 def main():
-    load_activations_for__main_0 = load_activations_for__main()
+    load_inputs_0 = load_inputs()
     load_weights_for__main_0 = load_weights_for__main()
-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0)
+    _main_0 = _main(load_inputs_0, load_weights_for__main_0)
     return 0
 
 
 def test_main():
     exact_pcc = 0.984375
 
-    input = load_activations_for__main()
+    input = load_inputs()
     weights = load_weights_for__main()
     outputs = _main(input, weights)
 

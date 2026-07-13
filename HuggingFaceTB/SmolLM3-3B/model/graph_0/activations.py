@@ -1,14 +1,10 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-"""Graph activation (input) loaders for the SmolLM3-3B TTNN codegen.
+"""Graph activation (input) loader for the SmolLM3-3B TTNN codegen.
 
-Two ways to produce the graph inputs `_main` consumes, in the same order:
-
-- ``load_activations_for__main`` -- loads the serialized inputs dumped at codegen
-  time from ``./tensors/argN.tensorbin`` (the original codegen loader).
-- ``load_inputs`` -- rebuilds the very same inputs from the golden PyTorch model's
-  inputs (``model_pt.load_input``) instead of from disk.
+``load_inputs`` produces the graph inputs `_main` consumes, in order, by
+rebuilding them from the golden PyTorch model's inputs (``model_pt.load_input``).
 
 The graph runs tensor-parallel on a (1, 4) mesh. Its inputs, in the forward-arg
 order read from the ``<input>`` args of ``func.func @main`` in ``ttnn.mlir``, are:
@@ -23,40 +19,6 @@ import ttnn
 import torch
 import utils
 import model_pt
-
-
-def load_activations_for__main():
-    utils_DeviceGetter_get_device_48 = utils.DeviceGetter.get_device(
-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
-    )
-    utils_load_tensor_0 = utils.load_tensor(
-        "./tensors/arg217.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_48,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_1 = utils.load_tensor(
-        "./tensors/arg219.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.INT32,
-        utils_DeviceGetter_get_device_48,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    utils_load_tensor_2 = utils.load_tensor(
-        "./tensors/arg220.tensorbin",
-        ttnn.Layout.ROW_MAJOR,
-        ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_48,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
-    return [utils_load_tensor_0, utils_load_tensor_1, utils_load_tensor_2]
 
 
 def _flatten_inputs(obj):
