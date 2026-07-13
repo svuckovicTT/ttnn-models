@@ -1,0 +1,19 @@
+Both files parse and `main.py` is clean. The refactor is complete.
+
+## Summary
+
+**`model_ttnn.py`:**
+- Added `import params` and the `LightweightModule` base class (its `__call__` dispatches to `self.forward`).
+- Added `class ModelTTNN(LightweightModule)`:
+  - `__init__(self, device)` saves `self.device = device` and loads `self.weights = params.load_weights_for__main_from_state_dict(device)`.
+  - `forward(self, activations)` is the former `_main` body verbatim — all the `ttnn.*` ops — with `weights[...]` → `self.weights[...]` (217 sites) and the `consteval__main(..., weights, device)` call → `consteval__main(..., self.weights, self.device)`. It still uses the module-global `ce_cache__main` via `global`, preserving the const-eval caching behavior.
+- The 48 `main_const_eval_*` helpers, `consteval__main`, and the `ce_cache__main` global stay module-level (called by `forward` → unchanged behavior).
+- Updated the module docstring to reflect `ModelTTNN`/`forward` instead of `_main`.
+
+**`main.py`:**
+- Import changed to `from model_ttnn import ModelTTNN`; removed the now-unused `from params import ...`.
+- `main()` and `test_main()` now instantiate `model = ModelTTNN(device)` and invoke the forward via the call operator (`model(inputs)`), replacing the old `_main(inputs, weights, device)` call plus the explicit `load_weights` call (weights now load inside `__init__`).
+
+Behavior is preserved: same weights loaded once, same const-eval cache population, same `ttnn` ops in the same order, same output. Both files parse cleanly; only `main.py` and `model_ttnn.py` were touched, and no tests were run.
+
+--- Time taken: 221.0s | session: 1ba72d92-2079-40d4-800c-b4ffd356c705 ---
