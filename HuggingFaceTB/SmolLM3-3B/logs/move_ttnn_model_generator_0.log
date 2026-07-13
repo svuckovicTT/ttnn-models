@@ -1,0 +1,20 @@
+The move is complete and verified:
+
+## Summary
+
+- **Created `model_ttnn.py`** containing the entire TTNN forward model, moved verbatim from `main.py`:
+  - the 48 `main_const_eval_*` functions,
+  - the `ce_cache__main = {}` module global,
+  - the forward function `_main`,
+  - `consteval__main`.
+  
+  Its only dependency is `ttnn` (confirmed: no references to `utils`, `model_pt`, `params`, `calculate_pcc`, or `load_inputs`), so the file just does `import ttnn`. A short module docstring documents its role. Total 50 top-level `def`s (48 const-evals + `_main` + `consteval__main`) — matching the original.
+
+- **Updated `main.py`**:
+  - Added `from model_ttnn import _main` to the import block.
+  - Removed the whole moved cluster; the file is now 61 lines — imports, the `load_inputs` activations shim, `main()`, `test_main()`, and the `__main__` guard. Both `main()` and `test_main()` call the imported `_main` unchanged.
+  - No cluster remnants remain (0 references to `main_const_eval`/`consteval__main`/`ce_cache__main`).
+
+No circular import (model_ttnn imports only `ttnn`; `main` imports `_main` from it). Both files parse cleanly. Only `main.py` and `model_ttnn.py` were touched, and no tests were run.
+
+--- Time taken: 144.2s | session: 1bef3c0d-d84c-48be-8c93-63051ce68029 ---
