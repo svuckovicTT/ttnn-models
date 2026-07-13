@@ -1,0 +1,948 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/HuggingFaceTB/SmolLM3-3B/model/graph_0
+plugins: json-report-1.5.0, split-0.11.0, metadata-3.1.1, jaxtyping-0.3.11, anyio-4.14.1, forked-1.6.0
+collected 1 item
+
+main.py Device: MeshDevice(1x4 grid, 4 devices)
+
+PCC: 0.984375
+.
+
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pad_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'tilize_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'move_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'untilize_with_unpadding_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'slice_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'transpose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'reshard_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'conv2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'max_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'avg_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'linear_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_batched_weights_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addmm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'sparse_matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'remainder_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'xlogy_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'hypot_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'nextafter_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'minimum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'atan2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gcd_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lcm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'isclose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_no_nan_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'floor_div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'maximum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'prelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'outer_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'polyval_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'fmod_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pow_t' was already registered!
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 1 passed, 80 warnings in 27.59s ========================
+2026-07-13 11:53:46.772 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]
+Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 3958.76it/s]
+
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 326/326 [00:00<00:00, 31257.84it/s]
+nanobind: leaked 474 instances!
+ - leaked instance 0x26176840 of type "ttnn._ttnn.operations.unary_backward.hardshrink_bw_t"
+ - leaked instance 0x26202700 of type "ttnn._ttnn.operations.matmul.addmm_t"
+ - leaked instance 0x263872e0 of type "ttnn._ttnn.operations.moreh.moreh_softmin_backward_t"
+ - leaked instance 0x2618a070 of type "ttnn._ttnn.operations.unary_backward.sigmoid_bw_t"
+ - leaked instance 0x25a34870 of type "ttnn._ttnn.operations.unary.alt_complex_rotate90_t"
+ - leaked instance 0x2637b9a0 of type "ttnn._ttnn.operations.moreh.moreh_group_norm_backward_t"
+ - leaked instance 0x262906e0 of type "ttnn._ttnn.operations.reduction.min_t"
+ - leaked instance 0x2373f320 of type "ttnn._ttnn.operations.unary.eqz_t"
+ - leaked instance 0x261f0020 of type "ttnn._ttnn.operations.loss.mse_loss_t"
+ - leaked instance 0x26268ea0 of type "ttnn._ttnn.operations.normalization.rms_norm_t"
+ - leaked instance 0x261e6880 of type "ttnn._ttnn.operations.creation.full_like_t"
+ - leaked instance 0x2619b1d0 of type "ttnn._ttnn.operations.unary_backward.log2_bw_t"
+ - leaked instance 0x260db5b0 of type "ttnn._ttnn.operations.ccl.mesh_partition_t"
+ - leaked instance 0x261edbb0 of type "ttnn._ttnn.operations.embedding_backward.embedding_bw_t"
+ - leaked instance 0x26177b00 of type "ttnn._ttnn.operations.unary_backward.leaky_relu_bw_t"
+ - leaked instance 0x26190c90 of type "ttnn._ttnn.operations.unary_backward.abs_bw_t"
+ - leaked instance 0x260ce4e0 of type "ttnn._ttnn.operations.binary_backward.rsub_bw_t"
+ - leaked instance 0x263817c0 of type "ttnn._ttnn.operations.moreh.moreh_nll_loss_backward_t"
+ - leaked instance 0x261f0a80 of type "ttnn._ttnn.operations.loss.l1_loss_t"
+ - leaked instance 0x261802f0 of type "ttnn._ttnn.operations.unary_backward.multigammaln_bw_t"
+ - ... skipped remainder
+nanobind: leaked 534 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2344 functions!
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function "__call__"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/HuggingFaceTB/SmolLM3-3B/model/graph_0
+plugins: json-report-1.5.0, split-0.11.0, metadata-3.1.1, jaxtyping-0.3.11, anyio-4.14.1, forked-1.6.0
+collected 1 item
+
+verify_weights.py Device: MeshDevice(1x4 grid, 4 devices)
+  OK: model.embed_tokens.weight (replicated)
+  OK: model.layers.0.input_layernorm.weight (replicated)
+  OK: model.layers.0.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.0.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.0.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.0.post_attention_layernorm.weight (replicated)
+  OK: model.layers.0.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.0.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.0.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.0.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.1.input_layernorm.weight (replicated)
+  OK: model.layers.1.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.1.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.1.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.1.post_attention_layernorm.weight (replicated)
+  OK: model.layers.1.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.1.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.1.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.1.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.10.input_layernorm.weight (replicated)
+  OK: model.layers.10.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.10.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.10.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.10.post_attention_layernorm.weight (replicated)
+  OK: model.layers.10.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.10.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.10.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.10.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.11.input_layernorm.weight (replicated)
+  OK: model.layers.11.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.11.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.11.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.11.post_attention_layernorm.weight (replicated)
+  OK: model.layers.11.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.11.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.11.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.11.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.12.input_layernorm.weight (replicated)
+  OK: model.layers.12.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.12.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.12.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.12.post_attention_layernorm.weight (replicated)
+  OK: model.layers.12.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.12.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.12.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.12.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.13.input_layernorm.weight (replicated)
+  OK: model.layers.13.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.13.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.13.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.13.post_attention_layernorm.weight (replicated)
+  OK: model.layers.13.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.13.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.13.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.13.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.14.input_layernorm.weight (replicated)
+  OK: model.layers.14.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.14.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.14.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.14.post_attention_layernorm.weight (replicated)
+  OK: model.layers.14.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.14.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.14.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.14.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.15.input_layernorm.weight (replicated)
+  OK: model.layers.15.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.15.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.15.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.15.post_attention_layernorm.weight (replicated)
+  OK: model.layers.15.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.15.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.15.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.15.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.16.input_layernorm.weight (replicated)
+  OK: model.layers.16.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.16.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.16.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.16.post_attention_layernorm.weight (replicated)
+  OK: model.layers.16.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.16.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.16.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.16.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.17.input_layernorm.weight (replicated)
+  OK: model.layers.17.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.17.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.17.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.17.post_attention_layernorm.weight (replicated)
+  OK: model.layers.17.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.17.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.17.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.17.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.18.input_layernorm.weight (replicated)
+  OK: model.layers.18.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.18.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.18.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.18.post_attention_layernorm.weight (replicated)
+  OK: model.layers.18.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.18.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.18.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.18.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.19.input_layernorm.weight (replicated)
+  OK: model.layers.19.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.19.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.19.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.19.post_attention_layernorm.weight (replicated)
+  OK: model.layers.19.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.19.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.19.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.19.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.2.input_layernorm.weight (replicated)
+  OK: model.layers.2.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.2.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.2.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.2.post_attention_layernorm.weight (replicated)
+  OK: model.layers.2.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.2.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.2.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.2.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.20.input_layernorm.weight (replicated)
+  OK: model.layers.20.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.20.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.20.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.20.post_attention_layernorm.weight (replicated)
+  OK: model.layers.20.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.20.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.20.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.20.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.21.input_layernorm.weight (replicated)
+  OK: model.layers.21.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.21.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.21.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.21.post_attention_layernorm.weight (replicated)
+  OK: model.layers.21.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.21.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.21.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.21.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.22.input_layernorm.weight (replicated)
+  OK: model.layers.22.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.22.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.22.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.22.post_attention_layernorm.weight (replicated)
+  OK: model.layers.22.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.22.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.22.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.22.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.23.input_layernorm.weight (replicated)
+  OK: model.layers.23.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.23.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.23.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.23.post_attention_layernorm.weight (replicated)
+  OK: model.layers.23.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.23.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.23.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.23.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.24.input_layernorm.weight (replicated)
+  OK: model.layers.24.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.24.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.24.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.24.post_attention_layernorm.weight (replicated)
+  OK: model.layers.24.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.24.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.24.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.24.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.25.input_layernorm.weight (replicated)
+  OK: model.layers.25.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.25.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.25.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.25.post_attention_layernorm.weight (replicated)
+  OK: model.layers.25.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.25.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.25.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.25.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.26.input_layernorm.weight (replicated)
+  OK: model.layers.26.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.26.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.26.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.26.post_attention_layernorm.weight (replicated)
+  OK: model.layers.26.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.26.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.26.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.26.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.27.input_layernorm.weight (replicated)
+  OK: model.layers.27.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.27.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.27.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.27.post_attention_layernorm.weight (replicated)
+  OK: model.layers.27.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.27.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.27.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.27.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.28.input_layernorm.weight (replicated)
+  OK: model.layers.28.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.28.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.28.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.28.post_attention_layernorm.weight (replicated)
+  OK: model.layers.28.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.28.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.28.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.28.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.29.input_layernorm.weight (replicated)
+  OK: model.layers.29.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.29.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.29.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.29.post_attention_layernorm.weight (replicated)
+  OK: model.layers.29.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.29.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.29.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.29.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.3.input_layernorm.weight (replicated)
+  OK: model.layers.3.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.3.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.3.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.3.post_attention_layernorm.weight (replicated)
+  OK: model.layers.3.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.3.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.3.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.3.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.30.input_layernorm.weight (replicated)
+  OK: model.layers.30.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.30.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.30.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.30.post_attention_layernorm.weight (replicated)
+  OK: model.layers.30.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.30.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.30.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.30.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.31.input_layernorm.weight (replicated)
+  OK: model.layers.31.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.31.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.31.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.31.post_attention_layernorm.weight (replicated)
+  OK: model.layers.31.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.31.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.31.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.31.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.32.input_layernorm.weight (replicated)
+  OK: model.layers.32.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.32.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.32.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.32.post_attention_layernorm.weight (replicated)
+  OK: model.layers.32.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.32.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.32.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.32.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.33.input_layernorm.weight (replicated)
+  OK: model.layers.33.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.33.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.33.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.33.post_attention_layernorm.weight (replicated)
+  OK: model.layers.33.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.33.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.33.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.33.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.34.input_layernorm.weight (replicated)
+  OK: model.layers.34.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.34.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.34.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.34.post_attention_layernorm.weight (replicated)
+  OK: model.layers.34.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.34.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.34.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.34.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.35.input_layernorm.weight (replicated)
+  OK: model.layers.35.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.35.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.35.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.35.post_attention_layernorm.weight (replicated)
+  OK: model.layers.35.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.35.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.35.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.35.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.4.input_layernorm.weight (replicated)
+  OK: model.layers.4.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.4.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.4.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.4.post_attention_layernorm.weight (replicated)
+  OK: model.layers.4.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.4.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.4.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.4.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.5.input_layernorm.weight (replicated)
+  OK: model.layers.5.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.5.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.5.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.5.post_attention_layernorm.weight (replicated)
+  OK: model.layers.5.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.5.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.5.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.5.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.6.input_layernorm.weight (replicated)
+  OK: model.layers.6.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.6.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.6.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.6.post_attention_layernorm.weight (replicated)
+  OK: model.layers.6.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.6.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.6.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.6.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.7.input_layernorm.weight (replicated)
+  OK: model.layers.7.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.7.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.7.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.7.post_attention_layernorm.weight (replicated)
+  OK: model.layers.7.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.7.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.7.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.7.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.8.input_layernorm.weight (replicated)
+  OK: model.layers.8.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.8.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.8.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.8.post_attention_layernorm.weight (replicated)
+  OK: model.layers.8.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.8.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.8.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.8.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.layers.9.input_layernorm.weight (replicated)
+  OK: model.layers.9.mlp.down_proj.weight (('sharded', 0))
+  OK: model.layers.9.mlp.gate_proj.weight (('sharded', 0))
+  OK: model.layers.9.mlp.up_proj.weight (('sharded', 0))
+  OK: model.layers.9.post_attention_layernorm.weight (replicated)
+  OK: model.layers.9.self_attn.k_proj.weight (('sharded', 0))
+  OK: model.layers.9.self_attn.o_proj.weight (('sharded', 0))
+  OK: model.layers.9.self_attn.q_proj.weight (('sharded', 0))
+  OK: model.layers.9.self_attn.v_proj.weight (('sharded', 0))
+  OK: model.norm.weight (replicated)
+  OK: model.rotary_emb.inv_freq (replicated)
+All 327 weights match!
+.
+
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pad_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'tilize_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'move_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'untilize_with_unpadding_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'slice_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'transpose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'reshard_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'conv2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'max_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'avg_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'linear_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_batched_weights_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addmm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'sparse_matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'remainder_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'xlogy_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'hypot_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'nextafter_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'minimum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'atan2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gcd_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lcm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'isclose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_no_nan_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'floor_div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'maximum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'prelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'outer_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'polyval_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'fmod_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pow_t' was already registered!
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 1 passed, 80 warnings in 17.66s ========================
+2026-07-13 11:54:16.469 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]
+Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 6589.64it/s]
+
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 326/326 [00:00<00:00, 29967.85it/s]
+nanobind: leaked 474 instances!
+ - leaked instance 0x2bcb2900 of type "ttnn._ttnn.operations.binary.div_no_nan_t"
+ - leaked instance 0x2bd11a50 of type "ttnn._ttnn.operations.binary_backward.subalpha_bw_t"
+ - leaked instance 0x2bc281c0 of type "ttnn._ttnn.operations.binary.logaddexp2_t"
+ - leaked instance 0x2b399850 of type "ttnn._ttnn.operations.unary.geglu_t"
+ - leaked instance 0x2bcab450 of type "ttnn._ttnn.operations.binary.logical_and__t"
+ - leaked instance 0x2bc93540 of type "ttnn._ttnn.operations.binary.rsub_t"
+ - leaked instance 0x2b4db160 of type "ttnn._ttnn.operations.unary.swiglu_t"
+ - leaked instance 0x2bc24db0 of type "ttnn._ttnn.operations.examples.composite_example_multiple_return_t"
+ - leaked instance 0x790c53de0828 of type "ttnn._ttnn.device.DispatchCoreConfig"
+ - leaked instance 0x2bcf6110 of type "ttnn._ttnn.operations.unary_backward.selu_bw_t"
+ - leaked instance 0x2bd4c320 of type "ttnn._ttnn.operations.creation.ones_like_t"
+ - leaked instance 0x2bdf4e60 of type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked instance 0x2bcd87c0 of type "ttnn._ttnn.operations.unary_backward.clamp_bw_t"
+ - leaked instance 0x2beef1e0 of type "ttnn._ttnn.operations.moreh.moreh_softmin_t"
+ - leaked instance 0x2bc3bfa0 of type "ttnn._ttnn.operations.complex_unary_backward.conj_bw_t"
+ - leaked instance 0x2bd84310 of type "ttnn._ttnn.operations.data_movement.bcast_t"
+ - leaked instance 0x2bcb62e0 of type "ttnn._ttnn.operations.binary.prelu_t"
+ - leaked instance 0x2b558360 of type "ttnn._ttnn.operations.unary.softplus_t"
+ - leaked instance 0x2bca3520 of type "ttnn._ttnn.operations.binary.minimum_t"
+ - leaked instance 0x2bdf13b0 of type "ttnn._ttnn.operations.reduction.mean_t"
+ - ... skipped remainder
+nanobind: leaked 533 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2342 functions!
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__init__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html

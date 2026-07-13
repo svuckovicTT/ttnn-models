@@ -1,0 +1,13 @@
+All three changes are complete:
+
+1. **`main.py`** now uses `load_weights_for__main_from_state_dict`:
+   - Import: `from params import load_weights_for__main_from_state_dict`
+   - `main()` and `test_main()` both call `load_weights_for__main_from_state_dict()`
+
+2. **`params.py`**: deleted the original `load_weights_for__main` disk loader (the ~3130-line function plus its `_main_weights = {}` module global), and updated the module docstring and the state-dict function's docstring to no longer reference the removed loader. The `load_weights_for__main_from_state_dict` function and all its supporting group definitions remain intact.
+
+3. **`verify_weights.py`**: deleted.
+
+Both files parse cleanly, and `grep` confirms no dangling references to the deleted loader, `_main_weights`, or `verify_weights` remain anywhere in the codegen dir. No tests were run.
+
+--- Time taken: 84.8s | session: e4cb4480-f94b-4ec4-875c-77c475690b38 ---
