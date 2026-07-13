@@ -1,0 +1,23 @@
+Everything is verified. The refactor is complete.
+
+## Summary
+
+I modularized the flat `forward` in `model_ttnn.py` into PyTorch-faithful `LightweightModule` classes, matching `SmolLM3Model`'s structure. Only `model_ttnn.py` was touched.
+
+### Module structure (main class at top)
+- **`LightweightModule`** — base (unchanged).
+- **`ModelTTNN(LightweightModule)`** — the main model, at the top. `__init__` loads/const-evals weights, then instantiates 36 `DecoderLayer`s (RoPE/NoPE per SmolLM3's every-4th-layer NoPE pattern) and the final `RMSNorm`. `forward` runs the embedding + attention-mask build, loops the layers, then the trailing reshape + final norm.
+- **`RMSNorm(LightweightModule)`** — one `ttnn.rms_norm`; reused for input/post-attn/final norms via a stored `weight_key`.
+- **`MLP(LightweightModule)`** — gate/up/SiLU/down + TP collectives (`self_attn`/`mlp` matmuls use per-layer weight keys via `self.layer`).
+- **`Attention(LightweightModule)`** — QKV split, rotary, scaled-dot-product attention, O-projection + collectives; a `use_rope` flag selects the RoPE vs NoPE body.
+- **`DecoderLayer(LightweightModule)`** — composes `input_ln → self_attn → residual → post_ln → mlp → residual`, exactly like `SmolLM3DecoderLayer`.
+
+### How correctness was guaranteed
+Every `ttnn` op and its argument groupings were kept **verbatim** — I only reorganized Python. I proved via data-flow analysis that:
+- All 26 RoPE-layer bodies are identical, all 8 NoPE bodies are identical, and the MLP + residual/dealloc pieces are identical across **all 36 layers** — so the reusable modules reproduce every layer exactly (weight keys parameterized by `self.layer`).
+- Layer 0's mask-build is a data-flow slice depending only on the inputs/consteval constants (not on attention), so hoisting it to the preamble is semantically neutral; layer 0 minus that slice has the identical computational op sequence to the standard RoPE body.
+- Layer 35's trailing reshape (which feeds the final norm) was moved after the loop; the rest matches the standard NoPE body.
+
+A runtime op-multiset reconstruction (expanding all 36 layer calls) matched the original exactly except **3 `deallocate` calls** — pure memory frees of shared tensors (the mask, etc.) that never affect computed values (PCC), so behavior is preserved. Free-variable checks on every method pass, all weight keys resolve, and the file parses. `main.py` is unchanged and already drives `ModelTTNN(device)` / `model(inputs)`.
+
+--- Time taken: 1753.5s | session: c403b9fa-97ed-4506-862c-c5c8620572a8 ---
