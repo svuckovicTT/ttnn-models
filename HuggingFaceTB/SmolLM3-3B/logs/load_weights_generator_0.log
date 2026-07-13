@@ -1,0 +1,22 @@
+Everything is complete and verified. Here's a summary of what I did:
+
+## Summary
+
+**1. Moved `load_weights_for__main` from `main.py` into a new `params.py`**
+- Extracted the disk loader **verbatim** (including its `_main_weights = {}` module global and all 327 `utils.load_tensor` calls) into `params.py` with an SPDX header, module docstring, and the needed imports (`ttnn`, `torch`, `utils`, `model_pt`).
+- Removed the block from `main.py` (which dropped ~3130 lines) and fixed the blank-line spacing at the junction. Confirmed no `_main_weights` references remain in `main.py`.
+
+**2. Updated `main.py` to use the moved function**
+- Added `from params import load_weights_for__main`. The existing call sites in `main()` and `test_main()` are unchanged and still resolve.
+
+**3. Added `load_weights_for__main_from_state_dict` to `params.py`**
+- Loads the golden model via `model_pt.load_pytorch_model()`, builds a combined dict from `state_dict()` **plus** `named_buffers()` (so the non-persistent `model.rotary_emb.inv_freq` is included and doesn't `KeyError`).
+- Defines weight-name sets grouped by shared properties, then loops: `ttnn.from_torch(pt_tensor, mesh_mapper=...)` followed by `to_layout` → `to_dtype` → `to_device` in that order.
+- **Mesh distribution** (verified against the Megatron-1D spec in `xla.py` and the `[1,4096,768]` per-device fused-QKV arithmetic): column-parallel q/k/v/gate/up sharded on dim 0, row-parallel o/down sharded on dim 1, everything else replicated — using `ShardTensorToMesh`/`ReplicateTensorToMesh` per `mesh_tensors.md`.
+- **Properties** matched to the disk loader exactly (cross-checked programmatically: keys identical, 0 property mismatches — TILE/DEVICE/bf16=217, ROW_MAJOR/HOST/bf16=109, ROW_MAJOR/HOST/fp32=1). Uses `ttnn.DRAM_MEMORY_CONFIG` as instructed. Did **not** wire this into `main.py`.
+
+**4. Created `verify_weights.py`** with a single `test_verify_weights` pytest function that compares the two loaders: count, keys, per-key values (exact), and per-key distribution (replicated vs sharded + dim) — reassembling multi-device tensors via `get_device_tensors` (never a bare `to_torch`), following `mesh_tensors.md`.
+
+All three files pass `ast.parse`. No tests were run.
+
+--- Time taken: 497.0s | session: 6c892118-9041-42a8-8d54-43276cc2f818 ---
