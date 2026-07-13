@@ -1,3 +1,4 @@
 *.tensorbin
 __pycache__/
 .pytest_cache/
+generated/
