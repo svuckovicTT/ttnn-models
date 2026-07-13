@@ -1,0 +1,15 @@
+The change is complete and verified.
+
+## Summary
+
+I edited `test_main` in `main.py` to add perf logging (only `main.py` was touched):
+
+- Added `import time`.
+- **Runs the same input through the model 3 times.** Because the forward deallocates its input tensors, the (identical) input is rebuilt via `load_inputs(device)` each iteration — done *outside* the timed region so it doesn't skew the measurement.
+- **Timing** uses `time.perf_counter()`: `start` captured right before `model(input)`, and after the call `ttnn.synchronize_device(device)` is invoked to wait for the device to finish *before* reading the end time (accurate measurement, not just op dispatch).
+- **Logs to console per run**: time taken with **4 decimals** (`{elapsed:.4f}s`) and throughput with **2 decimals**.
+- This is an **LLM** (SmolLM3 text encoder), so it logs **TPS** = `num_tokens / elapsed`, where `num_tokens = model_pt.BATCH_SIZE * model_pt.CONTEXT_LENGTH` (the actual batch × sequence length from the model config).
+
+The existing correctness check (PCC on the final run's `outputs`, which persists after the loop) and the device open/close lifetime are preserved. `main.py` parses cleanly and `model_pt.BATCH_SIZE` / `model_pt.CONTEXT_LENGTH` exist as used. No tests were run.
+
+--- Time taken: 131.5s | session: b3a7dfeb-ae25-4c78-aacd-7e2f6a5a3167 ---
