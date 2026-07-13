@@ -2,69 +2,36 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import ttnn
-import math
 import torch
 
+# Mesh + fabric configuration this graph was compiled for: a (1, 4) mesh running
+# tensor-parallel over the FABRIC_1D_RING fabric.
+MESH_SHAPE = (1, 4)
+FABRIC_CONFIG = ttnn.FabricConfig.FABRIC_1D_RING
+L1_SMALL_SIZE = 1 << 15
 
-class DeviceGetter:
-    _instance = None
-    _mesh_shape = None
-    _fabric_config = None
-    l1_small_size = 1 << 15
 
-    def __init__(self):
-        raise RuntimeError("This is Singleton, invoke get_device() instead.")
+def open_device(mesh_shape=MESH_SHAPE, fabric_config=FABRIC_CONFIG):
+    """Open the TTNN mesh device the graph runs on.
 
-    def __del__(self):
-        if self._instance is not None:
-            ttnn.close_mesh_device(self._instance)
-            ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
+    Sets the fabric config, then opens the mesh device -- mirroring the setup the
+    codegen was produced with. Open the device once per process (in each entry
+    point) and pipe the returned handle explicitly to every function that needs
+    it; close it with ``close_device`` when done.
+    """
+    ttnn.set_fabric_config(fabric_config)
+    device = ttnn.open_mesh_device(
+        mesh_shape=ttnn.MeshShape(mesh_shape),
+        l1_small_size=L1_SMALL_SIZE,
+    )
+    print(f"Device: {device}")
+    return device
 
-    @classmethod
-    def get_device(cls, mesh_shape, fabric_config=None):
-        if cls._instance is None:
-            if (
-                not isinstance(mesh_shape, (list, tuple))
-                or len(mesh_shape) == 0
-                or not all(isinstance(x, int) and x > 0 for x in mesh_shape)
-            ):
-                raise ValueError(
-                    f"mesh_shape must be a non-empty list or tuple of positive integers, got {mesh_shape}"
-                )
-            cls._mesh_shape = mesh_shape
 
-            # If the caller doesn't specify a fabric config, fallback to
-            # FABRIC_1D for multi-device meshes.
-            if fabric_config is None:
-                fabric_config = (
-                    ttnn.FabricConfig.FABRIC_1D
-                    if math.prod(mesh_shape) >= 2
-                    else ttnn.FabricConfig.DISABLED
-                )
-            cls._fabric_config = fabric_config
-
-            ttnn.set_fabric_config(fabric_config)
-            cls._instance = ttnn.open_mesh_device(
-                mesh_shape=ttnn.MeshShape(mesh_shape),
-                l1_small_size=cls.l1_small_size,
-            )
-            print(f"Device: {cls._instance}")
-
-        # Compare requested mesh_shape with _mesh_shape used to initialize the device
-        if tuple(cls._mesh_shape) != tuple(mesh_shape):
-            raise ValueError(
-                f"Device already initialized with mesh_shape={cls._mesh_shape}, but got mesh_shape={mesh_shape}"
-            )
-
-        # Same for fabric_config: if the caller explicitly requests one, it
-        # must match the config the singleton was initialized with.
-        if fabric_config is not None and fabric_config != cls._fabric_config:
-            raise ValueError(
-                f"Device already initialized with fabric_config={cls._fabric_config}, "
-                f"but got fabric_config={fabric_config}"
-            )
-
-        return cls._instance
+def close_device(device):
+    """Close the mesh device and reset the fabric config."""
+    ttnn.close_mesh_device(device)
+    ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
 
 
 def get_scalar_from_tensor(tensor: ttnn.Tensor) -> int:

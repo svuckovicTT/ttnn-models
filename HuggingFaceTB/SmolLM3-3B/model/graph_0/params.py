@@ -26,16 +26,11 @@ and with a fixed set of tensor properties (layout / dtype / placement):
 """
 import ttnn
 import torch
-import utils
 import model_pt
 
 
 # Number of decoder layers in SmolLM3-3B.
 NUM_LAYERS = 36
-
-# The graph runs tensor-parallel on a (1, 4) mesh.
-MESH_SHAPE = (1, 4)
-FABRIC_CONFIG = ttnn.FabricConfig.FABRIC_1D_RING
 
 
 def _per_layer(suffix):
@@ -87,7 +82,7 @@ ALL_WEIGHTS = (
 )
 
 
-def load_weights_for__main_from_state_dict():
+def load_weights_for__main_from_state_dict(device):
     """Rebuild the graph weights from the golden PyTorch model's state_dict.
 
     Returns the weight dict `_main` consumes, keyed by parameter name, with each
@@ -95,10 +90,8 @@ def load_weights_for__main_from_state_dict():
     (replicated vs sharded, and the shard dim) set per the compiled graph's
     contract. Weights are placed with the mesh mapper the graph expects -- a
     blanket replicate would break the compiled matmuls for the sharded
-    projections.
+    projections. ``device`` is the open TTNN mesh device to place them on.
     """
-    device = utils.DeviceGetter.get_device(MESH_SHAPE, fabric_config=FABRIC_CONFIG)
-
     model = model_pt.load_pytorch_model()
 
     # model.state_dict() excludes non-persistent buffers (rotary_emb.inv_freq),

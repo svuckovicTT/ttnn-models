@@ -17,7 +17,6 @@ All three are replicated across the mesh (each device holds an identical copy).
 """
 import ttnn
 import torch
-import utils
 import model_pt
 
 
@@ -67,19 +66,15 @@ def _to_graph_input(torch_tensor, mesh, layout, dtype):
     return tensor
 
 
-def load_inputs():
+def load_inputs(mesh):
     """Rebuild the graph inputs from the golden model's inputs.
 
     ``model_pt.load_input`` returns ``(input_ids, attention_mask)``; flatten it
     and reorder into the order ``_main`` consumes the inputs (the graph forward
     arg order read from the ``<input>`` ttir.names in ``ttnn.mlir``). The named
     inputs "args_N" map to flattened index N; do not assume the flattened order
-    already matches.
+    already matches. ``mesh`` is the open TTNN mesh device to place them on.
     """
-    mesh = utils.DeviceGetter.get_device(
-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
-    )
-
     flat = _flatten_inputs(model_pt.load_input())
     input_ids = flat[0]  # ttir.name "args_0"
     attention_mask = flat[1]  # ttir.name "args_1"
