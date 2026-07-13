@@ -1,0 +1,320 @@
+=== check: pytest main.py ===
+PASSED
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /localdev/svuckovic/_workspace/repos/project-alchemy/ttnn-models/HuggingFaceTB/SmolLM3-3B/model/graph_0
+plugins: json-report-1.5.0, split-0.11.0, metadata-3.1.1, jaxtyping-0.3.11, anyio-4.14.1, forked-1.6.0
+collected 1 item
+
+main.py Device: MeshDevice(1x4 grid, 4 devices)
+
+PCC: 0.984375
+.
+
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pad_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'tilize_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'move_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'untilize_with_unpadding_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'slice_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'transpose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'reshard_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'conv2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'max_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'avg_pool2d_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'linear_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'matmul_batched_weights_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addmm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'sparse_matmul_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'remainder_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'add__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subtract__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'xlogy_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_and_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_or_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bitwise_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_left_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_right_shift_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'hypot_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'nextafter_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'minimum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'atan2_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_or__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_xor__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logical_and__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gcd_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lcm_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'addalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'subalpha_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'isclose_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'div_no_nan_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'floor_div_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'maximum_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'prelu_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'outer_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'polyval_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'fmod_t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'gt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ge__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'lt__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'le__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'eq__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ne__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'ldexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'logaddexp2__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'squared_difference__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'multiply__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'divide__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'rsub__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'bias_gelu__t' was already registered!
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: RuntimeWarning: nanobind: type 'pow_t' was already registered!
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 1 passed, 80 warnings in 28.38s ========================
+2026-07-13 11:59:34.078 | WARNING  | torch_plugin_tt:__init__:40 - TT plugin is setting XLA_STABLEHLO_COMPILE to 1. This is required for TT PJRT plugin to work correctly.
+
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]
+Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 4221.75it/s]
+
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 326/326 [00:00<00:00, 31131.17it/s]
+
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]
+Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 5781.26it/s]
+
+Loading weights:   0%|          | 0/326 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 326/326 [00:00<00:00, 32940.09it/s]
+nanobind: leaked 474 instances!
+ - leaked instance 0x24379010 of type "ttnn._ttnn.operations.binary.bitwise_xor_t"
+ - leaked instance 0x2425fbd0 of type "ttnn._ttnn.operations.creation.from_buffer_t"
+ - leaked instance 0x243f6d30 of type "ttnn._ttnn.operations.moreh.moreh_nll_loss_unreduced_backward_t"
+ - leaked instance 0x23b43f80 of type "ttnn._ttnn.operations.unary.relu_max_t"
+ - leaked instance 0x24274590 of type "ttnn._ttnn.operations.matmul.linear_t"
+ - leaked instance 0x241ecc40 of type "ttnn._ttnn.operations.unary_backward.elu_bw_t"
+ - leaked instance 0x2413f890 of type "ttnn._ttnn.operations.binary_backward.min_bw_t"
+ - leaked instance 0x2420ed20 of type "ttnn._ttnn.operations.unary_backward.softsign_bw_t"
+ - leaked instance 0x2418d310 of type "ttnn._ttnn.operations.binary.le_t"
+ - leaked instance 0x2425f3d0 of type "ttnn._ttnn.operations.creation.empty_like_t"
+ - leaked instance 0x2440a050 of type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked instance 0x241fdc30 of type "ttnn._ttnn.operations.unary_backward.i0_bw_t"
+ - leaked instance 0x24205e40 of type "ttnn._ttnn.operations.unary_backward.silu_bw_t"
+ - leaked instance 0x243ec200 of type "ttnn._ttnn.operations.moreh.moreh_bmm_backward_t"
+ - leaked instance 0x2418e890 of type "ttnn._ttnn.operations.binary.logical_or_t"
+ - leaked instance 0x24143030 of type "ttnn._ttnn.operations.ternary_backward.addcdiv_bw_t"
+ - leaked instance 0x241f0c70 of type "ttnn._ttnn.operations.unary_backward.rdiv_bw_t"
+ - leaked instance 0x241ca1a0 of type "ttnn._ttnn.operations.binary.ge__t"
+ - leaked instance 0x24145e00 of type "ttnn._ttnn.operations.complex.complex_tensor_t"
+ - leaked instance 0x2410dfd0 of type "ttnn._ttnn.operations.unary.isneginf_t"
+ - ... skipped remainder
+nanobind: leaked 534 types!
+ - leaked type "ttnn._ttnn.operations.binary.lt__t"
+ - leaked type "ttnn._ttnn.operations.binary_backward.xlogy_bw_t"
+ - leaked type "ttnn._ttnn.operations.reduction.var_t"
+ - leaked type "DispatchCoreAxis"
+ - leaked type "ttnn._ttnn.operations.unary.fill_t"
+ - leaked type "ttnn._ttnn.operations.data_movement.gather_t"
+ - leaked type "ttnn._ttnn.operations.point_to_point.point_to_point_t"
+ - leaked type "ttnn._ttnn.operations.ternary.where_t"
+ - leaked type "ttnn._ttnn.device.SubDeviceManagerId"
+ - leaked type "ttnn._ttnn.operations.binary.pow_t"
+ - ... skipped remainder
+nanobind: leaked 2344 functions!
+ - leaked function ""
+ - leaked function "__init__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function "__call__"
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - leaked function ""
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html
+=== check: verify_weights.py ===
+PASSED
+verify_weights.py does not exist for step post_load_weights, as expected

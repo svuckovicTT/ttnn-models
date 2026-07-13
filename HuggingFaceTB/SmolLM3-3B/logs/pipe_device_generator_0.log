@@ -1,0 +1,27 @@
+All callers are updated and consistent. The refactor is complete. Here's a summary of what changed:
+
+## Summary
+
+**Device lifetime moved from a global singleton to explicit open-once-and-pipe.**
+
+### `utils.py`
+- Removed the `DeviceGetter` singleton class (and its now-unused `import math`).
+- Added two functions capturing the same open configuration the codegen used (`(1, 4)` mesh, `FABRIC_1D_RING`, `l1_small_size = 1 << 15`):
+  - `open_device(...)` — sets the fabric config and opens the mesh device.
+  - `close_device(device)` — closes it and resets the fabric config to `DISABLED` (mirroring the old `__del__` teardown).
+
+### `main.py`
+- `main()` and `test_main()` (the two entry points) now each call `utils.open_device()` once, pipe the handle into `load_inputs(device)`, `load_weights_for__main_from_state_dict(device)`, and `_main(..., device)`, and close it in a `finally` (in `test_main` the close happens after the output is pulled back to host).
+- `_main(activations, weights, device)` forwards `device` to `consteval__main(ce_cache, weights, device)`.
+- `consteval__main(ce_cache, weights, device)` passes `device` to all 48 `main_const_eval_*` calls (verified: 48/48).
+- All 48 `main_const_eval_*` functions now take `device` as a parameter; each internal `utils.DeviceGetter.get_device(...)` open was removed and its references repointed to the piped `device` (123 references).
+
+### `params.py`
+- `load_weights_for__main_from_state_dict(device)` now takes the device as an argument; removed the internal `get_device` call and the now-dead `MESH_SHAPE`/`FABRIC_CONFIG` constants and `import utils`.
+
+### `activations.py`
+- `load_inputs(mesh)` now takes the mesh device as an argument; removed the internal `get_device` call and the now-dead `import utils`.
+
+No `consteval.py` exists (the const-eval functions live in `main.py`), so it was not created. All four edited files parse cleanly, no `DeviceGetter`/`get_device` references remain, and no tests were run.
+
+--- Time taken: 504.4s | session: c8960d49-220a-4339-8f9a-d29d9560e2e9 ---
