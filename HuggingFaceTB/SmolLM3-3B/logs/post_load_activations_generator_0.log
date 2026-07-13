@@ -1,0 +1,14 @@
+Done. All three changes are complete and consistent:
+
+1. **`main.py`** now uses `load_inputs` instead of `load_activations_for__main`:
+   - Import binding: `load_inputs = _activations.load_inputs`
+   - `main()`: calls `load_inputs()`
+   - `test_main()`: calls `load_inputs()`
+
+2. **`activations.py`**: deleted the `load_activations_for__main` function (the disk `.tensorbin` loader) and trimmed the module docstring to describe only the remaining `load_inputs` loader. The `_flatten_inputs`, `_to_graph_input`, and `load_inputs` functions and all imports remain intact.
+
+3. **`verify_activations.py`**: deleted.
+
+`grep` confirms no dangling references to `load_activations_for` or `verify_activations` remain anywhere in the codegen dir. No tests were run.
+
+--- Time taken: 69.4s | session: a58293ec-3f8d-41fc-8f6b-d7b9b6ce8f7d ---
