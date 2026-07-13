@@ -2,7 +2,7 @@ import ttnn
 import utils
 import model_pt
 from utils import calculate_pcc
-from params import load_weights_for__main
+from params import load_weights_for__main_from_state_dict
 
 # ttnn registers a top-level module also named "activations", which shadows the
 # sibling activations.py in this directory on sys.path. Load our file directly by
@@ -36525,7 +36525,7 @@ def consteval__main(ce_cache, weights):
 
 def main():
     load_inputs_0 = load_inputs()
-    load_weights_for__main_0 = load_weights_for__main()
+    load_weights_for__main_0 = load_weights_for__main_from_state_dict()
     _main_0 = _main(load_inputs_0, load_weights_for__main_0)
     return 0
 
@@ -36534,7 +36534,7 @@ def test_main():
     exact_pcc = 0.984375
 
     input = load_inputs()
-    weights = load_weights_for__main()
+    weights = load_weights_for__main_from_state_dict()
     outputs = _main(input, weights)
 
     # The graph runs tensor-parallel on a (1, 4) mesh. Its single output (the
