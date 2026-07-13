@@ -1,0 +1,22 @@
+All checks pass. The refactor is complete and verified:
+
+- **All three files parse.** `consteval.py` has no leftover `arg[` and imports only `ttnn`. `forward` still ends with `return [ttnn_rms_norm_72]`.
+- **Key consistency is exact**: the 50 consteval-produced keys read by `forward` == the 50 written by `run_consteval` (no orphans either way).
+- **Multi-tensor ordering preserved**: `var_5=cos, var_6=sin`; `var_7[0]=causal_mask_bool (lt), var_7[1]=causal_mask_index (typecast)` — matching the original `ce26`/`ce27` return orders.
+
+## Summary
+
+**Created `consteval.py`** by extracting the const-eval code from `model_ttnn.py`, with ttnn ops preserved verbatim:
+- **Deduplicated the 36 identical QKV-fusion functions into one** `fuse_qkv_proj_weight(v_proj, k_proj, q_proj, device)`, called in a `for layer in range(NUM_LAYERS)` loop. The `arg[0/1/2]` indices were renamed to `v_proj/k_proj/q_proj` preserving the exact mapping (arg[0]=v, arg[1]=k, arg[2]=q) — so `to_device(q_proj)` etc. and the `concat([q,v,k], dim=1)` grouping are byte-identical.
+- Kept each unique constant generator as its own meaningfully-named helper (`embed_tokens_to_device`, `rotary_cos_sin`, `causal_mask`, `causal_position_mask`, `zeros_f32/bf16/i32`, `attn_scale_2d/4d`, `neg_inf_bf16/f32`, `nan_col`) — bodies verbatim.
+- **Split the two multi-tensor outputs** (`ce26`→cos/sin, `ce27`→causal bool/index) so each tensor lands under its own key.
+- `run_consteval(weights, device)` writes every produced tensor into `weights` under a single-tensor key (fused QKV → `model.layers.{L}.self_attn.qkv_proj.weight`, rotary → `model.rotary_emb.cos/sin`, etc.) and returns `weights`. **No `ce_cache`, no `if not ce_cache` guard** — `__init__` guarantees one-time execution.
+
+**Updated `model_ttnn.py`**:
+- Removed all 48 `main_const_eval_*`, `ce_cache__main`, and `consteval__main`; added `import consteval`.
+- `__init__` now runs `self.weights = consteval.run_consteval(self.weights, device)` after loading.
+- `forward` dropped the `global`/consteval call and reads every former `ce_cache__main["main_const_eval_N"]` from `self.weights[<key>]` (48 sites rewired).
+
+Const-eval execution order changed (loop-grouped) but is behavior-neutral since each constant is independent. Only `consteval.py` and `model_ttnn.py` were touched; no tests were run.
+
+--- Time taken: 664.8s | session: e388e1bc-a232-4b3e-b127-12eafc221779 ---
