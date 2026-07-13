@@ -1,0 +1,17 @@
+The implementation is complete. Both files parse and only `main.py` and `model_ttnn.py` were touched.
+
+## Summary
+
+**`model_ttnn.py`** — removed the single input-tensor deallocation (`ttnn.deallocate(args_0, False)` for `input_ids`). `args_1`/`activation_0` were never deallocated, so nothing else needed changing. This keeps the persistent input tensors alive (fixed addresses) across the trace capture/execute.
+
+**`main.py` `test_main`** — implemented the single-CQ metal trace with persistent DRAM inputs (per the linked §13.1 pattern), adapted to this model's 3 mesh-replicated inputs:
+
+1. **Persistent DRAM buffers**: `dram_inputs = load_inputs(device)` — these are the graph's actual on-device DRAM inputs (correct mesh distribution guaranteed), used as the fixed-address persistent buffers. Host copies `host_inputs` are captured via `ttnn.from_device` to refill from.
+2. **Run 1 (compile)**: refill inputs, run `model(dram_inputs)`, `synchronize_device`, time & log.
+3. **Run 2 (capture)**: refill, `begin_trace_capture` → `model(dram_inputs)` → `end_trace_capture`, `synchronize_device`, time & log. The returned `outputs` (kept on device) provides the output address to read after execution.
+4. **Runs 3–5 (execute)**: refill, `execute_trace(..., blocking=False)`, `outputs[0].cpu(blocking=False)`, `synchronize_device`, time & log.
+5. `release_trace`, then compose the final host output back to torch for the unchanged PCC check.
+
+All **5 runs are timed with `time.perf_counter()`** (with `ttnn.synchronize_device` before reading the end time) and logged with time at **4 decimals** and TPS at **2 decimals**, exactly as before. Input refills (`copy_host_to_device_tensor`, `cq_id=0`) happen outside the timed region, mirroring how input prep was previously excluded. I did **not** set `trace_region_size` or `enable_program_cache` (left `utils.open_device` untouched). No tests were run.
+
+--- Time taken: 261.9s | session: d94bce00-613e-45b2-8ef0-4d43a29d6852 ---
