@@ -2,8 +2,7 @@ import ttnn
 import utils
 import model_pt
 from utils import calculate_pcc
-from params import load_weights_for__main_from_state_dict
-from model_ttnn import _main
+from model_ttnn import ModelTTNN
 
 # ttnn registers a top-level module also named "activations", which shadows the
 # sibling activations.py in this directory on sys.path. Load our file directly by
@@ -22,9 +21,9 @@ load_inputs = _activations.load_inputs
 def main():
     device = utils.open_device()
     try:
+        model = ModelTTNN(device)
         load_inputs_0 = load_inputs(device)
-        load_weights_for__main_0 = load_weights_for__main_from_state_dict(device)
-        _main_0 = _main(load_inputs_0, load_weights_for__main_0, device)
+        _main_0 = model(load_inputs_0)
     finally:
         utils.close_device(device)
     return 0
@@ -35,9 +34,9 @@ def test_main():
 
     device = utils.open_device()
     try:
+        model = ModelTTNN(device)
         input = load_inputs(device)
-        weights = load_weights_for__main_from_state_dict(device)
-        outputs = _main(input, weights, device)
+        outputs = model(input)
 
         # The graph runs tensor-parallel on a (1, 4) mesh. Its single output (the
         # final hidden state) is replicated across the mesh -- the last collective
