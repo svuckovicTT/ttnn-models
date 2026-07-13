@@ -1,3 +1,5 @@
+import time
+
 import ttnn
 import utils
 import model_pt
@@ -32,11 +34,26 @@ def main():
 def test_main():
     exact_pcc = 0.984375
 
+    # This is an LLM, so report throughput in tokens/second (TPS).
+    num_tokens = model_pt.BATCH_SIZE * model_pt.CONTEXT_LENGTH
+
     device = utils.open_device()
     try:
         model = ModelTTNN(device)
-        input = load_inputs(device)
-        outputs = model(input)
+
+        # Run the same input through the model 3 times and log the perf. The
+        # forward deallocates its input tensors, so rebuild the (identical) input
+        # each iteration; the reload happens outside the timed region.
+        for run in range(3):
+            input = load_inputs(device)
+            start = time.perf_counter()
+            outputs = model(input)
+            # Wait for the device to finish before reading the end time, so the
+            # measurement covers the whole forward and not just op dispatch.
+            ttnn.synchronize_device(device)
+            elapsed = time.perf_counter() - start
+            tps = num_tokens / elapsed
+            print(f"\nRun {run + 1}: time {elapsed:.4f}s, TPS {tps:.2f}")
 
         # The graph runs tensor-parallel on a (1, 4) mesh. Its single output (the
         # final hidden state) is replicated across the mesh -- the last collective
