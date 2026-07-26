@@ -1,0 +1,11 @@
+All three files are in order:
+
+1. **`params.py`** — Contains the original `load_weights_for__main()` (moved verbatim from `main.py`) plus the new `load_weights_for__main_from_state_dict()`. The latter loads the PyTorch model via `model_pt.load_pytorch_model()`, builds a combined state dict (including non-persistent buffers like `rotary_emb.inv_freq`), and loops over `ALL_WEIGHTS` applying group-specific transforms:
+   - `HOST_WEIGHTS` (14 keys: biases, sinks, embed weights, inv_freq, router biases): `to_layout(ROW_MAJOR)` → `to_dtype(BFLOAT16)`
+   - `DEVICE_WEIGHTS` (24 keys: parametrized weights, expert weights/biases, layernorm/norm weights, lm_head): `to_layout(TILE)` → `to_dtype(BFLOAT16)` → `to_device(device, ttnn.DRAM_MEMORY_CONFIG)`
+
+2. **`main.py`** — Removed `_main_weights` global and `load_weights_for__main` definition; added `from params import load_weights_for__main`.
+
+3. **`verify_weights.py`** — pytest `test_verify_weights()` that loads both weight dicts, asserts key equality, then compares every tensor value via `torch.equal` after bringing to host.
+
+--- Time taken: 256.4s | session: 40b1b592-68eb-427d-9269-aee7e9380a08 ---
