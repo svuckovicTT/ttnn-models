@@ -1,0 +1,7 @@
+Everything is clean:
+
+- **`model_ttnn.py`**: Contains imports (`ttnn`, `utils`, `ttir_cpu`), all 33 `main_const_eval_*` functions, all 13 `cpu_hoisted_const_eval_*` functions, the `ce_cache__main` global, `_main()`, and `consteval__main()`.
+
+- **`main.py`**: Imports `_main` from `model_ttnn`, keeps `load_activations_for__main`, `main()`, `test_main()`, and `if __name__` block. Removed the `ttir_cpu` import since it's no longer used here.
+
+--- Time taken: 65.8s | session: 979897f8-814f-4880-8c4a-f98d72c533c3 ---
