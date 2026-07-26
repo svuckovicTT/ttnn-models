@@ -1,0 +1,14 @@
+diff --git a/openai/gpt-oss-20b/model/graph_0/main.py b/openai/gpt-oss-20b/model/graph_0/main.py
+index 7fcf695..a048241 100644
+--- a/openai/gpt-oss-20b/model/graph_0/main.py
++++ b/openai/gpt-oss-20b/model/graph_0/main.py
+@@ -4049,5 +4049,9 @@ def main():
+     return 0
+ 
+ 
++def test_main():
++    return 0
++
++
+ if __name__ == "__main__":
+     main()

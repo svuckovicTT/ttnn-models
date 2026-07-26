@@ -1,0 +1,65 @@
+I now have a thorough understanding of the codegen. Here's my summary:
+
+---
+
+## Codegen Summary: `openai/gpt-oss-20b/model/graph_0/`
+
+### Files
+| File | Lines | Role |
+|------|-------|------|
+| `main.py` | 4053 | Auto-generated TTNN forward pass + weight/activation loading + consteval |
+| `utils.py` | 162 | Shared utilities: `DeviceGetter` singleton, `load_tensor`, `execute_cpu_hoisted_function`, `create_global_semaphore` |
+| `ttir_cpu.py` | ~500 | Pure-torch CPU implementations of TTIR ops (well-structured, not messy) |
+| `__init__.py` | 3 | License header only |
+| `../../xla.py` | 222 | XLA reference: model loading, sharding, codegen invocation for a 2-layer reduced gpt-oss-20b |
+
+### Overall Structure
+
+**Entry point**: `main()` (line 4045) calls `load_activations_for__main()` → `load_weights_for__main()` → `_main(activations, weights)`.
+
+**Forward pass**: `_main(activations, weights)` (lines 1574–3474) is a ~1900-line monolithic function containing the entire TTNN graph for a **2-layer GPT-OSS-20B** model. It implements:
+1. Token embedding lookup
+2. **Two identical transformer layers**, each containing:
+   - RMS norm (manual `pow→mean→add_eps→rsqrt` path + `ttnn.rms_norm`)
+   - QKV linear projection with fused bias (concat of Q/K/V weights via consteval)
+   - Split heads (`ttnn.transformer.split_query_key_value_and_split_heads`)
+   - Rotary embedding (`ttnn.experimental.rotary_embedding`)
+   - GQA: KV repeat (2→16 heads via reshape+repeat)
+   - Attention: matmul→scale→causal mask add→softmax→matmul→concat heads
+   - Output projection + `ttnn.all_reduce` (TP4)
+   - Residual add
+   - Post-attn RMS norm
+   - **MoE (Mixture of Experts, 32 experts, top-4)**: router linear → topk → scatter → expert gate_up_proj → SiLU gating → down_proj → weighted sum
+3. Final RMS norm + `lm_head` linear → logits output
+
+**Consteval**: `consteval__main()` (line 3477) calls 33 `main_const_eval_N()` functions that preprocess weights at initialization (permute, typecast to bf8, reshape, compute rotary embeddings, build causal mask, etc.). Results cached in `ce_cache__main` dict.
+
+**CPU-hoisted functions**: ~10 `cpu_hoisted_const_eval_HASH()` functions execute pure-torch operations on host CPU via `utils.execute_cpu_hoisted_function()`. Used for operations like weight permutation, concatenation, rotary frequency computation, and causal mask generation.
+
+**Weight loading**: `load_weights_for__main()` loads 38 tensors from `./tensors/argN.tensorbin` files into `_main_weights` dict, keyed by HuggingFace-style parameter names.
+
+**Device config**: Mesh shape `(1, 4)` with `FABRIC_1D_RING` — 4-chip tensor-parallel configuration.
+
+### Auto-generated / Messy Characteristics
+
+1. **Massive return list**: `_main` returns a 74-element list mixing computed tensors, intermediate results, raw weights — clearly auto-generated debug output, not a clean API.
+
+2. **Numbered variable names**: `ttnn_reshape_0` through `ttnn_reshape_37`, `ttnn_matmul_0` through `ttnn_matmul_10`, etc. — machine-generated with global counters, no semantic meaning.
+
+3. **Redundant memory_config boilerplate**: Every single TTNN op has `memory_config=ttnn.MemoryConfig(ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None)` — could be extracted to a constant.
+
+4. **Duplicate layer code**: Layer 0 and Layer 1 are copy-pasted verbatim (~800 lines each) with incremented variable suffixes. Screaming for a loop or function extraction.
+
+5. **32x concat for MoE broadcast**: `ttnn_concat_5` and `ttnn_concat_7` literally list `ttnn_reshape_12` 32 times — the expert replication should be a `ttnn.repeat` or similar.
+
+6. **Dead computations**: `ttnn_rsqrt_0/1/2/3/4` are computed (the manual RMS norm path) but then `ttnn.rms_norm` is also called — the rsqrt results pass through to the return list but serve no purpose in the forward computation.
+
+7. **Unused `ttnn_permute_1` and `ttnn_permute_4`**: Computed after the attn matmul but never used in downstream computation (only returned).
+
+8. **Redundant `DeviceGetter.get_device()` calls**: Called at the start of every single function with the same `(1, 4)` args — could be called once and shared.
+
+9. **Hash-named CPU hoisted functions**: `cpu_hoisted_const_eval_4dba464f`, `cpu_hoisted_const_eval_319e9113`, etc. — auto-generated hex hashes with no semantic meaning.
+
+10. **Const-eval numbered slots**: `main_const_eval_0` through `main_const_eval_32` with opaque numbering — no indication of what each prepares (is it the embedding table? QKV weights? Rotary freqs?).
+
+--- Time taken: 115.0s | session: a71c7b40-6d1e-43b0-8a2e-04f1bf2c49c4 ---
