@@ -2,71 +2,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import ttnn
-import torch
 import utils
 
 
 _main_weights = {}
-
-ALL_WEIGHTS = [
-    "model.layers.0.self_attn.v_proj.bias",
-    "model.layers.0.self_attn.v_proj.parametrizations.weight.original",
-    "model.layers.0.input_layernorm.parametrizations.weight.original",
-    "model.embed_tokens.parametrizations.weight.original",
-    "model.rotary_emb.inv_freq",
-    "model.layers.0.self_attn.k_proj.bias",
-    "model.layers.0.self_attn.k_proj.parametrizations.weight.original",
-    "model.layers.1.self_attn.v_proj.bias",
-    "model.layers.1.self_attn.v_proj.parametrizations.weight.original",
-    "model.layers.1.input_layernorm.parametrizations.weight.original",
-    "model.layers.0.mlp.router.bias",
-    "model.layers.0.mlp.router.parametrizations.weight.original",
-    "model.layers.0.post_attention_layernorm.parametrizations.weight.original",
-    "model.layers.0.self_attn.o_proj.bias",
-    "model.layers.0.self_attn.o_proj.parametrizations.weight.original",
-    "model.layers.0.self_attn.sinks",
-    "model.layers.0.self_attn.q_proj.bias",
-    "model.layers.0.self_attn.q_proj.parametrizations.weight.original",
-    "model.layers.0.mlp.experts.down_proj_bias",
-    "model.layers.0.mlp.experts.down_proj",
-    "model.layers.0.mlp.experts.gate_up_proj_bias",
-    "model.layers.0.mlp.experts.gate_up_proj",
-    "model.layers.1.self_attn.k_proj.bias",
-    "model.layers.1.self_attn.k_proj.parametrizations.weight.original",
-    "lm_head.parametrizations.weight.original",
-    "model.norm.parametrizations.weight.original",
-    "model.layers.1.mlp.router.bias",
-    "model.layers.1.mlp.router.parametrizations.weight.original",
-    "model.layers.1.post_attention_layernorm.parametrizations.weight.original",
-    "model.layers.1.self_attn.o_proj.bias",
-    "model.layers.1.self_attn.o_proj.parametrizations.weight.original",
-    "model.layers.1.self_attn.sinks",
-    "model.layers.1.self_attn.q_proj.bias",
-    "model.layers.1.self_attn.q_proj.parametrizations.weight.original",
-    "model.layers.1.mlp.experts.down_proj_bias",
-    "model.layers.1.mlp.experts.down_proj",
-    "model.layers.1.mlp.experts.gate_up_proj_bias",
-    "model.layers.1.mlp.experts.gate_up_proj",
-]
-
-HOST_WEIGHTS = {
-    "model.layers.0.self_attn.v_proj.bias",
-    "model.embed_tokens.parametrizations.weight.original",
-    "model.rotary_emb.inv_freq",
-    "model.layers.0.self_attn.k_proj.bias",
-    "model.layers.1.self_attn.v_proj.bias",
-    "model.layers.0.mlp.router.bias",
-    "model.layers.0.self_attn.o_proj.bias",
-    "model.layers.0.self_attn.sinks",
-    "model.layers.0.self_attn.q_proj.bias",
-    "model.layers.1.self_attn.k_proj.bias",
-    "model.layers.1.mlp.router.bias",
-    "model.layers.1.self_attn.o_proj.bias",
-    "model.layers.1.self_attn.sinks",
-    "model.layers.1.self_attn.q_proj.bias",
-}
-
-DEVICE_WEIGHTS = set(ALL_WEIGHTS) - HOST_WEIGHTS
 
 
 def load_weights_for__main():
@@ -457,39 +396,3 @@ def load_weights_for__main():
     )
     _main_weights["model.layers.1.mlp.experts.gate_up_proj"] = utils_load_tensor_38
     return _main_weights
-
-
-def load_weights_for__main_from_state_dict():
-    import model_pt
-
-    model = model_pt.load_pytorch_model()
-
-    state_dict = dict(model.state_dict())
-    for name, buf in model.named_buffers():
-        if name not in state_dict:
-            state_dict[name] = buf
-
-    device = utils.DeviceGetter.get_device(
-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
-    )
-
-    weights = {}
-    for key in ALL_WEIGHTS:
-        hf_key = key.replace(".parametrizations.weight.original", ".weight")
-        if hf_key not in state_dict and hf_key == "lm_head.weight" and getattr(model.config, "tie_word_embeddings", False):
-            hf_key = "model.embed_tokens.weight"
-        pt_tensor = state_dict[hf_key]
-        ttnn_tensor = ttnn.from_torch(pt_tensor)
-
-        if key in HOST_WEIGHTS:
-            ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.ROW_MAJOR)
-            ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
-
-        if key in DEVICE_WEIGHTS:
-            ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.TILE)
-            ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
-            ttnn_tensor = ttnn.to_device(ttnn_tensor, device, ttnn.DRAM_MEMORY_CONFIG)
-
-        weights[key] = ttnn_tensor
-
-    return weights
