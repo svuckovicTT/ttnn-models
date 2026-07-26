@@ -1,0 +1,3 @@
+Done. The `_main` forward function and all its supporting code (33 `main_const_eval_*` functions, 13 `cpu_hoisted_const_eval_*` functions, `consteval__main`, and the `ce_cache__main` global) have been moved to `model_ttnn.py`. `main.py` now imports `_main` via `from model_ttnn import _main` and both call sites (`main()` line 27 and `test_main()` line 57) work unchanged.
+
+--- Time taken: 100.1s | session: 8bc25aa2-d7dd-4af9-8cd7-2c631a72c305 ---
