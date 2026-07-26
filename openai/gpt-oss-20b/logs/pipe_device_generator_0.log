@@ -1,0 +1,19 @@
+All files parse cleanly. Here's a summary of the changes:
+
+**`utils.py`**:
+- Removed `DeviceGetter` class entirely
+- Added `open_device()` function that opens a `(1, 4)` mesh with `FABRIC_1D_RING` (matching the original device configuration)
+- Changed `execute_cpu_hoisted_function` to accept `mesh_device` as an explicit parameter instead of reading `DeviceGetter._instance`
+- Removed unused `math` import
+
+**`main.py`**:
+- `main()` and `test_main()` now call `utils.open_device()` to create the device and pipe it through to all callees
+- All 33 `main_const_eval_*` functions accept `device` parameter instead of calling `DeviceGetter.get_device()`
+- All 13 `cpu_hoisted_const_eval_*` functions accept `device` and pass it to `execute_cpu_hoisted_function`
+- `consteval__main`, `_main`, `load_activations_for__main` all accept and forward `device`
+- `to_host_torch` in `test_main` checks `device is not None` instead of `DeviceGetter._instance`
+
+**`params.py`**:
+- `load_weights_for__main(device)` accepts `device` parameter instead of calling `DeviceGetter.get_device()`
+
+--- Time taken: 367.6s | session: 088dc72c-c2d0-4011-95ae-80f9a116e43c ---
