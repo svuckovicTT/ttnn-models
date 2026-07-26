@@ -1,3 +1,6 @@
-Done. The `_main` forward function and all its supporting code (33 `main_const_eval_*` functions, 13 `cpu_hoisted_const_eval_*` functions, `consteval__main`, and the `ce_cache__main` global) have been moved to `model_ttnn.py`. `main.py` now imports `_main` via `from model_ttnn import _main` and both call sites (`main()` line 27 and `test_main()` line 57) work unchanged.
+Everything is in order:
 
---- Time taken: 100.1s | session: 8bc25aa2-d7dd-4af9-8cd7-2c631a72c305 ---
+- **`model_ttnn.py`**: contains all 4 imports (`ttnn`, `utils`, `ttir_cpu`, `torch`), the `ce_cache__main` global, all 33 `main_const_eval_*` functions, all 13 `cpu_hoisted_const_eval_*` functions, `_main()`, and `consteval__main()`.
+- **`main.py`**: imports `_main` from `model_ttnn`, retains `load_activations_for__main`, `main()`, `test_main()`, and the `if __name__` block. Removed the now-unused `import ttir_cpu` since that module is only used inside the moved code.
+
+--- Time taken: 98.8s | session: 1674f06b-3230-4e7a-9553-bc6f818aaee7 ---

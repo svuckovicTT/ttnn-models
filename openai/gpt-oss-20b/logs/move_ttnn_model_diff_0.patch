@@ -3546,13 +3546,14 @@ index 7fc59f6..b6a0336 100644
          "./tensors/arg3.tensorbin",
 diff --git a/openai/gpt-oss-20b/model/graph_0/model_ttnn.py b/openai/gpt-oss-20b/model/graph_0/model_ttnn.py
 new file mode 100644
-index 0000000..92cea85
+index 0000000..ab3103d
 --- /dev/null
 +++ b/openai/gpt-oss-20b/model/graph_0/model_ttnn.py
-@@ -0,0 +1,3534 @@
+@@ -0,0 +1,3535 @@
 +import ttnn
 +import utils
 +import ttir_cpu
++import torch
 +
 +
 +def main_const_eval_0(arg, device):
