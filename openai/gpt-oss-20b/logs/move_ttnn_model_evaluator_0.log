@@ -1,0 +1,7 @@
+{
+  "is_approved": true,
+  "failed_criteria": [],
+  "reasoning": "All three criteria are satisfied. The Generator correctly created model_ttnn.py with the full set of imports (ttnn, utils, ttir_cpu, torch) and moved _main and all its helper functions (main_const_eval_*, cpu_hoisted_const_eval_*, consteval__main) into it. main.py was updated to import _main from model_ttnn and no longer carries import ttir_cpu. The code is moved verbatim \u2014 no TTNN ops replaced, no MemoryConfig arguments dropped, no tensor shapes altered. The test suite passed."
+}
+
+--- Time taken: 112.6s ---

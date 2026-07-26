@@ -1,0 +1,15 @@
+Both files parse cleanly. Here's a summary of the changes:
+
+**`model_ttnn.py`**:
+- Added `import params`
+- Added `LightweightModule` base class with `__call__` dispatching to `forward`
+- Wrapped the old `_main` function into `ModelTTNN(LightweightModule)`:
+  - `__init__(self, device)` saves `self.device`, loads weights via `params.load_weights_for__main(device)` into `self.weights`, and initializes `self.ce_cache__main = {}`
+  - `forward(self, activations)` contains the full TTNN op graph — it creates local aliases `device = self.device`, `weights = self.weights`, and `ce_cache__main = self.ce_cache__main` so the body code works unchanged
+
+**`main.py`**:
+- Replaced `from params import load_weights_for__main` and `from model_ttnn import _main` with `from model_ttnn import ModelTTNN`
+- `main()`: instantiates `model = ModelTTNN(device)`, calls `model(activations)` — no separate weight loading needed
+- `test_main()`: same pattern — `model = ModelTTNN(device)`, calls `model([ttnn_input])`
+
+--- Time taken: 115.6s | session: dab26691-b355-4880-8a80-82bd0f042fa3 ---
