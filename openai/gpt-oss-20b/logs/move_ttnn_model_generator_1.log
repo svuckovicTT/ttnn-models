@@ -1,0 +1,3 @@
+Done. The forward function `_main()` and all its supporting functions (`main_const_eval_*`, `cpu_hoisted_const_eval_*`, `consteval__main`, and `ce_cache__main`) have been moved to `model_ttnn.py`. The `main.py` now imports `_main` via `from model_ttnn import _main`, and the unused `ttir_cpu` import was removed from `main.py`.
+
+--- Time taken: 71.9s | session: 24601b77-74a3-441f-a50e-b24fb52b9ce5 ---
