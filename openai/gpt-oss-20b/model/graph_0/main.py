@@ -1,5 +1,6 @@
 import ttnn
 import utils
+from utils import calculate_pcc
 import ttir_cpu
 import torch
 
