@@ -1,8 +1,7 @@
 import ttnn
 import utils
 from utils import calculate_pcc
-from params import load_weights_for__main
-from model_ttnn import _main
+from model_ttnn import ModelTTNN
 import torch
 
 
@@ -21,9 +20,9 @@ def load_activations_for__main(device):
 
 def main():
     device = utils.open_device()
+    model = ModelTTNN(device)
     load_activations_for__main_0 = load_activations_for__main(device)
-    load_weights_for__main_0 = load_weights_for__main(device)
-    _main_0 = _main(load_activations_for__main_0, load_weights_for__main_0, device)
+    _main_0 = model(load_activations_for__main_0)
     return 0
 
 
@@ -33,6 +32,7 @@ def test_main():
     exact_pcc = 0.98
 
     device = utils.open_device()
+    model = ModelTTNN(device)
 
     def to_host_torch(tensor):
         tensor = ttnn.from_device(tensor)
@@ -52,8 +52,7 @@ def test_main():
         ),
     )
 
-    weights = load_weights_for__main(device)
-    outputs = _main([ttnn_input], weights, device)
+    outputs = model([ttnn_input])
 
     ttnn_output = to_host_torch(outputs[4])[:, -1]
     golden_output = model_pt.run_pytorch_model()
