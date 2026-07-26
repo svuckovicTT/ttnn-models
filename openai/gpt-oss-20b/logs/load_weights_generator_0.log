@@ -1,0 +1,13 @@
+All changes are complete. Here's a summary of what was done:
+
+1. **`params.py`** (new) — Contains:
+   - `load_weights_for__main()`: exact copy of the original function from `main.py`, loading 38 tensors from disk
+   - `HOST_WEIGHTS` set: 14 weights kept on host (ROW_MAJOR, BF16, no device) — biases, sinks, embed_tokens, rotary_emb.inv_freq, router biases
+   - `DEVICE_WEIGHTS` set: 24 weights sent to device (TILE, BF16, DRAM) — parametrized weights, expert projections, norms, lm_head
+   - `load_weights_for__main_from_state_dict()`: loads the PyTorch model via `model_pt`, builds a combined state_dict (including non-persistent buffers like `rotary_emb.inv_freq`), converts each tensor via `ttnn.from_torch()` then applies `to_layout → to_dtype → to_device` based on group membership
+
+2. **`main.py`** (modified) — Removed `_main_weights` global and `load_weights_for__main` function body; added `from params import load_weights_for__main` so all existing call sites (`main()` and `test_main()`) continue to work unchanged
+
+3. **`verify_weights.py`** (new) — `test_verify_weights()` pytest function that loads weights from both sources, asserts key sets match, compares every tensor value via `torch.equal`, and reports mismatches with max diff
+
+--- Time taken: 203.8s | session: 412647b7-5393-468b-8151-85a84e99bacd ---
