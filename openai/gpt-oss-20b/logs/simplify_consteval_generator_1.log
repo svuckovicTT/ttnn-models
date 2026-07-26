@@ -1,0 +1,26 @@
+Here's a summary of what was done:
+
+**Created `consteval.py`** with deduplicated helper functions:
+- `_to_device` — simple device placement (embed_tokens)
+- `_transpose_to_bf8b` — transpose weight + cast to BF8_B (o_proj weights, router weights, lm_head) 
+- `_typecast_to_bf8b` — cast to BF8_B on device (expert gate_up_proj, down_proj)
+- `_qkv_concat_to_bf8b` — permute + concat V/K/Q weights + slice/reorder + BF8_B (per-layer QKV)
+- `_reshape_expert_bias` — reshape expert biases with parameterized shape ([32,1,5760] or [32,1,2880])
+- `_reshape_o_proj_bias` — reshape o_proj bias to [1, 2880]
+- `_router_bias_passthrough` — identity pass-through for router biases
+- `_qkv_bias_concat` — mesh_partition + concat + slice/reorder for QKV biases
+- `_sinks_broadcast` — mesh_partition + reshape + broadcast for attention sinks
+- `_compute_rotary_embeddings` — compute cos/sin from inv_freq (returns 3 separate tensors)
+- `_compute_causal_mask` — build lower-triangular causal mask
+- `_compute_scatter_index` — build MoE scatter indices
+- `run_consteval(weights, device)` — orchestrates all transforms in a loop over layers, stores results back into `weights` dict with meaningful keys
+
+**Updated `model_ttnn.py`**:
+- Removed all 33 `main_const_eval_*` functions, 13 `cpu_hoisted_const_eval_*` functions, and `consteval__main`
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` 
+- Removed `ce_cache__main` — consteval results stored directly in `weights` dict
+- Replaced all `ce_cache__main["main_const_eval_N"]` with descriptive weight keys (e.g., `weights["model.rotary_emb.cos"]`, `weights["__consteval__.causal_mask"]`)
+- Split multi-tensor key `main_const_eval_6` (list of 3) into `model.rotary_emb.cos`, `.sin`, `.freqs`
+- Removed unused `import utils`, `import ttir_cpu`; added `import consteval`
+
+--- Time taken: 324.2s | session: 89b26502-d2bf-463c-b590-805ba804e20c ---

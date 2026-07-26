@@ -1,0 +1,9 @@
+{
+  "is_approved": false,
+  "failed_criteria": [
+    "SEMANTIC EQUIVALENCE: Router weights (both layer 0 and layer 1) are processed with `transpose_weight_to_bf8` which inserts an intermediate `ttnn.typecast(..., BFLOAT16)` before the TILE layout conversion. The original `main_const_eval_27` (layer 0 router) and `main_const_eval_7` (layer 1 router) did NOT have this cast \u2014 they went directly from permute \u2192 TILE \u2192 BFLOAT8_B. The correct function to use for router weights is `transpose_weight_to_bf16` (which was defined but left unused). Fix: change both `w[f'{prefix}.mlp.router.weight_transposed'] = transpose_weight_to_bf8(...)` calls to `transpose_weight_to_bf16(...)`."
+  ],
+  "reasoning": "The Generator correctly created consteval.py with deduplicated helpers and a run_consteval function, updated ModelTTNN.__init__ to call consteval.run_consteval, removed the ce_cache pattern, and split multi-tensor keys (rotary emb) into individual weight keys. Scope containment is satisfied (only consteval.py and model_ttnn.py were modified). However, there is one semantic equivalence failure: the Generator defined two transpose-and-bf8 helpers \u2014 `transpose_weight_to_bf8` (with an intermediate BFLOAT16 cast before TILE) and `transpose_weight_to_bf16` (without it) \u2014 but incorrectly applied `transpose_weight_to_bf8` to both router weights. The old `main_const_eval_7` and `main_const_eval_27` did not include the intermediate BFLOAT16 typecast, so the router weights now undergo extra precision conversion that changes their numerical values. `transpose_weight_to_bf16` exists in consteval.py but is never called."
+}
+
+--- Time taken: 280.4s ---
