@@ -1,0 +1,176 @@
+diff --git a/openai/gpt-oss-20b/model/graph_0/params.py b/openai/gpt-oss-20b/model/graph_0/params.py
+index 183df84..8ec22f1 100644
+--- a/openai/gpt-oss-20b/model/graph_0/params.py
++++ b/openai/gpt-oss-20b/model/graph_0/params.py
+@@ -2,72 +2,11 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ import ttnn
+-import torch
+ import utils
+ 
+ 
+ _main_weights = {}
+ 
+-ALL_WEIGHTS = [
+-    "model.layers.0.self_attn.v_proj.bias",
+-    "model.layers.0.self_attn.v_proj.parametrizations.weight.original",
+-    "model.layers.0.input_layernorm.parametrizations.weight.original",
+-    "model.embed_tokens.parametrizations.weight.original",
+-    "model.rotary_emb.inv_freq",
+-    "model.layers.0.self_attn.k_proj.bias",
+-    "model.layers.0.self_attn.k_proj.parametrizations.weight.original",
+-    "model.layers.1.self_attn.v_proj.bias",
+-    "model.layers.1.self_attn.v_proj.parametrizations.weight.original",
+-    "model.layers.1.input_layernorm.parametrizations.weight.original",
+-    "model.layers.0.mlp.router.bias",
+-    "model.layers.0.mlp.router.parametrizations.weight.original",
+-    "model.layers.0.post_attention_layernorm.parametrizations.weight.original",
+-    "model.layers.0.self_attn.o_proj.bias",
+-    "model.layers.0.self_attn.o_proj.parametrizations.weight.original",
+-    "model.layers.0.self_attn.sinks",
+-    "model.layers.0.self_attn.q_proj.bias",
+-    "model.layers.0.self_attn.q_proj.parametrizations.weight.original",
+-    "model.layers.0.mlp.experts.down_proj_bias",
+-    "model.layers.0.mlp.experts.down_proj",
+-    "model.layers.0.mlp.experts.gate_up_proj_bias",
+-    "model.layers.0.mlp.experts.gate_up_proj",
+-    "model.layers.1.self_attn.k_proj.bias",
+-    "model.layers.1.self_attn.k_proj.parametrizations.weight.original",
+-    "lm_head.parametrizations.weight.original",
+-    "model.norm.parametrizations.weight.original",
+-    "model.layers.1.mlp.router.bias",
+-    "model.layers.1.mlp.router.parametrizations.weight.original",
+-    "model.layers.1.post_attention_layernorm.parametrizations.weight.original",
+-    "model.layers.1.self_attn.o_proj.bias",
+-    "model.layers.1.self_attn.o_proj.parametrizations.weight.original",
+-    "model.layers.1.self_attn.sinks",
+-    "model.layers.1.self_attn.q_proj.bias",
+-    "model.layers.1.self_attn.q_proj.parametrizations.weight.original",
+-    "model.layers.1.mlp.experts.down_proj_bias",
+-    "model.layers.1.mlp.experts.down_proj",
+-    "model.layers.1.mlp.experts.gate_up_proj_bias",
+-    "model.layers.1.mlp.experts.gate_up_proj",
+-]
+-
+-HOST_WEIGHTS = {
+-    "model.layers.0.self_attn.v_proj.bias",
+-    "model.embed_tokens.parametrizations.weight.original",
+-    "model.rotary_emb.inv_freq",
+-    "model.layers.0.self_attn.k_proj.bias",
+-    "model.layers.1.self_attn.v_proj.bias",
+-    "model.layers.0.mlp.router.bias",
+-    "model.layers.0.self_attn.o_proj.bias",
+-    "model.layers.0.self_attn.sinks",
+-    "model.layers.0.self_attn.q_proj.bias",
+-    "model.layers.1.self_attn.k_proj.bias",
+-    "model.layers.1.mlp.router.bias",
+-    "model.layers.1.self_attn.o_proj.bias",
+-    "model.layers.1.self_attn.sinks",
+-    "model.layers.1.self_attn.q_proj.bias",
+-}
+-
+-DEVICE_WEIGHTS = set(ALL_WEIGHTS) - HOST_WEIGHTS
+-
+ 
+ def load_weights_for__main():
+     utils_DeviceGetter_get_device_34 = utils.DeviceGetter.get_device(
+@@ -457,39 +396,3 @@ def load_weights_for__main():
+     )
+     _main_weights["model.layers.1.mlp.experts.gate_up_proj"] = utils_load_tensor_38
+     return _main_weights
+-
+-
+-def load_weights_for__main_from_state_dict():
+-    import model_pt
+-
+-    model = model_pt.load_pytorch_model()
+-
+-    state_dict = dict(model.state_dict())
+-    for name, buf in model.named_buffers():
+-        if name not in state_dict:
+-            state_dict[name] = buf
+-
+-    device = utils.DeviceGetter.get_device(
+-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
+-    )
+-
+-    weights = {}
+-    for key in ALL_WEIGHTS:
+-        hf_key = key.replace(".parametrizations.weight.original", ".weight")
+-        if hf_key not in state_dict and hf_key == "lm_head.weight" and getattr(model.config, "tie_word_embeddings", False):
+-            hf_key = "model.embed_tokens.weight"
+-        pt_tensor = state_dict[hf_key]
+-        ttnn_tensor = ttnn.from_torch(pt_tensor)
+-
+-        if key in HOST_WEIGHTS:
+-            ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.ROW_MAJOR)
+-            ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
+-
+-        if key in DEVICE_WEIGHTS:
+-            ttnn_tensor = ttnn.to_layout(ttnn_tensor, ttnn.Layout.TILE)
+-            ttnn_tensor = ttnn.to_dtype(ttnn_tensor, ttnn.DataType.BFLOAT16)
+-            ttnn_tensor = ttnn.to_device(ttnn_tensor, device, ttnn.DRAM_MEMORY_CONFIG)
+-
+-        weights[key] = ttnn_tensor
+-
+-    return weights
+diff --git a/openai/gpt-oss-20b/model/graph_0/verify_weights.py b/openai/gpt-oss-20b/model/graph_0/verify_weights.py
+deleted file mode 100644
+index 8a69554..0000000
+--- a/openai/gpt-oss-20b/model/graph_0/verify_weights.py
++++ /dev/null
+@@ -1,53 +0,0 @@
+-# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+-#
+-# SPDX-License-Identifier: Apache-2.0
+-import ttnn
+-import torch
+-from params import load_weights_for__main, load_weights_for__main_from_state_dict
+-
+-
+-def test_verify_weights():
+-    disk_weights = load_weights_for__main()
+-    sd_weights = load_weights_for__main_from_state_dict()
+-
+-    disk_keys = set(disk_weights.keys())
+-    sd_keys = set(sd_weights.keys())
+-    assert disk_keys == sd_keys, (
+-        f"Key mismatch. In disk but not state_dict: {disk_keys - sd_keys}. "
+-        f"In state_dict but not disk: {sd_keys - disk_keys}."
+-    )
+-
+-    def _shards(t):
+-        if t.device() is not None:
+-            t = ttnn.from_device(t)
+-        return [ttnn.to_torch(s) for s in ttnn.get_device_tensors(t)]
+-
+-    def _logical(shards, ref_shape=None):
+-        if len(shards) == 1:
+-            return shards[0]
+-        if all(torch.equal(shards[0], s) for s in shards[1:]):
+-            return shards[0]
+-        if ref_shape is not None:
+-            for d in range(shards[0].dim()):
+-                if shards[0].shape[d] * len(shards) == ref_shape[d]:
+-                    return torch.cat(shards, dim=d)
+-        return torch.cat(shards, dim=0)
+-
+-    mismatches = []
+-    for key in sorted(disk_weights.keys()):
+-        sd_logical = _logical(_shards(sd_weights[key]))
+-        pt2 = sd_logical.flatten()
+-        pt1 = _logical(_shards(disk_weights[key]), sd_logical.shape).flatten()
+-
+-        if not torch.equal(pt1, pt2):
+-            max_diff = (pt1 - pt2).abs().max().item()
+-            mismatches.append((key, max_diff))
+-            print(f"  MISMATCH: {key} (max diff: {max_diff})")
+-        else:
+-            print(f"  OK: {key}")
+-
+-    assert not mismatches, (
+-        f"{len(mismatches)} / {len(disk_weights)} weights mismatch: "
+-        + ", ".join(f"{k}={d}" for k, d in mismatches)
+-    )
+-    print(f"All {len(disk_weights)} weights match!")

@@ -1,0 +1,7 @@
+Done. Since this is a multi-device mesh model (1x4 TP):
+
+1. **Kept `load_weights_for__main`** in `params.py` — the disk loader preserves the codegen's mesh-distributed tensor sharding
+2. **Deleted `verify_weights.py`**
+3. **Removed `load_weights_for__main_from_state_dict`** and its supporting constants (`ALL_WEIGHTS`, `HOST_WEIGHTS`, `DEVICE_WEIGHTS`) and unused `torch` import from `params.py`
+
+--- Time taken: 59.6s | session: d21de120-c1bd-403f-878c-d0c6e563a919 ---
