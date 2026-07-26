@@ -1,0 +1,7 @@
+{
+  "is_approved": true,
+  "failed_criteria": [],
+  "reasoning": "All three criteria pass. model_pt.py was created with the correct function names and logic copied exactly from xla.py's CPU-only paths. calculate_pcc() was added to utils.py with the exact body specified in the prompt, and the required import torch was added to support it. from utils import calculate_pcc was added to main.py. Only the three allowed files were touched, and no existing code was altered."
+}
+
+--- Time taken: 27.6s ---

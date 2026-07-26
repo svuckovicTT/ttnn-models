@@ -1,0 +1,46 @@
+diff --git a/openai/gpt-oss-20b/model/graph_0/main.py b/openai/gpt-oss-20b/model/graph_0/main.py
+index e2fcd36..7dc9049 100644
+--- a/openai/gpt-oss-20b/model/graph_0/main.py
++++ b/openai/gpt-oss-20b/model/graph_0/main.py
+@@ -4051,7 +4051,40 @@ def main():
+ 
+ 
+ def test_main():
+-    return 0
++    import model_pt
++
++    exact_pcc = 0.98
++
++    def to_host_torch(tensor):
++        tensor = ttnn.from_device(tensor)
++        if utils.DeviceGetter._instance is not None:
++            return ttnn.to_torch(ttnn.get_device_tensors(tensor)[0])
++        return ttnn.to_torch(tensor)
++
++    pt_input = model_pt.load_input()
++    device = utils.DeviceGetter.get_device(
++        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
++    )
++    ttnn_input = ttnn.from_torch(
++        pt_input["input_ids"], dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR
++    )
++    ttnn_input = ttnn.to_device(
++        ttnn_input,
++        device,
++        ttnn.MemoryConfig(
++            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
++        ),
++    )
++
++    weights = load_weights_for__main()
++    outputs = _main([ttnn_input], weights)
++
++    ttnn_output = to_host_torch(outputs[4])[:, -1]
++    golden_output = model_pt.run_pytorch_model()
++
++    pcc = calculate_pcc(ttnn_output.to(torch.float32), golden_output.to(torch.float32))
++    print(f"\nPCC: {pcc:.6f}")
++    assert pcc > exact_pcc, f"PCC {pcc} is below expected {exact_pcc}"
+ 
+ 
+ if __name__ == "__main__":

@@ -1,0 +1,8 @@
+`test_main()` now:
+1. Loads input via `model_pt.load_input()`, converts `input_ids` to TTNN (`INT32`, `ROW_MAJOR`, DRAM interleaved on the `(1,4)` mesh) — matching `load_activations_for__main()`
+2. Runs `_main` and extracts `outputs[4]` (`ttnn_reshape_37` — the `[1, 17, 201088]` logits)
+3. Uses a `to_host_torch` helper that handles multi-device by taking device 0's shard (replicated logits)
+4. Slices `[:, -1]` to get last-token logits matching the PyTorch golden's shape
+5. Compares PCC in float32, asserts `> 0.98`
+
+--- Time taken: 74.1s | session: 528f11d3-cc84-461e-a962-80a63c237a52 ---
