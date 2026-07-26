@@ -1,0 +1,13 @@
+All clean. Here's a summary of what was done:
+
+1. **`params.py`** (new) — contains:
+   - `load_weights_for__main()`: the original function moved verbatim from `main.py`, including the `_main_weights` global
+   - `HOST_WEIGHTS` set (14 keys): biases, sinks, embed tokens, rotary inv_freq, router biases — ROW_MAJOR, BFLOAT16, host-only
+   - `DEVICE_WEIGHTS` set (24 keys): parametrized weights, experts, lm_head, norms — TILE, BFLOAT16, on-device DRAM
+   - `load_weights_for__main_from_state_dict()`: loads weights from PyTorch model's state_dict (with non-persistent buffers included), converts via `ttnn.from_torch` → `ttnn.to_layout` → `ttnn.to_dtype` → `ttnn.to_device` based on which set each key belongs to
+
+2. **`main.py`** (updated) — removed `_main_weights` global and `load_weights_for__main()` function; added `from params import load_weights_for__main`
+
+3. **`verify_weights.py`** (new) — `test_verify_weights()` loads weights from both sources, asserts key equality, and compares tensor values exactly via `torch.equal`
+
+--- Time taken: 207.3s | session: 3624fbc1-9b56-4e3f-9b38-7ffd2f1c180b ---
