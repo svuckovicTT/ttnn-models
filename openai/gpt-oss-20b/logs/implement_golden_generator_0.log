@@ -1,0 +1,9 @@
+Done. Three changes made:
+
+1. **`model_pt.py`** — created with `load_pytorch_model()`, `load_input()`, and `run_pytorch_model()` mirroring the CPU-only logic from `xla.py` (reduced-layer config, MXFP4 dequantized weights, StaticCache, last-token logits).
+
+2. **`utils.py`** — added `import torch` at the top and appended the `calculate_pcc()` function at the bottom.
+
+3. **`main.py`** — added `from utils import calculate_pcc` import.
+
+--- Time taken: 50.2s | session: 0ede2c96-5f17-47be-8140-d22ef91ce105 ---

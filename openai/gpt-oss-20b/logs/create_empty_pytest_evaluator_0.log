@@ -1,0 +1,7 @@
+{
+  "is_approved": true,
+  "failed_criteria": [],
+  "reasoning": "The Generator made exactly one change: adding the `test_main()` function returning 0, placed immediately above the `if __name__ == \"__main__\":` block in `openai/gpt-oss-20b/model/graph_0/main.py`. The diff matches the requested template precisely, no other files were touched, and no existing code was altered."
+}
+
+--- Time taken: 8.7s ---

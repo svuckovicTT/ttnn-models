@@ -1,0 +1,119 @@
+diff --git a/openai/gpt-oss-20b/model/graph_0/main.py b/openai/gpt-oss-20b/model/graph_0/main.py
+index a048241..e2fcd36 100644
+--- a/openai/gpt-oss-20b/model/graph_0/main.py
++++ b/openai/gpt-oss-20b/model/graph_0/main.py
+@@ -1,5 +1,6 @@
+ import ttnn
+ import utils
++from utils import calculate_pcc
+ import ttir_cpu
+ import torch
+ 
+diff --git a/openai/gpt-oss-20b/model/graph_0/model_pt.py b/openai/gpt-oss-20b/model/graph_0/model_pt.py
+new file mode 100644
+index 0000000..3fae87d
+--- /dev/null
++++ b/openai/gpt-oss-20b/model/graph_0/model_pt.py
+@@ -0,0 +1,66 @@
++# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
++#
++# SPDX-License-Identifier: Apache-2.0
++import os
++
++import torch
++from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
++from transformers.cache_utils import StaticCache
++from transformers.utils.quantization_config import Mxfp4Config
++
++MODEL_ID = "openai/gpt-oss-20b"
++DATA_FORMAT = torch.bfloat16
++BATCH_SIZE = int(os.environ.get("BATCH", "1"))
++INPUT_SEQUENCE_LENGTH = int(os.environ.get("ISL", "128"))
++REDUCED_LAYERS = int(os.environ.get("REDUCED_LAYERS", "2"))
++DEFAULT_INPUT_PROMPT = "Here is an exaustive list of the best practices for writing clean code:"
++
++
++def _reduced_config():
++    config = AutoConfig.from_pretrained(MODEL_ID, trust_remote_code=True)
++    config.num_hidden_layers = REDUCED_LAYERS
++    return config
++
++
++def load_pytorch_model():
++    config = _reduced_config()
++    quantization_config = Mxfp4Config(dequantize=True)
++    model = AutoModelForCausalLM.from_pretrained(
++        MODEL_ID, config=config, quantization_config=quantization_config,
++        low_cpu_mem_usage=True, trust_remote_code=True, attn_implementation="eager",
++        torch_dtype=DATA_FORMAT,
++    )
++    if hasattr(model.config, "layer_types"):
++        model.config.layer_types = ["full_attention"] * len(model.config.layer_types)
++    model.eval()
++    return model
++
++
++def load_input():
++    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
++    tokenizer.pad_token = tokenizer.eos_token
++    tokenized = tokenizer([DEFAULT_INPUT_PROMPT] * BATCH_SIZE, return_tensors="pt",
++                          max_length=INPUT_SEQUENCE_LENGTH, truncation=True)
++    input_ids = tokenized["input_ids"]
++    config = _reduced_config()
++    head_dim = getattr(config, "head_dim", None) or (config.hidden_size // config.num_attention_heads)
++    num_kv = getattr(config, "num_key_value_heads", config.num_attention_heads)
++    pkv = StaticCache(config=config, max_batch_size=BATCH_SIZE, max_cache_len=INPUT_SEQUENCE_LENGTH,
++                      device="cpu", dtype=DATA_FORMAT)
++    pkv.early_initialization(batch_size=BATCH_SIZE, num_heads=num_kv, head_dim=head_dim,
++                             dtype=DATA_FORMAT, device="cpu")
++    return {"input_ids": input_ids, "past_key_values": pkv,
++            "cache_position": torch.arange(0, input_ids.shape[1]), "use_cache": True}
++
++
++def run_pytorch_model():
++    model = load_pytorch_model()
++    with torch.no_grad():
++        out = model(**load_input())
++    o = out.logits[:, -1]
++    print("PT_OUT_SHAPE", tuple(o.shape))
++    return o
++
++
++if __name__ == "__main__":
++    run_pytorch_model()
+diff --git a/openai/gpt-oss-20b/model/graph_0/utils.py b/openai/gpt-oss-20b/model/graph_0/utils.py
+index f28a7f2..de71465 100644
+--- a/openai/gpt-oss-20b/model/graph_0/utils.py
++++ b/openai/gpt-oss-20b/model/graph_0/utils.py
+@@ -1,6 +1,7 @@
+ # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+ #
+ # SPDX-License-Identifier: Apache-2.0
++import torch
+ import ttnn
+ import math
+ 
+@@ -159,3 +160,23 @@ def create_global_semaphore(input_tensor):
+     mesh_device = input_tensor.device()
+     shard_spec = input_tensor.memory_config().shard_spec
+     return ttnn.create_global_semaphore(mesh_device, shard_spec.grid, 0)
++
++
++def calculate_pcc(x, y):
++    # This function calculates the PCC between two torch tensors
++
++    # Assert both are torch tensors
++    assert isinstance(x, torch.Tensor), "x must be a torch tensor"
++    assert isinstance(y, torch.Tensor), "y must be a torch tensor"
++
++    if x.shape != y.shape:
++        raise ValueError(
++            f"Shapes of x and y must be the same, but got {x.shape} and {y.shape}"
++        )
++
++    # Calculate PCC
++    x_flat, y_flat = x.flatten(), y.flatten()
++    vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
++    denom = vx.norm() * vy.norm()
++
++    return float("nan") if denom == 0 else ((vx @ vy) / denom).item()
