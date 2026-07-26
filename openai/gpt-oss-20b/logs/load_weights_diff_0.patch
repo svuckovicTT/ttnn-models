@@ -412,18 +412,79 @@ index 7dc9049..b1c1c14 100644
      load_weights_for__main_0 = load_weights_for__main()
 diff --git a/openai/gpt-oss-20b/model/graph_0/params.py b/openai/gpt-oss-20b/model/graph_0/params.py
 new file mode 100644
-index 0000000..97394a4
+index 0000000..183df84
 --- /dev/null
 +++ b/openai/gpt-oss-20b/model/graph_0/params.py
-@@ -0,0 +1,477 @@
+@@ -0,0 +1,495 @@
 +# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 +#
 +# SPDX-License-Identifier: Apache-2.0
 +import ttnn
++import torch
 +import utils
 +
 +
 +_main_weights = {}
++
++ALL_WEIGHTS = [
++    "model.layers.0.self_attn.v_proj.bias",
++    "model.layers.0.self_attn.v_proj.parametrizations.weight.original",
++    "model.layers.0.input_layernorm.parametrizations.weight.original",
++    "model.embed_tokens.parametrizations.weight.original",
++    "model.rotary_emb.inv_freq",
++    "model.layers.0.self_attn.k_proj.bias",
++    "model.layers.0.self_attn.k_proj.parametrizations.weight.original",
++    "model.layers.1.self_attn.v_proj.bias",
++    "model.layers.1.self_attn.v_proj.parametrizations.weight.original",
++    "model.layers.1.input_layernorm.parametrizations.weight.original",
++    "model.layers.0.mlp.router.bias",
++    "model.layers.0.mlp.router.parametrizations.weight.original",
++    "model.layers.0.post_attention_layernorm.parametrizations.weight.original",
++    "model.layers.0.self_attn.o_proj.bias",
++    "model.layers.0.self_attn.o_proj.parametrizations.weight.original",
++    "model.layers.0.self_attn.sinks",
++    "model.layers.0.self_attn.q_proj.bias",
++    "model.layers.0.self_attn.q_proj.parametrizations.weight.original",
++    "model.layers.0.mlp.experts.down_proj_bias",
++    "model.layers.0.mlp.experts.down_proj",
++    "model.layers.0.mlp.experts.gate_up_proj_bias",
++    "model.layers.0.mlp.experts.gate_up_proj",
++    "model.layers.1.self_attn.k_proj.bias",
++    "model.layers.1.self_attn.k_proj.parametrizations.weight.original",
++    "lm_head.parametrizations.weight.original",
++    "model.norm.parametrizations.weight.original",
++    "model.layers.1.mlp.router.bias",
++    "model.layers.1.mlp.router.parametrizations.weight.original",
++    "model.layers.1.post_attention_layernorm.parametrizations.weight.original",
++    "model.layers.1.self_attn.o_proj.bias",
++    "model.layers.1.self_attn.o_proj.parametrizations.weight.original",
++    "model.layers.1.self_attn.sinks",
++    "model.layers.1.self_attn.q_proj.bias",
++    "model.layers.1.self_attn.q_proj.parametrizations.weight.original",
++    "model.layers.1.mlp.experts.down_proj_bias",
++    "model.layers.1.mlp.experts.down_proj",
++    "model.layers.1.mlp.experts.gate_up_proj_bias",
++    "model.layers.1.mlp.experts.gate_up_proj",
++]
++
++HOST_WEIGHTS = {
++    "model.layers.0.self_attn.v_proj.bias",
++    "model.embed_tokens.parametrizations.weight.original",
++    "model.rotary_emb.inv_freq",
++    "model.layers.0.self_attn.k_proj.bias",
++    "model.layers.1.self_attn.v_proj.bias",
++    "model.layers.0.mlp.router.bias",
++    "model.layers.0.self_attn.o_proj.bias",
++    "model.layers.0.self_attn.sinks",
++    "model.layers.0.self_attn.q_proj.bias",
++    "model.layers.1.self_attn.k_proj.bias",
++    "model.layers.1.mlp.router.bias",
++    "model.layers.1.self_attn.o_proj.bias",
++    "model.layers.1.self_attn.sinks",
++    "model.layers.1.self_attn.q_proj.bias",
++}
++
++DEVICE_WEIGHTS = set(ALL_WEIGHTS) - HOST_WEIGHTS
 +
 +
 +def load_weights_for__main():
@@ -816,57 +877,11 @@ index 0000000..97394a4
 +    return _main_weights
 +
 +
-+HOST_WEIGHTS = {
-+    "model.layers.0.self_attn.v_proj.bias",
-+    "model.layers.0.self_attn.k_proj.bias",
-+    "model.layers.0.self_attn.q_proj.bias",
-+    "model.layers.0.self_attn.o_proj.bias",
-+    "model.layers.0.self_attn.sinks",
-+    "model.layers.0.mlp.router.bias",
-+    "model.layers.1.self_attn.v_proj.bias",
-+    "model.layers.1.self_attn.k_proj.bias",
-+    "model.layers.1.self_attn.q_proj.bias",
-+    "model.layers.1.self_attn.o_proj.bias",
-+    "model.layers.1.self_attn.sinks",
-+    "model.layers.1.mlp.router.bias",
-+    "model.embed_tokens.parametrizations.weight.original",
-+    "model.rotary_emb.inv_freq",
-+}
-+
-+DEVICE_WEIGHTS = {
-+    "model.layers.0.self_attn.v_proj.parametrizations.weight.original",
-+    "model.layers.0.self_attn.k_proj.parametrizations.weight.original",
-+    "model.layers.0.self_attn.q_proj.parametrizations.weight.original",
-+    "model.layers.0.self_attn.o_proj.parametrizations.weight.original",
-+    "model.layers.0.input_layernorm.parametrizations.weight.original",
-+    "model.layers.0.post_attention_layernorm.parametrizations.weight.original",
-+    "model.layers.0.mlp.router.parametrizations.weight.original",
-+    "model.layers.0.mlp.experts.gate_up_proj",
-+    "model.layers.0.mlp.experts.gate_up_proj_bias",
-+    "model.layers.0.mlp.experts.down_proj",
-+    "model.layers.0.mlp.experts.down_proj_bias",
-+    "model.layers.1.self_attn.v_proj.parametrizations.weight.original",
-+    "model.layers.1.self_attn.k_proj.parametrizations.weight.original",
-+    "model.layers.1.self_attn.q_proj.parametrizations.weight.original",
-+    "model.layers.1.self_attn.o_proj.parametrizations.weight.original",
-+    "model.layers.1.input_layernorm.parametrizations.weight.original",
-+    "model.layers.1.post_attention_layernorm.parametrizations.weight.original",
-+    "model.layers.1.mlp.router.parametrizations.weight.original",
-+    "model.layers.1.mlp.experts.gate_up_proj",
-+    "model.layers.1.mlp.experts.gate_up_proj_bias",
-+    "model.layers.1.mlp.experts.down_proj",
-+    "model.layers.1.mlp.experts.down_proj_bias",
-+    "lm_head.parametrizations.weight.original",
-+    "model.norm.parametrizations.weight.original",
-+}
-+
-+ALL_WEIGHTS = sorted(HOST_WEIGHTS | DEVICE_WEIGHTS)
-+
-+
 +def load_weights_for__main_from_state_dict():
 +    import model_pt
 +
 +    model = model_pt.load_pytorch_model()
++
 +    state_dict = dict(model.state_dict())
 +    for name, buf in model.named_buffers():
 +        if name not in state_dict:
@@ -878,7 +893,10 @@ index 0000000..97394a4
 +
 +    weights = {}
 +    for key in ALL_WEIGHTS:
-+        pt_tensor = state_dict[key]
++        hf_key = key.replace(".parametrizations.weight.original", ".weight")
++        if hf_key not in state_dict and hf_key == "lm_head.weight" and getattr(model.config, "tie_word_embeddings", False):
++            hf_key = "model.embed_tokens.weight"
++        pt_tensor = state_dict[hf_key]
 +        ttnn_tensor = ttnn.from_torch(pt_tensor)
 +
 +        if key in HOST_WEIGHTS:
@@ -895,15 +913,15 @@ index 0000000..97394a4
 +    return weights
 diff --git a/openai/gpt-oss-20b/model/graph_0/verify_weights.py b/openai/gpt-oss-20b/model/graph_0/verify_weights.py
 new file mode 100644
-index 0000000..8a73373
+index 0000000..8a69554
 --- /dev/null
 +++ b/openai/gpt-oss-20b/model/graph_0/verify_weights.py
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,53 @@
 +# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 +#
 +# SPDX-License-Identifier: Apache-2.0
-+import torch
 +import ttnn
++import torch
 +from params import load_weights_for__main, load_weights_for__main_from_state_dict
 +
 +
@@ -918,18 +936,27 @@ index 0000000..8a73373
 +        f"In state_dict but not disk: {sd_keys - disk_keys}."
 +    )
 +
++    def _shards(t):
++        if t.device() is not None:
++            t = ttnn.from_device(t)
++        return [ttnn.to_torch(s) for s in ttnn.get_device_tensors(t)]
++
++    def _logical(shards, ref_shape=None):
++        if len(shards) == 1:
++            return shards[0]
++        if all(torch.equal(shards[0], s) for s in shards[1:]):
++            return shards[0]
++        if ref_shape is not None:
++            for d in range(shards[0].dim()):
++                if shards[0].shape[d] * len(shards) == ref_shape[d]:
++                    return torch.cat(shards, dim=d)
++        return torch.cat(shards, dim=0)
++
 +    mismatches = []
 +    for key in sorted(disk_weights.keys()):
-+        t1 = disk_weights[key]
-+        t2 = sd_weights[key]
-+
-+        if t1.device() is not None:
-+            t1 = ttnn.from_device(t1)
-+        if t2.device() is not None:
-+            t2 = ttnn.from_device(t2)
-+
-+        pt1 = ttnn.to_torch(t1).flatten()
-+        pt2 = ttnn.to_torch(t2).flatten()
++        sd_logical = _logical(_shards(sd_weights[key]))
++        pt2 = sd_logical.flatten()
++        pt1 = _logical(_shards(disk_weights[key]), sd_logical.shape).flatten()
 +
 +        if not torch.equal(pt1, pt2):
 +            max_diff = (pt1 - pt2).abs().max().item()
