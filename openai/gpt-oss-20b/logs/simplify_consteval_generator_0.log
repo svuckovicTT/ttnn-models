@@ -1,0 +1,15 @@
+All files parse correctly. Here's a summary of the changes:
+
+**`consteval.py`** (new file):
+- Deduplicated 33 `main_const_eval_*` and 13 `cpu_hoisted_*` functions into reusable helpers with descriptive names: `transpose_weight_to_bf8`, `qkv_concat_transpose_to_bf8`, `typecast_to_bf8_device`, `qkv_bias_concat`, `sinks_to_device`, `o_proj_bias_reshape`, `expert_bias_reshape`, `router_bias_to_device`, `build_causal_mask`, `build_rotary_emb`, `build_expert_index_offsets`
+- `run_consteval(weights, device)` updates the weights dict in-place with processed tensors using meaningful key names (e.g., `model.layers.0.self_attn.qkv_proj.weight`, `rotary_emb.cos`, `moe_scatter_zeros`, `attn_scale`)
+- Uses a loop over the 2 layers to avoid duplicating per-layer consteval logic
+- The old 3-element list under `main_const_eval_6` is now 3 separate keys: `rotary_emb.cos`, `rotary_emb.sin`, `rotary_emb.freqs`
+
+**`model_ttnn.py`**:
+- Removed all `main_const_eval_*`, `cpu_hoisted_const_eval_*`, and `consteval__main` functions
+- Removed `ttir_cpu` import (no longer needed), added `consteval` import
+- `__init__` now calls `consteval.run_consteval(self.weights, device)` — no more `ce_cache`
+- Forward function references updated from `ce_cache__main["main_const_eval_N"]` to descriptive `weights["..."]` keys
+
+--- Time taken: 259.8s | session: e6e62ccc-ed65-466e-8079-13295be84b9d ---
