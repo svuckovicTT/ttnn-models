@@ -3,68 +3,18 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import ttnn
-import math
 
 
-class DeviceGetter:
-    _instance = None
-    _mesh_shape = None
-    _fabric_config = None
-    l1_small_size = 1 << 15
-
-    def __init__(self):
-        raise RuntimeError("This is Singleton, invoke get_device() instead.")
-
-    def __del__(self):
-        if self._instance is not None:
-            ttnn.close_mesh_device(self._instance)
-            ttnn.set_fabric_config(ttnn.FabricConfig.DISABLED)
-
-    @classmethod
-    def get_device(cls, mesh_shape, fabric_config=None):
-        if cls._instance is None:
-            if (
-                not isinstance(mesh_shape, (list, tuple))
-                or len(mesh_shape) == 0
-                or not all(isinstance(x, int) and x > 0 for x in mesh_shape)
-            ):
-                raise ValueError(
-                    f"mesh_shape must be a non-empty list or tuple of positive integers, got {mesh_shape}"
-                )
-            cls._mesh_shape = mesh_shape
-
-            # If the caller doesn't specify a fabric config, fallback to
-            # FABRIC_1D for multi-device meshes.
-            if fabric_config is None:
-                fabric_config = (
-                    ttnn.FabricConfig.FABRIC_1D
-                    if math.prod(mesh_shape) >= 2
-                    else ttnn.FabricConfig.DISABLED
-                )
-            cls._fabric_config = fabric_config
-
-            ttnn.set_fabric_config(fabric_config)
-            cls._instance = ttnn.open_mesh_device(
-                mesh_shape=ttnn.MeshShape(mesh_shape),
-                l1_small_size=cls.l1_small_size,
-            )
-            print(f"Device: {cls._instance}")
-
-        # Compare requested mesh_shape with _mesh_shape used to initialize the device
-        if tuple(cls._mesh_shape) != tuple(mesh_shape):
-            raise ValueError(
-                f"Device already initialized with mesh_shape={cls._mesh_shape}, but got mesh_shape={mesh_shape}"
-            )
-
-        # Same for fabric_config: if the caller explicitly requests one, it
-        # must match the config the singleton was initialized with.
-        if fabric_config is not None and fabric_config != cls._fabric_config:
-            raise ValueError(
-                f"Device already initialized with fabric_config={cls._fabric_config}, "
-                f"but got fabric_config={fabric_config}"
-            )
-
-        return cls._instance
+def open_device():
+    mesh_shape = (1, 4)
+    fabric_config = ttnn.FabricConfig.FABRIC_1D_RING
+    ttnn.set_fabric_config(fabric_config)
+    device = ttnn.open_mesh_device(
+        mesh_shape=ttnn.MeshShape(mesh_shape),
+        l1_small_size=1 << 15,
+    )
+    print(f"Device: {device}")
+    return device
 
 
 def get_scalar_from_tensor(tensor: ttnn.Tensor) -> int:
@@ -95,22 +45,17 @@ def load_tensor(file_path: str, layout, dtype, device, memory_config) -> ttnn.Te
 # CPU-hoisted segments are barrier-free local compute, so each device's shard is
 # computed independently on the host and the per-shard results are reassembled
 # into a multi-device tensor.
-def execute_cpu_hoisted_function(inputs, function):
+def execute_cpu_hoisted_function(inputs, function, mesh_device):
     """Run a pure-torch CPU-hoisted body shard-by-shard over a mesh.
 
-    inputs:   list of ttnn.Tensor operands (device-resident, possibly sharded).
-    function: pure-torch callable mapping torch tensors -> torch tensor(s).
+    inputs:      list of ttnn.Tensor operands (device-resident, possibly sharded).
+    function:    pure-torch callable mapping torch tensors -> torch tensor(s).
+    mesh_device: the mesh device handle (or None for host-only execution).
     Returns a single ttnn.Tensor, or a tuple of them for multi-output bodies.
     """
 
     def _wrap_outputs(result):
         return result if isinstance(result, (list, tuple)) else (result,)
-
-    # The mesh device comes from the program context (the DeviceGetter
-    # singleton), not from the inputs: CPU-hoisted inputs have already been
-    # brought to host by the device program, so their .device() is None. This
-    # mirrors how the runtime obtains the mesh device from the ProgramContext.
-    mesh_device = DeviceGetter._instance
 
     # No mesh context: run the body once on the host and return host tensor(s).
     if mesh_device is None:

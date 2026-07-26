@@ -8,10 +8,7 @@ import utils
 _main_weights = {}
 
 
-def load_weights_for__main():
-    utils_DeviceGetter_get_device_34 = utils.DeviceGetter.get_device(
-        (1, 4), fabric_config=ttnn.FabricConfig.FABRIC_1D_RING
-    )
+def load_weights_for__main(device):
     global _main_weights
     utils_load_tensor_1 = utils.load_tensor(
         "./tensors/arg0.tensorbin",
@@ -25,7 +22,7 @@ def load_weights_for__main():
         "./tensors/arg1.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -37,7 +34,7 @@ def load_weights_for__main():
         "./tensors/arg2.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -75,7 +72,7 @@ def load_weights_for__main():
         "./tensors/arg7.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -95,7 +92,7 @@ def load_weights_for__main():
         "./tensors/arg9.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -107,7 +104,7 @@ def load_weights_for__main():
         "./tensors/arg10.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -127,7 +124,7 @@ def load_weights_for__main():
         "./tensors/arg12.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -139,7 +136,7 @@ def load_weights_for__main():
         "./tensors/arg13.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -159,7 +156,7 @@ def load_weights_for__main():
         "./tensors/arg15.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -187,7 +184,7 @@ def load_weights_for__main():
         "./tensors/arg18.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -199,7 +196,7 @@ def load_weights_for__main():
         "./tensors/arg19.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -209,7 +206,7 @@ def load_weights_for__main():
         "./tensors/arg20.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -219,7 +216,7 @@ def load_weights_for__main():
         "./tensors/arg21.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -229,7 +226,7 @@ def load_weights_for__main():
         "./tensors/arg22.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -247,7 +244,7 @@ def load_weights_for__main():
         "./tensors/arg24.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -259,7 +256,7 @@ def load_weights_for__main():
         "./tensors/arg25.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -269,7 +266,7 @@ def load_weights_for__main():
         "./tensors/arg26.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -287,7 +284,7 @@ def load_weights_for__main():
         "./tensors/arg28.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -299,7 +296,7 @@ def load_weights_for__main():
         "./tensors/arg29.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -319,7 +316,7 @@ def load_weights_for__main():
         "./tensors/arg31.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -347,7 +344,7 @@ def load_weights_for__main():
         "./tensors/arg34.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -359,7 +356,7 @@ def load_weights_for__main():
         "./tensors/arg35.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -369,7 +366,7 @@ def load_weights_for__main():
         "./tensors/arg36.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -379,7 +376,7 @@ def load_weights_for__main():
         "./tensors/arg37.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
@@ -389,7 +386,7 @@ def load_weights_for__main():
         "./tensors/arg38.tensorbin",
         ttnn.Layout.TILE,
         ttnn.DataType.BFLOAT16,
-        utils_DeviceGetter_get_device_34,
+        device,
         ttnn.MemoryConfig(
             ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
         ),
