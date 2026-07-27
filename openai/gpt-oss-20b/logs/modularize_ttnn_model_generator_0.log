@@ -1,17 +1,19 @@
-Good — `main.py` imports `ModelTTNN` from `model_ttnn`, which is still the top-level class.
+`main.py` doesn't need any changes — it already imports `ModelTTNN` and calls it correctly with `model(load_activations_for__main_0)` and `model([ttnn_input])`.
 
 Here's a summary of the modularization:
 
-**Module hierarchy** (mirroring the PyTorch `GptOssForCausalLM`):
+**File structure** (`model_ttnn.py`, 1282 lines):
+- `LightweightModule` — base class with `__call__` → `forward`
+- `DRAM_MC`, `WORMHOLE_CFG` — extracted constants
+- **`ModelTTNN`** (at top) — main model class
+  - `__init__`: loads weights, runs consteval, creates 2 `GptOssDecoderLayer` instances
+  - `forward`: embedding → layer 0 → layer 1 → final RMS norm + lm_head → argmax → 79-element return list
+- **`GptOssAttention`** — QKV linear, rotary embedding, GQA repeat, attention, o_proj, all_reduce
+  - Returns 10-tuple: `(attn_output_2d, v_heads, k_after_rotary, q_after_rotary, k_repeated, v_repeated, attn_scores_slice, attn_output_permuted, softmax_result, concat_with_sinks)`
+- **`GptOssMLP`** — expert forward (32x concat, gate/up/SiLU/down), router (topk), MoE dispatch (scatter/weighted sum)
+  - Returns 10-tuple: `(mlp_output, topk_dim1, topk_neg1, moe_weights, expert_concat, gate_up_matmul, sigmoid, silu, down_proj_matmul, moe_softmax)`
+- **`GptOssDecoderLayer`** — pre-attn RMS norm → attention → residual add → post-attn RMS norm → MLP → residual add
+  - Handles layer 0 vs layer 1 residual format difference via `residual_input_flat` parameter
+  - Returns 10-tuple with layer output, post-attn hidden, norm weights/intermediates, and sub-module intermediate tuples
 
-- **`ModelTTNN`** — top-level model, contains embedding + 2 decoder layers + final norm + lm_head
-  - **`GptOssDecoderLayer`** (×2) — one transformer layer with self-attention + MoE MLP
-    - **`GptOssRMSNorm`** — input_layernorm and post_attention_layernorm
-    - **`GptOssAttention`** — QKV projection, rotary embedding, scaled dot-product attention with sinks, output projection + all_reduce
-    - **`GptOssMLP`** — router (top-k), dense experts (gate_up_proj + SiLU gating + down_proj), MoE weighting via scatter
-  - **`GptOssRMSNorm`** — final norm
-  - **`GptOssLMHead`** — output projection to vocabulary
-
-All classes extend `LightweightModule` and implement `__init__`/`forward`. The `ModelTTNN.__init__` instantiates all submodules. The flat forward is now organized into module calls, with intermediate results threaded through return dicts to preserve the original return list exactly.
-
---- Time taken: 204.7s | session: 1a666bf8-38dc-428e-9e20-975670cbfb0e ---
+--- Time taken: 1287.9s | session: 2f4574f0-333d-445e-af52-cfae6eae8794 ---
