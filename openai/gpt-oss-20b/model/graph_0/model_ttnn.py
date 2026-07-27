@@ -313,7 +313,6 @@ class ModelTTNN(LightweightModule):
             None,
             memory_config=DRAM_MC,
         )
-        ttnn.deallocate(primals_39, False)
 
         # ---- Return list ----
         return [
