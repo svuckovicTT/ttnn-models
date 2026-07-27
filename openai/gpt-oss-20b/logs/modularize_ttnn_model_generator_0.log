@@ -1,0 +1,17 @@
+Good — `main.py` imports `ModelTTNN` from `model_ttnn`, which is still the top-level class.
+
+Here's a summary of the modularization:
+
+**Module hierarchy** (mirroring the PyTorch `GptOssForCausalLM`):
+
+- **`ModelTTNN`** — top-level model, contains embedding + 2 decoder layers + final norm + lm_head
+  - **`GptOssDecoderLayer`** (×2) — one transformer layer with self-attention + MoE MLP
+    - **`GptOssRMSNorm`** — input_layernorm and post_attention_layernorm
+    - **`GptOssAttention`** — QKV projection, rotary embedding, scaled dot-product attention with sinks, output projection + all_reduce
+    - **`GptOssMLP`** — router (top-k), dense experts (gate_up_proj + SiLU gating + down_proj), MoE weighting via scatter
+  - **`GptOssRMSNorm`** — final norm
+  - **`GptOssLMHead`** — output projection to vocabulary
+
+All classes extend `LightweightModule` and implement `__init__`/`forward`. The `ModelTTNN.__init__` instantiates all submodules. The flat forward is now organized into module calls, with intermediate results threaded through return dicts to preserve the original return list exactly.
+
+--- Time taken: 204.7s | session: 1a666bf8-38dc-428e-9e20-975670cbfb0e ---
