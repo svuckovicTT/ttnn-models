@@ -1,0 +1,6 @@
+The changes are:
+- Added `import time` at the top
+- After the PCC assertion, added a perf logging loop that runs the model 3 times, using `time.perf_counter()` for timing and `ttnn.synchronize_device(device)` after each run to ensure accurate measurements
+- Logs TPS (tokens per second) since this is an LLM model, with time at 4 decimal places and TPS at 2 decimal places
+
+--- Time taken: 30.6s | session: 8e7535ad-57bf-43c3-b92e-c20383daf4df ---
