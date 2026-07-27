@@ -1,0 +1,16 @@
+Both files parse correctly. Here's a summary of the changes:
+
+**`model_ttnn.py`**: Removed `ttnn.deallocate(primals_39, False)` (line 316) — the input tensor must persist across trace replays.
+
+**`main.py`**: Replaced the test_main perf section with the metal trace approach:
+
+1. **Allocate persistent DRAM tensor** using `ttnn.allocate_tensor_on_device` with the input's shape/dtype/layout
+2. **Run 0 (compile)**: Copy host→device, run model, synchronize — fills program cache
+3. **PCC check** on first run output
+4. **Run 1 (warm)**: Second inference with warm program cache
+5. **Trace capture**: `begin_trace_capture` → model forward → `end_trace_capture`, keeping `output_tensor` reference
+6. **Runs 2-4 (trace)**: 3 trace executions using `ttnn.execute_trace` with `blocking=False`, reading output via `output_tensor[4].cpu(blocking=False)`
+
+All 5 runs are timed with `time.perf_counter()` and log elapsed time (4 decimal places) + TPS (2 decimal places).
+
+--- Time taken: 72.6s | session: 27c310e5-db0a-4bb3-87e4-96f38a71e5ff ---

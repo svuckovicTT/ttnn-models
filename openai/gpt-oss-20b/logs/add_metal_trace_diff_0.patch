@@ -1,0 +1,103 @@
+diff --git a/openai/gpt-oss-20b/model/graph_0/main.py b/openai/gpt-oss-20b/model/graph_0/main.py
+index 0b5d108..2d056b7 100644
+--- a/openai/gpt-oss-20b/model/graph_0/main.py
++++ b/openai/gpt-oss-20b/model/graph_0/main.py
+@@ -45,20 +45,33 @@ def test_main():
+     input_ids_pt = pt_input["input_ids"]
+     num_tokens = input_ids_pt.numel()
+ 
+-    def make_ttnn_input():
+-        t = ttnn.from_torch(
+-            input_ids_pt, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR
+-        )
+-        return ttnn.to_device(
+-            t,
+-            device,
+-            ttnn.MemoryConfig(
+-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+-            ),
+-        )
+-
+-    outputs = model([make_ttnn_input()])
++    dram_mem_config = ttnn.MemoryConfig(
++        ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
++    )
++
++    host_tensor = ttnn.from_torch(
++        input_ids_pt, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR
++    )
++
++    input_dram_tensor = ttnn.allocate_tensor_on_device(
++        host_tensor.shape,
++        ttnn.DataType.INT32,
++        ttnn.Layout.ROW_MAJOR,
++        device,
++        dram_mem_config,
++    )
+ 
++    # Run 1: compile ops and fill program cache
++    ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
++    start = time.perf_counter()
++    outputs = model([input_dram_tensor])
++    ttnn.synchronize_device(device)
++    end = time.perf_counter()
++    elapsed = end - start
++    tps = num_tokens / elapsed
++    print(f"\nRun 0 (compile): {elapsed:.4f}s, TPS: {tps:.2f}")
++
++    # PCC check on first run
+     ttnn_output = to_host_torch(outputs[4])[:, -1]
+     golden_output = model_pt.run_pytorch_model()
+ 
+@@ -66,16 +79,35 @@ def test_main():
+     print(f"\nPCC: {pcc:.6f}")
+     assert pcc > exact_pcc, f"PCC {pcc} is below expected {exact_pcc}"
+ 
+-    print("\n--- Performance ---")
++    # Run 2: second inference (program cache warm)
++    ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
++    start = time.perf_counter()
++    outputs = model([input_dram_tensor])
++    ttnn.synchronize_device(device)
++    end = time.perf_counter()
++    elapsed = end - start
++    tps = num_tokens / elapsed
++    print(f"Run 1 (warm): {elapsed:.4f}s, TPS: {tps:.2f}")
++
++    # Capture trace
++    ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
++    tid = ttnn.begin_trace_capture(device, cq_id=0)
++    output_tensor = model([input_dram_tensor])
++    ttnn.end_trace_capture(device, tid, cq_id=0)
++    ttnn.synchronize_device(device)
++
++    # Runs 3-5: execute trace
++    print("\n--- Trace Performance ---")
+     for i in range(3):
+-        ttnn_input = make_ttnn_input()
++        ttnn.copy_host_to_device_tensor(host_tensor, input_dram_tensor, cq_id=0)
+         start = time.perf_counter()
+-        outputs = model([ttnn_input])
++        ttnn.execute_trace(device, tid, cq_id=0, blocking=False)
++        host_output = output_tensor[4].cpu(blocking=False)
+         ttnn.synchronize_device(device)
+         end = time.perf_counter()
+         elapsed = end - start
+         tps = num_tokens / elapsed
+-        print(f"Run {i}: {elapsed:.4f}s, TPS: {tps:.2f}")
++        print(f"Run {i + 2} (trace): {elapsed:.4f}s, TPS: {tps:.2f}")
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/openai/gpt-oss-20b/model/graph_0/model_ttnn.py b/openai/gpt-oss-20b/model/graph_0/model_ttnn.py
+index 6ece9ed..bdf12fd 100644
+--- a/openai/gpt-oss-20b/model/graph_0/model_ttnn.py
++++ b/openai/gpt-oss-20b/model/graph_0/model_ttnn.py
+@@ -313,7 +313,6 @@ class ModelTTNN(LightweightModule):
+             None,
+             memory_config=DRAM_MC,
+         )
+-        ttnn.deallocate(primals_39, False)
+ 
+         # ---- Return list ----
+         return [
