@@ -1,0 +1,12 @@
+The modular hierarchy is:
+
+- **`ModelTTNN`** — top-level model (embedding → layers → final norm → lm_head)
+  - **`GptOssDecoderLayer`** — one decoder layer (input_layernorm → self_attn → residual → post_attn_layernorm → mlp → residual)
+    - **`GptOssAttention`** — attention (QKV proj → rotary embed → repeat KV → scaled dot product → concat heads → o_proj → all_reduce)
+    - **`GptOssMLP`** — MoE MLP (experts + router → weighted sum)
+      - **`GptOssTopKRouter`** — top-k router (linear → topk → softmax → scatter)
+      - **`GptOssExperts`** — expert computation (repeat input → gate_up_proj → _apply_gate → down_proj)
+
+Each class extends `LightweightModule`, has `__init__` and `forward`, and the `ModelTTNN.__init__` instantiates the submodules. The main model stays at the top of the file. The return list preserves the exact same 74-element output order as the original.
+
+--- Time taken: 181.5s | session: ea74e6c5-0c5e-4056-ba65-f78de5d2c5bd ---
