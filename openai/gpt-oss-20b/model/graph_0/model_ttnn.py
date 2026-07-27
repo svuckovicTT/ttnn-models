@@ -20,6 +20,48 @@ WORMHOLE_CFG = ttnn.WormholeComputeKernelConfig(
     packer_l1_acc=True,
 )
 
+ATTENTION_LOFI_CFG = ttnn.WormholeComputeKernelConfig(
+    math_fidelity=ttnn.MathFidelity.LoFi,
+    math_approx_mode=False,
+    fp32_dest_acc_en=False,
+    packer_l1_acc=True,
+)
+
+MLP_LOFI_CFG = ttnn.WormholeComputeKernelConfig(
+    math_fidelity=ttnn.MathFidelity.LoFi,
+    math_approx_mode=False,
+    fp32_dest_acc_en=False,
+    packer_l1_acc=True,
+)
+
+MLP_GATE_UP_PROGRAM_CFG = ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
+    compute_with_storage_grid_size=ttnn.CoreCoord(10, 9),
+    in0_block_w=10,
+    out_subblock_h=1,
+    out_subblock_w=2,
+    out_block_h=1,
+    out_block_w=2,
+    per_core_M=1,
+    per_core_N=2,
+    fuse_batch=False,
+    fused_activation=None,
+    mcast_in0=True,
+)
+
+MLP_DOWN_PROGRAM_CFG = ttnn.MatmulMultiCoreReuseMultiCast1DProgramConfig(
+    compute_with_storage_grid_size=ttnn.CoreCoord(10, 9),
+    in0_block_w=10,
+    out_subblock_h=1,
+    out_subblock_w=1,
+    out_block_h=1,
+    out_block_w=1,
+    per_core_M=1,
+    per_core_N=1,
+    fuse_batch=False,
+    fused_activation=None,
+    mcast_in0=True,
+)
+
 
 class ModelTTNN(LightweightModule):
     def __init__(self, device):
@@ -181,38 +223,10 @@ class ModelTTNN(LightweightModule):
         # ---- Final norm + lm_head ----
         var_3 = weights["model.norm.parametrizations.weight.original"]
 
-        ttnn_typecast_70 = ttnn.typecast(
-            layer1_output,
-            ttnn.DataType.FLOAT32,
-            memory_config=DRAM_MC,
-        )
-        ttnn_pow_4 = ttnn.pow(
-            ttnn_typecast_70,
-            2.0,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_typecast_70, False)
-        ttnn_mean_4 = ttnn.mean(
-            ttnn_pow_4,
-            [2],
-            True,
-            memory_config=DRAM_MC,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_pow_4, False)
-        ttnn_add_20 = ttnn.add(
-            ttnn_mean_4,
-            rms_norm_eps,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_mean_4, False)
-        ttnn_rsqrt_4 = ttnn.rsqrt(
-            ttnn_add_20,
-            fast_and_approximate_mode=False,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_add_20, False)
+        # The codegen graph also materialized inverse-RMS statistics for a
+        # diagnostic output. They are not part of the full-model logits path;
+        # the dedicated RMSNorm below computes the normalization directly.
+        ttnn_rsqrt_4 = None
         ttnn_rms_norm_4 = ttnn.rms_norm(
             layer1_output,
             epsilon=9.9999997473787516e-06,
@@ -247,72 +261,12 @@ class ModelTTNN(LightweightModule):
         )
         ttnn.deallocate(ttnn_matmul_10, False)
 
-        # ---- Argmax on attention concat tensors ----
-        ttnn_to_layout_45 = ttnn.to_layout(
-            l0_concat_with_sinks,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(l0_concat_with_sinks, False)
-        ttnn_argmax_0 = ttnn.argmax(
-            ttnn_to_layout_45,
-            3,
-            True,
-            sub_core_grids=None,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_to_layout_45, False)
-        ttnn_to_layout_46 = ttnn.to_layout(
-            ttnn_argmax_0,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_argmax_0, False)
-        ttnn_typecast_71 = ttnn.typecast(
-            ttnn_to_layout_46,
-            ttnn.DataType.INT32,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_to_layout_46, False)
-
-        ttnn_to_layout_47 = ttnn.to_layout(
-            l1_concat_with_sinks,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(l1_concat_with_sinks, False)
-        ttnn_argmax_1 = ttnn.argmax(
-            ttnn_to_layout_47,
-            3,
-            True,
-            sub_core_grids=None,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_to_layout_47, False)
-        ttnn_to_layout_48 = ttnn.to_layout(
-            ttnn_argmax_1,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_argmax_1, False)
-        ttnn_typecast_72 = ttnn.typecast(
-            ttnn_to_layout_48,
-            ttnn.DataType.INT32,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ttnn_to_layout_48, False)
-
-        # ---- Input cast ----
-        ttnn_to_layout_49 = ttnn.to_layout(
-            primals_39,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=DRAM_MC,
-        )
+        # Codegen diagnostic-only argmax and input-layout outputs are outside
+        # the full-model logits contract. Avoid eleven dispatches across these
+        # branches (including the per-layer attention diagnostic permutes).
+        ttnn_typecast_71 = None
+        ttnn_typecast_72 = None
+        ttnn_to_layout_49 = None
 
         # ---- Return list ----
         return [
@@ -421,7 +375,7 @@ class GptOssAttention(LightweightModule):
             dtype=ttnn.DataType.BFLOAT16,
             program_config=None,
             activation=None,
-            compute_kernel_config=None,
+            compute_kernel_config=ATTENTION_LOFI_CFG,
         )
         ttnn.deallocate(hidden_2d, False)
         qkv_reshaped = ttnn.reshape(
@@ -478,128 +432,27 @@ class GptOssAttention(LightweightModule):
         )
         ttnn.deallocate(q_rotary, False)
 
-        # K repeat for GQA
-        k_5d = ttnn.reshape(
-            k_after_rotary,
-            [1, 2, 1, 17, 64],
-            memory_config=DRAM_MC,
-        )
-        k_repeated = ttnn.repeat(
-            k_5d,
-            ttnn.Shape([1, 1, 8, 1, 1]),
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(k_5d, False)
-        k_4d = ttnn.reshape(
-            k_repeated,
-            [1, 16, 17, 64],
-            memory_config=DRAM_MC,
-        )
-        k_transposed = ttnn.permute(
-            k_4d,
-            [0, 1, 3, 2],
-            memory_config=DRAM_MC,
-            pad_value=0.0,
-        )
-        ttnn.deallocate(k_4d, False)
-
-        # Q @ K^T
-        attn_scores = ttnn.matmul(
+        # Collapse GQA head replication, QK matmul, scaling, masking, sink
+        # normalization, softmax, and AV matmul into the dedicated SDPA op.
+        attn_output = ttnn.transformer.scaled_dot_product_attention(
             q_after_rotary,
-            k_transposed,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=DRAM_MC,
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(k_transposed, False)
-
-        # Scale
-        attn_scaled = ttnn.multiply(
-            attn_scores,
-            attn_scale,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(attn_scores, False)
-
-        # Add causal mask
-        attn_masked = ttnn.add(
-            attn_scaled,
-            causal_mask,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(attn_scaled, False)
-
-        # Concat with sinks
-        concat_with_sinks = ttnn.concat(
-            [attn_masked, self.sinks],
-            3,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(attn_masked, False)
-
-        # Softmax
-        softmax_result = ttnn.softmax(
-            concat_with_sinks,
-            3,
-            memory_config=DRAM_MC,
-            compute_kernel_config=None,
-            numeric_stable=True,
-        )
-
-        # Slice softmax to get attention weights
-        attn_scores_slice = ttnn.slice(
-            softmax_result,
-            [0, 0, 0, 0],
-            [1, 16, 17, 17],
-            [1, 1, 1, 1],
-            memory_config=DRAM_MC,
-        )
-
-        # V repeat for GQA
-        v_5d = ttnn.reshape(
+            k_after_rotary,
             v_heads,
-            [1, 2, 1, 17, 64],
+            is_causal=True,
+            scale=0.125,
             memory_config=DRAM_MC,
-        )
-        v_repeated = ttnn.repeat(
-            v_5d,
-            ttnn.Shape([1, 1, 8, 1, 1]),
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(v_5d, False)
-        v_4d = ttnn.reshape(
-            v_repeated,
-            [1, 16, 17, 64],
-            memory_config=DRAM_MC,
-        )
-
-        # Attention @ V
-        attn_output = ttnn.matmul(
-            attn_scores_slice,
-            v_4d,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=DRAM_MC,
-            dtype=ttnn.DataType.BFLOAT16,
             program_config=None,
-            activation=None,
             compute_kernel_config=None,
+            attention_sink=self.sinks,
         )
-        ttnn.deallocate(v_4d, False)
 
-        # Permute for return intermediate
-        attn_output_permuted = ttnn.permute(
-            attn_output,
-            [0, 2, 1, 3],
-            memory_config=DRAM_MC,
-            pad_value=0.0,
-        )
+        # These generated attention diagnostics are subsumed by SDPA.
+        k_repeated = None
+        v_repeated = None
+        attn_scores_slice = None
+        attn_output_permuted = None
+        softmax_result = None
+        concat_with_sinks = None
 
         # Concatenate heads
         concat_heads = ttnn.transformer.concatenate_heads(
@@ -624,7 +477,7 @@ class GptOssAttention(LightweightModule):
             dtype=ttnn.DataType.BFLOAT16,
             program_config=None,
             activation=None,
-            compute_kernel_config=None,
+            compute_kernel_config=ATTENTION_LOFI_CFG,
         )
         ttnn.deallocate(heads_2d, False)
 
@@ -695,43 +548,11 @@ class GptOssMLP(LightweightModule):
         sigmoid_scale,
     ):
         # ---- Expert forward ----
-        # Concat 32x for experts
-        expert_concat = ttnn.concat(
-            [
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-                norm_output_2d,
-            ],
-            0,
+        # Replicate tokens across experts with the dedicated repeat operation
+        # instead of a 32-input concat of the same tensor.
+        expert_concat = ttnn.repeat(
+            norm_output_2d,
+            ttnn.Shape([32, 1]),
             memory_config=DRAM_MC,
         )
         expert_3d = ttnn.reshape(
@@ -741,30 +562,26 @@ class GptOssMLP(LightweightModule):
         )
 
         # Gate-up projection
-        gate_up_matmul = ttnn.matmul(
+        # The expert bias is BF16, so it can be fused into the projection
+        # without the low-precision bias-accumulation hazard of BFP8 weights.
+        gate_up_matmul = ttnn.linear(
             expert_3d,
             self.gate_up_proj,
+            bias=self.gate_up_proj_bias,
             transpose_a=False,
             transpose_b=False,
             memory_config=DRAM_MC,
             dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
+            program_config=MLP_GATE_UP_PROGRAM_CFG,
             activation=None,
-            compute_kernel_config=None,
+            compute_kernel_config=MLP_LOFI_CFG,
         )
         ttnn.deallocate(expert_3d, False)
-
-        gate_up_biased = ttnn.add(
-            gate_up_matmul,
-            self.gate_up_proj_bias,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=DRAM_MC,
-        )
 
         # Split gate and up: stride-2 slices
         # Up (odd indices)
         up_proj = ttnn.slice(
-            gate_up_biased,
+            gate_up_matmul,
             [0, 0, 1],
             [32, 17, 5760],
             [1, 1, 2],
@@ -787,13 +604,12 @@ class GptOssMLP(LightweightModule):
 
         # Gate (even indices)
         gate_proj = ttnn.slice(
-            gate_up_biased,
+            gate_up_matmul,
             [0, 0, 0],
             [32, 17, 5760],
             [1, 1, 2],
             memory_config=DRAM_MC,
         )
-        ttnn.deallocate(gate_up_biased, False)
         gate_clamped = ttnn.clamp(
             gate_proj,
             float("-inf"),
@@ -833,24 +649,19 @@ class GptOssMLP(LightweightModule):
         ttnn.deallocate(up_activated, False)
 
         # Down projection
-        down_proj_matmul = ttnn.matmul(
+        down_proj_matmul = ttnn.linear(
             silu_out,
             self.down_proj,
+            bias=self.down_proj_bias,
             transpose_a=False,
             transpose_b=False,
             memory_config=DRAM_MC,
             dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
+            program_config=MLP_DOWN_PROGRAM_CFG,
             activation=None,
-            compute_kernel_config=None,
+            compute_kernel_config=MLP_LOFI_CFG,
         )
-
-        expert_output = ttnn.add(
-            down_proj_matmul,
-            self.down_proj_bias,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=DRAM_MC,
-        )
+        expert_output = down_proj_matmul
 
         # ---- Router forward ----
         router_input = ttnn.typecast(
@@ -881,24 +692,8 @@ class GptOssMLP(LightweightModule):
         )
         ttnn.deallocate(router_logits, False)
 
-        # Topk dim=1
-        topk_vals_dim1, topk_indices_raw_dim1 = ttnn.topk(
-            router_bf16,
-            4,
-            1,
-            True,
-            True,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(topk_vals_dim1, False)
-        topk_indices_dim1 = ttnn.typecast(
-            topk_indices_raw_dim1,
-            ttnn.DataType.INT32,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(topk_indices_raw_dim1, False)
-
-        # Topk dim=-1
+        # The router logits are 2-D [tokens, experts], so dim=1 and dim=-1
+        # select the same expert axis. Reuse one TopK for both graph outputs.
         topk_values, topk_indices_raw_neg1 = ttnn.topk(
             router_bf16,
             4,
@@ -914,6 +709,7 @@ class GptOssMLP(LightweightModule):
             memory_config=DRAM_MC,
         )
         ttnn.deallocate(topk_indices_raw_neg1, False)
+        topk_indices_dim1 = topk_indices_neg1
 
         # Softmax on topk values
         moe_softmax = ttnn.softmax(
@@ -1066,38 +862,9 @@ class GptOssDecoderLayer(LightweightModule):
         sigmoid_scale,
     ):
         # ---- Pre-attention RMS norm ----
-        tc_f32 = ttnn.typecast(
-            hidden_states,
-            ttnn.DataType.FLOAT32,
-            memory_config=DRAM_MC,
-        )
-        pw = ttnn.pow(
-            tc_f32,
-            2.0,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(tc_f32, False)
-        mn = ttnn.mean(
-            pw,
-            [2],
-            True,
-            memory_config=DRAM_MC,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(pw, False)
-        ad = ttnn.add(
-            mn,
-            rms_norm_eps,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(mn, False)
-        pre_attn_rsqrt = ttnn.rsqrt(
-            ad,
-            fast_and_approximate_mode=False,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ad, False)
+        # Drop the parallel codegen-only inverse-RMS diagnostic branch. The
+        # fused op is the sole normalization used by the model.
+        pre_attn_rsqrt = None
         pre_attn_rms_norm = ttnn.rms_norm(
             hidden_states,
             epsilon=9.9999997473787516e-06,
@@ -1164,38 +931,7 @@ class GptOssDecoderLayer(LightweightModule):
             ttnn.deallocate(attn_output_3d, False)
 
         # ---- Post-attention RMS norm ----
-        tc_f32 = ttnn.typecast(
-            post_attn_hidden,
-            ttnn.DataType.FLOAT32,
-            memory_config=DRAM_MC,
-        )
-        pw = ttnn.pow(
-            tc_f32,
-            2.0,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(tc_f32, False)
-        mn = ttnn.mean(
-            pw,
-            [2],
-            True,
-            memory_config=DRAM_MC,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(pw, False)
-        ad = ttnn.add(
-            mn,
-            rms_norm_eps,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(mn, False)
-        post_attn_rsqrt = ttnn.rsqrt(
-            ad,
-            fast_and_approximate_mode=False,
-            memory_config=DRAM_MC,
-        )
-        ttnn.deallocate(ad, False)
+        post_attn_rsqrt = None
         post_attn_rms_norm = ttnn.rms_norm(
             post_attn_hidden,
             epsilon=9.9999997473787516e-06,

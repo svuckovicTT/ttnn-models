@@ -23,7 +23,7 @@ def _to_device_tile_bf16(tensor, device):
     return tensor
 
 
-def _transpose_to_bf8b(tensor, device):
+def _transpose_to_bf8b(tensor, device, dtype=ttnn.DataType.BFLOAT8_B):
     def _permute_impl(arg_0):
         return ttir_cpu.permute(arg_0, [1, 0])
 
@@ -49,7 +49,7 @@ def _transpose_to_bf8b(tensor, device):
     t = ttnn.from_device(t)
     ttnn.deallocate(prev, False)
     prev = t
-    t = ttnn.typecast(t, ttnn.DataType.BFLOAT8_B, memory_config=None)
+    t = ttnn.typecast(t, dtype, memory_config=None)
     ttnn.deallocate(prev, False)
     prev = t
     t = _to_device(t, device)
@@ -62,6 +62,18 @@ def _typecast_to_bf8b(tensor, device):
     ttnn.deallocate(tensor, False)
     prev = t
     t = ttnn.typecast(t, ttnn.DataType.BFLOAT8_B, memory_config=None)
+    ttnn.deallocate(prev, False)
+    prev = t
+    t = _to_device(t, device)
+    ttnn.deallocate(prev, False)
+    return t
+
+
+def _typecast_to_bf4b(tensor, device):
+    t = ttnn.from_device(tensor)
+    ttnn.deallocate(tensor, False)
+    prev = t
+    t = ttnn.typecast(t, ttnn.DataType.BFLOAT4_B, memory_config=None)
     ttnn.deallocate(prev, False)
     prev = t
     t = _to_device(t, device)
@@ -222,7 +234,12 @@ def _qkv_bias_concat(v_bias, k_bias, q_bias, device):
 def _sinks_broadcast(tensor, device):
     def _reshape_broadcast_impl(arg_0):
         t = ttir_cpu.reshape(arg_0, [1, 16, 1, 1])
-        return ttir_cpu.broadcast(t, [1, 16, 17, 1])
+        # SDPA applies its scale to both QK logits and attention sinks. GPT-OSS
+        # sinks are already in post-scale logit space, so pre-divide by 0.125.
+        inverse_attn_scale = ttir_cpu.full(
+            shape=[1, 1, 1, 1], fill_value=8.0, dtype=torch.float32
+        )
+        return ttir_cpu.multiply(t, inverse_attn_scale)
 
     t = _to_device(tensor, device)
     prev = t
@@ -369,7 +386,7 @@ def run_consteval(weights, device):
             weights[f"{prefix}.mlp.router.bias"], device
         )
 
-        weights[f"{prefix}.mlp.experts.gate_up_proj"] = _typecast_to_bf8b(
+        weights[f"{prefix}.mlp.experts.gate_up_proj"] = _typecast_to_bf4b(
             weights[f"{prefix}.mlp.experts.gate_up_proj"], device
         )
 
