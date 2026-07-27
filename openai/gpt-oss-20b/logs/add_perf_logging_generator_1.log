@@ -1,0 +1,6 @@
+The changes add:
+- `import time` 
+- `num_tokens` computed from `input_ids.numel()` (total token count across batch × sequence length)
+- 3 perf runs after PCC validation, each measuring wall-clock time with `time.perf_counter()`, calling `ttnn.synchronize_device(device)` before fetching end time, and logging time (4 decimal places) and TPS (2 decimal places)
+
+--- Time taken: 36.0s | session: 712bcfe8-fb2c-4251-b018-3f1c2c2f7633 ---
