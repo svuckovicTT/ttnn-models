@@ -28,6 +28,7 @@ def main():
 
 def test_main():
     import model_pt
+    import time
 
     exact_pcc = 0.98
 
@@ -41,18 +42,22 @@ def test_main():
         return ttnn.to_torch(tensor)
 
     pt_input = model_pt.load_input()
-    ttnn_input = ttnn.from_torch(
-        pt_input["input_ids"], dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR
-    )
-    ttnn_input = ttnn.to_device(
-        ttnn_input,
-        device,
-        ttnn.MemoryConfig(
-            ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-        ),
-    )
+    input_ids_pt = pt_input["input_ids"]
+    num_tokens = input_ids_pt.numel()
 
-    outputs = model([ttnn_input])
+    def make_ttnn_input():
+        t = ttnn.from_torch(
+            input_ids_pt, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR
+        )
+        return ttnn.to_device(
+            t,
+            device,
+            ttnn.MemoryConfig(
+                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+            ),
+        )
+
+    outputs = model([make_ttnn_input()])
 
     ttnn_output = to_host_torch(outputs[4])[:, -1]
     golden_output = model_pt.run_pytorch_model()
@@ -60,6 +65,17 @@ def test_main():
     pcc = calculate_pcc(ttnn_output.to(torch.float32), golden_output.to(torch.float32))
     print(f"\nPCC: {pcc:.6f}")
     assert pcc > exact_pcc, f"PCC {pcc} is below expected {exact_pcc}"
+
+    print("\n--- Performance ---")
+    for i in range(3):
+        ttnn_input = make_ttnn_input()
+        start = time.perf_counter()
+        outputs = model([ttnn_input])
+        ttnn.synchronize_device(device)
+        end = time.perf_counter()
+        elapsed = end - start
+        tps = num_tokens / elapsed
+        print(f"Run {i}: {elapsed:.4f}s, TPS: {tps:.2f}")
 
 
 if __name__ == "__main__":
