@@ -1,0 +1,3 @@
+Added perf logging to `test_main`: after the PCC assertion, runs the model 3 more times, calling `ttnn.synchronize_device(device)` after each invocation, measuring elapsed time with `time.perf_counter()`, and printing time (4 decimal places) and TPS (2 decimal places) for each run. Token count is derived dynamically from `pt_input["input_ids"].shape[1]`.
+
+--- Time taken: 49.3s | session: bf697ffa-b372-4722-b8b4-cee4e3230a8d ---
