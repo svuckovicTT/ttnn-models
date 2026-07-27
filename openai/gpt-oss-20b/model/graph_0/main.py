@@ -28,6 +28,7 @@ def main():
 
 def test_main():
     import model_pt
+    import time
 
     exact_pcc = 0.98
 
@@ -41,8 +42,10 @@ def test_main():
         return ttnn.to_torch(tensor)
 
     pt_input = model_pt.load_input()
+    input_ids = pt_input["input_ids"]
+    num_tokens = input_ids.numel()
     ttnn_input = ttnn.from_torch(
-        pt_input["input_ids"], dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR
+        input_ids, dtype=ttnn.DataType.INT32, layout=ttnn.Layout.ROW_MAJOR
     )
     ttnn_input = ttnn.to_device(
         ttnn_input,
@@ -60,6 +63,16 @@ def test_main():
     pcc = calculate_pcc(ttnn_output.to(torch.float32), golden_output.to(torch.float32))
     print(f"\nPCC: {pcc:.6f}")
     assert pcc > exact_pcc, f"PCC {pcc} is below expected {exact_pcc}"
+
+    print("\n--- Performance Logging ---")
+    for i in range(3):
+        start = time.perf_counter()
+        outputs = model([ttnn_input])
+        ttnn.synchronize_device(device)
+        end = time.perf_counter()
+        elapsed = end - start
+        tps = num_tokens / elapsed
+        print(f"Run {i + 1}: Time={elapsed:.4f}s, TPS={tps:.2f}")
 
 
 if __name__ == "__main__":
