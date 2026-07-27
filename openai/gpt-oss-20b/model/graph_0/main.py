@@ -1,3 +1,5 @@
+import time
+
 import ttnn
 import utils
 from utils import calculate_pcc
@@ -60,6 +62,17 @@ def test_main():
     pcc = calculate_pcc(ttnn_output.to(torch.float32), golden_output.to(torch.float32))
     print(f"\nPCC: {pcc:.6f}")
     assert pcc > exact_pcc, f"PCC {pcc} is below expected {exact_pcc}"
+
+    num_tokens = pt_input["input_ids"].shape[1]
+    print(f"\nPerf logging (num_tokens={num_tokens}):")
+    for i in range(3):
+        start = time.perf_counter()
+        outputs = model([ttnn_input])
+        ttnn.synchronize_device(device)
+        end = time.perf_counter()
+        elapsed = end - start
+        tps = num_tokens / elapsed
+        print(f"  Run {i}: {elapsed:.4f}s, TPS: {tps:.2f}")
 
 
 if __name__ == "__main__":
