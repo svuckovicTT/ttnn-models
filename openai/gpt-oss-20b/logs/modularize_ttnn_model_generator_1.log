@@ -1,0 +1,11 @@
+All classes have both `__init__` and `forward` methods, `ModelTTNN` is at the top (after `LightweightModule` base), and all modules extend `LightweightModule`. The modular structure matches the PyTorch model:
+
+- **`ModelTTNN`** — top-level model (embedding, decoder layers, final norm, lm_head)
+  - **`GptOssDecoderLayer`** — transformer decoder layer (per the `GptOssDecoderLayer` in HF)
+    - **`GptOssRMSNorm`** — RMS normalization (`input_layernorm`, `post_attention_layernorm`, `model.norm`)
+    - **`GptOssAttention`** — self-attention (QKV projection, rotary embedding, attention, o_proj, all_reduce)
+    - **`GptOssMLP`** — MoE MLP block
+      - **`GptOssTopKRouter`** — top-k router (linear → topk → softmax)
+      - **`GptOssExperts`** — dense expert computation (gate_up_proj, SiLU gating, down_proj)
+
+--- Time taken: 342.6s | session: 1344f311-631f-4c6f-96c8-4c30a11308d0 ---
