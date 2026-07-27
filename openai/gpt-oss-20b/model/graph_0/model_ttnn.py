@@ -3,11 +3,21 @@ import torch
 import params
 import consteval
 
+DRAM_MEMORY_CONFIG = ttnn.MemoryConfig(
+    ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
+)
+
+WORMHOLE_COMPUTE_KERNEL_CONFIG = ttnn.WormholeComputeKernelConfig(
+    math_fidelity=ttnn.MathFidelity.HiFi4,
+    math_approx_mode=False,
+    fp32_dest_acc_en=True,
+    packer_l1_acc=True,
+)
+
 
 class LightweightModule:
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
-
 
 
 class ModelTTNN(LightweightModule):
@@ -16,42 +26,23 @@ class ModelTTNN(LightweightModule):
         self.weights = params.load_weights_for__main(device)
         self.weights = consteval.run_consteval(self.weights, device)
 
+        self.layers = []
+        for i in range(2):
+            self.layers.append(GptOssDecoderLayer(device, self.weights, i))
+        self.final_norm = GptOssRMSNorm(device, self.weights, "model.norm")
+        self.lm_head = GptOssLMHead(device, self.weights)
+
     def forward(self, activations):
         device = self.device
         weights = self.weights
-        var_0 = weights["model.layers.0.input_layernorm.parametrizations.weight.original"]
         primals_39 = activations[0]
-        var_1 = weights["model.layers.1.input_layernorm.parametrizations.weight.original"]
-        var_2 = weights[
-            "model.layers.0.post_attention_layernorm.parametrizations.weight.original"
-        ]
-        var_3 = weights["model.norm.parametrizations.weight.original"]
-        var_4 = weights[
-            "model.layers.1.post_attention_layernorm.parametrizations.weight.original"
-        ]
-        var_5 = weights["__consteval__.moe_scatter_zeros"]
-        var_6 = weights["__consteval__.causal_mask"]
-        var_8 = weights["model.rotary_emb.cos"]
-        var_9 = weights["model.rotary_emb.sin"]
-        var_10 = weights["__consteval__.ones_scalar"]
-        var_11 = weights["__consteval__.scatter_index"]
-        var_12 = weights["__consteval__.attn_scale"]
-        var_13 = weights["__consteval__.rms_norm_eps"]
-        var_14 = weights["__consteval__.sigmoid_scale"]
+
         ttnn_typecast_57 = ttnn.typecast(
             primals_39,
             ttnn.DataType.UINT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            memory_config=DRAM_MEMORY_CONFIG,
         )
-        ttnn_reshape_0 = ttnn.reshape(
-            ttnn_typecast_57,
-            [17],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
+        ttnn_reshape_0 = ttnn.reshape(ttnn_typecast_57, [17], memory_config=DRAM_MEMORY_CONFIG)
         ttnn.deallocate(ttnn_typecast_57, False)
         ttnn_embedding_0 = ttnn.embedding(
             ttnn_reshape_0,
@@ -59,1788 +50,73 @@ class ModelTTNN(LightweightModule):
             padding_idx=None,
             layout=ttnn.Layout.TILE,
             dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            memory_config=DRAM_MEMORY_CONFIG,
         )
         ttnn.deallocate(ttnn_reshape_0, False)
-        ttnn_reshape_1 = ttnn.reshape(
-            ttnn_embedding_0,
-            [1, 17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_typecast_58 = ttnn.typecast(
-            ttnn_reshape_1,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_pow_0 = ttnn.pow(
-            ttnn_typecast_58,
-            2.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_58, False)
-        ttnn_mean_0 = ttnn.mean(
-            ttnn_pow_0,
-            [2],
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_pow_0, False)
-        ttnn_add_0 = ttnn.add(
-            ttnn_mean_0,
-            var_13,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_mean_0, False)
-        ttnn_rsqrt_0 = ttnn.rsqrt(
-            ttnn_add_0,
-            fast_and_approximate_mode=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_0, False)
-        ttnn_rms_norm_0 = ttnn.rms_norm(
-            ttnn_reshape_1,
-            epsilon=9.9999997473787516e-06,
-            weight=var_0,
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            program_config=None,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=True,
-            ),
-        )
-        ttnn_reshape_2 = ttnn.reshape(
-            ttnn_rms_norm_0,
-            [17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_linear_0 = ttnn.linear(
-            ttnn_reshape_2,
-            weights["model.layers.0.self_attn.qkv_proj.weight"],
-            bias=weights["model.layers.0.self_attn.qkv_proj.bias"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_2, False)
-        ttnn_reshape_3 = ttnn.reshape(
-            ttnn_linear_0,
-            [1, 17, 1280],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_linear_0, False)
-        v_15, v_16, v_17 = ttnn.transformer.split_query_key_value_and_split_heads(
-            ttnn_reshape_3,
-            None,
-            num_heads=16,
-            num_kv_heads=2,
-            transpose_key=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_3, False)
-        ttnn_experimental_rotary_embedding_0 = ttnn.experimental.rotary_embedding(
-            v_17,
-            var_8,
-            var_9,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(v_17, False)
-        ttnn_slice_12 = ttnn.slice(
-            ttnn_experimental_rotary_embedding_0,
-            [0, 0, 0, 0],
-            [1, 2, 17, 64],
-            [1, 1, 1, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_experimental_rotary_embedding_0, False)
-        ttnn_experimental_rotary_embedding_1 = ttnn.experimental.rotary_embedding(
-            v_15,
-            var_8,
-            var_9,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(v_15, False)
-        ttnn_slice_13 = ttnn.slice(
-            ttnn_experimental_rotary_embedding_1,
-            [0, 0, 0, 0],
-            [1, 16, 17, 64],
-            [1, 1, 1, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_experimental_rotary_embedding_1, False)
-        ttnn_reshape_4 = ttnn.reshape(
-            ttnn_slice_12,
-            [1, 2, 1, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_repeat_0 = ttnn.repeat(
-            ttnn_reshape_4,
-            ttnn.Shape([1, 1, 8, 1, 1]),
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_4, False)
-        ttnn_reshape_5 = ttnn.reshape(
-            ttnn_repeat_0,
-            [1, 16, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_permute_0 = ttnn.permute(
-            ttnn_reshape_5,
-            [0, 1, 3, 2],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            pad_value=0.0,
-        )
-        ttnn.deallocate(ttnn_reshape_5, False)
-        ttnn_matmul_0 = ttnn.matmul(
-            ttnn_slice_13,
-            ttnn_permute_0,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_permute_0, False)
-        ttnn_multiply_0 = ttnn.multiply(
-            ttnn_matmul_0,
-            var_12,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_0, False)
-        ttnn_add_1 = ttnn.add(
-            ttnn_multiply_0,
-            var_6,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_multiply_0, False)
-        ttnn_concat_4 = ttnn.concat(
-            [ttnn_add_1, weights["model.layers.0.self_attn.sinks"]],
-            3,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_1, False)
-        ttnn_softmax_0 = ttnn.softmax(
-            ttnn_concat_4,
-            3,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-            numeric_stable=True,
-        )
-        ttnn_slice_14 = ttnn.slice(
-            ttnn_softmax_0,
-            [0, 0, 0, 0],
-            [1, 16, 17, 17],
-            [1, 1, 1, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_reshape_6 = ttnn.reshape(
-            v_16,
-            [1, 2, 1, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_repeat_1 = ttnn.repeat(
-            ttnn_reshape_6,
-            ttnn.Shape([1, 1, 8, 1, 1]),
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_6, False)
-        ttnn_reshape_7 = ttnn.reshape(
-            ttnn_repeat_1,
-            [1, 16, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_matmul_1 = ttnn.matmul(
-            ttnn_slice_14,
-            ttnn_reshape_7,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_7, False)
-        ttnn_permute_1 = ttnn.permute(
-            ttnn_matmul_1,
-            [0, 2, 1, 3],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            pad_value=0.0,
-        )
-        ttnn_transformer_concatenate_heads_0 = ttnn.transformer.concatenate_heads(
-            ttnn_matmul_1,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_1, False)
-        ttnn_reshape_8 = ttnn.reshape(
-            ttnn_transformer_concatenate_heads_0,
-            [17, 1024],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_transformer_concatenate_heads_0, False)
-        ttnn_matmul_2 = ttnn.matmul(
-            ttnn_reshape_8,
-            weights["model.layers.0.self_attn.o_proj.parametrizations.weight.original"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_8, False)
-        ttnn_reshape_9 = ttnn.reshape(
-            ttnn_matmul_2,
-            [1, 1, 17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_2, False)
-        ttnn_all_reduce_0 = ttnn.all_reduce(
-            input_tensor=ttnn_reshape_9,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            num_links=None,
-            topology=ttnn.Topology.Ring,
-        )
-        ttnn.deallocate(ttnn_reshape_9, False)
-        ttnn_reshape_10 = ttnn.reshape(
-            ttnn_all_reduce_0,
-            [17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_all_reduce_0, False)
-        ttnn_add_2 = ttnn.add(
-            ttnn_reshape_10,
-            weights["model.layers.0.self_attn.o_proj.bias"],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_10, False)
-        ttnn_add_3 = ttnn.add(
-            ttnn_embedding_0,
-            ttnn_add_2,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_2, False)
-        ttnn.deallocate(ttnn_embedding_0, False)
-        ttnn_reshape_11 = ttnn.reshape(
-            ttnn_add_3,
-            [1, 17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_3, False)
-        ttnn_typecast_59 = ttnn.typecast(
-            ttnn_reshape_11,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_pow_1 = ttnn.pow(
-            ttnn_typecast_59,
-            2.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_59, False)
-        ttnn_mean_1 = ttnn.mean(
-            ttnn_pow_1,
-            [2],
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_pow_1, False)
-        ttnn_add_4 = ttnn.add(
-            ttnn_mean_1,
-            var_13,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_mean_1, False)
-        ttnn_rsqrt_1 = ttnn.rsqrt(
-            ttnn_add_4,
-            fast_and_approximate_mode=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_4, False)
-        ttnn_rms_norm_1 = ttnn.rms_norm(
-            ttnn_reshape_11,
-            epsilon=9.9999997473787516e-06,
-            weight=var_2,
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            program_config=None,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=True,
-            ),
-        )
-        ttnn_reshape_12 = ttnn.reshape(
-            ttnn_rms_norm_1,
-            [17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_concat_5 = ttnn.concat(
-            [
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-                ttnn_reshape_12,
-            ],
-            0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_reshape_13 = ttnn.reshape(
-            ttnn_concat_5,
-            [32, 17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_matmul_3 = ttnn.matmul(
-            ttnn_reshape_13,
-            weights["model.layers.0.mlp.experts.gate_up_proj"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_13, False)
-        ttnn_add_5 = ttnn.add(
-            ttnn_matmul_3,
-            weights["model.layers.0.mlp.experts.gate_up_proj_bias"],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_slice_15 = ttnn.slice(
-            ttnn_add_5,
-            [0, 0, 1],
-            [32, 17, 5760],
-            [1, 1, 2],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_clamp_0 = ttnn.clamp(
-            ttnn_slice_15,
-            -7.0,
-            7.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_slice_15, False)
-        ttnn_add_6 = ttnn.add(
-            ttnn_clamp_0,
-            var_10,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_clamp_0, False)
-        ttnn_slice_16 = ttnn.slice(
-            ttnn_add_5,
-            [0, 0, 0],
-            [32, 17, 5760],
-            [1, 1, 2],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_5, False)
-        ttnn_clamp_1 = ttnn.clamp(
-            ttnn_slice_16,
-            float("-inf"),
-            7.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_slice_16, False)
-        ttnn_multiply_1 = ttnn.multiply(
-            ttnn_clamp_1,
-            var_14,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_sigmoid_0 = ttnn.sigmoid(
-            ttnn_multiply_1,
-            vector_mode=4,
-            mode=ttnn.SigmoidMode.Accurate,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_multiply_1, False)
-        ttnn_multiply_2 = ttnn.multiply(
-            ttnn_clamp_1,
-            ttnn_sigmoid_0,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_clamp_1, False)
-        ttnn_multiply_3 = ttnn.multiply(
-            ttnn_add_6,
-            ttnn_multiply_2,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_multiply_2, False)
-        ttnn.deallocate(ttnn_add_6, False)
-        ttnn_matmul_4 = ttnn.matmul(
-            ttnn_multiply_3,
-            weights["model.layers.0.mlp.experts.down_proj"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn_add_7 = ttnn.add(
-            ttnn_matmul_4,
-            weights["model.layers.0.mlp.experts.down_proj_bias"],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_typecast_60 = ttnn.typecast(
-            ttnn_reshape_12,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_12, False)
-        ttnn_linear_1 = ttnn.linear(
-            ttnn_typecast_60,
-            weights["model.layers.0.mlp.router.parametrizations.weight.original"],
-            bias=weights["model.layers.0.mlp.router.bias"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.FLOAT32,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_typecast_60, False)
-        ttnn_typecast_61 = ttnn.typecast(
-            ttnn_linear_1,
-            ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_linear_1, False)
-        v_18, v_19 = ttnn.topk(
-            ttnn_typecast_61,
-            4,
-            1,
-            True,
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(v_18, False)
-        ttnn_typecast_62 = ttnn.typecast(
-            v_19,
-            ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(v_19, False)
-        v_20, v_21 = ttnn.topk(
-            ttnn_typecast_61,
-            4,
-            -1,
-            True,
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_61, False)
-        ttnn_typecast_63 = ttnn.typecast(
-            v_21,
-            ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(v_21, False)
-        ttnn_softmax_1 = ttnn.softmax(
-            v_20,
-            1,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-            numeric_stable=True,
-        )
-        ttnn.deallocate(v_20, False)
-        ttnn_reshape_14 = ttnn.reshape(
-            ttnn_typecast_63,
-            [17, 4, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_add_8 = ttnn.add(
-            var_11,
-            ttnn_reshape_14,
-            dtype=ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_14, False)
-        ttnn_reshape_15 = ttnn.reshape(
-            ttnn_add_8,
-            [68],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_8, False)
-        ttnn_reshape_16 = ttnn.reshape(
-            ttnn_softmax_1,
-            [68],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_to_layout_39 = ttnn.to_layout(
-            ttnn_reshape_15,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_15, False)
-        ttnn_to_layout_40 = ttnn.to_layout(
-            ttnn_reshape_16,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_16, False)
-        ttnn_scatter_0 = ttnn.scatter(
-            input=var_5,
-            dim=0,
-            index=ttnn_to_layout_39,
-            src=ttnn_to_layout_40,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            reduce=None,
-        )
-        ttnn.deallocate(ttnn_to_layout_40, False)
-        ttnn.deallocate(ttnn_to_layout_39, False)
-        ttnn_to_layout_41 = ttnn.to_layout(
-            ttnn_scatter_0,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_scatter_0, False)
-        ttnn_reshape_17 = ttnn.reshape(
-            ttnn_to_layout_41,
-            [17, 32],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_to_layout_41, False)
-        ttnn_permute_2 = ttnn.permute(
-            ttnn_reshape_17,
-            [1, 0],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            pad_value=0.0,
-        )
-        ttnn_reshape_18 = ttnn.reshape(
-            ttnn_permute_2,
-            [32, 17, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_permute_2, False)
-        ttnn_multiply_4 = ttnn.multiply(
-            ttnn_add_7,
-            ttnn_reshape_18,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_18, False)
-        ttnn.deallocate(ttnn_add_7, False)
-        ttnn_sum_0 = ttnn.sum(
-            ttnn_multiply_4,
-            [0],
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_multiply_4, False)
-        ttnn_add_9 = ttnn.add(
-            ttnn_reshape_11,
-            ttnn_sum_0,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_sum_0, False)
-        ttnn_typecast_64 = ttnn.typecast(
-            ttnn_add_9,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_pow_2 = ttnn.pow(
-            ttnn_typecast_64,
-            2.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_64, False)
-        ttnn_mean_2 = ttnn.mean(
-            ttnn_pow_2,
-            [2],
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_pow_2, False)
-        ttnn_add_10 = ttnn.add(
-            ttnn_mean_2,
-            var_13,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_mean_2, False)
-        ttnn_rsqrt_2 = ttnn.rsqrt(
-            ttnn_add_10,
-            fast_and_approximate_mode=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_10, False)
-        ttnn_rms_norm_2 = ttnn.rms_norm(
-            ttnn_add_9,
-            epsilon=9.9999997473787516e-06,
-            weight=var_1,
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            program_config=None,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=True,
-            ),
-        )
-        ttnn_reshape_19 = ttnn.reshape(
-            ttnn_rms_norm_2,
-            [17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_linear_2 = ttnn.linear(
-            ttnn_reshape_19,
-            weights["model.layers.1.self_attn.qkv_proj.weight"],
-            bias=weights["model.layers.1.self_attn.qkv_proj.bias"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_19, False)
-        ttnn_reshape_20 = ttnn.reshape(
-            ttnn_linear_2,
-            [1, 17, 1280],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_linear_2, False)
-        v_22, v_23, v_24 = ttnn.transformer.split_query_key_value_and_split_heads(
-            ttnn_reshape_20,
-            None,
-            num_heads=16,
-            num_kv_heads=2,
-            transpose_key=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_20, False)
-        ttnn_experimental_rotary_embedding_2 = ttnn.experimental.rotary_embedding(
-            v_24,
-            var_8,
-            var_9,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(v_24, False)
-        ttnn_slice_17 = ttnn.slice(
-            ttnn_experimental_rotary_embedding_2,
-            [0, 0, 0, 0],
-            [1, 2, 17, 64],
-            [1, 1, 1, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_experimental_rotary_embedding_2, False)
-        ttnn_experimental_rotary_embedding_3 = ttnn.experimental.rotary_embedding(
-            v_22,
-            var_8,
-            var_9,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(v_22, False)
-        ttnn_slice_18 = ttnn.slice(
-            ttnn_experimental_rotary_embedding_3,
-            [0, 0, 0, 0],
-            [1, 16, 17, 64],
-            [1, 1, 1, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_experimental_rotary_embedding_3, False)
-        ttnn_reshape_21 = ttnn.reshape(
-            ttnn_slice_17,
-            [1, 2, 1, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_repeat_2 = ttnn.repeat(
-            ttnn_reshape_21,
-            ttnn.Shape([1, 1, 8, 1, 1]),
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_21, False)
-        ttnn_reshape_22 = ttnn.reshape(
-            ttnn_repeat_2,
-            [1, 16, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_permute_3 = ttnn.permute(
-            ttnn_reshape_22,
-            [0, 1, 3, 2],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            pad_value=0.0,
-        )
-        ttnn.deallocate(ttnn_reshape_22, False)
-        ttnn_matmul_5 = ttnn.matmul(
-            ttnn_slice_18,
-            ttnn_permute_3,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_permute_3, False)
-        ttnn_multiply_5 = ttnn.multiply(
-            ttnn_matmul_5,
-            var_12,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_5, False)
-        ttnn_add_11 = ttnn.add(
-            ttnn_multiply_5,
-            var_6,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_multiply_5, False)
-        ttnn_concat_6 = ttnn.concat(
-            [ttnn_add_11, weights["model.layers.1.self_attn.sinks"]],
-            3,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_11, False)
-        ttnn_softmax_2 = ttnn.softmax(
-            ttnn_concat_6,
-            3,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-            numeric_stable=True,
-        )
-        ttnn_slice_19 = ttnn.slice(
-            ttnn_softmax_2,
-            [0, 0, 0, 0],
-            [1, 16, 17, 17],
-            [1, 1, 1, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_reshape_23 = ttnn.reshape(
-            v_23,
-            [1, 2, 1, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_repeat_3 = ttnn.repeat(
-            ttnn_reshape_23,
-            ttnn.Shape([1, 1, 8, 1, 1]),
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_23, False)
-        ttnn_reshape_24 = ttnn.reshape(
-            ttnn_repeat_3,
-            [1, 16, 17, 64],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_matmul_6 = ttnn.matmul(
-            ttnn_slice_19,
-            ttnn_reshape_24,
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_24, False)
-        ttnn_permute_4 = ttnn.permute(
-            ttnn_matmul_6,
-            [0, 2, 1, 3],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            pad_value=0.0,
-        )
-        ttnn_transformer_concatenate_heads_1 = ttnn.transformer.concatenate_heads(
-            ttnn_matmul_6,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_6, False)
-        ttnn_reshape_25 = ttnn.reshape(
-            ttnn_transformer_concatenate_heads_1,
-            [17, 1024],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_transformer_concatenate_heads_1, False)
-        ttnn_matmul_7 = ttnn.matmul(
-            ttnn_reshape_25,
-            weights["model.layers.1.self_attn.o_proj.parametrizations.weight.original"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_25, False)
-        ttnn_reshape_26 = ttnn.reshape(
-            ttnn_matmul_7,
-            [1, 1, 17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_7, False)
-        ttnn_all_reduce_1 = ttnn.all_reduce(
-            input_tensor=ttnn_reshape_26,
-            cluster_axis=1,
-            subdevice_id=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            num_links=None,
-            topology=ttnn.Topology.Ring,
-        )
-        ttnn.deallocate(ttnn_reshape_26, False)
-        ttnn_reshape_27 = ttnn.reshape(
-            ttnn_all_reduce_1,
-            [17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_all_reduce_1, False)
-        ttnn_add_12 = ttnn.add(
-            ttnn_reshape_27,
-            weights["model.layers.1.self_attn.o_proj.bias"],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_27, False)
-        ttnn_reshape_28 = ttnn.reshape(
-            ttnn_add_12,
-            [1, 17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_12, False)
-        ttnn_add_13 = ttnn.add(
-            ttnn_add_9,
-            ttnn_reshape_28,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_28, False)
-        ttnn_typecast_65 = ttnn.typecast(
-            ttnn_add_13,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_pow_3 = ttnn.pow(
-            ttnn_typecast_65,
-            2.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_65, False)
-        ttnn_mean_3 = ttnn.mean(
-            ttnn_pow_3,
-            [2],
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_pow_3, False)
-        ttnn_add_14 = ttnn.add(
-            ttnn_mean_3,
-            var_13,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_mean_3, False)
-        ttnn_rsqrt_3 = ttnn.rsqrt(
-            ttnn_add_14,
-            fast_and_approximate_mode=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_14, False)
-        ttnn_rms_norm_3 = ttnn.rms_norm(
-            ttnn_add_13,
-            epsilon=9.9999997473787516e-06,
-            weight=var_4,
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            program_config=None,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=True,
-            ),
-        )
-        ttnn_reshape_29 = ttnn.reshape(
-            ttnn_rms_norm_3,
-            [17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_concat_7 = ttnn.concat(
-            [
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-                ttnn_reshape_29,
-            ],
-            0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_reshape_30 = ttnn.reshape(
-            ttnn_concat_7,
-            [32, 17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_matmul_8 = ttnn.matmul(
-            ttnn_reshape_30,
-            weights["model.layers.1.mlp.experts.gate_up_proj"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_30, False)
-        ttnn_add_15 = ttnn.add(
-            ttnn_matmul_8,
-            weights["model.layers.1.mlp.experts.gate_up_proj_bias"],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_slice_20 = ttnn.slice(
-            ttnn_add_15,
-            [0, 0, 1],
-            [32, 17, 5760],
-            [1, 1, 2],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_clamp_2 = ttnn.clamp(
-            ttnn_slice_20,
-            -7.0,
-            7.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_slice_20, False)
-        ttnn_add_16 = ttnn.add(
-            ttnn_clamp_2,
-            var_10,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_clamp_2, False)
-        ttnn_slice_21 = ttnn.slice(
-            ttnn_add_15,
-            [0, 0, 0],
-            [32, 17, 5760],
-            [1, 1, 2],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_15, False)
-        ttnn_clamp_3 = ttnn.clamp(
-            ttnn_slice_21,
-            float("-inf"),
-            7.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_slice_21, False)
-        ttnn_multiply_6 = ttnn.multiply(
-            ttnn_clamp_3,
-            var_14,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_sigmoid_1 = ttnn.sigmoid(
-            ttnn_multiply_6,
-            vector_mode=4,
-            mode=ttnn.SigmoidMode.Accurate,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_multiply_6, False)
-        ttnn_multiply_7 = ttnn.multiply(
-            ttnn_clamp_3,
-            ttnn_sigmoid_1,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_clamp_3, False)
-        ttnn_multiply_8 = ttnn.multiply(
-            ttnn_add_16,
-            ttnn_multiply_7,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_multiply_7, False)
-        ttnn.deallocate(ttnn_add_16, False)
-        ttnn_matmul_9 = ttnn.matmul(
-            ttnn_multiply_8,
-            weights["model.layers.1.mlp.experts.down_proj"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn_add_17 = ttnn.add(
-            ttnn_matmul_9,
-            weights["model.layers.1.mlp.experts.down_proj_bias"],
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_typecast_66 = ttnn.typecast(
-            ttnn_reshape_29,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_29, False)
-        ttnn_linear_3 = ttnn.linear(
-            ttnn_typecast_66,
-            weights["model.layers.1.mlp.router.parametrizations.weight.original"],
-            bias=weights["model.layers.1.mlp.router.bias"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.FLOAT32,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_typecast_66, False)
-        ttnn_typecast_67 = ttnn.typecast(
-            ttnn_linear_3,
-            ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_linear_3, False)
-        v_25, v_26 = ttnn.topk(
-            ttnn_typecast_67,
-            4,
-            1,
-            True,
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(v_25, False)
-        ttnn_typecast_68 = ttnn.typecast(
-            v_26,
-            ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(v_26, False)
-        v_27, v_28 = ttnn.topk(
-            ttnn_typecast_67,
-            4,
-            -1,
-            True,
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_67, False)
-        ttnn_typecast_69 = ttnn.typecast(
-            v_28,
-            ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(v_28, False)
-        ttnn_softmax_3 = ttnn.softmax(
-            v_27,
-            1,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-            numeric_stable=True,
-        )
-        ttnn.deallocate(v_27, False)
-        ttnn_reshape_31 = ttnn.reshape(
-            ttnn_typecast_69,
-            [17, 4, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_add_18 = ttnn.add(
-            var_11,
-            ttnn_reshape_31,
-            dtype=ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_31, False)
-        ttnn_reshape_32 = ttnn.reshape(
-            ttnn_add_18,
-            [68],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_18, False)
-        ttnn_reshape_33 = ttnn.reshape(
-            ttnn_softmax_3,
-            [68],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_to_layout_42 = ttnn.to_layout(
-            ttnn_reshape_32,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_32, False)
-        ttnn_to_layout_43 = ttnn.to_layout(
-            ttnn_reshape_33,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_33, False)
-        ttnn_scatter_1 = ttnn.scatter(
-            input=var_5,
-            dim=0,
-            index=ttnn_to_layout_42,
-            src=ttnn_to_layout_43,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            reduce=None,
-        )
-        ttnn.deallocate(ttnn_to_layout_43, False)
-        ttnn.deallocate(ttnn_to_layout_42, False)
-        ttnn_to_layout_44 = ttnn.to_layout(
-            ttnn_scatter_1,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_scatter_1, False)
-        ttnn_reshape_34 = ttnn.reshape(
-            ttnn_to_layout_44,
-            [17, 32],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_to_layout_44, False)
-        ttnn_permute_5 = ttnn.permute(
-            ttnn_reshape_34,
-            [1, 0],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            pad_value=0.0,
-        )
-        ttnn_reshape_35 = ttnn.reshape(
-            ttnn_permute_5,
-            [32, 17, 1],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_permute_5, False)
-        ttnn_multiply_9 = ttnn.multiply(
-            ttnn_add_17,
-            ttnn_reshape_35,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_reshape_35, False)
-        ttnn.deallocate(ttnn_add_17, False)
-        ttnn_sum_1 = ttnn.sum(
-            ttnn_multiply_9,
-            [0],
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_multiply_9, False)
-        ttnn_add_19 = ttnn.add(
-            ttnn_add_13,
-            ttnn_sum_1,
-            dtype=ttnn.DataType.BFLOAT16,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_sum_1, False)
-        ttnn_typecast_70 = ttnn.typecast(
-            ttnn_add_19,
-            ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_pow_4 = ttnn.pow(
-            ttnn_typecast_70,
-            2.0,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_typecast_70, False)
-        ttnn_mean_4 = ttnn.mean(
-            ttnn_pow_4,
-            [2],
-            True,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_pow_4, False)
-        ttnn_add_20 = ttnn.add(
-            ttnn_mean_4,
-            var_13,
-            dtype=ttnn.DataType.FLOAT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_mean_4, False)
-        ttnn_rsqrt_4 = ttnn.rsqrt(
-            ttnn_add_20,
-            fast_and_approximate_mode=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_add_20, False)
-        ttnn_rms_norm_4 = ttnn.rms_norm(
-            ttnn_add_19,
-            epsilon=9.9999997473787516e-06,
-            weight=var_3,
-            bias=None,
-            residual_input_tensor=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            program_config=None,
-            compute_kernel_config=ttnn.WormholeComputeKernelConfig(
-                math_fidelity=ttnn.MathFidelity.HiFi4,
-                math_approx_mode=False,
-                fp32_dest_acc_en=True,
-                packer_l1_acc=True,
-            ),
-        )
-        ttnn_reshape_36 = ttnn.reshape(
-            ttnn_rms_norm_4,
-            [17, 2880],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn_matmul_10 = ttnn.matmul(
-            ttnn_reshape_36,
-            weights["lm_head.parametrizations.weight.original"],
-            transpose_a=False,
-            transpose_b=False,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-            dtype=ttnn.DataType.BFLOAT16,
-            program_config=None,
-            activation=None,
-            compute_kernel_config=None,
-        )
-        ttnn.deallocate(ttnn_reshape_36, False)
-        ttnn_reshape_37 = ttnn.reshape(
-            ttnn_matmul_10,
-            [1, 17, 201088],
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
-        ttnn.deallocate(ttnn_matmul_10, False)
+        ttnn_reshape_1 = ttnn.reshape(ttnn_embedding_0, [1, 17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+
+        hidden_states = ttnn_reshape_1
+        residual = ttnn_embedding_0
+
+        layer_0_outputs = self.layers[0](hidden_states, residual)
+        hidden_states_0 = layer_0_outputs["hidden_states"]
+        residual_0 = layer_0_outputs["residual"]
+
+        layer_1_outputs = self.layers[1](hidden_states_0, residual_0)
+        hidden_states_1 = layer_1_outputs["hidden_states"]
+        residual_1 = layer_1_outputs["residual"]
+
+        norm_out, rsqrt_out = self.final_norm(hidden_states_1)
+        logits = self.lm_head(norm_out)
+
         ttnn_to_layout_45 = ttnn.to_layout(
-            ttnn_concat_4,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            layer_0_outputs["attn_concat"], ttnn.Layout.ROW_MAJOR, None,
+            memory_config=DRAM_MEMORY_CONFIG,
         )
-        ttnn.deallocate(ttnn_concat_4, False)
+        ttnn.deallocate(layer_0_outputs["attn_concat"], False)
         ttnn_argmax_0 = ttnn.argmax(
-            ttnn_to_layout_45,
-            3,
-            True,
-            sub_core_grids=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            ttnn_to_layout_45, 3, True, sub_core_grids=None,
+            memory_config=DRAM_MEMORY_CONFIG,
         )
         ttnn.deallocate(ttnn_to_layout_45, False)
         ttnn_to_layout_46 = ttnn.to_layout(
-            ttnn_argmax_0,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            ttnn_argmax_0, ttnn.Layout.TILE, None,
+            memory_config=DRAM_MEMORY_CONFIG,
         )
         ttnn.deallocate(ttnn_argmax_0, False)
-        ttnn_typecast_71 = ttnn.typecast(
-            ttnn_to_layout_46,
-            ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
+        ttnn_typecast_71 = ttnn.typecast(ttnn_to_layout_46, ttnn.DataType.INT32, memory_config=DRAM_MEMORY_CONFIG)
         ttnn.deallocate(ttnn_to_layout_46, False)
+
         ttnn_to_layout_47 = ttnn.to_layout(
-            ttnn_concat_6,
-            ttnn.Layout.ROW_MAJOR,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            layer_1_outputs["attn_concat"], ttnn.Layout.ROW_MAJOR, None,
+            memory_config=DRAM_MEMORY_CONFIG,
         )
-        ttnn.deallocate(ttnn_concat_6, False)
+        ttnn.deallocate(layer_1_outputs["attn_concat"], False)
         ttnn_argmax_1 = ttnn.argmax(
-            ttnn_to_layout_47,
-            3,
-            True,
-            sub_core_grids=None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            ttnn_to_layout_47, 3, True, sub_core_grids=None,
+            memory_config=DRAM_MEMORY_CONFIG,
         )
         ttnn.deallocate(ttnn_to_layout_47, False)
         ttnn_to_layout_48 = ttnn.to_layout(
-            ttnn_argmax_1,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            ttnn_argmax_1, ttnn.Layout.TILE, None,
+            memory_config=DRAM_MEMORY_CONFIG,
         )
         ttnn.deallocate(ttnn_argmax_1, False)
-        ttnn_typecast_72 = ttnn.typecast(
-            ttnn_to_layout_48,
-            ttnn.DataType.INT32,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
-        )
+        ttnn_typecast_72 = ttnn.typecast(ttnn_to_layout_48, ttnn.DataType.INT32, memory_config=DRAM_MEMORY_CONFIG)
         ttnn.deallocate(ttnn_to_layout_48, False)
+
         ttnn_to_layout_49 = ttnn.to_layout(
-            primals_39,
-            ttnn.Layout.TILE,
-            None,
-            memory_config=ttnn.MemoryConfig(
-                ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
-            ),
+            primals_39, ttnn.Layout.TILE, None,
+            memory_config=DRAM_MEMORY_CONFIG,
         )
         ttnn.deallocate(primals_39, False)
+
         return [
-            v_16,
-            ttnn_slice_12,
-            v_23,
-            ttnn_slice_17,
-            ttnn_reshape_37,
+            layer_0_outputs["v"],
+            layer_0_outputs["k_rotated"],
+            layer_1_outputs["v"],
+            layer_1_outputs["k_rotated"],
+            logits,
             weights["model.layers.0.mlp.experts.gate_up_proj"],
             weights["model.layers.0.mlp.experts.gate_up_proj_bias"],
             weights["model.layers.0.mlp.experts.down_proj"],
@@ -1852,68 +128,463 @@ class ModelTTNN(LightweightModule):
             ttnn_to_layout_49,
             weights["model.rotary_emb.freqs"],
             ttnn_reshape_1,
-            var_0,
-            ttnn_rsqrt_0,
-            ttnn_rms_norm_0,
+            layer_0_outputs["input_layernorm_weight"],
+            layer_0_outputs["input_rsqrt"],
+            layer_0_outputs["input_rms_norm"],
             weights["model.layers.0.self_attn.q_proj.parametrizations.weight.original"],
             weights["model.layers.0.self_attn.k_proj.parametrizations.weight.original"],
             weights["model.layers.0.self_attn.v_proj.parametrizations.weight.original"],
-            ttnn_slice_13,
-            ttnn_repeat_0,
-            ttnn_repeat_1,
+            layer_0_outputs["q_rotated"],
+            layer_0_outputs["k_repeated"],
+            layer_0_outputs["v_repeated"],
             ttnn_typecast_71,
-            ttnn_slice_14,
-            ttnn_permute_1,
+            layer_0_outputs["attn_weights_sliced"],
+            layer_0_outputs["attn_permute"],
             weights["model.layers.0.self_attn.o_proj.parametrizations.weight.original"],
-            ttnn_reshape_11,
-            var_2,
-            ttnn_rsqrt_1,
-            ttnn_rms_norm_1,
+            layer_0_outputs["post_attn_residual"],
+            layer_0_outputs["post_attn_layernorm_weight"],
+            layer_0_outputs["post_attn_rsqrt"],
+            layer_0_outputs["post_attn_rms_norm"],
             weights["model.layers.0.mlp.router.parametrizations.weight.original"],
-            ttnn_typecast_62,
-            ttnn_typecast_63,
+            layer_0_outputs["topk_indices_sorted"],
+            layer_0_outputs["topk_indices"],
             weights["__consteval__.moe_weights_zeros"],
-            ttnn_reshape_17,
-            ttnn_concat_5,
-            ttnn_matmul_3,
-            ttnn_sigmoid_0,
-            ttnn_multiply_3,
-            ttnn_matmul_4,
-            ttnn_add_9,
-            var_1,
-            ttnn_rsqrt_2,
-            ttnn_rms_norm_2,
+            layer_0_outputs["moe_reshape"],
+            layer_0_outputs["expert_repeat"],
+            layer_0_outputs["expert_gate_up_matmul"],
+            layer_0_outputs["expert_sigmoid"],
+            layer_0_outputs["expert_gate_activated"],
+            layer_0_outputs["expert_down_matmul"],
+            residual_0,
+            layer_1_outputs["input_layernorm_weight"],
+            layer_1_outputs["input_rsqrt"],
+            layer_1_outputs["input_rms_norm"],
             weights["model.layers.1.self_attn.q_proj.parametrizations.weight.original"],
             weights["model.layers.1.self_attn.k_proj.parametrizations.weight.original"],
             weights["model.layers.1.self_attn.v_proj.parametrizations.weight.original"],
-            ttnn_slice_18,
-            ttnn_repeat_2,
-            ttnn_repeat_3,
+            layer_1_outputs["q_rotated"],
+            layer_1_outputs["k_repeated"],
+            layer_1_outputs["v_repeated"],
             ttnn_typecast_72,
-            ttnn_slice_19,
-            ttnn_permute_4,
+            layer_1_outputs["attn_weights_sliced"],
+            layer_1_outputs["attn_permute"],
             weights["model.layers.1.self_attn.o_proj.parametrizations.weight.original"],
-            ttnn_add_13,
-            var_4,
-            ttnn_rsqrt_3,
-            ttnn_rms_norm_3,
+            residual_1,
+            layer_1_outputs["post_attn_layernorm_weight"],
+            layer_1_outputs["post_attn_rsqrt"],
+            layer_1_outputs["post_attn_rms_norm"],
             weights["model.layers.1.mlp.router.parametrizations.weight.original"],
-            ttnn_typecast_68,
-            ttnn_typecast_69,
-            ttnn_reshape_34,
-            ttnn_concat_7,
-            ttnn_matmul_8,
-            ttnn_sigmoid_1,
-            ttnn_multiply_8,
-            ttnn_matmul_9,
-            ttnn_add_19,
-            var_3,
-            ttnn_rsqrt_4,
-            ttnn_rms_norm_4,
+            layer_1_outputs["topk_indices_sorted"],
+            layer_1_outputs["topk_indices"],
+            layer_1_outputs["moe_reshape"],
+            layer_1_outputs["expert_repeat"],
+            layer_1_outputs["expert_gate_up_matmul"],
+            layer_1_outputs["expert_sigmoid"],
+            layer_1_outputs["expert_gate_activated"],
+            layer_1_outputs["expert_down_matmul"],
+            hidden_states_1,
+            weights["model.norm.parametrizations.weight.original"],
+            rsqrt_out,
+            norm_out,
             weights["lm_head.parametrizations.weight.original"],
-            ttnn_softmax_3,
-            ttnn_softmax_2,
-            ttnn_softmax_1,
-            ttnn_softmax_0,
+            layer_1_outputs["router_softmax"],
+            layer_1_outputs["attn_softmax"],
+            layer_0_outputs["router_softmax"],
+            layer_0_outputs["attn_softmax"],
         ]
 
+
+class GptOssRMSNorm(LightweightModule):
+    def __init__(self, device, weights, prefix):
+        self.device = device
+        self.weight = weights[f"{prefix}.parametrizations.weight.original"]
+
+    def forward(self, x):
+        ttnn_typecast = ttnn.typecast(x, ttnn.DataType.FLOAT32, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn_pow = ttnn.pow(ttnn_typecast, 2.0, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(ttnn_typecast, False)
+        ttnn_mean = ttnn.mean(ttnn_pow, [2], True, memory_config=DRAM_MEMORY_CONFIG, compute_kernel_config=None)
+        ttnn.deallocate(ttnn_pow, False)
+        ttnn_add = ttnn.add(ttnn_mean, 9.9999997473787516e-06, dtype=ttnn.DataType.FLOAT32, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(ttnn_mean, False)
+        ttnn_rsqrt = ttnn.rsqrt(ttnn_add, fast_and_approximate_mode=False, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(ttnn_add, False)
+        ttnn_rms_norm = ttnn.rms_norm(
+            x,
+            epsilon=9.9999997473787516e-06,
+            weight=self.weight,
+            bias=None,
+            residual_input_tensor=None,
+            memory_config=DRAM_MEMORY_CONFIG,
+            program_config=None,
+            compute_kernel_config=WORMHOLE_COMPUTE_KERNEL_CONFIG,
+        )
+        return ttnn_rms_norm, ttnn_rsqrt
+
+
+class GptOssAttention(LightweightModule):
+    def __init__(self, device, weights, layer_idx):
+        self.device = device
+        self.layer_idx = layer_idx
+        prefix = f"model.layers.{layer_idx}"
+        self.qkv_weight = weights[f"{prefix}.self_attn.qkv_proj.weight"]
+        self.qkv_bias = weights[f"{prefix}.self_attn.qkv_proj.bias"]
+        self.o_proj_weight = weights[f"{prefix}.self_attn.o_proj.parametrizations.weight.original"]
+        self.o_proj_bias = weights[f"{prefix}.self_attn.o_proj.bias"]
+        self.sinks = weights[f"{prefix}.self_attn.sinks"]
+        self.cos = weights["model.rotary_emb.cos"]
+        self.sin = weights["model.rotary_emb.sin"]
+        self.attn_scale = weights["__consteval__.attn_scale"]
+        self.causal_mask = weights["__consteval__.causal_mask"]
+
+    def forward(self, hidden_states_2d):
+        ttnn_linear = ttnn.linear(
+            hidden_states_2d,
+            self.qkv_weight,
+            bias=self.qkv_bias,
+            transpose_a=False,
+            transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None,
+            activation=None,
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(hidden_states_2d, False)
+        ttnn_reshape_qkv = ttnn.reshape(ttnn_linear, [1, 17, 1280], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(ttnn_linear, False)
+
+        q, v, k = ttnn.transformer.split_query_key_value_and_split_heads(
+            ttnn_reshape_qkv,
+            None,
+            num_heads=16,
+            num_kv_heads=2,
+            transpose_key=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+        )
+        ttnn.deallocate(ttnn_reshape_qkv, False)
+
+        k_rotated_full = ttnn.experimental.rotary_embedding(
+            k, self.cos, self.sin, None,
+            memory_config=DRAM_MEMORY_CONFIG,
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(k, False)
+        k_rotated = ttnn.slice(k_rotated_full, [0, 0, 0, 0], [1, 2, 17, 64], [1, 1, 1, 1], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(k_rotated_full, False)
+
+        q_rotated_full = ttnn.experimental.rotary_embedding(
+            q, self.cos, self.sin, None,
+            memory_config=DRAM_MEMORY_CONFIG,
+            compute_kernel_config=None,
+        )
+        ttnn.deallocate(q, False)
+        q_rotated = ttnn.slice(q_rotated_full, [0, 0, 0, 0], [1, 16, 17, 64], [1, 1, 1, 1], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(q_rotated_full, False)
+
+        k_reshaped = ttnn.reshape(k_rotated, [1, 2, 1, 17, 64], memory_config=DRAM_MEMORY_CONFIG)
+        k_repeated = ttnn.repeat(k_reshaped, ttnn.Shape([1, 1, 8, 1, 1]), memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(k_reshaped, False)
+        k_expanded = ttnn.reshape(k_repeated, [1, 16, 17, 64], memory_config=DRAM_MEMORY_CONFIG)
+        k_transposed = ttnn.permute(k_expanded, [0, 1, 3, 2], memory_config=DRAM_MEMORY_CONFIG, pad_value=0.0)
+        ttnn.deallocate(k_expanded, False)
+
+        attn_weights = ttnn.matmul(
+            q_rotated, k_transposed,
+            transpose_a=False, transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None, activation=None, compute_kernel_config=None,
+        )
+        ttnn.deallocate(k_transposed, False)
+        attn_weights_scaled = ttnn.multiply(attn_weights, self.attn_scale, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(attn_weights, False)
+        attn_weights_masked = ttnn.add(attn_weights_scaled, self.causal_mask, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(attn_weights_scaled, False)
+
+        attn_concat = ttnn.concat([attn_weights_masked, self.sinks], 3, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(attn_weights_masked, False)
+        attn_softmax = ttnn.softmax(attn_concat, 3, memory_config=DRAM_MEMORY_CONFIG, compute_kernel_config=None, numeric_stable=True)
+        attn_weights_sliced = ttnn.slice(attn_softmax, [0, 0, 0, 0], [1, 16, 17, 17], [1, 1, 1, 1], memory_config=DRAM_MEMORY_CONFIG)
+
+        v_reshaped = ttnn.reshape(v, [1, 2, 1, 17, 64], memory_config=DRAM_MEMORY_CONFIG)
+        v_repeated = ttnn.repeat(v_reshaped, ttnn.Shape([1, 1, 8, 1, 1]), memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(v_reshaped, False)
+        v_expanded = ttnn.reshape(v_repeated, [1, 16, 17, 64], memory_config=DRAM_MEMORY_CONFIG)
+
+        attn_output = ttnn.matmul(
+            attn_weights_sliced, v_expanded,
+            transpose_a=False, transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None, activation=None, compute_kernel_config=None,
+        )
+        ttnn.deallocate(v_expanded, False)
+        attn_permute = ttnn.permute(attn_output, [0, 2, 1, 3], memory_config=DRAM_MEMORY_CONFIG, pad_value=0.0)
+        concat_heads = ttnn.transformer.concatenate_heads(attn_output, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(attn_output, False)
+
+        reshaped_heads = ttnn.reshape(concat_heads, [17, 1024], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(concat_heads, False)
+        o_proj_out = ttnn.matmul(
+            reshaped_heads, self.o_proj_weight,
+            transpose_a=False, transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None, activation=None, compute_kernel_config=None,
+        )
+        ttnn.deallocate(reshaped_heads, False)
+        o_proj_reshaped = ttnn.reshape(o_proj_out, [1, 1, 17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(o_proj_out, False)
+
+        o_proj_reduced = ttnn.all_reduce(
+            input_tensor=o_proj_reshaped,
+            cluster_axis=1,
+            subdevice_id=None,
+            memory_config=DRAM_MEMORY_CONFIG,
+            num_links=None,
+            topology=ttnn.Topology.Ring,
+        )
+        ttnn.deallocate(o_proj_reshaped, False)
+        o_proj_2d = ttnn.reshape(o_proj_reduced, [17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(o_proj_reduced, False)
+        attn_out_with_bias = ttnn.add(o_proj_2d, self.o_proj_bias, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(o_proj_2d, False)
+
+        return {
+            "attn_output": attn_out_with_bias,
+            "v": v,
+            "k_rotated": k_rotated,
+            "q_rotated": q_rotated,
+            "k_repeated": k_repeated,
+            "v_repeated": v_repeated,
+            "attn_weights_sliced": attn_weights_sliced,
+            "attn_permute": attn_permute,
+            "attn_concat": attn_concat,
+            "attn_softmax": attn_softmax,
+        }
+
+
+class GptOssMLP(LightweightModule):
+    def __init__(self, device, weights, layer_idx):
+        self.device = device
+        prefix = f"model.layers.{layer_idx}"
+        self.router_weight = weights[f"{prefix}.mlp.router.parametrizations.weight.original"]
+        self.router_bias = weights[f"{prefix}.mlp.router.bias"]
+        self.gate_up_proj = weights[f"{prefix}.mlp.experts.gate_up_proj"]
+        self.gate_up_proj_bias = weights[f"{prefix}.mlp.experts.gate_up_proj_bias"]
+        self.down_proj = weights[f"{prefix}.mlp.experts.down_proj"]
+        self.down_proj_bias = weights[f"{prefix}.mlp.experts.down_proj_bias"]
+        self.ones_scalar = weights["__consteval__.ones_scalar"]
+        self.sigmoid_scale = weights["__consteval__.sigmoid_scale"]
+        self.scatter_index = weights["__consteval__.scatter_index"]
+        self.moe_scatter_zeros = weights["__consteval__.moe_scatter_zeros"]
+
+    def forward(self, hidden_states_2d):
+        ttnn_concat_experts = ttnn.concat(
+            [hidden_states_2d] * 32,
+            0,
+            memory_config=DRAM_MEMORY_CONFIG,
+        )
+        ttnn_reshape_experts = ttnn.reshape(ttnn_concat_experts, [32, 17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+
+        expert_gate_up_matmul = ttnn.matmul(
+            ttnn_reshape_experts, self.gate_up_proj,
+            transpose_a=False, transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None, activation=None, compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_reshape_experts, False)
+        gate_up_with_bias = ttnn.add(expert_gate_up_matmul, self.gate_up_proj_bias, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+
+        gate_slice = ttnn.slice(gate_up_with_bias, [0, 0, 1], [32, 17, 5760], [1, 1, 2], memory_config=DRAM_MEMORY_CONFIG)
+        gate_clamped = ttnn.clamp(gate_slice, -7.0, 7.0, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(gate_slice, False)
+        gate_activated = ttnn.add(gate_clamped, self.ones_scalar, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(gate_clamped, False)
+
+        up_slice = ttnn.slice(gate_up_with_bias, [0, 0, 0], [32, 17, 5760], [1, 1, 2], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(gate_up_with_bias, False)
+        up_clamped = ttnn.clamp(up_slice, float("-inf"), 7.0, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(up_slice, False)
+
+        up_scaled = ttnn.multiply(up_clamped, self.sigmoid_scale, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        expert_sigmoid = ttnn.sigmoid(up_scaled, vector_mode=4, mode=ttnn.SigmoidMode.Accurate, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(up_scaled, False)
+        expert_gate_activated = ttnn.multiply(up_clamped, expert_sigmoid, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(up_clamped, False)
+        expert_hidden = ttnn.multiply(gate_activated, expert_gate_activated, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(expert_gate_activated, False)
+        ttnn.deallocate(gate_activated, False)
+
+        expert_down_matmul = ttnn.matmul(
+            expert_hidden, self.down_proj,
+            transpose_a=False, transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None, activation=None, compute_kernel_config=None,
+        )
+        expert_down_with_bias = ttnn.add(expert_down_matmul, self.down_proj_bias, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+
+        ttnn_typecast_router = ttnn.typecast(hidden_states_2d, ttnn.DataType.FLOAT32, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(hidden_states_2d, False)
+        router_logits = ttnn.linear(
+            ttnn_typecast_router, self.router_weight,
+            bias=self.router_bias,
+            transpose_a=False, transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.FLOAT32,
+            program_config=None, activation=None, compute_kernel_config=None,
+        )
+        ttnn.deallocate(ttnn_typecast_router, False)
+        router_bf16 = ttnn.typecast(router_logits, ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(router_logits, False)
+
+        topk_vals_sorted, topk_indices_sorted = ttnn.topk(router_bf16, 4, 1, True, True, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(topk_vals_sorted, False)
+        topk_indices_sorted_int = ttnn.typecast(topk_indices_sorted, ttnn.DataType.INT32, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(topk_indices_sorted, False)
+
+        topk_vals, topk_indices = ttnn.topk(router_bf16, 4, -1, True, True, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(router_bf16, False)
+        topk_indices_int = ttnn.typecast(topk_indices, ttnn.DataType.INT32, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(topk_indices, False)
+        router_softmax = ttnn.softmax(topk_vals, 1, memory_config=DRAM_MEMORY_CONFIG, compute_kernel_config=None, numeric_stable=True)
+        ttnn.deallocate(topk_vals, False)
+
+        indices_reshaped = ttnn.reshape(topk_indices_int, [17, 4, 1], memory_config=DRAM_MEMORY_CONFIG)
+        scatter_idx = ttnn.add(self.scatter_index, indices_reshaped, dtype=ttnn.DataType.INT32, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(indices_reshaped, False)
+        scatter_idx_flat = ttnn.reshape(scatter_idx, [68], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(scatter_idx, False)
+        softmax_flat = ttnn.reshape(router_softmax, [68], memory_config=DRAM_MEMORY_CONFIG)
+
+        scatter_idx_rm = ttnn.to_layout(scatter_idx_flat, ttnn.Layout.ROW_MAJOR, None, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(scatter_idx_flat, False)
+        softmax_rm = ttnn.to_layout(softmax_flat, ttnn.Layout.ROW_MAJOR, None, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(softmax_flat, False)
+
+        moe_weights = ttnn.scatter(
+            input=self.moe_scatter_zeros,
+            dim=0,
+            index=scatter_idx_rm,
+            src=softmax_rm,
+            memory_config=DRAM_MEMORY_CONFIG,
+            reduce=None,
+        )
+        ttnn.deallocate(softmax_rm, False)
+        ttnn.deallocate(scatter_idx_rm, False)
+
+        moe_weights_tiled = ttnn.to_layout(moe_weights, ttnn.Layout.TILE, None, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(moe_weights, False)
+        moe_reshape = ttnn.reshape(moe_weights_tiled, [17, 32], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(moe_weights_tiled, False)
+        moe_permuted = ttnn.permute(moe_reshape, [1, 0], memory_config=DRAM_MEMORY_CONFIG, pad_value=0.0)
+        moe_weights_3d = ttnn.reshape(moe_permuted, [32, 17, 1], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(moe_permuted, False)
+
+        weighted_experts = ttnn.multiply(expert_down_with_bias, moe_weights_3d, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(moe_weights_3d, False)
+        ttnn.deallocate(expert_down_with_bias, False)
+        mlp_output = ttnn.sum(weighted_experts, [0], True, memory_config=DRAM_MEMORY_CONFIG, compute_kernel_config=None)
+        ttnn.deallocate(weighted_experts, False)
+
+        return {
+            "mlp_output": mlp_output,
+            "topk_indices_sorted": topk_indices_sorted_int,
+            "topk_indices": topk_indices_int,
+            "moe_reshape": moe_reshape,
+            "expert_repeat": ttnn_concat_experts,
+            "expert_gate_up_matmul": expert_gate_up_matmul,
+            "expert_sigmoid": expert_sigmoid,
+            "expert_gate_activated": expert_hidden,
+            "expert_down_matmul": expert_down_matmul,
+            "router_softmax": router_softmax,
+        }
+
+
+class GptOssDecoderLayer(LightweightModule):
+    def __init__(self, device, weights, layer_idx):
+        self.device = device
+        self.layer_idx = layer_idx
+        prefix = f"model.layers.{layer_idx}"
+        self.input_layernorm = GptOssRMSNorm(device, weights, f"{prefix}.input_layernorm")
+        self.self_attn = GptOssAttention(device, weights, layer_idx)
+        self.post_attn_layernorm = GptOssRMSNorm(device, weights, f"{prefix}.post_attention_layernorm")
+        self.mlp = GptOssMLP(device, weights, layer_idx)
+        self.input_layernorm_weight = weights[f"{prefix}.input_layernorm.parametrizations.weight.original"]
+        self.post_attn_layernorm_weight = weights[f"{prefix}.post_attention_layernorm.parametrizations.weight.original"]
+
+    def forward(self, hidden_states, residual):
+        input_rms_norm, input_rsqrt = self.input_layernorm(hidden_states)
+        hidden_states_2d = ttnn.reshape(input_rms_norm, [17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+
+        attn_outputs = self.self_attn(hidden_states_2d)
+
+        attn_3d = ttnn.reshape(attn_outputs["attn_output"], [1, 17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(attn_outputs["attn_output"], False)
+        post_attn_residual = ttnn.add(residual, attn_3d, dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(attn_3d, False)
+        ttnn.deallocate(residual, False)
+
+        post_attn_hidden = ttnn.reshape(post_attn_residual, [1, 17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(post_attn_residual, False)
+
+        post_attn_rms_norm, post_attn_rsqrt = self.post_attn_layernorm(post_attn_hidden)
+        post_attn_2d = ttnn.reshape(post_attn_rms_norm, [17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+
+        mlp_outputs = self.mlp(post_attn_2d)
+
+        new_hidden = ttnn.add(post_attn_hidden, mlp_outputs["mlp_output"], dtype=ttnn.DataType.BFLOAT16, memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(mlp_outputs["mlp_output"], False)
+
+        return {
+            "hidden_states": new_hidden,
+            "residual": new_hidden,
+            "post_attn_residual": post_attn_hidden,
+            "input_layernorm_weight": self.input_layernorm_weight,
+            "input_rsqrt": input_rsqrt,
+            "input_rms_norm": input_rms_norm,
+            "post_attn_layernorm_weight": self.post_attn_layernorm_weight,
+            "post_attn_rsqrt": post_attn_rsqrt,
+            "post_attn_rms_norm": post_attn_rms_norm,
+            "v": attn_outputs["v"],
+            "k_rotated": attn_outputs["k_rotated"],
+            "q_rotated": attn_outputs["q_rotated"],
+            "k_repeated": attn_outputs["k_repeated"],
+            "v_repeated": attn_outputs["v_repeated"],
+            "attn_weights_sliced": attn_outputs["attn_weights_sliced"],
+            "attn_permute": attn_outputs["attn_permute"],
+            "attn_concat": attn_outputs["attn_concat"],
+            "attn_softmax": attn_outputs["attn_softmax"],
+            "topk_indices_sorted": mlp_outputs["topk_indices_sorted"],
+            "topk_indices": mlp_outputs["topk_indices"],
+            "moe_reshape": mlp_outputs["moe_reshape"],
+            "expert_repeat": mlp_outputs["expert_repeat"],
+            "expert_gate_up_matmul": mlp_outputs["expert_gate_up_matmul"],
+            "expert_sigmoid": mlp_outputs["expert_sigmoid"],
+            "expert_gate_activated": mlp_outputs["expert_gate_activated"],
+            "expert_down_matmul": mlp_outputs["expert_down_matmul"],
+            "router_softmax": mlp_outputs["router_softmax"],
+        }
+
+
+class GptOssLMHead(LightweightModule):
+    def __init__(self, device, weights):
+        self.device = device
+        self.weight = weights["lm_head.parametrizations.weight.original"]
+
+    def forward(self, hidden_states):
+        hidden_2d = ttnn.reshape(hidden_states, [17, 2880], memory_config=DRAM_MEMORY_CONFIG)
+        logits = ttnn.matmul(
+            hidden_2d, self.weight,
+            transpose_a=False, transpose_b=False,
+            memory_config=DRAM_MEMORY_CONFIG,
+            dtype=ttnn.DataType.BFLOAT16,
+            program_config=None, activation=None, compute_kernel_config=None,
+        )
+        ttnn.deallocate(hidden_2d, False)
+        logits_3d = ttnn.reshape(logits, [1, 17, 201088], memory_config=DRAM_MEMORY_CONFIG)
+        ttnn.deallocate(logits, False)
+        return logits_3d
