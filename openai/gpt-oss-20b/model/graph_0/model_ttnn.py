@@ -13,6 +13,24 @@ DRAM_MC = ttnn.MemoryConfig(
     ttnn.TensorMemoryLayout.INTERLEAVED, ttnn.BufferType.DRAM, None
 )
 
+# The hidden size is 2,880 = 90 tiles.  Keep one width tile per core on the
+# same 10x9 grid used by the expert matmuls so the residual stream can remain
+# L1-resident across layer boundaries and sharded RMSNorm/residual operations.
+RESIDUAL_GRID = ttnn.CoreGrid(y=9, x=10)
+L1_RESIDUAL_MC = ttnn.create_sharded_memory_config(
+    shape=(1, 1, 32, 2880),
+    core_grid=RESIDUAL_GRID,
+    strategy=ttnn.ShardStrategy.WIDTH,
+    orientation=ttnn.ShardOrientation.ROW_MAJOR,
+)
+RESIDUAL_NORM_PROGRAM_CFG = ttnn.LayerNormShardedMultiCoreProgramConfig(
+    compute_with_storage_grid_size=(10, 9),
+    subblock_w=1,
+    block_h=1,
+    block_w=1,
+    inplace=False,
+)
+
 WORMHOLE_CFG = ttnn.WormholeComputeKernelConfig(
     math_fidelity=ttnn.MathFidelity.HiFi4,
     math_approx_mode=False,
@@ -233,14 +251,14 @@ class ModelTTNN(LightweightModule):
             weight=var_3,
             bias=None,
             residual_input_tensor=None,
-            memory_config=DRAM_MC,
-            program_config=None,
+            memory_config=L1_RESIDUAL_MC,
+            program_config=RESIDUAL_NORM_PROGRAM_CFG,
             compute_kernel_config=WORMHOLE_CFG,
         )
         ttnn_reshape_36 = ttnn.reshape(
             ttnn_rms_norm_4,
             [17, 2880],
-            memory_config=DRAM_MC,
+            memory_config=L1_RESIDUAL_MC,
         )
         ttnn_matmul_10 = ttnn.matmul(
             ttnn_reshape_36,
@@ -473,7 +491,7 @@ class GptOssAttention(LightweightModule):
             self.o_proj_weight,
             transpose_a=False,
             transpose_b=False,
-            memory_config=DRAM_MC,
+            memory_config=ttnn.L1_WIDTH_SHARDED_MEMORY_CONFIG,
             dtype=ttnn.DataType.BFLOAT16,
             program_config=None,
             activation=None,
@@ -485,14 +503,14 @@ class GptOssAttention(LightweightModule):
         o_proj_4d = ttnn.reshape(
             o_proj_out,
             [1, 1, 17, 2880],
-            memory_config=DRAM_MC,
+            memory_config=ttnn.L1_MEMORY_CONFIG,
         )
         ttnn.deallocate(o_proj_out, False)
         all_reduce_out = ttnn.all_reduce(
             input_tensor=o_proj_4d,
             cluster_axis=1,
             subdevice_id=None,
-            memory_config=DRAM_MC,
+            memory_config=ttnn.L1_MEMORY_CONFIG,
             num_links=None,
             topology=ttnn.Topology.Ring,
         )
@@ -502,14 +520,14 @@ class GptOssAttention(LightweightModule):
         attn_output_flat = ttnn.reshape(
             all_reduce_out,
             [17, 2880],
-            memory_config=DRAM_MC,
+            memory_config=ttnn.L1_MEMORY_CONFIG,
         )
         ttnn.deallocate(all_reduce_out, False)
         attn_output_2d = ttnn.add(
             attn_output_flat,
             self.o_proj_bias,
             dtype=ttnn.DataType.BFLOAT16,
-            memory_config=DRAM_MC,
+            memory_config=ttnn.L1_MEMORY_CONFIG,
         )
         ttnn.deallocate(attn_output_flat, False)
 
@@ -861,6 +879,11 @@ class GptOssDecoderLayer(LightweightModule):
         ones_scalar,
         sigmoid_scale,
     ):
+        hidden_states = ttnn.to_memory_config(
+            hidden_states,
+            memory_config=L1_RESIDUAL_MC,
+        )
+
         # ---- Pre-attention RMS norm ----
         # Drop the parallel codegen-only inverse-RMS diagnostic branch. The
         # fused op is the sole normalization used by the model.
@@ -871,8 +894,8 @@ class GptOssDecoderLayer(LightweightModule):
             weight=self.input_layernorm_weight,
             bias=None,
             residual_input_tensor=None,
-            memory_config=DRAM_MC,
-            program_config=None,
+            memory_config=L1_RESIDUAL_MC,
+            program_config=RESIDUAL_NORM_PROGRAM_CFG,
             compute_kernel_config=WORMHOLE_CFG,
         )
 
@@ -898,37 +921,22 @@ class GptOssDecoderLayer(LightweightModule):
         ) = self.self_attn(hidden_2d, cos, sin, causal_mask, attn_scale)
 
         # ---- Attention residual ----
-        if residual_input_flat is not None:
-            # Layer 0: flat add [17,2880] + [17,2880] then reshape [1,17,2880]
-            post_attn_hidden_flat = ttnn.add(
-                residual_input_flat,
-                attn_output_2d,
-                dtype=ttnn.DataType.BFLOAT16,
-                memory_config=DRAM_MC,
-            )
-            ttnn.deallocate(attn_output_2d, False)
-            ttnn.deallocate(residual_input_flat, False)
-            post_attn_hidden = ttnn.reshape(
-                post_attn_hidden_flat,
-                [1, 17, 2880],
-                memory_config=DRAM_MC,
-            )
-            ttnn.deallocate(post_attn_hidden_flat, False)
-        else:
-            # Layer 1+: reshape attn output [1,17,2880] then add hidden_states
-            attn_output_3d = ttnn.reshape(
-                attn_output_2d,
-                [1, 17, 2880],
-                memory_config=DRAM_MC,
-            )
-            ttnn.deallocate(attn_output_2d, False)
-            post_attn_hidden = ttnn.add(
-                hidden_states,
-                attn_output_3d,
-                dtype=ttnn.DataType.BFLOAT16,
-                memory_config=DRAM_MC,
-            )
-            ttnn.deallocate(attn_output_3d, False)
+        # Both the embedding handoff and every stacked-layer handoff use the
+        # same [1,17,2880] L1 residual contract.  This avoids a second
+        # layer-0-only DRAM->L1 conversion of the flat embedding view.
+        attn_output_3d = ttnn.reshape(
+            attn_output_2d,
+            [1, 17, 2880],
+            memory_config=L1_RESIDUAL_MC,
+        )
+        ttnn.deallocate(attn_output_2d, False)
+        post_attn_hidden = ttnn.add(
+            hidden_states,
+            attn_output_3d,
+            dtype=ttnn.DataType.BFLOAT16,
+            memory_config=L1_RESIDUAL_MC,
+        )
+        ttnn.deallocate(attn_output_3d, False)
 
         # ---- Post-attention RMS norm ----
         post_attn_rsqrt = None
@@ -938,8 +946,8 @@ class GptOssDecoderLayer(LightweightModule):
             weight=self.post_attn_layernorm_weight,
             bias=None,
             residual_input_tensor=None,
-            memory_config=DRAM_MC,
-            program_config=None,
+            memory_config=L1_RESIDUAL_MC,
+            program_config=RESIDUAL_NORM_PROGRAM_CFG,
             compute_kernel_config=WORMHOLE_CFG,
         )
 
@@ -973,9 +981,12 @@ class GptOssDecoderLayer(LightweightModule):
         # ---- Post-MLP residual ----
         layer_output = ttnn.add(
             post_attn_hidden,
-            mlp_output,
+            ttnn.to_memory_config(
+                mlp_output,
+                memory_config=L1_RESIDUAL_MC,
+            ),
             dtype=ttnn.DataType.BFLOAT16,
-            memory_config=DRAM_MC,
+            memory_config=L1_RESIDUAL_MC,
         )
         ttnn.deallocate(mlp_output, False)
 
